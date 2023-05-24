@@ -75,14 +75,5 @@ feed:
 ## Plugins: https://github.com/hexojs/hexo/wiki/Plugins
 ## Themes: https://github.com/hexojs/hexo/wiki/Themes
 ## yarn install hexo-renderer-pug
-## yarn install hexo-renderer-sass
+## yarn install hexo-renderer-sass-next
 theme: maupassant-hexo
-
-# Deployment
-## Docs: http://hexo.io/docs/deployment.html
-deploy:
-  type: git
-  repo:
-      github: git@github.com:selfboot/selfboot.github.io.git
-      coding: git@git.coding.net:xuelangzf/xuelangzf.git
-  branch: master
