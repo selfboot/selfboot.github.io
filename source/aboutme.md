@@ -30,12 +30,6 @@ comments: false
 
 喜欢读书，尤其是科幻，喜欢书里对技术与人类未来的思考。
 
-SegmentFault 名片
-
-<div class="card-wrapper">
-<script src='//w.segmentfault.com/card/1030000000159828.js?w=0&3rd=1&bg=0&bd=DDDDDD&cl=333333&btn=009a61&noBtn=0'></script>
-</div>
-
 Github 名片
 
 <div class="card-wrapper">
