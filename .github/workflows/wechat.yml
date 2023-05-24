@@ -1,0 +1,28 @@
+name: Wechat
+
+on:
+  push:
+    branches:
+      - main # default branch
+
+jobs:
+  job_name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - name: Get .md files
+        run: |
+          echo "MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep '\.md$' | xargs)" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run script
+        run: python wechat_draft.py
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_SECRET: ${{ secrets.APP_SECRET }}
+          PROXY_URL: ${{ secrets.PROXY_URL }}
