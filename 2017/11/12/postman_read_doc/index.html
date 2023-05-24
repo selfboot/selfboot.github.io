@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Postman 高级用法指南 | Just For Fun</title><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-41784041-1## Your Google Analytics tracking id, e.g. UA-42425684-2','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Postman 高级用法指南</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Postman 高级用法指南</h1><div class="post-meta">2017/11/12<span> | </span><span class="category"><a href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2017/11/12/postman_read_doc/" href="/2017/11/12/postman_read_doc/#disqus_thread"></a><div class="post-content"><p>Postman是一款强大的API接口测试工具，有许多不容易发现的好用的功能，下面简单介绍其中一部分功能。详细内容可以参考<a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/">文档</a>，官方还有视频教程，非常方便入手。后续本博客会持续提供一些Postman使用的细节技巧，方便大家用Postman进行接口调试。</p>
+<p><img src="https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/statusBar.png" alt="Navigating Postman"> </p>
+<span id="more"></span>
+
+<p>作为一个跨平台的API测试工具，Postman有Win&#x2F;Mac&#x2F;Linux客户端，还有浏览器扩展程序。不过官方建议使用客户端，主要有以下优点：</p>
+<ul>
+<li>自带cookie支持：请求可以使用同一域名下的cookie；</li>
+<li>内置代理支持：可以用来转发请求，分析请求流量；</li>
+<li>自定义请求头：不必受限于Chrome中对于请求头的限制；</li>
+<li>内置控制台：在控制台可以查看请求的详细信息</li>
+</ul>
+<p>简单来说，postman 做的事情就是模拟浏览器发送请求，接受响应。使用Postman可以模拟任何浏览器发出的请求，可以自由地构造请求地址，请求方法，请求内容，Cookies等。Postman的响应内容包括完整的响应头，响应时间，响应大小，cookie等内容。</p>
+<p>此外，postman还提供如下方便功能：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/sending_api_requests/debugging_and_logs">Debugging and logs</a>：可以在控制台对postman的请求进行调试，特别是如果有pre-request或者test script时，使用控制台可以方便debug。原生postman可以通过<code>CMD/CTRL + ALT + C</code>打开控制台。</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/sending_api_requests/generate_code_snippets">Generate code snippets</a>：将当前请求导出为各种版本的请求代码，比如python，js，curl等，方便用命令行测试；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/sending_api_requests/proxy">Proxy</a>：如果本机不能直接访问服务端，可以在<code>Settings-Proxy-Using custom/system proxy</code>设置代理；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/sending_api_requests/capturing_http_requests">Capturing HTTP requests</a>：有时候用手机访问服务端时，我们可能需要借助fiddler来查看HTTP请求。postman也可以做相同的工作，只需要将postman作为代理转发HTTP请求即可。</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/sending_api_requests/certificates">Certificates</a>： 如果服务端要验证客户端证书，可以在<code>Settings-Certificates-Add Certificate</code>配置证书；</li>
+</ul>
+<h1 id="Environments-and-globals"><a href="#Environments-and-globals" class="headerlink" title="Environments and globals"></a>Environments and globals</h1><p>我们在构造API请求时，经常会在多个地方使用相同的值，比如相同的请求域名，一些固定的参数值。这时候如果使用<strong>变量</strong>来保存相应的值，然后在需要使用该值的地方用变量来代替会带来不少好处，比如要改变这些值，只用在变量的定义地方作出改动即可。</p>
+<p><img src="https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/59165135.png" alt="Quick Look for variables"></p>
+<p>Postman定义了4类变量，极大地方便了构造请求以及对结果进行测试：</p>
+<ul>
+<li>Global: 全局变量，postman中所有请求都可以访问或者修改；</li>
+<li>Environment: 构造请求时可以选择使用某个Environment，这样就可以访问或者修改该Environment下的所有变量；</li>
+<li>Local: 脚本中定义的变量，只对脚本的当前作用域有用；</li>
+<li>Data: 只有在使用 <code>Collection Runner</code> 的时候，可以通过导入 Data Files 来构造当前测试集中用到的数据。</li>
+</ul>
+<p>就像程序中的变量一样，这里的变量也是有优先级，如果在Environment中有和Global重名的变量，会优先使用Environment中变量。上面4个变量的优先级由上到下依次减弱。 </p>
+<p>在postman中使用变量有着很多意想不到的好处，比如：</p>
+<ol>
+<li>Collection Runner中通过Data file来构造不同的测试数据，方便快速进行大量不同请求数据的测试；</li>
+<li>可以在不同请求中传递值，比如在一个请求中产生流水号，将其设置为某个变量的值，下一个请求即可使用该变量值。</li>
+</ol>
+<h1 id="Scripts"><a href="#Scripts" class="headerlink" title="Scripts"></a>Scripts</h1><p>Postman 内置了Node.js的运行时环境，可以执行JS脚本。这样就带来了很多激动人心的好处，比如构建动态请求参数，编写强大的测试用例等。Postman中的Scripts分为2类：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/scripts/pre_request_scripts">pre-request script</a>: 在发送请求之前执行的脚本，一般用来构建请求参数；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/scripts/test_scripts">test script</a>: 在获取相应之后执行的脚本，一般用来做测试。不过需要注意，测试脚本运行在Sandbox环境，内置了许多JS库支持，方便进行测试。</li>
+</ul>
+<p><img src="https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/59184189.png" alt="Request Execution Flow"></p>
+<p>Postman的<a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/scripts/postman_sandbox">Sandbox</a>环境十分强大，比如：</p>
+<ol>
+<li>通过提供 <code>postman.setNextRequest(&quot;request_name&quot;)</code> 实现，可以很方便地在 Collection 中控制请求的执行路径；</li>
+<li>提供了一系列<a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/scripts/postman_sandbox_api_reference">内置接口</a>，方便对环境变量，请求或者相应内容进行访问；</li>
+<li>提供了 CryptoJS 库，可以方便地进行加解密操作；</li>
+<li>提供了 tv4 库，可以对 Json Scheme进行测试；JSON Schema 定义了如何基于 JSON 格式描述 JSON 数据结构的规范，进而提供数据校验、文档生成和接口数据交互控制等一系列能力。</li>
+</ol>
+<h1 id="Collections-runs"><a href="#Collections-runs" class="headerlink" title="Collections runs"></a>Collections runs</h1><p>Collections 是一系列请求的集合，postman通过collection来支持构建请求工作流，自动化测试，请求的导入导出，持续集成等功能。Collection 支持以下功能：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collections/sharing_collections">Sharing collections</a>：可以将Collection中的请求导出分享给其他人；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collections/data_formats">Data formats</a>：Postman可以导出环境变量，甚至可以将请求和环境变量等一起打包为一个Json，方便迁移所有的请求数据。</li>
+</ul>
+<p>Collection的一大用处就是一次执行其中所有的请求，这就是所谓的 <a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/starting_a_collection_run">collection run</a>。</p>
+<p><img src="https://s3.amazonaws.com/postman-static-getpostman-com/postman-docs/58793861.png" alt="collection runner"></p>
+<p>在执行collection run时，有很多配置选项，主要如下：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/using_environments_in_collection_runs">Using environments in collection runs</a>: 可以指定一个 Environment，这样collection中的请求可以使用其中的变量；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/working_with_data_files">Working with data files</a>: 可以导入一个Data File，里面存放测试中用到的Data变量。可以存放很多不同的Data变量，这样迭代跑多次Collection时，每次使用不同的数据；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/running_multiple_iterations">Running multiple iterations</a>: 可以配置迭代的运行Collection中的请求，对接口的稳定性进行测试。此外配合Data files，也可以对接口的正确性进行测试；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/building_workflows">Building workflows</a>：默认情况下会顺序执行Collection中的请求，不过可以通过<code>setNextRequest()</code>来更改请求的执行流程。</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/debugging_a_collection_run">Debugging a collection run</a>: Collection中的请求执行后，会有可视化的执行结果展示，可以方便进行调试，此外，也可以通过控制台来进行调试。</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/sharing_a_collection_run">Sharing a collection run</a>: 整个Collection Run也是可以导出，可以在其他平台进行运行；</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/command_line_integration_with_newman">Command line integration with Newman</a>: 导出Collection Run后，可以在命令行使用 newman 运行。</li>
+<li><a target="_blank" rel="noopener" href="https://www.getpostman.com/docs/postman/collection_runs/integration_with_travis">Integration with Travis CI</a>: 可以将 newman 和 Travis CI集成，配置好持续性集成，指定自动运行测试用例的时机。</li>
+</ul>
+<h1 id="其他功能"><a href="#其他功能" class="headerlink" title="其他功能"></a>其他功能</h1><p><strong>1. 文件上传</strong></p>
+<p>图形界面端，Collection 中的请求不支持POST文件上传，不过在导出Collection后，可以在json文件中配置文件路径，然后使用 newman 进行文件上传。详细可以参考Postman官方博客：<a target="_blank" rel="noopener" href="http://blog.getpostman.com/2014/11/15/using-newman-to-run-collections-with-file-post-requests/">Using Newman to run collections with file-post requests</a></p>
+<p>不过文件上传时必须指定文件路径，不能用变量代替，也不能通过Data Files来设置不同的文件，不是很方便。所以我给官方提了 <a target="_blank" rel="noopener" href="https://github.com/postmanlabs/postman-app-support/issues/3779">Issue</a>，目前该功能已经纳入 Feature，有望在后续版本中实现该功能。这里就不得不赞一下Postman的社区支持了，基本上有任何问题，只要在官方Issue上提出，基本很快就会有Postman的工作人员提供支持。</p>
+<p>（备注：本文所有图片均来自Postman Doc）</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="http://creativecommons.org/licenses/by-sa/3.0/cn" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：Postman 高级用法指南</p><p>本文链接为：https://selfboot.cn/2017/11/12/postman_read_doc/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/%E6%95%99%E7%A8%8B/"><i class="fa fa-tag"></i>教程</a><a href="/tags/%E6%80%BB%E7%BB%93/"><i class="fa fa-tag"></i>总结</a></div><div class="post-nav"><a class="next" href="/2016/12/28/py_encode_decode/">Python2.x 字符编码终极指南</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2017/11/12/postman_read_doc/';
+    this.page.identifier = '2017/11/12/postman_read_doc/';
+    this.page.title = 'Postman 高级用法指南';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/12/postman_read_doc/">Postman 高级用法指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/28/py_encode_decode/">Python2.x 字符编码终极指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/03/threadlocal_enhance/">深入理解Python中的ThreadLocal变量（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/30/forum_design_flask/">从零开始搭建论坛（三）：Flask框架简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/c++_undefined_behaviours/">C++ 中的未定义行为</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/01/lost_partition/">被忽视的 partition 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/26/threadlocal_implement/">深入理解Python中的ThreadLocal变量（中）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/threadlocal_overview/">深入理解Python中的ThreadLocal变量（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/forum_design_wsgi/">从零开始搭建论坛（二）：Web服务器网关接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/28/forum_design_framework/">从零开始搭建论坛（一）：Web服务器与Web框架</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Environments-and-globals"><span class="toc-number">1.</span> <span class="toc-text">Environments and globals</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Scripts"><span class="toc-number">2.</span> <span class="toc-text">Scripts</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Collections-runs"><span class="toc-number">3.</span> <span class="toc-text">Collections runs</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD"><span class="toc-number">4.</span> <span class="toc-text">其他功能</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <script async="" src="https:////busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57adc438b914651b" async></script></div></body></html>

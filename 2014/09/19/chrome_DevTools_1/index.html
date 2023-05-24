@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>神器——Chrome开发者工具(一) | Just For Fun</title><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-41784041-1## Your Google Analytics tracking id, e.g. UA-42425684-2','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">神器——Chrome开发者工具(一)</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">神器——Chrome开发者工具(一)</h1><div class="post-meta">2014/09/19<span> | </span><span class="category"><a href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2014/09/19/chrome_DevTools_1/" href="/2014/09/19/chrome_DevTools_1/#disqus_thread"></a><div class="post-content"><p>这里我假设你用的是Chrome浏览器，如果恰好你做web开发，或者是比较好奇网页中的一些渲染效果并且喜欢折腾，那么你一定知道Chrome的开发者工具了。其实其他浏览器也有类似工具，比如Firefox下的firebug。本文将会详细讲述如何使用Chrome开发者工具，希望里面有些让你感到惊艳的东西！即使你不用Chrome，那么文中的某些内容也会相当有用。</p>
+<p>首先啰嗦一下如何打开开发者工具吧。可以直接在页面上点击右键，然后选择审查元素；或者是打开Tools–Developer Tools；或者是用快捷键Command + I 打开。打开后我们看到的界面大概如下：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Summary.png" alt="图1. 开发者工具概况"></p>
+<span id="more"></span>
+
+<p>Google Chrome一共提供了8大组工具：</p>
+<ol>
+<li>Elements: 允许我们从浏览器的角度看页面，也就是说我们可以看到chrome渲染页面所需要的的HTML、CSS和DOM(Document Object Model)对象。此外，还可以编辑这些内容更改页面显示效果；</li>
+<li>Network: 可以看到页面向服务器请求了哪些资源、资源的大小以及加载资源花费的时间，当然也能看到哪些资源不能成功加载。此外，还可以查看HTTP的请求头，返回内容等；</li>
+<li>Sources: 主要用来调试js；</li>
+<li>Timeline: 提供了加载页面时花费时间的完整分析，所有事件，从下载资源到处理Javascript，计算CSS样式等花费的时间都展示在Timeline中；</li>
+<li>Profiles: 分析web应用或者页面的执行时间以及内存使用情况；</li>
+<li>Resources: 对本地缓存（IndexedDB、Web SQL、Cookie、应用程序缓存、Web Storage）中的数据进行确认及编辑；</li>
+<li>Audits: 分析页面加载的过程，进而提供减少页面加载时间、提升响应速度的方案；</li>
+<li>Console: 显示各种警告与错误信息，并且提供了shell用来和文档、开发者工具交互。</li>
+</ol>
+<p>强大的Chrome开发者工具提供了很棒的提示功能，当我们把鼠标悬停在某些项时，会显示一些很有用的提示信息，有时候我们可以得到意想不到的收获。此外，开发者工具还提供了Emulation功能，做移动开发时特别有用。下面先详细研究一下8大工具的使用方法。</p>
+<h1 id="Elements"><a href="#Elements" class="headerlink" title="Elements"></a><a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools/docs/dom-and-styles">Elements</a></h1><p>Elements工具像一把手术刀一样“解剖”了当前页面，我们看到的Elements页面一般像这样子：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element.png" alt="图2. Element 总体效果"></p>
+<p>图中标记为1的红色区块为页面HTML文件，HTML中的每个元素比如<body>、<p>都是一个DOM节点，所有的DOM节点组成了DOM树。我们完全可以把红色区块1当做是DOM树，把HTML元素标签看做DOM节点。</p>
+<p>当我们在这里选中某一DOM对象时，网页中相应元素也会被阴影覆盖。我们可以对DOM对象进行修改，修改后结果会在页面实时显示出来。此外，还可以用<code>Command+f</code>搜索DOM树中指定的内容，或者是以HTML形式更改页面元素，如下图：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_html.png" alt="图3. 更改内容"></p>
+<p>选中DOM对象之后右键即可以看到一些辅助的功能，如图中标记为2的区块所示：</p>
+<ol>
+<li>Add Attribute: 在标签中增加新的属性；</li>
+<li>Force Element State: 有时候我们为页面元素添加一些动态的样式，比如当鼠标悬停在元素上时的样式，这种动态样式很难调试。我们可以使用<code>Force Element State</code>强制元素状态，便于调试，如下图：<br> <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_dynamic_style.gif" alt="图4. 强制元素状态"></li>
+<li>Edit as HTML: 以HTML形式更改页面元素；</li>
+<li>Copy XPath: 复制<a href="#XPath">XPath</a>；</li>
+<li>Delete Node: 删除DOM节点；</li>
+<li>Break On: 设置<a href="#dom_breakpoint">DOM 断点</a>。</li>
+</ol>
+<p>图中被标记为3的蓝色区块显示当前标签的路径：从html开始一直到当前位置，我们单击路径中任何一个标签，即可以跳转到相应标签内容中去。</p>
+<p>图中标记为4的蓝色区块实时显示当前选中标签的CSS样式、属性等，一共有以下5小部分：</p>
+<ul>
+<li>Styles: 显示用户定义的样式，比如请求的default.css中的样式，和通过Javasript生成的样式，还有开发者工具添加的样式；</li>
+<li>Computed: 显示开发者工具计算好的元素样式；</li>
+<li>Event Listeners: 显示当前HTML DOM节点和其祖先节点的所有JavaScript<a href="#dom_event">事件监听器</a>，这里的监听脚本可以来自Chrome的插件。可以点击右边小漏斗形状(filter)选择只显示当前节点的事件监听器。</li>
+<li>DOM Breakpoints: 列出所有的<a href="#dom_breakpoint">DOM 断点</a>；</li>
+<li>Properties: 超级全面地列出当前选中内容的属性，不过基本很少用到。</li>
+</ul>
+<p>实际应用中我们经常会用到Styles，如下图：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_styles.png" alt="图5. Element 样式"></p>
+<p>图中标记为1的+号为<code>New style rule</code>，可以为当前标签添加新的选择器，新建立的样式为inspector-stylesheet。此外，也可以直接在原有的样式上增加、修改、禁用样式属性，如图中标记2显示。</p>
+<p>在New style rule右边为<code>Toggle Element State</code>，选择后会出现标记3显示的选择框，如果选中<code>:hover</code>后，即可以看到鼠标悬停在页面元素上时的CSS样式了，作用类似于前面的Force Element State，更多内容可以看<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/4515124/see-hover-state-in-chrome-developer-tools">:hover state in Chrome Developer Tools</a> 。</p>
+<p>更强大的是，开发者工具以直观的图形展示了盒子模型的margin、border、padding部分，如标记5所示。下面动态图给出了盒子模型的一个示例：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_box.gif" alt="图6. 盒子模型示例"></p>
+<h1 id="Network"><a href="#Network" class="headerlink" title="Network"></a><a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools/docs/network">Network</a></h1><p>有时候我们的网页加载的很慢，而相同网速下，其他网页加载速度并不慢。这时候就得考虑优化网页，优化前我们必须知道加载速度的瓶颈在哪里，这个时候可以考虑使用Network工具。下图为我的博客首页加载时的Network情况：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Network.png" alt="图7. Network 总体效果"></p>
+<p>请求的每个资源在Network表格中显示为一行，每个资源都有许多列的内容(如红色区块1)，不过默认情况下不是所有列都显示出来。</p>
+<ul>
+<li><p>Name&#x2F;Path: 资源名称以及URL路径；</p>
+</li>
+<li><p>Method: HTTP请求方法；</p>
+</li>
+<li><p>Status&#x2F;Text: HTTP状态码&#x2F;文字解释；</p>
+</li>
+<li><p>Type: 请求资源的MIME类型；</p>
+</li>
+<li><p>Initiator解释请求是怎么发起的，有四种可能的值：</p>
+<ol>
+<li>Parser：请求是由页面的HTML解析时发送的；</li>
+<li>Redirect：请求是由页面重定向发送的；</li>
+<li>Script：请求是由script脚本处理发送的；</li>
+<li>Other：请求是由其他过程发送的，比如页面里的link链接点击，在地址栏输入URL地址。</li>
+</ol>
+</li>
+<li><p>Size&#x2F;Content: Size是响应头部和响应体结合起来的大小，Content是请求内容解码后的大小。进一步了解可以看这里<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/8072921/chrome-dev-tools-size-vs-content">Chrome Dev Tools - “Size” vs “Content”</a>；</p>
+</li>
+<li><p>Time&#x2F;Latency: Time是从请求开始到接收到最后一个字节的总时长，Latency是从请求开始到接收到第一个字节的时间；</p>
+</li>
+<li><p>Timeline: 显示网络请求的<code>可视化瀑布流</code>，鼠标悬停在某一个时间线上，可以显示整个请求各部分花费的时间。</p>
+</li>
+</ul>
+<p>以上是默认显示的列，不过我们可以在瀑布流的顶部右键，这样就可以选择显示或者隐藏更多的列，比如Cache-Control, Connection, Cookies, Domain等。</p>
+<p>我们可以按照上面任意一项来给资源请求排序，只需要单击相应的名字即可。Timeline排序比较复杂，单击Timeline后，需要选择根据Start Time、Response Time、End Time、Duration、Latency中的一项来排序。</p>
+<p>红色区块2中，一共有6个小功能：</p>
+<ol>
+<li>Record Network Log: 红色表示此时正在记录资源请求信息；</li>
+<li>Clear: 清空所有的资源请求信息；</li>
+<li>Filter: 过滤资源请求信息；</li>
+<li>Use small resource raws: 每一行显示更少的内容；</li>
+<li>Perserve Log: 再次记录请求的信息时不擦出之前的资源信息；</li>
+<li>Disable cache: 不允许缓存的话，所有资源均重新加载。</li>
+</ol>
+<p>选择Filter后，就会出现如红色区块3所显示的过滤条件，当我们点击某一内容类型(可以是Documents, Stylesheets, Images, Scripts, XHR, Fonts, WebSockets, Other)后，只显示该特定类型的资源。在<a href="#XHR">XHR请求</a>中，可以在一个请求上右键选择“Replay XHR”来重新运行一个XHR请求。</p>
+<p>有时候我们需要把Network里面内容传给别人，这时候可以在资源请求行的空白处右键然后选择<code>Save as HAR with Content</code>保存为一个HAR文件。然后可以在一些第三方工具网站，比如<a target="_blank" rel="noopener" href="http://ericduran.github.io/chromeHAR/">这里</a>重现网络请求信息。</p>
+<p>选定某一资源后，我们还可以<code>Copy as cURL</code>，也就是复制网络请求作为curl命令的参数，详细内容看<a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools/docs/network#copying-requests-as-curl-commands"> Copying requests as cURL commands</a></p>
+<p>此外，我们还可以查看网络请求的请求头，响应头，已经返回的内容等信息，如下图：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Network_content.png" alt="图8. 网页请求内容"></p>
+<p>资源的详细内容有以下几个：</p>
+<ul>
+<li>HTTP request and response headers</li>
+<li>Resource preview: 可行时进行资源预览；</li>
+<li>HTTP response: 未处理过的资源内容；</li>
+<li>Cookie names and values: HTTP请求以及返回中传输的所有Cookies；</li>
+<li>WebSocket messages: 通过WebSocket发送和接收到的信息；</li>
+<li>Resource network timing: 图形化显示资源加载过程中各阶段花费的时间。</li>
+</ul>
+<h1 id="补充解释"><a href="#补充解释" class="headerlink" title="补充解释"></a>补充解释</h1><p><a name="XPath"></a><strong>[XPath]</strong></p>
+<p>XPath 是一门在 XML 文档中查找信息的语言。XPath 用于在 XML 文档中通过元素和属性进行导航。比如在图2中，</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;https://github.com/NUKnightLab/TimelineJS&quot;</span>&gt;</span>这里<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里a标签的Xpath为：<code>/html/body/div[2]/p[1]/a</code>，解读为：html里面body标签的第二个div标签的第一个p标签下的a标签。</p>
+<p><a name="dom_event"></a><strong>[HTML DOM事件]</strong></p>
+<p>HTML DOM允许我们在某一事件发生时执行特定的JavaScript脚本，这里的事件可以是：</p>
+<ul>
+<li>鼠标移到某元素之上；</li>
+<li>窗口或框架被重新调整大小；</li>
+<li>文本被选中；</li>
+<li>用户在HTML元素上单击；</li>
+<li>某个键盘按键被按下…</li>
+</ul>
+<p>这里事件发生时执行的javascript脚本就是事件监听器。</p>
+<p><a name="dom_breakpoint"></a><strong>[DOM 断点]</strong></p>
+<p>DOM 断点（DOM Breakpoints）可以监听某个 DOM 被修改情况，在Elements中某个元素上右键可以设置三种不同情况的断点：</p>
+<ul>
+<li>子节点修改</li>
+<li>自身属性修改</li>
+<li>自身节点被删除</li>
+</ul>
+<p>设置后 DOM Breakpoints 列表中就会出现该 DOM 断点。</p>
+<p>一旦监听的DOM被修改时，断点就会定位到执行修改操作的代码，这对于绑定了多个事件的 DOM 调试有很大的帮助。</p>
+<p><a name="XHR"></a><strong>[XMLHttpRequest]</strong></p>
+<p>XMLHttpRequest是一个浏览器接口，使得Javascript可以进行HTTP(S)通信。XMLHttpRequest 对象用于在后台与服务器交换数据，这样就可以</p>
+<ul>
+<li>在不重新加载页面的情况下更新网页</li>
+<li>在页面已加载后从服务器请求数据</li>
+<li>在页面已加载后从服务器接收数据</li>
+<li>在后台向服务器发送数据</li>
+</ul>
+<p>更多关于XHR的内容可以看阮一峰老师的<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2012/09/xmlhttprequest_level_2.html">XMLHttpRequest Level 2 使用指南</a>。</p>
+<p><a name="webSocket"></a><strong>[WebSocket]</strong></p>
+<p><a target="_blank" rel="noopener" href="http://dev.w3.org/html5/websockets/">WebSocket规范</a>定义了一种 API，可在网络浏览器和服务器之间建立“套接字”连接。简单地说：客户端和服务器之间存在持久的连接，而且双方都可以随时开始发送数据。这样就解决了长期以来只能由客户端发起请求才能从服务器获取信息这一问题。</p>
+<p>更多关于WebSocket的内容可以看<a href="">WebSockets 简介：将套接字引入网络</a></p>
+<p><strong>[本文环境]</strong></p>
+<ul>
+<li>操作系统：OS X 10.9.4</li>
+<li>Chrome版本：Version 37.0.2062.120</li>
+</ul>
+<h1 id="更多阅读"><a href="#更多阅读" class="headerlink" title="更多阅读"></a>更多阅读</h1><p><a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools">Chrome DevTools Overview</a><br><a target="_blank" rel="noopener" href="http://www.html5rocks.com/en/tutorials/developertools/part1/">Introduction to Chrome Developer Tools</a><br><a target="_blank" rel="noopener" href="http://code.tutsplus.com/articles/chrome-dev-tools-networking-and-the-console--net-28167">Chrome Dev Tools: Networking and the Console</a></p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="http://creativecommons.org/licenses/by-sa/3.0/cn" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：神器——Chrome开发者工具(一)</p><p>本文链接为：https://selfboot.cn/2014/09/19/chrome_DevTools_1/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/%E6%95%99%E7%A8%8B/"><i class="fa fa-tag"></i>教程</a></div><div class="post-nav"><a class="pre" href="/2014/10/13/html2dash/">Dash助手——任意html转换为Docset</a><a class="next" href="/2014/09/03/how_to_crawl_coursera/">一步步爬取Coursera课程资源</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2014/09/19/chrome_DevTools_1/';
+    this.page.identifier = '2014/09/19/chrome_DevTools_1/';
+    this.page.title = '神器——Chrome开发者工具(一)';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/12/postman_read_doc/">Postman 高级用法指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/28/py_encode_decode/">Python2.x 字符编码终极指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/03/threadlocal_enhance/">深入理解Python中的ThreadLocal变量（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/30/forum_design_flask/">从零开始搭建论坛（三）：Flask框架简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/c++_undefined_behaviours/">C++ 中的未定义行为</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/01/lost_partition/">被忽视的 partition 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/26/threadlocal_implement/">深入理解Python中的ThreadLocal变量（中）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/threadlocal_overview/">深入理解Python中的ThreadLocal变量（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/forum_design_wsgi/">从零开始搭建论坛（二）：Web服务器网关接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/28/forum_design_framework/">从零开始搭建论坛（一）：Web服务器与Web框架</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Elements"><span class="toc-number">1.</span> <span class="toc-text">Elements</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Network"><span class="toc-number">2.</span> <span class="toc-text">Network</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E8%A7%A3%E9%87%8A"><span class="toc-number">3.</span> <span class="toc-text">补充解释</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E9%98%85%E8%AF%BB"><span class="toc-number">4.</span> <span class="toc-text">更多阅读</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <script async="" src="https:////busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57adc438b914651b" async></script></div></body></html>
