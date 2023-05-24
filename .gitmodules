@@ -1,0 +1,3 @@
+[submodule "themes/maupassant-hexo"]
+	path = themes/maupassant-hexo
+	url = git@github.com:selfboot/maupassant-hexo.git
