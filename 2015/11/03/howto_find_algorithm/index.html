@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>知其所以然之永不遗忘的算法 | Just For Fun</title><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-41784041-1## Your Google Analytics tracking id, e.g. UA-42425684-2','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">知其所以然之永不遗忘的算法</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">知其所以然之永不遗忘的算法</h1><div class="post-meta">2015/11/03<span> | </span><span class="category"><a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2015/11/03/howto_find_algorithm/" href="/2015/11/03/howto_find_algorithm/#disqus_thread"></a><div class="post-content"><p>相信大部分同学曾经都学习过快速排序、Huffman、KMP、Dijkstra等经典算法，初次学习时我们惊叹于算法的巧妙，同时被设计者的智慧所折服。于是，我们仔细研读算法的每一步，甚至去证明算法的正确性，或者是去尝试优雅地实现这些算法。总之，我们会花费很大的时间精力去理解这些智慧的结晶。</p>
+<p>然而，现在对于这些经典的算法你仍然了然于胸吗？就算现在你仍然记得这些算法的步骤，你敢确保一年后、十年后自己不会忘记？我想没有多少人敢保证吧。</p>
+<span id="more"></span>
+
+<p>我们当然希望自己掌握一个算法后，就永远不会忘记，最好还能举一反三，利用算法中的思想去解决新的问题。然而，现实与美好的愿景往往是背道而驰，不要说举一反三，我们甚至经常忘记那些算法本身。</p>
+<h1 id="背算法与设计算法"><a href="#背算法与设计算法" class="headerlink" title="背算法与设计算法"></a>背算法与设计算法</h1><p>为什么会这样？简单来说，因为我们从来就没有真正掌握过这些算法，我们只不过是在<strong>背诵</strong>别人发明的算法，就像我们背诵历史书上的那些历史事件一样，时间久了自然会慢慢遗忘。</p>
+<p>我们接触到某个算法时，看到的只是对算法过程的讲解，对其正确性的证明，或者对其效率的分析（想想大名鼎鼎的<a target="_blank" rel="noopener" href="https://book.douban.com/subject/20432061/">《算法导论》</a>，<a target="_blank" rel="noopener" href="https://book.douban.com/subject/19952400/">《算法》</a>是如何讲解某一算法的），我们不会看到那些牛人是如何“<strong>灵机一动</strong>”设计出了这惊天地泣鬼神的算法。也就是说我们只是知其然，并没有知其所以然。当我们不知道一个算法的来龙去脉，不知道设计它经历的那些思维历程时，就很容易忘记它的具体内容。相反，那些牛人就不会忘记自己设计的算法。</p>
+<p>所以，当看到别人牛逼的闪闪发光的算法后，我们一定要探寻算法背后那“曲径通幽”的思维之路。只有经历了思维之路的磨难，才配得上永远占有一个算法，并有可能举一反三，或者是设计一个巧妙算法。刘未鹏在<a target="_blank" rel="noopener" href="http://mindhacks.cn/2011/07/10/the-importance-of-knowing-why-part3/">知其所以然（三）：为什么算法这么难？</a>中探索了Huffman编码的思维历程，值得一看。顺便说一下，探索算法背后的思维历程不是件容易的事，要知道就是霍夫曼本人也是花了一个学期才想出它的编码算法。</p>
+<p>下面我们以LeetCode上一个<code>好问题</code>，来探索这个问题的算法背后的思维之路。关于什么是好问题，刘未鹏在<a target="_blank" rel="noopener" href="http://mindhacks.cn/2008/04/18/learning-from-polya/">跟波利亚学解题</a>上有一个不错的观点：<strong>好问题即测试一个人思维的习惯的题目</strong>，通常考察你的联想能力、类比能力、抽象能力、演绎能力、归纳能力、观察能力、发散能力等。</p>
+<h1 id="一个好问题"><a href="#一个好问题" class="headerlink" title="一个好问题"></a>一个好问题</h1><p>LeetCode 84题：<a target="_blank" rel="noopener" href="https://leetcode.com/problems/largest-rectangle-in-histogram/">Largest Rectangle in Histogram</a>，给定一个直方图（下图a），求直方图中能够组成的所有矩形中，面积最大为多少。对于图a来说，我们很容易看出来面积最大的矩形为高度为5和6的直方图组成的矩形（图b隐形部分），其面积为5 * 2 &#x3D; 10。</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151103_histogram_area.png" alt="题目描述"></p>
+<p>其实这个题稍微加以变化，就是另一个相当有趣的问题：<a target="_blank" rel="noopener" href="https://leetcode.com/problems/maximal-rectangle/">Maximal Rectangle</a>.</p>
+<p>这道题目一个显而易见的解决方法就是<code>暴力搜索</code>：找出所有可能的矩形，然后求出面积最大的那个。要找出所有可能的矩形，只需要从左到右扫描每个立柱，然后以这个立柱为矩形的左边界（假设为第i个），再向右扫面，分别以（i+1, i+2, n）为右边界确定矩形的形状。</p>
+<p>这符合我们本能的思考过程：要找出最大的一个，就先列出所有的可能，比较大小后求出最大的那个。然而不幸的是，本能的思考过程通常是简单粗暴而又低效的，就这个题目来说，时间复杂度为N^2 。那么有没有一种更加高效的解决办法呢？</p>
+<h1 id="一个好算法"><a href="#一个好算法" class="headerlink" title="一个好算法"></a>一个好算法</h1><p>我第一次面对这个题时，并没有想出一个漂亮的解决方案。因为从给定的条件来看，似乎找不到一个约束条件使得满足这个条件的矩形面积最大，也就是说无法缩减问题的规模，因此必须找出所有可能的矩形，这样的话效率肯定是N^2 。</p>
+<p>然而去Google了一下，立即发现了一个时间复杂度O(n)的算法，当时就被这神奇的解法所震撼到。它的代码十分简单，简单到一开始我根本就看不懂，不明白为什么这样子求出的就是最大的矩形。网上好多所谓的解题报告里面只是人云亦云地给出了算法的步骤，没有算法正确性的证明，更没有我们最想要的关于解题思路。</p>
+<p>我也先给出算法步骤和代码，看看你是不是同样一头雾水。在程序中维护一个栈，栈中元素为直方图中bar的下标，然后从头开始扫描每个bar：</p>
+<ol>
+<li>如果当前bar的高度大于栈顶bar的高度，则将当前bar的下标入栈；</li>
+<li>否则执行出栈操作，记录弹出下标对应的bar的高度，并计算出一个面积，然后用这个面积更新最大面积。</li>
+</ol>
+<p>代码也是相当简洁，python源码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">largestRectangleArea</span>(<span class="params">self, height</span>):</span><br><span class="line">    height.append(<span class="number">0</span>)</span><br><span class="line">    size = <span class="built_in">len</span>(height)</span><br><span class="line">    no_decrease_stack = [<span class="number">0</span>]</span><br><span class="line">    max_size = height[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> i &lt; size:</span><br><span class="line">        cur_num = height[i]</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">not</span> no_decrease_stack <span class="keyword">or</span></span><br><span class="line">                    cur_num &gt; height[no_decrease_stack[-<span class="number">1</span>]]):</span><br><span class="line">            no_decrease_stack.append(i)</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            index = no_decrease_stack.pop()</span><br><span class="line">            <span class="keyword">if</span> no_decrease_stack:</span><br><span class="line">                width = i - no_decrease_stack[-<span class="number">1</span>] - <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                width = i</span><br><span class="line">            max_size = <span class="built_in">max</span>(max_size, width * height[index])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> max_size</span><br></pre></td></tr></table></figure>
+
+<p>高效而难以理解，这就是那些神奇算法的共性。</p>
+<h1 id="一个思维历程"><a href="#一个思维历程" class="headerlink" title="一个思维历程"></a>一个思维历程</h1><p>那么这个算法真的就是我等凡夫俗子不能想出来的？难道我们只能仰望高山，恨自己智商不高？我还真不服气呢，于是又静下心去思考这个问题。</p>
+<p>这次我们不从已知条件推结果，而直接从结论入手，就是说假设现在已经找到了面积最大的那个矩形。接着我们来分析该矩形有什么特征，然后可以用下面两种方法之一来缩减问题的规模（因为这两种方法都不用找出所有的矩形一一比较）。</p>
+<ol>
+<li>找出满足这些特征的矩形，面积最大的矩形肯定是其中之一；</li>
+<li>排除那些不满足这些特征的矩形，面积最大的矩形在剩下的那些矩形里面。</li>
+</ol>
+<p>为了使考虑情况尽可能全面，画了许多直方图，防止使用原题目图片可能存在的一些特定假设，其中一个直方图如下图：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151103_histogram.png" alt="题目情况分析"></p>
+<p>通过不断地对多个直方图的观察，发现面积最大的那个矩形好像都包含至少一个完整的bar，那么这条规律适用于所有的直方图吗？我们用反证法来证明，假设某个最大矩形中每个竖直块都是所在的bar的一小段，那么这个矩形高度增加1后仍然是一个合法的矩形，但新的矩形面积更大，与假设矛盾，所以面积最大的矩形必须至少有一个竖直块是整个bar。</p>
+<p>至此我们找到了面积最大矩形的一个特性：<code>各组成竖直块中至少有一个是完整的Bar</code>。有了这条特性，我们再找面积最大的矩形时，就有了一个比较小的范围。具体来说就是针对每个bar，我们找出包含这个bar的面积最大的矩形，然后只需要比较这N个矩形即可（N为bar的个数）。</p>
+<p>那么问题又来了，如何找出“<strong>包含某个bar的面积最大的矩形呢</strong>”？对于上面的直方图，包含下标为4的bar的最大矩形如下图橘黄色部分：</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151103_histogram_more.png" alt="局部最大矩形"></p>
+<p>简单观察一下，就会发现要找到包含某个bar的最大矩形其实很简答，只需要找到高度小于该bar的左、右边界即可，上图中分别是下标为1的bar和下标为10的bar。</p>
+<p>至此问题已经变为<strong>“对于给定的bar，如何确定高度比它小的左、右边界”</strong>。其实求左边界和右边界是同样的求法，下面我们考虑求每个bar的左边界。最直接的思路是对于每个bar，扫面其前面所有的bar，找出最后一个高度小于它的bar，这样的话时间复杂度明显又是N^2 ，Holy Shit。</p>
+<p>到这里似乎没有路可走了，但如果我们继续绞尽脑汁地去想，<strong>可能</strong>（或许你对栈理解的很深入，或许是你在一个类似的问题中用到了栈，当然你也可能想到动态规划的思想，那也是可行的）会<strong>联想</strong>到<code>栈</code>这一数据结构。<strong>用栈维护一个高度递增的bar的集合，也就是说栈底到栈顶部对应的bar的高度越来越大</strong>。那么对应一个刚读入的bar，我们只需要比较它的高度和栈顶对应bar的高度，如果当前bar比较高，则弹出栈顶元素继续比较，直到栈顶bar比它低或者栈为空。之后，将当前bar入栈，更新栈内的递增序列。</p>
+<p>我们从左到右扫一遍得到每个bar对应的左边界，然后从右到左扫一遍得到bar的右边界。两次扫描过程中，每个bar都只有出栈、入栈操作，所以时间复杂度为O(N)。通过这样的预处理，即可以O(N)的时间复杂度得到每个bar的左右边界。之后对于每个bar求出包含它的最大面积，也即是由左右边界和bar的高度围起来的矩形的面积。再做N次比较，即可得出最终的结果。</p>
+<p>这里先预处理用两个栈扫描两次得到左、右边界，再计算面积，是按照推导过程一步一步来的。当我们写完程序后，再综合看这个问题，可能会发现其实没必要这样分开来做，我们可以在扫描的同时，维护一个递增的栈，同时在“合适的”时候计算面积，然后更新最大面积。具体实现方法就是前面给出的那个神奇的算法，不过现在看来一点也不神奇了，我们已经探索到了它背后的思维历程。</p>
+<p>当然，条条道路通罗马，上面思维过程只是其中一条通往解决方案的路径，你可能以另一种思维过程找到了答案。不过，我们上面的整个推导过程没有涉及一些类似“神谕”的启发，只是一些简单的方法：比如从结论推导、反证法、归纳总结、联想（可能联想到栈有点难）等，因此每个人都可以学会，并且很容易被大脑记住。值得注意的是，我们的整个思考过程并不简简单单地跟上面写的那样是线性的，它更可能是树形的，只是我们剪去了那些后来证明行不通的枝。</p>
+<h1 id="解题的万能思考法则"><a href="#解题的万能思考法则" class="headerlink" title="解题的万能思考法则?"></a>解题的万能思考法则?</h1><p>人类在漫长的进化史中，解决了各种各样的问题。例如</p>
+<ul>
+<li>如何度过一条湍急的河流</li>
+<li>如何保留火种</li>
+<li>如何治愈天花</li>
+<li>如何制造一个会飞的机器</li>
+<li>…</li>
+</ul>
+<p>同时也对自己的思维方式进行总结和反思，笛卡尔曾经试图将人类思维的规则总结为36条（最终完成了<a target="_blank" rel="noopener" href="https://en.wikisource.org/wiki/Rules_for_the_Direction_of_the_Mind">21条</a>）。</p>
+<p>那么有没有一个解题的万能思考法则，按照这个法则去思考，最终能解决所有的问题或者是证明某个问题不可解？目前看来是没有这样的思考法则的，不然我们就可以制造出真正的会思考的机器了。</p>
+<p>不过还是有许多思维方法值得我们去学习强化，波利亚在《How To Solve It》上总结了这些方法，如果想培养良好的思维习惯，那么这本书是必不可少的。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="http://creativecommons.org/licenses/by-sa/3.0/cn" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：知其所以然之永不遗忘的算法</p><p>本文链接为：https://selfboot.cn/2015/11/03/howto_find_algorithm/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/Python/"><i class="fa fa-tag"></i>Python</a><a href="/tags/%E6%96%B9%E6%B3%95/"><i class="fa fa-tag"></i>方法</a></div><div class="post-nav"><a class="pre" href="/2015/11/05/dns_theory/">从理论到实践，全方位认识DNS（理论篇）</a><a class="next" href="/2015/10/23/marketing/">别惊讶，这只是营销！</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2015/11/03/howto_find_algorithm/';
+    this.page.identifier = '2015/11/03/howto_find_algorithm/';
+    this.page.title = '知其所以然之永不遗忘的算法';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/11/12/postman_read_doc/">Postman 高级用法指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/28/py_encode_decode/">Python2.x 字符编码终极指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/03/threadlocal_enhance/">深入理解Python中的ThreadLocal变量（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/30/forum_design_flask/">从零开始搭建论坛（三）：Flask框架简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/c++_undefined_behaviours/">C++ 中的未定义行为</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/01/lost_partition/">被忽视的 partition 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/26/threadlocal_implement/">深入理解Python中的ThreadLocal变量（中）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/22/threadlocal_overview/">深入理解Python中的ThreadLocal变量（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/07/forum_design_wsgi/">从零开始搭建论坛（二）：Web服务器网关接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/28/forum_design_framework/">从零开始搭建论坛（一）：Web服务器与Web框架</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E7%AE%97%E6%B3%95%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">背算法与设计算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%A5%BD%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">一个好问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%A5%BD%E7%AE%97%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">一个好算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%80%9D%E7%BB%B4%E5%8E%86%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">一个思维历程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E7%9A%84%E4%B8%87%E8%83%BD%E6%80%9D%E8%80%83%E6%B3%95%E5%88%99"><span class="toc-number">5.</span> <span class="toc-text">解题的万能思考法则?</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <script async="" src="https:////busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57adc438b914651b" async></script></div></body></html>
