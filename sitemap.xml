@@ -2,7 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://selfboot.cn/2016/09/01/lost_partition/</loc>
+    <loc>https://selfboot.cn/2015/11/25/skip_classes/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/05/04/pythonic/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/06/13/python_performance_analysis/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/06/26/why_need_to_read_stackoverflow/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/07/24/leetcode_guide_why/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/07/28/forum_design_framework/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/08/07/forum_design_wsgi/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/08/22/threadlocal_overview/</loc>
     
     <lastmod>2023-05-24</lastmod>
     
@@ -12,6 +75,15 @@
   
   <url>
     <loc>https://selfboot.cn/2016/08/26/threadlocal_implement/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/09/01/lost_partition/</loc>
     
     <lastmod>2023-05-24</lastmod>
     
@@ -65,24 +137,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2016/08/22/threadlocal_overview/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/08/07/forum_design_wsgi/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/aboutme.html</loc>
     
     <lastmod>2023-05-24</lastmod>
@@ -111,6 +165,105 @@
   
   <url>
     <loc>https://selfboot.cn/guestbook.html</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2013/06/07/hack_the_browser/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2013/06/11/vim_plugins/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2013/06/16/how_to_use_the_network/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2013/06/22/books_summary/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/04/simple_trie_tree/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/07/python_object/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/08/python_copy/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/10/python_decorator/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/12/python_how_to_use_trie_tree/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/21/regular_expression_all/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/08/28/character_encoding/</loc>
     
     <lastmod>2023-05-24</lastmod>
     
@@ -263,15 +416,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2015/11/05/dns_theory/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/2015/11/03/howto_find_algorithm/</loc>
     
     <lastmod>2023-05-24</lastmod>
@@ -281,160 +425,16 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/2015/11/05/dns_theory/</loc>
+    
+    <lastmod>2023-05-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2015/11/14/dns_practice/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/11/25/skip_classes/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/05/04/pythonic/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/06/13/python_performance_analysis/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/06/26/why_need_to_read_stackoverflow/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/07/24/leetcode_guide_why/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/07/28/forum_design_framework/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2013/06/07/hack_the_browser/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2013/06/11/vim_plugins/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2013/06/16/how_to_use_the_network/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2013/06/22/books_summary/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/04/simple_trie_tree/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/07/python_object/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/08/python_copy/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/10/python_decorator/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/12/python_how_to_use_trie_tree/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/21/regular_expression_all/</loc>
-    
-    <lastmod>2023-05-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/28/character_encoding/</loc>
     
     <lastmod>2023-05-24</lastmod>
     
