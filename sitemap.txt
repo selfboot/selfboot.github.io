@@ -1,3 +1,5 @@
+https://selfboot.cn/2015/11/05/dns_theory/
+https://selfboot.cn/2015/11/14/dns_practice/
 https://selfboot.cn/2015/11/25/skip_classes/
 https://selfboot.cn/2016/05/04/pythonic/
 https://selfboot.cn/2016/06/13/python_performance_analysis/
@@ -13,8 +15,9 @@ https://selfboot.cn/2016/10/30/forum_design_flask/
 https://selfboot.cn/2016/11/03/threadlocal_enhance/
 https://selfboot.cn/2016/12/28/py_encode_decode/
 https://selfboot.cn/2017/11/12/postman_read_doc/
-https://selfboot.cn/aboutme.html
+https://selfboot.cn/2023/05/24/gpt4_teach_option/
 https://selfboot.cn/baidu_verify_GhL87XFQ6N.html
+https://selfboot.cn/aboutme.html
 https://selfboot.cn/google0b4c8a25b65d7c2a.html
 https://selfboot.cn/guestbook.html
 https://selfboot.cn/2013/06/07/hack_the_browser/
@@ -45,8 +48,6 @@ https://selfboot.cn/2015/10/13/pages_count/
 https://selfboot.cn/2015/10/15/lightweight-GUI/
 https://selfboot.cn/2015/10/23/marketing/
 https://selfboot.cn/2015/11/03/howto_find_algorithm/
-https://selfboot.cn/2015/11/05/dns_theory/
-https://selfboot.cn/2015/11/14/dns_practice/
 https://selfboot.cn/404.html
 https://selfboot.cn/
 https://selfboot.cn/tags/Python/
@@ -64,6 +65,7 @@ https://selfboot.cn/tags/Protocol/
 https://selfboot.cn/tags/C/
 https://selfboot.cn/tags/Flask/
 https://selfboot.cn/tags/Thread/
+https://selfboot.cn/tags/GPT4/
 https://selfboot.cn/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/
 https://selfboot.cn/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/
 https://selfboot.cn/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/
@@ -72,3 +74,4 @@ https://selfboot.cn/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/
 https://selfboot.cn/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/
 https://selfboot.cn/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/
 https://selfboot.cn/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/
+https://selfboot.cn/categories/%E9%87%91%E8%9E%8D/
