@@ -65,6 +65,15 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/2014/11/11/osx_app_summary/</loc>
+    
+    <lastmod>2023-05-25</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2014/11/30/jekyll_to_hexo/</loc>
     
     <lastmod>2023-05-25</lastmod>
@@ -444,15 +453,6 @@
   
   <url>
     <loc>https://selfboot.cn/2014/11/03/vim_plugin_with_python/</loc>
-    
-    <lastmod>2023-05-25</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/11/11/osx_app_summary/</loc>
     
     <lastmod>2023-05-25</lastmod>
     

@@ -5,6 +5,7 @@ https://selfboot.cn/aboutme.html
 https://selfboot.cn/baidu_verify_GhL87XFQ6N.html
 https://selfboot.cn/google0b4c8a25b65d7c2a.html
 https://selfboot.cn/guestbook.html
+https://selfboot.cn/2014/11/11/osx_app_summary/
 https://selfboot.cn/2014/11/30/jekyll_to_hexo/
 https://selfboot.cn/2014/12/21/add_blog_to_google/
 https://selfboot.cn/2014/12/26/django_start/
@@ -48,7 +49,6 @@ https://selfboot.cn/2014/09/19/chrome_DevTools_1/
 https://selfboot.cn/2014/10/13/html2dash/
 https://selfboot.cn/2014/10/27/python_default_values/
 https://selfboot.cn/2014/11/03/vim_plugin_with_python/
-https://selfboot.cn/2014/11/11/osx_app_summary/
 https://selfboot.cn/404.html
 https://selfboot.cn/
 https://selfboot.cn/tags/Python/
