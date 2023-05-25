@@ -11,10 +11,16 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.11
+      - name: Debug
+        run: |
+          git log --oneline -n 2
+          git diff --name-only --diff-filter=A HEAD^ HEAD
       - name: Get .md files
         run: |
           echo "MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep '\.md$' | xargs)" >> $GITHUB_ENV
