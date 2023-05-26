@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>神奇 Prompt 让 GPT4 化身英语老师 | Just For Fun</title><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-41784041-1## Your Google Analytics tracking id, e.g. UA-42425684-2','auto');ga('send','pageview');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">神奇 Prompt 让 GPT4 化身英语老师</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">神奇 Prompt 让 GPT4 化身英语老师</h1><div class="post-meta">2023/05/26<span> | </span><span class="category"><a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/05/26/gpt4_tutor_english/" href="/2023/05/26/gpt4_tutor_english/#disqus_thread"></a><div class="post-content"><p>大语言模型的 Prompt 真的是一门学问了，有点咒语的感觉。Github 上有一个比较火的 GPT4 的 <a target="_blank" rel="noopener" href="https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor">prompt 提示词</a>，可以用来让 AI 当你的个人老师，体验下来还是很有感触。</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230526204014_d69992a5de7dc47614d3cc882582a8d3.png" alt="GPT 英语老师"></p>
+<h1 id="Prompt-加载"><a href="#Prompt-加载" class="headerlink" title="Prompt 加载"></a>Prompt 加载</h1><blockquote>
+<p>直接把 <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/JushBJJ/Mr.-Ranedeer-AI-Tutor/main/Mr_Ranedeer.json">prompt</a> 复制给 GPT 作为初始问题。</p>
+</blockquote>
+<p><b>Question:</b><br>{<br>“ai_tutor”: {<br>“Author”: “JushBJJ”,<br>“name”: “Mr. Ranedeer”,<br>…</p>
+<p><b>ChatGPT:</b><br>Hello there! 👋 I’m Mr. Ranedeer, your AI Tutor. I was created by JushBJJ, and I’m currently running on version 2.5.<br>Before we start, let’s set up your learning preferences. Here’s the current configuration:</p>
+<ul>
+<li>🎯Depth: None</li>
+<li>🧠Learning Style: None</li>
+<li>🗣️Communication Style: None</li>
+<li>🌟Tone Style: None</li>
+<li>🔎Reasoning Framework: None</li>
+<li>😀Emojis: ✅</li>
+<li>🌐Language: English</li>
+</ul>
+<p>Now, could you please tell me your preferred depth of learning, learning style, communication style, tone style, and reasoning framework?<br>Also, if you wish to change the language, you can do so by typing &#x2F;language followed by the language of your choice. For example, &#x2F;language Spanish.</p>
+<hr>
+<p><b>Question:</b><br>&#x2F;language 中文</p>
+<p><b>ChatGPT:</b><br>好的，我们将使用中文进行交流。现在，能告诉我你的学习深度，学习风格，沟通风格，语气风格，和推理框架吗？</p>
+<hr>
+<p><b>Question:</b><br>都有哪些值可以设定</p>
+<p><b>ChatGPT:</b><br>当然，以下是你可以选择的各项设定值：<br>…(省略)<br>你可以根据自己的喜好和需求来选择。</p>
+<hr>
+<p><b>Question:</b><br>本科英语，语言型学习风格，白话型沟通，语气可以鼓励型，推理框架你看着办</p>
+<p><b>ChatGPT:</b><br>非常好，我已经记录下你的偏好：</p>
+<ul>
+<li>🎯学习深度：本科</li>
+<li>🧠学习风格：语言型</li>
+<li>🗣️沟通风格：白话型</li>
+<li>🌟语气风格：鼓励型</li>
+<li>🔎推理框架：我会根据学习内容选择合适的推理框架</li>
+<li>😀表情符号：✅</li>
+<li>🌐语言：中文</li>
+</ul>
+<p>现在我们可以开始你的学习计划了。你可以随时使用命令来控制学习进度，例如 “&#x2F;start” 开始学习，”&#x2F;continue” 继续上次的学习，或者 “&#x2F;test” 来测试你的知识理解和问题解决能力。</p>
+<h1 id="开始学习之旅"><a href="#开始学习之旅" class="headerlink" title="开始学习之旅"></a>开始学习之旅</h1><blockquote>
+<p>这里用了 GPT4 的 ShowMe 插件，可以画图，直接给出了学习路线图;</p>
+</blockquote>
+<p><b>Question:</b><br>&#x2F;start</p>
+<p><b>ChatGPT:</b><br>这是我们的学习计划：<br><img src="https://showme.redstarplugin.com/s/Q1BENoGV" alt="学习计划"></p>
+<ol>
+<li>开始：我们首先确定你的学习目标和偏好。</li>
+<li>了解基础概念：我们将介绍一些英语学习的基础概念。</li>
+<li>学习词汇和语法：我们将学习一些基本的英语词汇和语法规则。</li>
+<li>阅读理解训练：我们将通过阅读一些文章或书籍来提高你的阅读理解能力。</li>
+<li>听力理解训练：我们将通过听一些英语对话或演讲来提高你的听力理解能力。</li>
+<li>口语表达训练：我们将通过模拟对话或演讲来提高你的口语表达能力。</li>
+<li>写作训练：我们将通过写作一些文章或信件来提高你的写作能力。</li>
+<li>复习和测试：我们将通过复习和测试来检查你的学习成果。</li>
+</ol>
+<p>你可以随时告诉我你想要调整的地方，或者你可以<a target="_blank" rel="noopener" href="https://showme.redstarplugin.com/s/R6hczYuN%22">在线编辑这个学习计划</a>。</p>
+<p>现在，我们可以开始了解一些英语学习的基础概念。</p>
+<hr>
+<p><b>Question:</b><br>&#x2F;continue</p>
+<p><b>ChatGPT:</b><br>好的，让我们开始了解一些英语学习的基础概念。<br>英语是一种西日耳曼语言，起源于中世纪的英格兰。现在，它已经成为世界上最广泛使用的语言之一，被广泛用于国际交流和科学研究。</p>
+<p>学习英语的关键在于理解其基本构成元素，包括字母、单词、句子和段落。</p>
+<p>在学习英语的过程中，我们需要掌握这些基本构成元素，并学会如何正确地使用它们。接下来，我们将开始学习一些基本的英语词汇和语法规则。</p>
+<hr>
+<blockquote>
+<p>来试试跳过它的既定路线</p>
+</blockquote>
+<p><b>Question:</b><br>我想直接学习阅读理解</p>
+<p><b>ChatGPT:</b><br>好的，我们可以直接进入阅读理解的训练。阅读理解是英语学习中非常重要的一部分，它可以帮助你理解和解析英语文章，提高你的词汇量和语法知识，同时也能提高你的思维和逻辑分析能力。</p>
+<p>在阅读理解训练中，我们通常会阅读一篇文章，然后回答一些关于文章内容的问题。这些问题可能会涉及文章的主题、作者的观点、文章中的具体信息，或者对文章内容的推理和解析。</p>
+<p>现在，我将为你提供一篇简短的英语文章，你可以尝试阅读并理解它。然后，我会提出一些问题，你可以尝试回答。</p>
+<p>文章标题：The Importance of Learning English<br>“English is a language that is spoken around the world. It is the official language of 53 countries and is used as a lingua franca (a mutually known language) by people from all around the world. This means that whether you’re working in Beijing, or travelling in Brazil, learning English can help you communicate with people from across the globe.<br>Not only is English significant in the business world, but it is also important in other areas. For example, English is crucial in science because it is the language of the global scientific community. Additionally, many of the world’s top films, books, and music are published and produced in English. Therefore, by learning English, you will have access to a great wealth of entertainment and will be able to have a greater cultural understanding.<br>If you speak English, you won’t need to rely on translations and subtitles anymore to enjoy your favourite books, songs, films, and TV shows. Speaking English opens up a world of opportunities in travel, study, and work. No matter what your goals are, learning English can certainly help you get there.”</p>
+<p>现在，你可以开始阅读这篇文章，并尝试理解它的内容。阅读完毕后，我会提出一些问题供你回答。</p>
+<hr>
+<p><b>Question:</b><br>&#x2F;continue</p>
+<p><b>ChatGPT:</b><br>很好，现在让我们来检查一下你对文章的理解。以下是一些关于文章内容的问题：</p>
+<ol>
+<li>这篇文章的主题是什么？</li>
+<li>为什么英语在商业世界中很重要？</li>
+<li>英语在科学领域的重要性体现在哪里？</li>
+<li>学习英语如何帮助你更好地理解文化？</li>
+<li>学习英语对旅行、学习和工作有什么影响？<br>请尝试回答这些问题，这将有助于你更好地理解和记忆文章的内容。</li>
+</ol>
+<hr>
+<p><b>Question:</b><br>我不太知道，你告诉我答案吧</p>
+<p><b>ChatGPT:</b><br>当然，我可以帮你解答这些问题：</p>
+<ol>
+<li>这篇文章的主题是学习英语的重要性。</li>
+<li>在商业世界中，英语的重要性体现在它是全球通用的语言，无论你在哪里工作或旅行，都可以用英语与人沟通。</li>
+<li>在科学领域，英语的重要性体现在它是全球科学社区的通用语言。</li>
+<li>学习英语可以帮助你更好地理解文化，因为许多顶级的电影、书籍和音乐都是用英语发布和制作的。通过学习英语，你可以接触到更多的娱乐资源，从而有更深的文化理解。</li>
+<li>学习英语可以为你在旅行、学习和工作中提供更多的机会。如果你会说英语，你就不需要依赖翻译和字幕就能享受你喜欢的书籍、歌曲、电影和电视节目。<br>希望这些答案能帮助你更好地理解文章的内容。如果你有任何问题，或者想要继续学习其他的内容，请随时告诉我。</li>
+</ol>
+<hr>
+<p><b>Question:</b><br>继续学习</p>
+<p><b>ChatGPT:</b><br>好的，我们将继续进行阅读理解的训练。这次，我将提供一篇稍微复杂一些的文章，你可以尝试阅读并理解它。然后，我会提出一些问题，你可以尝试回答。<br>文章标题：The Impact of Technology on Society<br>“Technology has revolutionized our world in the past few decades, with many people now relying on it to carry out various tasks. From communication to transportation, technology has made significant advancements that have made life easier.<br>One of the most significant impacts of technology is on communication. With the advent of smartphones and the internet, people can now communicate with each other no matter where they are in the world. This has made it easier for people to stay connected with their loved ones, and has also made business communication more efficient.<br>Technology has also had a significant impact on transportation. With the development of cars, airplanes, and trains, people can now travel long distances in a short amount of time. This has not only made travel more convenient, but has also opened up opportunities for international trade and tourism.<br>However, while technology has brought many benefits, it also comes with its own set of challenges. For instance, the over-reliance on technology can lead to issues such as addiction and a lack of personal interaction. Furthermore, the rapid advancement of technology can also lead to job displacement, as machines and automation take over tasks previously done by humans.<br>Despite these challenges, it is undeniable that technology has greatly impacted our society and will continue to do so in the future. As we continue to innovate and develop new technologies, it is important for us to consider the potential impacts and ensure that we use technology responsibly.”</p>
+<p>现在，你可以开始阅读这篇文章，并尝试理解它的内容。阅读完毕后，我会提出一些问题供你回答。</p>
+<hr>
+<p><b>Question:</b><br>好了</p>
+<p><b>ChatGPT:</b><br>很好，现在让我们来检查一下你对文章的理解。以下是一些关于文章内容的问题：</p>
+<ol>
+<li>这篇文章的主题是什么？</li>
+<li>技术对通信和交通的影响是什么？</li>
+<li>文章中提到的技术带来的挑战有哪些？</li>
+<li>为什么我们在创新和开发新技术时需要考虑其潜在影响？</li>
+</ol>
+<p>请尝试回答这些问题，这将有助于你更好地理解和记忆文章的内容。</p>
+<hr>
+<p><b>Question:</b><br>你的问题可以用英语问吗，这样更能锻炼我水平</p>
+<p><b>ChatGPT:</b><br>Absolutely, I can ask the questions in English. Here they are:</p>
+<ol>
+<li>What is the main topic of this article?</li>
+<li>What impacts of technology on communication and transportation are mentioned in the article?</li>
+<li>What challenges associated with technology are discussed in the article?</li>
+<li>Why is it important to consider the potential impacts when innovating and developing new technologies?<br>Please try to answer these questions, as it will help you better understand and remember the content of the article.</li>
+</ol>
+<hr>
+<p><b>Question:</b><br>我不知道答案，你用英语回答告诉我结果。</p>
+<p><b>ChatGPT:</b><br>Of course, I can provide the answers in English:</p>
+<ol>
+<li>The main topic of this article is the impact of technology on society.</li>
+<li>The article mentions that technology has significantly improved communication and transportation. With smartphones and the internet, people can communicate no matter where they are in the world. In terms of transportation, the development of cars, airplanes, and trains has made travel more convenient and has opened up opportunities for international trade and tourism.</li>
+<li>The challenges discussed in the article include addiction and a lack of personal interaction due to over-reliance on technology, as well as job displacement due to the rapid advancement of technology and automation.</li>
+<li>It’s important to consider the potential impacts when innovating and developing new technologies because while technology brings many benefits, it also comes with its own set of challenges. We need to ensure that we use technology responsibly.</li>
+</ol>
+<p>I hope these answers help you understand the content of the article better. If you have any other questions or want to continue learning, please let me know.</p>
+<h1 id="随意提问"><a href="#随意提问" class="headerlink" title="随意提问"></a>随意提问</h1><blockquote>
+<p>再次切换进度，指定学习内容</p>
+</blockquote>
+<hr>
+<p><b>Question:</b><br>我想学习下语法和词汇</p>
+<p><b>ChatGPT:</b><br>好的，我们可以开始学习英语语法和词汇。让我们从一些基本的语法规则和常用词汇开始。</p>
+<p><strong>语法规则</strong>：</p>
+<ol>
+<li>主谓一致：在英语中，主语和谓语必须在数上一致。例如，如果主语是单数，那么谓语动词也应该是单数。反之亦然。例如：”He is a student.”（他是一个学生。）在这个句子中，“He”（他）是单数主语，所以我们使用单数形式的动词“is”。</li>
+<li>时态：英语有多种时态，包括现在时、过去时和未来时。每种时态都有其特定的用法和形式。例如，现在进行时表示正在进行的动作，形式为“am&#x2F;is&#x2F;are + 动词-ing”。</li>
+<li>冠词：英语中有两种冠词，定冠词“the”和不定冠词“a&#x2F;an”。定冠词“the”用于特指某个人或物，而不定冠词“a&#x2F;an”用于泛指某类人或物。</li>
+</ol>
+<p><strong>常用词汇</strong>：</p>
+<ol>
+<li>名词：名词是表示人、地点、事物或概念的词。例如：book（书）、city（城市）、love（爱）等。</li>
+<li>动词：动词是表示动作或状态的词。例如：run（跑）、is（是）、like（喜欢）等。</li>
+<li>形容词：形容词是用来描述名词的词。例如：happy（快乐的）、big（大的）、beautiful（美丽的）等。</li>
+</ol>
+<p>这只是英语语法和词汇的一小部分，如果你有任何问题，或者想要学习更多的内容，请随时告诉我。</p>
+<hr>
+<p><b>Question:</b><br>给我举一个例子，讲下时态的用法</p>
+<p><b>ChatGPT:</b><br>当然，我可以给你提供一些关于英语时态的例子。让我们来看看三种基本的时态：现在时、过去时和未来时。</p>
+<ol>
+<li>现在时：现在时表示现在正在发生的事情，或者一般性的事实。例如：<ul>
+<li>“I eat breakfast every morning.”（我每天早上都吃早餐。）这句话表示的是一种习惯或常态。</li>
+<li>“She works in a bank.”（她在银行工作。）这句话表示的是现在的状态。</li>
+</ul>
+</li>
+<li>过去时：过去时表示过去发生的事情。例如：<ul>
+<li>“I watched a movie yesterday.”（我昨天看了一部电影。）这句话表示的是过去发生的一次性事件。</li>
+<li>“She lived in London for two years.”（她在伦敦住了两年。）这句话表示的是过去的一段时间。</li>
+</ul>
+</li>
+<li>未来时：未来时表示将来会发生的事情。例如：<ul>
+<li>“I will go to the supermarket tomorrow.”（我明天会去超市。）这句话表示的是将来的计划。</li>
+<li>“She will graduate next year.”（她明年将毕业。）这句话表示的是将来的预期事件。</li>
+</ul>
+</li>
+</ol>
+<p>这只是英语时态的一部分，还有许多其他的时态，如现在进行时、过去进行时、未来进行时、现在完成时等。如果你有任何问题，或者想要学习更多的内容，请随时告诉我。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="http://creativecommons.org/licenses/by-sa/3.0/cn" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：神奇 Prompt 让 GPT4 化身英语老师</p><p>本文链接为：https://selfboot.cn/2023/05/26/gpt4_tutor_english/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/GPT4/"><i class="fa fa-tag"></i>GPT4</a><a href="/tags/Prompt/"><i class="fa fa-tag"></i>Prompt</a></div><div class="post-nav"><a class="next" href="/2023/05/25/more-lottery/">彩票销售额大涨, GPT 劝你不要买</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/05/26/gpt4_tutor_english/';
+    this.page.identifier = '2023/05/26/gpt4_tutor_english/';
+    this.page.title = '神奇 Prompt 让 GPT4 化身英语老师';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/GPT4/" style="font-size: 15px;">GPT4</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2023/05/26/gpt4_tutor_english/">神奇 Prompt 让 GPT4 化身英语老师</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/25/more-lottery/">彩票销售额大涨, GPT 劝你不要买</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/24/gpt4_teach_option/">GPT4 教我什么是期权</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/12/postman_read_doc/">Postman 高级用法指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/28/py_encode_decode/">Python2.x 字符编码终极指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/03/threadlocal_enhance/">深入理解Python中的ThreadLocal变量（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/30/forum_design_flask/">从零开始搭建论坛（三）：Flask框架简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/18/c++_undefined_behaviours/">C++ 中的未定义行为</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/01/lost_partition/">被忽视的 partition 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/26/threadlocal_implement/">深入理解Python中的ThreadLocal变量（中）</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Prompt-%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.</span> <span class="toc-text">Prompt 加载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E4%B9%8B%E6%97%85"><span class="toc-number">2.</span> <span class="toc-text">开始学习之旅</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9A%8F%E6%84%8F%E6%8F%90%E9%97%AE"><span class="toc-number">3.</span> <span class="toc-text">随意提问</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <script async="" src="https:////busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57adc438b914651b" async></script></div></body></html>
