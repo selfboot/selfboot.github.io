@@ -1,5 +1,5 @@
 ---
-title: 彩票销售额大涨, GPT劝你不要买 
+title: 彩票销售额大涨, GPT 劝你不要买 
 date: 2023-05-25 19:36:12
 tags: [GPT4]
 toc: true
