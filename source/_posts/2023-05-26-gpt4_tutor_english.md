@@ -77,7 +77,9 @@ Also, if you wish to change the language, you can do so by typing /language foll
 
 <b>ChatGPT:</b>
 这是我们的学习计划：
-<img src="https://showme.redstarplugin.com/s/Q1BENoGV" alt="学习计划">
+
+![学习计划](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230526205350_7a4062c89c1c4e9ed69777c23320ba92.png)
+
 1. 开始：我们首先确定你的学习目标和偏好。
 2. 了解基础概念：我们将介绍一些英语学习的基础概念。
 3. 学习词汇和语法：我们将学习一些基本的英语词汇和语法规则。
