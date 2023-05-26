@@ -2,7 +2,11 @@ import requests
 import os
 import markdown
 import json
+import io
+import re
 import yaml
+from PIL import Image
+from bs4 import BeautifulSoup
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -11,6 +15,8 @@ app_id = os.getenv('APP_ID')
 app_secret = os.getenv('APP_SECRET')
 proxy_url = os.getenv('PROXY_URL')
 md_files = os.getenv('MD_FILES').split()
+
+thumb_media_id = None
 
 proxies = {
   "https": proxy_url
@@ -28,7 +34,22 @@ def get_access_token(appid, appsecret):
         print(f"Failed to retrieve access token. Error code: {data['errcode']}, Error message: {data['errmsg']}")
         return None, None
 
-def parse_md_file(md_file):
+def replace_image_urls(html, access_token):
+    # Define a regular expression to match image URLs
+    pattern = r'src="[^"]*"'
+
+    def process_url(match):
+        # Extract the original URL from the match object
+        original_url = match.group(0)[5:-1]
+        # Process the URL and return the new URL
+        new_url = upload_image_to_wechat(access_token, original_url)
+        return f'src="{new_url}"'
+
+    # Use the re.sub function to replace all image URLs
+    new_html = re.sub(pattern, process_url, html)
+    return new_html
+
+def parse_md_file(accesstoken, md_file):
     p = Path(md_file)
     if not p.exists():
         print(f"{md_file} does not exist.")
@@ -49,16 +70,76 @@ def parse_md_file(md_file):
         content = ''.join(lines)
     
     html = markdown.markdown(content)
+    html = replace_image_urls(html, accesstoken)
+    html = add_font_size_to_headers(html)
+    # print(html)
     # convert file link from
     # source/_posts/2023-05-24-gpt4_teach_option.md
     # to
     # https://selfboot.cn/2023/05/24/gpt4_teach_option/
     parts = p.stem.split('-')
-    link = "https://selfboot.cn/" + '/'.join(parts) + '/'
+    # link = "https://selfboot.cn/" + '/'.join(parts) + '/'
+    # The link should include the year, month, day from the filename and keep '-' in the title
+    link = "https://selfboot.cn/" + '/'.join(parts[:3]) + '/' + '-'.join(parts[3:]) + '/'
     return title, link, html
 
+def upload_image_to_wechat(access_token, cos_url):
+    headers = {'Referer': 'localhost'}
+    response = requests.get(cos_url, headers=headers)
+    image_file = io.BytesIO(response.content)
+    url = f"https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={access_token}"
+    image_file.seek(0)
+    image = Image.open(image_file)
+    image_type = image.format.lower()
+    image_file.seek(0)
+    mime_type = 'image/' + image_type if image_type else 'application/octet-stream'
+    files = {'media': ('image.' + image_type if image_type else 'file', image_file, mime_type)}
+
+    global thumb_media_id
+    # Add this image to media library
+    if not thumb_media_id:
+        media_url = f"https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={access_token}&type=image"
+        media_response = requests.post(media_url, files=files)
+        media_data = media_response.json()
+        if "media_id" in media_data:
+            thumb_media_id = media_data["media_id"]
+            print(f"Image added to media library {thumb_media_id} successfully.")
+
+    image_file.seek(0) # Reset the file pointer again
+    response = requests.post(url, files=files)
+    data = response.json()
+    print(f"Image uploaded result {data}")
+    if "url" in data:
+        print("Image uploaded successfully.")
+        return data["url"]
+    else:
+        print(f"Failed to upload image. Error code: {data['errcode']}, Error message: {data['errmsg']}")
+        return None
+
+def add_font_size_to_headers(html):
+    # Parse the HTML
+    soup = BeautifulSoup(html, 'html.parser')
+    
+    # Define the font sizes
+    font_sizes = {
+        'h1': '2.0em',
+        'h2': '1.8em',
+        'h3': '1.6em',
+        'h4': '1.4em',
+        'h5': '1.2em',
+        'h6': '1.0em',
+    }
+    
+    # Add the style attribute to each header tag
+    for tag_name, font_size in font_sizes.items():
+        for tag in soup.find_all(tag_name):
+            tag['style'] = f'font-size: {font_size};'
+    
+    # Return the modified HTML
+    return str(soup)
+
 def add_draft(access_token, filename):
-    title, link, html = parse_md_file(filename)
+    title, link, html = parse_md_file(access_token,filename)
     if not html:
         print(f"Failed to convert {filename} to html.")
         return None
@@ -69,7 +150,7 @@ def add_draft(access_token, filename):
         "digest": "",
         "content": html,
         "content_source_url": link,
-        "thumb_media_id": "9p-m_bFNKi9cDOyUgfbEnqvyl3Rox79zs1DvpLad1ZBQ4q59A5AKCjqiKgk3nyWb",
+        "thumb_media_id": thumb_media_id if thumb_media_id else "9p-m_bFNKi9cDOyUgfbEnqvyl3Rox79zs1DvpLad1ZBQ4q59A5AKCjqiKgk3nyWb",
         "need_open_comment": 0,
         "only_fans_can_comment": 0
     }
