@@ -6,7 +6,7 @@ import io
 import re
 import yaml
 from PIL import Image
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -69,10 +69,21 @@ def parse_md_file(accesstoken, md_file):
         title = p.stem
         content = ''.join(lines)
     
-    html = markdown.markdown(content)
-    html = replace_image_urls(html, accesstoken)
-    html = add_font_size_to_headers(html)
-    # print(html)
+    html_content = markdown.markdown(content)
+
+    #
+    # with open('public/2023/05/26/gpt4_tutor_english/index.html', 'r') as f:
+    #     html_content = f.read()
+    #     soup = BeautifulSoup(html_content, 'html.parser')
+    #     # 找到 class 为 "body_container" 的 div
+    #     all = soup.find('div', class_='post-content')
+    #     html_content = str(all)
+
+    html_content = replace_image_urls(html_content, accesstoken)
+    html_content = adapt_wechat(html_content)
+    with open('test.html', 'w') as f:
+        f.write(html_content)
+
     # convert file link from
     # source/_posts/2023-05-24-gpt4_teach_option.md
     # to
@@ -81,7 +92,7 @@ def parse_md_file(accesstoken, md_file):
     # link = "https://selfboot.cn/" + '/'.join(parts) + '/'
     # The link should include the year, month, day from the filename and keep '-' in the title
     link = "https://selfboot.cn/" + '/'.join(parts[:3]) + '/' + '-'.join(parts[3:]) + '/'
-    return title, link, html
+    return title, link, html_content
 
 def upload_image_to_wechat(access_token, cos_url):
     headers = {'Referer': 'localhost'}
@@ -116,7 +127,7 @@ def upload_image_to_wechat(access_token, cos_url):
         print(f"Failed to upload image. Error code: {data['errcode']}, Error message: {data['errmsg']}")
         return None
 
-def add_font_size_to_headers(html):
+def _add_font_size_to_headers(html):
     # Parse the HTML
     soup = BeautifulSoup(html, 'html.parser')
     
@@ -137,6 +148,10 @@ def add_font_size_to_headers(html):
     
     # Return the modified HTML
     return str(soup)
+
+def adapt_wechat(html_content):
+    html_content = _add_font_size_to_headers(html_content)
+    return html_content
 
 def add_draft(access_token, filename):
     title, link, html = parse_md_file(access_token,filename)

@@ -1,9 +1,10 @@
 name: Wechat
 
 on:
-  push:
-    branches:
-      - main # default branch
+  workflow_run:
+    workflows: ["Pages", "pages build and deployment"]
+    types:
+      - completed
 
 jobs:
   job_name:
