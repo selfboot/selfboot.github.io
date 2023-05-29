@@ -1,12 +1,10 @@
 import requests
 import os
-import markdown
 import json
 import io
 import re
-import yaml
 from PIL import Image
-from bs4 import BeautifulSoup, NavigableString
+from bs4 import BeautifulSoup
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -16,6 +14,7 @@ app_secret = os.getenv('APP_SECRET')
 proxy_url = os.getenv('PROXY_URL')
 md_files = os.getenv('MD_FILES').split()
 
+gh_pages_pre = 'gh-pages/public' if 'GITHUB_ACTIONS' in os.environ else 'public'
 thumb_media_id = None
 
 proxies = {
@@ -34,7 +33,7 @@ def get_access_token(appid, appsecret):
         print(f"Failed to retrieve access token. Error code: {data['errcode']}, Error message: {data['errmsg']}")
         return None, None
 
-def replace_image_urls(html, access_token):
+def replace_image_urls(html_content, access_token):
     # Define a regular expression to match image URLs
     pattern = r'src="[^"]*"'
 
@@ -46,52 +45,29 @@ def replace_image_urls(html, access_token):
         return f'src="{new_url}"'
 
     # Use the re.sub function to replace all image URLs
-    new_html = re.sub(pattern, process_url, html)
+    new_html = re.sub(pattern, process_url, html_content)
     return new_html
 
-def parse_md_file(accesstoken, md_file):
+def md_to_valid_html(accesstoken, md_file):
     p = Path(md_file)
-    if not p.exists():
-        print(f"{md_file} does not exist.")
-        return None
-
-    with open(md_file, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    title = None
-    # Extract and parse the YAML Front Matter
-    if lines[0].strip() == '---':
-        end = lines.index('---\n', 1)
-        front_matter = yaml.safe_load(''.join(lines[1:end]))
-        title = front_matter.get('title')
-        content = ''.join(lines[end+1:])
-    else:
-        title = p.stem
-        content = ''.join(lines)
-    
-    html_content = markdown.markdown(content)
-
-    #
-    # with open('public/2023/05/26/gpt4_tutor_english/index.html', 'r') as f:
-    #     html_content = f.read()
-    #     soup = BeautifulSoup(html_content, 'html.parser')
-    #     # 找到 class 为 "body_container" 的 div
-    #     all = soup.find('div', class_='post-content')
-    #     html_content = str(all)
-
-    html_content = replace_image_urls(html_content, accesstoken)
-    html_content = adapt_wechat(html_content)
-    with open('test.html', 'w') as f:
-        f.write(html_content)
-
-    # convert file link from
-    # source/_posts/2023-05-24-gpt4_teach_option.md
-    # to
-    # https://selfboot.cn/2023/05/24/gpt4_teach_option/
     parts = p.stem.split('-')
-    # link = "https://selfboot.cn/" + '/'.join(parts) + '/'
+    # convert file link from source/_posts/2023-05-24-gpt4_teach_option.md to
+    # https://selfboot.cn/2023/05/26/gpt4_tutor_english/
+    file_path = '/'.join(parts[:3]) + '/' + '-'.join(parts[3:]) + '/'
     # The link should include the year, month, day from the filename and keep '-' in the title
-    link = "https://selfboot.cn/" + '/'.join(parts[:3]) + '/' + '-'.join(parts[3:]) + '/'
+    html_path = Path(gh_pages_pre) / file_path / 'index.html'
+    print(html_path)
+
+    with open(html_path, 'r') as f:
+        html_content = f.read()
+        
+    html_content, title = adapt_wechat(html_content)
+    html_content = replace_image_urls(html_content, accesstoken)
+    # with open('test.html', 'w') as f:
+    #     f.write(html_content)
+
+    parts = p.stem.split('-')
+    link = "https://selfboot.cn/" + file_path
     return title, link, html_content
 
 def upload_image_to_wechat(access_token, cos_url):
@@ -127,10 +103,29 @@ def upload_image_to_wechat(access_token, cos_url):
         print(f"Failed to upload image. Error code: {data['errcode']}, Error message: {data['errmsg']}")
         return None
 
-def _add_font_size_to_headers(html):
-    # Parse the HTML
-    soup = BeautifulSoup(html, 'html.parser')
-    
+def _del_unsupported_tag(soup):
+    h_tags = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+    for tag in h_tags:
+        del tag['id']
+        for a in tag.find_all('a'):
+            a.decompose()
+            
+    return soup
+
+def _fix_list_item(soup):
+    list_tags = soup.find_all(['ul', 'ol'])
+
+    for original_list_tag in list_tags:
+        new_list_tag = soup.new_tag(original_list_tag.name)
+        # new_list_tag.attrs['style'] = "margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; padding-inline-start: 40px;"
+        for li_tag in original_list_tag.find_all('li', recursive=False):
+            new_list_tag.append(li_tag)
+
+        original_list_tag.replace_with(new_list_tag)
+
+    return soup
+
+def _add_font_size_to_headers(soup):
     # Define the font sizes
     font_sizes = {
         'h1': '2.0em',
@@ -147,15 +142,44 @@ def _add_font_size_to_headers(html):
             tag['style'] = f'font-size: {font_size};'
     
     # Return the modified HTML
-    return str(soup)
+    return soup
+
+def _replace_special_chars(page):
+    replacements = {
+        '：': ': ',
+        # '（': '(',
+        # '）': ')',
+        '。': '. ',
+    }
+    for old, new in replacements.items():
+        page = page.replace(old, new)
+    return page
 
 def adapt_wechat(html_content):
-    html_content = _add_font_size_to_headers(html_content)
-    return html_content
+    # <div class="post"><h1 class="post-title">神奇 Prompt 让 GPT4 化身英语老师</h1></div>
+    soup = BeautifulSoup(html_content, 'html.parser')
+    h1_tag = soup.find('h1', class_='post-title')
+    title = h1_tag.text if h1_tag and h1_tag.text else "未知标题"
+    
+    content_soup = soup.find('div', 'post-content')
+    if not content_soup:
+        print("Failed to find post content.")
+        return None, None
+    
+    new_html = ''.join(str(content) for content in content_soup.contents)
+    page_soup = BeautifulSoup(new_html, 'html.parser')
+
+    page_soup = _del_unsupported_tag(page_soup)
+    page_soup = _add_font_size_to_headers(page_soup)
+    page_soup = _fix_list_item(page_soup)
+
+    page_content = _replace_special_chars(str(page_soup))
+    page_content = page_content.rstrip('\n')
+    return page_content, title
 
 def add_draft(access_token, filename):
-    title, link, html = parse_md_file(access_token,filename)
-    if not html:
+    title, link, html_content = md_to_valid_html(access_token, filename)
+    if not html_content:
         print(f"Failed to convert {filename} to html.")
         return None
     
@@ -163,7 +187,7 @@ def add_draft(access_token, filename):
         "title": title,
         "author": "SelfBoot",
         "digest": "",
-        "content": html,
+        "content": html_content,
         "content_source_url": link,
         "thumb_media_id": thumb_media_id if thumb_media_id else "9p-m_bFNKi9cDOyUgfbEnqvyl3Rox79zs1DvpLad1ZBQ4q59A5AKCjqiKgk3nyWb",
         "need_open_comment": 0,

@@ -1,12 +1,12 @@
-from bs4 import BeautifulSoup
 import json
 import requests
 
 def add_draft():
-    access_token = '69_95aldcZUwqN2UdNqHVOhHGkjefk_rlUbKUCHW0Iq828tJ_AsQWOa75j0_JSRYRGd8GHO9CAMm6VSNoU4AQHUqqAS8JGfqhGVWipFz_4FUuyLh3MZWOp4sK2a_0sISBgAGANXG'
-    with open('./wechat_demo.html') as f:
+    access_token = '69_mTzte3C-RgQMUKqzcNvY67zjZvd9sLc2iR2_voFv4h0sv0OEOy5N_FppSomxdAN_ghwC4riE_YvFDlFCmpkQl4wY4XPE2QjniBjmF1lw5Y0eSyE7Za4niL9POA0QNEfAGALIZ'
+    # with open('./wechat_demo.html') as f:
+    #     html = f.read()
+    with open('./test.html') as f:
         html = f.read()
-
     title = 'test'
     link = 'https://selfboot.cn' 
     
