@@ -2,7 +2,7 @@ name: Wechat
 
 on:
   workflow_run:
-    workflows: ["Pages", "pages build and deployment"]
+    workflows: ["Pages", "pages-build-deployment"]
     types:
       - completed
 
