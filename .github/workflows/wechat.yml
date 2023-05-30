@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: gh-pages 
-          path: gh-pages  # this will checkout the pages branch into a directory named 'gh-pages'
+          path: public  # this will checkout the pages branch into a directory named 'public'
       - name: Set up Python
         uses: actions/setup-python@v2
         with:

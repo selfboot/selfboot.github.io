@@ -14,7 +14,7 @@ app_secret = os.getenv('APP_SECRET')
 proxy_url = os.getenv('PROXY_URL')
 md_files = os.getenv('MD_FILES').split()
 
-gh_pages_pre = 'gh-pages/public' if 'GITHUB_ACTIONS' in os.environ else 'public'
+gh_pages_pre = 'public'
 thumb_media_id = None
 
 proxies = {
