@@ -125,6 +125,12 @@ def _fix_list_item(soup):
 
     return soup
 
+def _add_table_overflow(soup):
+    # style="width: 100%; overflow-x: auto; display: block;"
+    for table_tag in soup.find_all('table'):
+        table_tag.attrs['style'] = "width: 100%; overflow-x: auto; display: block;"
+    return soup
+
 def _add_font_size_to_headers(soup):
     # Define the font sizes
     font_sizes = {
@@ -172,6 +178,7 @@ def adapt_wechat(html_content):
     page_soup = _del_unsupported_tag(page_soup)
     page_soup = _add_font_size_to_headers(page_soup)
     page_soup = _fix_list_item(page_soup)
+    page_soup = _add_table_overflow(page_soup)
 
     page_content = _replace_special_chars(str(page_soup))
     page_content = page_content.rstrip('\n')
