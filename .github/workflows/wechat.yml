@@ -5,6 +5,8 @@ on:
     workflows: ["Pages", "pages-build-deployment"]
     types:
       - completed
+    conclusions:
+      - success
 
 jobs:
   job_name:
