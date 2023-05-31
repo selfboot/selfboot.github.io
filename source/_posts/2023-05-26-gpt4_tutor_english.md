@@ -247,3 +247,5 @@ I hope these answers help you understand the content of the article better. If y
     - "She will graduate next year."（她明年将毕业。）这句话表示的是将来的预期事件。
 
 这只是英语时态的一部分，还有许多其他的时态，如现在进行时、过去进行时、未来进行时、现在完成时等。如果你有任何问题，或者想要学习更多的内容，请随时告诉我。
+
+**完整的对话，可以见[聊天](https://chat.openai.com/share/ac735791-5c8f-4c08-a6b3-ef5456ff8596)。**
