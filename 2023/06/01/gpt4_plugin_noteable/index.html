@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>GPT4 plugin 来做数据分析 | Just For Fun</title><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create','UA-41784041-1','auto');ga('send','pageview');
+</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">GPT4 plugin 来做数据分析</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">GPT4 plugin 来做数据分析</h1><div class="post-meta">2023/06/01<span> | </span><span class="category"><a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/06/01/gpt4_plugin_noteable/" href="/2023/06/01/gpt4_plugin_noteable/#disqus_thread"></a><div class="post-content"><p>GPT4 的部分插件还是能提高工作效率的，其中 noteable 可以写脚本绘制图，在数据分析领域还是很不错的。我们可以 AI 总结中国过去十年的出生人口趋势，可以分析用户留存率，或者找出某些日子都活跃的用户。</p>
+<h1 id="人口趋势"><a href="#人口趋势" class="headerlink" title="人口趋势"></a>人口趋势</h1><p><strong>Human:</strong><br>统计下中国官方给的最近 10 年总出生人口，用 python 画一个曲线走势图。</p>
+<p><strong>ChatGPT:</strong><br>好的，首先我们需要找到这些数据。这些数据可能来自中国的官方统计局或其他可靠的数据源。让我帮你找一下。</p>
+<p>我在中国统计局的官方网站上没有直接找到过去十年的出生人口数据。可能需要在网站的不同部分或者在年度统计报告中进行深入搜索。另一种可能是这些数据可能需要在其他可靠的数据源中查找。你是否有推荐的数据源，或者我可以继续在中国统计局网站上进行深入搜索？</p>
+<blockquote>
+<p>这里用了插件 WebPilot，可以去网上搜索，目前用过的最好用的插件了。作者是一个产品经理，可以在<a target="_blank" rel="noopener" href="https://twitter.com/CocoSgt_twt">这里</a>找他。不过这里没有找到相关数据，就自己去网上搜索了下，给他链接。</p>
+</blockquote>
+<hr>
+<p><strong>Human:</strong><br>这里有，<a target="_blank" rel="noopener" href="https://www.163.com/dy/article/HSAQ6SQ2055611U3.html">https://www.163.com/dy/article/HSAQ6SQ2055611U3.html</a> ，帮我用  python  画一个曲线走势图吧</p>
+<p><strong>ChatGPT:</strong><br>这篇文章中包含了从1949年到2022年中国每年的出生人口数据。以下是最近十年的数据：</p>
+<ul>
+<li>2013年：1640万</li>
+<li>2014年：1687万</li>
+<li>2015年：1655万</li>
+<li>2016年：1786万</li>
+<li>2017年：1723万</li>
+<li>2018年：1523万</li>
+<li>2019年：1465万</li>
+<li>2020年：1202万</li>
+<li>2021年：1062万</li>
+<li>2022年：956万</li>
+</ul>
+<p>接下来，我将使用这些数据创建一个Python notebook，并绘制出生人口的曲线走势图。</p>
+<p>我已经创建了一个名为 “China_Birth_Rate_Analysis.ipynb” 的 Python notebook。你可以点击<a target="_blank" rel="noopener" href="https://app.noteable.io/f/f033b7db-8516-4543-b085-447dc449b97f/China_Birth_Rate_Analysis.ipynb">这里</a>查看。</p>
+<p>接下来，我将在 notebook 中添加一些 Python 代码来创建出生人口的曲线走势图。这是从2013年到2022年中国出生人口的曲线走势图：<br><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230601133231_344b4812a1ac3baf0be6c0917048c000.png" alt="出生人口走势图"></p>
+<p>从图中可以看出，中国的出生人口在2016年达到了峰值，之后开始逐年下降。</p>
+<h1 id="计算留存"><a href="#计算留存" class="headerlink" title="计算留存"></a>计算留存</h1><blockquote>
+<p>下面给他一个随便编的用户活跃天数记录，然后让 AI 计算留存；</p>
+</blockquote>
+<hr>
+<p><strong>Human:</strong><br>这是一个记录用户活跃天数的表，第一列是用户 id，第二列是活跃日期，可以帮我写一个脚本，计算20230501号活跃的用户，在 20230502 和20230503日的留存率是多少吗？ 帮我画一个留存率的图。</p>
+<p><strong>ChatGPT:</strong><br>当然可以。首先，我需要查看一下你的数据。你能提供一下数据的链接或者文件吗？</p>
+<hr>
+<p><strong>Human:</strong><br><a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1b2HiAqlAQGRS2RMnI8ZbFD3i3dZu-Fv460Q6mh_cFLQ/edit#gid=0">https://docs.google.com/spreadsheets/d/1b2HiAqlAQGRS2RMnI8ZbFD3i3dZu-Fv460Q6mh_cFLQ/edit#gid=0</a></p>
+<p><strong>ChatGPT:</strong><br>很抱歉，我无法直接访问 Google Sheets 文档。你能将数据下载为 CSV 文件并上传吗？或者，如果你愿意的话，我可以提供一段 Python 代码，你可以在本地运行来计算留存率。</p>
+<hr>
+<p><strong>Human:</strong><br>csv 文件在这里 <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1b2HiAqlAQGRS2RMnI8ZbFD3i3dZu-Fv460Q6mh_cFLQ/edit?usp=sharing">https://docs.google.com/spreadsheets/d/1b2HiAqlAQGRS2RMnI8ZbFD3i3dZu-Fv460Q6mh_cFLQ/edit?usp=sharing</a></p>
+<p><strong>ChatGPT:</strong><br>很抱歉，我仍然无法直接访问 Google Sheets 文档的内容。你能将数据下载为 CSV 文件并上传吗？或者，如果你愿意的话，我可以提供一段 Python 代码，你可以在本地运行来计算留存率。</p>
+<hr>
+<p><strong>Human:</strong><br>抱歉，给错了，用新的这个<a target="_blank" rel="noopener" href="https://drive.google.com/file/d/1Ax9tZcKQjlittBy9mA08NaZu2VadVEjx/view?usp=sharing">https://drive.google.com/file/d/1Ax9tZcKQjlittBy9mA08NaZu2VadVEjx/view?usp=sharing</a></p>
+<p><strong>ChatGPT:</strong><br>很抱歉，我仍然无法直接访问 Google Drive 上的文件。然而，我可以提供一段 Python 代码，你可以在本地运行来计算留存率。这段代码假设你已经将数据下载为 CSV 文件，并且文件的路径是 ‘data.csv’。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取数据</span></span><br><span class="line">df = pd.read_csv(<span class="string">&#x27;data.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将活跃日期转换为日期格式</span></span><br><span class="line">df[<span class="string">&#x27;活跃日期&#x27;</span>] = pd.to_datetime(df[<span class="string">&#x27;活跃日期&#x27;</span>], <span class="built_in">format</span>=<span class="string">&#x27;%Y%m%d&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算20230501号活跃的用户</span></span><br><span class="line">active_users = df[df[<span class="string">&#x27;活跃日期&#x27;</span>] == <span class="string">&#x27;2023-05-01&#x27;</span>][<span class="string">&#x27;用户&#x27;</span>].unique()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算这些用户在20230502和20230503的活跃情况</span></span><br><span class="line">active_users_next_day = df[(df[<span class="string">&#x27;活跃日期&#x27;</span>] == <span class="string">&#x27;2023-05-02&#x27;</span>) &amp; (df[<span class="string">&#x27;用户&#x27;</span>].isin(active_users))][<span class="string">&#x27;用户&#x27;</span>].unique()</span><br><span class="line">active_users_next_two_days = df[(df[<span class="string">&#x27;活跃日期&#x27;</span>] == <span class="string">&#x27;2023-05-03&#x27;</span>) &amp; (df[<span class="string">&#x27;用户&#x27;</span>].isin(active_users))][<span class="string">&#x27;用户&#x27;</span>].unique()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算留存率</span></span><br><span class="line">retention_rate_next_day = <span class="built_in">len</span>(active_users_next_day) / <span class="built_in">len</span>(active_users)</span><br><span class="line">retention_rate_next_two_days = <span class="built_in">len</span>(active_users_next_two_days) / <span class="built_in">len</span>(active_users)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;20230502的留存率: <span class="subst">&#123;retention_rate_next_day * <span class="number">100</span>&#125;</span>%&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;20230503的留存率: <span class="subst">&#123;retention_rate_next_two_days * <span class="number">100</span>&#125;</span>%&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这段代码首先读取 CSV 文件中的数据，然后计算20230501号活跃的用户。然后，它查找这些用户在20230502和20230503的活跃情况，并计算留存率。最后，它打印出这两天的留存率。</p>
+<blockquote>
+<p>怪我，傻傻的一直给他 Google Drive 的链接，逼得 AI 自己写脚本处理本地文件了都。下面换一个 Tencent COS 上的文件链接。</p>
+</blockquote>
+<hr>
+<p><strong>Human:</strong><br>你再试试这个链接 <a target="_blank" rel="noopener" href="https://others-1251736664.cos.ap-guangzhou.myqcloud.com/Test%20-%20Sheet1.csv">https://others-1251736664.cos.ap-guangzhou.myqcloud.com/Test%20-%20Sheet1.csv</a> ，可以帮我写一个脚本，计算20230501号活跃的用户，在 20230502 和20230503日的留存率是多少吗？ 帮我画一个留存率的图。</p>
+<p><strong>ChatGPT:</strong><br>好的，我已经成功获取到了数据。现在我将在 Python notebook 中添加一些代码来计算并绘制留存率。</p>
+<p>根据数据，20230501号活跃的用户在20230502的留存率为33.33%，在20230503的留存率为66.67%。</p>
+<p>接下来，我将在 notebook 中添加一些 Python 代码来创建留存率的图表。</p>
+<p>这是20230501号活跃的用户在20230502和20230503的留存率图表：<br><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230601133739_3c3ec80d771b81994abc89c76a14664a.png" alt="留存率曲线"></p>
+<p>从图中可以看出，20230502的留存率为33.33%，20230503的留存率为66.67%。</p>
+<hr>
+<p><strong>Human:</strong><br>可以画一个留存率表格吗，用曲线不太合适。</p>
+<p><strong>ChatGPT:</strong><br>这是20230501号活跃的用户在20230502和20230503的留存率表格：<br><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230601133835_efd40df694081d8d39a9ab6c18f2b243.png" alt="留存率表格"></p>
+<hr>
+<p><strong>Human:</strong><br>可以帮我找出在 3 天都活跃的用户，然后给出列表</p>
+<p><strong>ChatGPT:</strong><br>在20230501、20230502和20230503这三天都活跃的用户是：3号、4号和7号用户。</p>
+<p>在<a target="_blank" rel="noopener" href="https://chat.openai.com/share/7d223aae-2976-447a-ad82-bcd69fc01f57">这里</a>可以查看完整对话。 </p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="http://creativecommons.org/licenses/by-sa/3.0/cn" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：GPT4 plugin 来做数据分析</p><p>本文链接为：https://selfboot.cn/2023/06/01/gpt4_plugin_noteable/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/GPT4/"><i class="fa fa-tag"></i>GPT4</a><a href="/tags/Plugin/"><i class="fa fa-tag"></i>Plugin</a></div><div class="post-nav"><a class="next" href="/2023/05/31/gpt4_tutor_physics/">神奇 Prompt 让 GPT4 化身物理老师</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/06/01/gpt4_plugin_noteable/';
+    this.page.identifier = '2023/06/01/gpt4_plugin_noteable/';
+    this.page.title = 'GPT4 plugin 来做数据分析';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/GPT4/" style="font-size: 15px;">GPT4</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2023/06/01/gpt4_plugin_noteable/">GPT4 plugin 来做数据分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/31/gpt4_tutor_physics/">神奇 Prompt 让 GPT4 化身物理老师</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/29/gpt4_cal_date/">加班了多少天？GPT4 被绕晕了</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/26/gpt4_tutor_english/">神奇 Prompt 让 GPT4 化身英语老师</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/25/more-lottery/">彩票销售额大涨, GPT 劝你不要买</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/24/gpt4_teach_option/">GPT4 教我什么是期权</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/12/postman_read_doc/">Postman 高级用法指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/12/28/py_encode_decode/">Python2.x 字符编码终极指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/03/threadlocal_enhance/">深入理解Python中的ThreadLocal变量（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/30/forum_design_flask/">从零开始搭建论坛（三）：Flask框架简单介绍</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%BA%E5%8F%A3%E8%B6%8B%E5%8A%BF"><span class="toc-number">1.</span> <span class="toc-text">人口趋势</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E7%95%99%E5%AD%98"><span class="toc-number">2.</span> <span class="toc-text">计算留存</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <script async="" src="https:////busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-57adc438b914651b" async></script></div></body></html>
