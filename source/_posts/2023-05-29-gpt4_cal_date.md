@@ -4,11 +4,12 @@ date: 2023-05-29 21:01:48
 category: 人工智能
 tags: [GPT4, Prompt]  
 toc: true 
+description: 探索人工智能的无限可能性，本页面详细介绍了如何使用GPT-4进行日期计算，包括如何计算特定日期范围内的星期六数量，并排除中国的法定节假日和调班日。我们通过实际案例，展示了GPT-4在处理复杂问题时的表现，以及如何通过编程让AI更好地完成任务。
 ---
 
 在一个劳动纠纷中，需要计算下员工总的加班天数，把任务给 GPT 后，见证了 GPT 傻傻的样子。历经各种 Prompt 调教，最后还是告诉我一个满意的结果了。
 
-![计算加班总天数](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230529210931_f3454f85caa8287ed2847f9d9efaab38.png)
+![计算加班总天数](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_cal_date.png)
 
 # 自然推理 Prompt
 

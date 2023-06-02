@@ -4,11 +4,12 @@ date: 2023-05-31 10:03:57
 category: 人工智能
 tags: [GPT4, Prompt]  
 toc: true 
+description: 我们展示了如何使用GPT-4作为你的物理教师。本页面详细介绍了个性化的学习计划设置，并通过高中物理的实例来实践这一过程。无论你是想复习基础知识，还是想进一步探索物理学的复杂领域，这里都将提供你所需要的帮助。
 ---
 
 在 [神奇 Prompt 让 GPT4 化身英语老师](https://selfboot.cn/2023/05/26/gpt4_tutor_english/)里，GPT 充当了我们的英语老师，这里我们再来看看万能 GPT 当物理老师的表现。
 
-![GPT4 物理老师](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230531100651_7affecfedce62780cdb562abe7fa9709.png)
+![GPT4 物理老师](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_tutor_physics.png)
 
 首先同样是先喂 [prompt](https://raw.githubusercontent.com/JushBJJ/Mr.-Ranedeer-AI-Tutor/main/Mr_Ranedeer.json) 给 GPT 作为初始问题，指定 `/language 中文` 来设定语音，然后开启学习之旅。
 

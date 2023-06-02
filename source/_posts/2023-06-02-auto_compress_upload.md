@@ -349,6 +349,6 @@ on run {input, parameters}
 end run
 ```
 
-实现的结果，指定一个目录，后面往这个目录新增加的 png，都自动压缩，在前缀加上当前日期，然后传输到腾讯云 COS 上。
+实现的结果，指定一个目录，后面往这个目录新增加的 png，都自动压缩，在前缀加上当前日期，然后传输到腾讯云 COS 上。完整的对话在[这里](https://chat.openai.com/share/724a1870-7524-4ed7-be08-c22c2b4acfb3)。
 
 ![最终自动化工具](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_auto_compress_upload_final.png)

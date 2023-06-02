@@ -4,11 +4,12 @@ date: 2023-05-26 20:08:45
 category: 人工智能
 tags: [GPT4, Prompt]  
 toc: true 
+description: 本页面详细介绍了如何使用GPT-4作为您的个人英语老师，包括如何设置学习偏好，如何进行阅读理解训练，以及如何学习英语语法和词汇。我们通过实际对话，展示了GPT-4在教学中的应用，以及如何通过智能提示（Prompt）进行有效的学习。无论您是英语初学者，还是希望提高英语水平，这里都能为您提供有价值的参考。
 ---
 
 大语言模型的 Prompt 真的是一门学问了，有点咒语的感觉。Github 上有一个比较火的 GPT4 的 [prompt 提示词](https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor)，可以用来让 AI 当你的个人老师，体验下来还是很有感触。
 
-![GPT 英语老师](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230526204014_d69992a5de7dc47614d3cc882582a8d3.png)
+![GPT 英语老师](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_tutor_english.png)
 
 # Prompt 加载
 
@@ -78,7 +79,7 @@ Also, if you wish to change the language, you can do so by typing /language foll
 <b>ChatGPT:</b>
 这是我们的学习计划：
 
-![学习计划](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230526205350_7a4062c89c1c4e9ed69777c23320ba92.png)
+![学习计划](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_tutor_english_roadmap.png)
 
 1. 开始：我们首先确定你的学习目标和偏好。
 2. 了解基础概念：我们将介绍一些英语学习的基础概念。
