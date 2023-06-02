@@ -279,13 +279,20 @@ div {
   text-justify: distribute;
   word-break: normal;
 }
-.post .post-content h2 {
-  margin: 1.4em 0 1.1em;
-  border-bottom: 1px solid #eee;
+.post .post-content h1 h2 h3 h4 h5 h6 {
   overflow: hidden;
 }
-.post .post-content h3 {
+.post .post-content h1 {
   margin: 1.4em 0 1.1em;
+  font-size: 1.5em;
+}
+.post .post-content h2 {
+  margin: 1.2em 0 1.1em;
+  font-size: 1.3em;
+}
+.post .post-content h3 {
+  margin: 1em 0 1.1em;
+  font-size: 1.1em;
 }
 .post .post-content pre code {
   padding: 0 2em;
