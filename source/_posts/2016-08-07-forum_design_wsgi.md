@@ -3,6 +3,7 @@ date: 2016-08-07 22:02:50
 category: 项目实践
 tags: [Flask, Python]
 toc: true
+description: 详细解析了WSGI的工作原理，以及如何在Python中实现WSGI。这是一个必读的指南，无论你是想要理解WSGI的工作原理，还是想要在自己的项目中实现WSGI。
 ---
 
 在 [从零开始搭建论坛（一）：Web服务器与Web框架](http://selfboot.cn/2016/07/28/forum_design_framework/) 中我们弄清楚了Web 服务器、Web 应用程序、Web框架的概念。对于 Python 来说，越来越多的 Web 框架面世，在给我们更多选择机会的同时，也限制了我们对于 Web Server 的选择。同样是有着很多 Web 框架的Java，因为有着 servlet API 的存在，任何Java Web框架写的应用程序都可以运行在任意一个 Web Server 上。

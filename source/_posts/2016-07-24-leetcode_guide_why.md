@@ -3,6 +3,7 @@ date: 2016-07-24 22:02:50
 category: 数据结构与算法
 tags: [思考, Python, C++]
 toc: true
+description: 这篇文章深入探讨了为什么我们需要在LeetCode上刷题。它详细解释了刷题的好处，包括提高抽象思维能力，理解算法的时间和空间复杂度，以及学习不同编程语言的特性。如果你正在寻找提升编程能力的方法，那么这篇文章将为你提供宝贵的建议。
 ---
 
 虽然刷题一直饱受诟病，不过不可否认刷题确实能锻炼我们的编程能力，相信每个认真刷题的人都会有体会。现在提供在线编程评测的平台有很多，比较有名的有 [hihocoder](http://hihocoder.com/)，[LintCode](http://www.lintcode.com/zh-cn/)，以及这里我们关注的 [LeetCode](https://LeetCode.com/)。

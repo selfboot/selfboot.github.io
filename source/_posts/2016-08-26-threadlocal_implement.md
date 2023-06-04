@@ -3,6 +3,7 @@ date: 2016-08-26 00:02:50
 category: 源码剖析
 tags: [Python, Thread]
 toc: true
+description: 深入探讨Python中ThreadLocal变量的实现。这篇文章详细介绍了ThreadLocal变量的工作原理，以及如何在Python中实现它。对于希望深入理解Python多线程编程的读者来说，这是一篇必读的文章。
 ---
 
 在 [深入理解Python中的ThreadLocal变量（上）](http://selfboot.cn/2016/08/22/threadlocal_overview/) 中我们看到 ThreadLocal 的引入，使得可以很方便地在多线程环境中使用局部变量。如此美妙的功能到底是怎样实现的？如果你对它的实现原理没有好奇心或一探究竟的冲动，那么接下来的内容估计会让你后悔自己的浅尝辄止了。

@@ -3,6 +3,7 @@ date: 2016-11-03 22:02:50
 category: 源码剖析
 tags: [Python, Thread, Flask]
 toc: true
+description: 本文详细分析了 ThreadLocal 变量的使用和实现，包括 Werkzeug 中的 ThreadLocal 设计和实现。通过阅读本文，您可以更好地理解 Python 的并发编程和线程管理，提升您的编程技能。
 ---
 
 在[上篇](http://selfboot.cn/2016/08/22/threadlocal_overview/)我们看到了 ThreadLocal 变量的简单使用，[中篇](http://selfboot.cn/2016/08/26/threadlocal_implement/)对python中 ThreadLocal 的实现进行了分析，但故事还没有结束。本篇我们一起来看下[Werkzeug](http://werkzeug.pocoo.org/)中ThreadLocal的设计。

@@ -3,6 +3,7 @@ date: 2017-11-12 12:18:50
 category: 工具介绍   
 tags: [教程, 总结]  
 toc: true  
+description: 探索Postman的高级用法，学习如何更有效地进行HTTP API测试。本篇指南深入讲解Postman的功能，带领读者了解如何更好地使用这个强大的工具，提高工作效率。适合各类开发者阅读。
 ---
 
 Postman是一款强大的API接口测试工具，有许多不容易发现的好用的功能，下面简单介绍其中一部分功能。详细内容可以参考[文档](https://www.getpostman.com/docs/)，官方还有视频教程，非常方便入手。后续本博客会持续提供一些Postman使用的细节技巧，方便大家用Postman进行接口调试。

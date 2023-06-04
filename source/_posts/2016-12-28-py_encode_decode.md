@@ -3,6 +3,7 @@ date: 2016-12-28 22:02:50
 category: 计算机基础
 tags: [Python, 方法]
 toc: true
+description: 深入探索 Python 2.x 的字符编码问题。本文详细介绍了 Python 2.x 中的编码和解码过程，包括 Unicode、UTF-8 和其他编码格式。理解 Python 的字符编码可以帮助您避免编程中的常见错误，提高代码质量。
 ---
 
 在[人机交互之字符编码](http://selfboot.cn/2014/08/28/character_encoding/) 一文中对字符编码进行了详细的讨论，并通过一些简单的小程序验证了我们对于字符编码的认识。但仅了解这篇文章的内容，并不能帮我们在日常编程中躲过一些字符编码相关的坑，Stackoverflow 上就有大量编码相关的问题，比如 [1](http://stackoverflow.com/questions/9942594/unicodeencodeerror-ascii-codec-cant-encode-character-u-xa0-in-position-20)，[2](Python: Convert Unicode to ASCII without errors)，[3](http://stackoverflow.com/questions/2688020/how-to-print-chinese-word-in-my-code-using-python)。
