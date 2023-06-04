@@ -3,6 +3,7 @@ date: 2015-1-11
 tags: [Python,教程,Django]
 category: 程序设计
 toc: true
+description: Django入门教程的下篇，深入探讨Django的后台管理和自动化测试。这篇文章详细介绍了如何使用Django创建后台管理系统，以及如何编写测试单元来检查程序的正确性。适合有一定Python和Django基础的开发者阅读，提升你的Django开发技能。
 ---
 
 在[两篇文章帮你入门Django(上)](http://selfboot.cn/2014/12/26/django_start/)一文中，我们已经做了一个简单的小网站，实现了保存用户数据到数据库，以及从后台数据库读取数据显示到网页上这两个功能。

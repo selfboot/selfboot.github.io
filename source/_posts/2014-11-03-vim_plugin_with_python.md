@@ -2,6 +2,7 @@ title: 使用python写vim插件
 tags:  [教程, Python]
 category: 程序设计
 toc: true
+description: 这篇文章详细介绍了如何使用Python编写Vim插件。从Vim的编译特性，到如何在Vim中执行Python命令，再到如何使用Vim模块进行更复杂的操作，这篇文章都有详尽的解释和示例。如果你是一名Vim用户，并且对Python有一定的了解，那么这篇文章将是你的宝贵资源。
 ---
 
 vim有各种强大的插件，这不仅归功于其提供的用来编写插件的脚本语言vimL，还得益于它良好的接口实现，从而支持python等语言编写插件。当vim编译时带有`+python`特性时就能使用python2.x编写插件，`+python3`则支持python3.x，可以使用`vim --version`来查看vim的编译特性。

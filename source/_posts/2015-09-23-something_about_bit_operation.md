@@ -3,6 +3,7 @@ date: 2015-09-23
 tags: [总结,Python]
 category: 计算机基础
 toc: true
+description: 这篇文章详细解析了位运算的基本概念和应用，包括位运算的种类、用途以及在Python中的实现。适合对计算机科学有兴趣的读者，让你从位运算的角度重新认识编程的魅力。
 ---
 
 先来看[LeetCode](https://leetcode.com)上的[Divide Two Integers](https://leetcode.com/problems/divide-two-integers/)题目要求：
