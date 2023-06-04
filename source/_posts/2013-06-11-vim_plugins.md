@@ -2,6 +2,7 @@ title: Vim插件简单介绍
 tags: [教程, 总结]
 category: 工具介绍
 toc: true
+description: 这是一个关于Vim插件介绍的页面，详细介绍了如何使用Vim的各种插件来提升编程效率，包括但不限于pathogen、nerdtree、xptemplate、YouCompleteMe、pydiction、syntastic、vimwiki、ZenCoding、Tagbar、Powerline等。这个页面是为那些希望提升Vim使用效率的开发者提供的宝贵资源。通过这些插件，你可以更好地管理你的代码，提高编程效率，使你的Vim变成一个强大的开发工具。
 ---
 
 Vim作为一个强大的编辑器，再配合强大的插件，就可以称得上为编辑神器了。

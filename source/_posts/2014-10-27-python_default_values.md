@@ -1,6 +1,7 @@
 title: 陷阱！python参数默认值
 tags: Python
 category: 程序设计
+description: 深入探索Python默认值的神秘世界。在这篇文章中，我们将详细解析Python函数的默认值如何工作，以及如何在编程中正确使用它们。这是Python开发者必读的一篇文章，无论你是新手还是有经验的开发者，都能从中获益。
 ---
 
 在stackoverflow上看到这样一个程序：
