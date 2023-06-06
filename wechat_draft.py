@@ -109,7 +109,9 @@ def _del_unsupported_tag(soup):
         del tag['id']
         for a in tag.find_all('a'):
             a.decompose()
-            
+
+    for a_tag in soup.find_all('a'):
+        del a_tag['href']     
     return soup
 
 def _fix_list_item(soup):
