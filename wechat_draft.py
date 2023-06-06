@@ -152,17 +152,6 @@ def _add_font_size_to_headers(soup):
     # Return the modified HTML
     return soup
 
-def _replace_special_chars(page):
-    replacements = {
-        '：': ': ',
-        # '（': '(',
-        # '）': ')',
-        '。': '. ',
-    }
-    for old, new in replacements.items():
-        page = page.replace(old, new)
-    return page
-
 def adapt_wechat(html_content):
     # <div class="post"><h1 class="post-title">神奇 Prompt 让 GPT4 化身英语老师</h1></div>
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -182,7 +171,7 @@ def adapt_wechat(html_content):
     page_soup = _fix_list_item(page_soup)
     page_soup = _add_table_overflow(page_soup)
 
-    page_content = _replace_special_chars(str(page_soup))
+    page_content = str(page_soup)
     page_content = page_content.rstrip('\n')
     return page_content, title
 
