@@ -28,6 +28,7 @@ https://selfboot.cn/2023/06/02/auto_compress_upload/
 https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/
 https://selfboot.cn/2023/06/05/gpt4_write_cmd/
 https://selfboot.cn/2023/06/06/gpt4_lawer_helper/
+https://selfboot.cn/2023/06/07/gpt4_heygen_video/
 https://selfboot.cn/aboutme.html
 https://selfboot.cn/baidu_verify_GhL87XFQ6N.html
 https://selfboot.cn/google0b4c8a25b65d7c2a.html
