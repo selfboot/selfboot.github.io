@@ -1,3 +1,4 @@
+https://selfboot.cn/2015/11/03/howto_find_algorithm/
 https://selfboot.cn/2015/11/05/dns_theory/
 https://selfboot.cn/2015/11/14/dns_practice/
 https://selfboot.cn/2015/11/25/skip_classes/
@@ -26,11 +27,12 @@ https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/
 https://selfboot.cn/2023/06/05/gpt4_write_cmd/
 https://selfboot.cn/2023/06/06/gpt4_lawer_helper/
 https://selfboot.cn/2023/06/07/gpt4_heygen_video/
+https://selfboot.cn/2023/06/08/gpt4_leetcode_1318/
 https://selfboot.cn/aboutme.html
 https://selfboot.cn/baidu_verify_GhL87XFQ6N.html
 https://selfboot.cn/google0b4c8a25b65d7c2a.html
-https://selfboot.cn/links.html
 https://selfboot.cn/guestbook.html
+https://selfboot.cn/links.html
 https://selfboot.cn/2013/06/07/hack_the_browser/
 https://selfboot.cn/2013/06/11/vim_plugins/
 https://selfboot.cn/2013/06/16/how_to_use_the_network/
@@ -58,7 +60,6 @@ https://selfboot.cn/2015/09/23/something_about_bit_operation/
 https://selfboot.cn/2015/10/13/pages_count/
 https://selfboot.cn/2015/10/15/lightweight-GUI/
 https://selfboot.cn/2015/10/23/marketing/
-https://selfboot.cn/2015/11/03/howto_find_algorithm/
 https://selfboot.cn/404.html
 https://selfboot.cn/
 https://selfboot.cn/tags/Python/
@@ -79,6 +80,7 @@ https://selfboot.cn/tags/Thread/
 https://selfboot.cn/tags/GPT4/
 https://selfboot.cn/tags/Prompt/
 https://selfboot.cn/tags/Plugin/
+https://selfboot.cn/tags/Leetcode/
 https://selfboot.cn/tags/%E6%B3%95%E5%BE%8B/
 https://selfboot.cn/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/
 https://selfboot.cn/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/
