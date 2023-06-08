@@ -33,7 +33,9 @@ heygen 官网的价格，每生成 2 分钟最便宜也是要 $2。不过好在�
 
 heygen 官方生成的视频，支持更高的自定义程度，包括背景等，还有字幕，这里有一个简单的视频。
 
-<iframe width="560" height="315" src="https://app.heygen.com/embeds/ede2ffb6805f4b7da2bde80f5440e315" title="HeyGen video player" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe style="position: absolute; top:0; left: 0; width: 100%; height: 100%;" src="https://app.heygen.com/embeds/ede2ffb6805f4b7da2bde80f5440e315" title="HeyGen video player" frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+</div>
 
 # 其他生成器
 
