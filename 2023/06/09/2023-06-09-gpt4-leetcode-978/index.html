@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="探索动态规划的深度理解与应用，通过与OpenAI的ChatGPT的对话，解决LeetCode中等难度的'最长湍流子数组'问题。本文详细介绍了问题分析，状态定义，状态转移方程的构建，以及代码实现和优化的过程。这不仅是对动态规划的一次深入学习，也是体验人性化AI交互的有趣旅程。"><title>GPT4 解 Leetcode 题目：最大连续湍流子序列和 | Just For Fun</title><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.async = true; 
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script async type="text/javascript" src="https://cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">GPT4 解 Leetcode 题目：最大连续湍流子序列和</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-link"> 链接</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">GPT4 解 Leetcode 题目：最大连续湍流子序列和</h1><div class="post-meta">2023/06/09<span> | </span><span class="category"><a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/06/09/2023-06-09-gpt4-leetcode-978/" href="/2023/06/09/2023-06-09-gpt4-leetcode-978/#disqus_thread"></a><div class="post-content"><p>在探索算法的世界中，我们经常会遇到一些挑战，其中动态规划无疑是其中的一大难题。然而，你可能会惊讶地发现，OpenAI 的 ChatGPT 对于动态规划的理解和应用，往往能超越许多接受过专业算法训练的人。它不仅能迅速解决中等难度的问题，还能不断优化解决方案，展现出强大的问题解决能力。</p>
+<p>在与 ChatGPT 的交流中，你会发现它不仅是一个高效的问题解决者，更是一个善于沟通的伙伴。它会对你的问题<strong>给予积极的反馈，赞赏你的提问，并尽其所能提供帮助</strong>。这种人性化的交流方式，使得与 ChatGPT 的对话不再是冰冷的机器交互，而更像是与一个有深度、有思考的人进行的对话。</p>
+<p>在接下来的文章中，我将分享我与 ChatGPT 在解决一个动态规划问题上的对话。我希望这个过程不仅能帮助你理解动态规划的思想，更能让你感受到与 ChatGPT 对话的乐趣。</p>
+<span id="more"></span>
+
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230609_gpt4_leetcode_978.png" alt="GPT 对于动态规划题目的理解"></p>
+<h1 id="AI-的解法"><a href="#AI-的解法" class="headerlink" title="AI 的解法"></a>AI 的解法</h1><p><strong>Human:</strong><br>阅读这个题目 <a target="_blank" rel="noopener" href="https://leetcode.com/problems/longest-turbulent-subarray/">https://leetcode.com/problems/longest-turbulent-subarray/</a> ，给出解决代码，注意补全下面的代码 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">maxTurbulenceSize</span>(<span class="params">self, arr: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>ChatGPT:</strong><br>这个题目叫做 “最长湍流子数组”，给定一个整数数组 arr，返回 arr 的最大湍流子数组的长度。一个子数组被称为湍流子数组，当且仅当在该子数组中，每一对相邻元素的比较符号在子数组中每次都会翻转。</p>
+<p>更正式地说，一个子数组 <code>[arr[i], arr[i + 1], ..., arr[j]]</code> 被称为湍流子数组，当且仅当：</p>
+<ul>
+<li>对于 i &lt;&#x3D; k &lt; j：<ul>
+<li>当 k 是奇数时，arr[k] &gt; arr[k + 1]</li>
+<li>当 k 是偶数时，arr[k] &lt; arr[k + 1]</li>
+</ul>
+</li>
+<li>或者，对于 i &lt;&#x3D; k &lt; j：<ul>
+<li>当 k 是偶数时，arr[k] &gt; arr[k + 1]</li>
+<li>当 k 是奇数时，arr[k] &lt; arr[k + 1]</li>
+</ul>
+</li>
+</ul>
+<p>约束条件：</p>
+<ul>
+<li>1 &lt;&#x3D; arr.length &lt;&#x3D; 4 * 10^4</li>
+<li>0 &lt;&#x3D; arr[i] &lt;&#x3D; 10^9</li>
+</ul>
+<p>这个问题可以使用动态规划的思想来解决。我们可以使用两个动态规划数组 up 和 down，其中 up[i] 表示以 arr[i] 结尾，且 arr[i] &gt; arr[i-1] 的最长湍流子数组的长度，down[i] 表示以 arr[i] 结束，且 arr[i] &lt; arr[i-1] 的最长湍流子数组的长度。然后我们可以根据 arr[i] 和 arr[i-1] 的关系来更新 up[i] 和 down[i]，最后的答案即为 <code>max(up[i], down[i]) (0 &lt;= i &lt; n)</code>。</p>
+<p>下面是 Python 的解决代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">maxTurbulenceSize</span>(<span class="params">self, arr: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        n = <span class="built_in">len</span>(arr)</span><br><span class="line">        up = [<span class="number">1</span>] * n</span><br><span class="line">        down = [<span class="number">1</span>] * n</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n):</span><br><span class="line">            <span class="keyword">if</span> arr[i] &gt; arr[i-<span class="number">1</span>]:</span><br><span class="line">                up[i] = down[i-<span class="number">1</span>] + <span class="number">1</span></span><br><span class="line">                down[i] = <span class="number">1</span></span><br><span class="line">            <span class="keyword">elif</span> arr[i] &lt; arr[i-<span class="number">1</span>]:</span><br><span class="line">                down[i] = up[i-<span class="number">1</span>] + <span class="number">1</span></span><br><span class="line">                up[i] = <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                up[i] = down[i] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">max</span>(<span class="built_in">max</span>(up), <span class="built_in">max</span>(down))</span><br></pre></td></tr></table></figure>
+
+<p>这段代码首先初始化了两个长度为 n 的数组 up 和 down，并将它们的所有元素都设置为 1。然后，对于数组 arr 中的每个元素 arr[i]，如果 arr[i] &gt; arr[i-1]，则更新 up[i] &#x3D; down[i-1] + 1 和 down[i] &#x3D; 1；如果 arr[i] &lt; arr[i-1]，则更新 down[i] &#x3D; up[i-1] + 1 和 up[i] &#x3D; 1；如果 arr[i] &#x3D;&#x3D; arr[i-1]，则更新 up[i] &#x3D; down[i] &#x3D; 1。最后，返回 max(up) 和 max(down) 中的最大值，即为最长湍流子数组的长度。</p>
+<hr>
+<p><strong>Human</strong><br>这个算法的时间复杂度和空间复杂度分别是多少呢？</p>
+<p><strong>ChatGPT:</strong><br>这个算法的时间复杂度是 O(n)，其中 n 是数组 arr 的长度。这是因为我们只需要遍历一次数组，对于数组中的每个元素，我们只需要常数时间就能完成所有操作。</p>
+<p>这个算法的空间复杂度也是 O(n)，其中 n 是数组 arr 的长度。这是因为我们需要使用两个长度为 n 的数组 up 和 down 来存储动态规划的状态。</p>
+<p>虽然空间复杂度是 O(n)，但如果你想进一步优化，**可以注意到 up[i] 和 down[i] 只依赖于 up[i-1] 和 down[i-1]，因此可以使用两个变量而不是两个数组来存储上一次的 up 和 down，这样空间复杂度可以优化到 O(1)**。</p>
+<blockquote>
+<p>不愧是语言模型，我问到空间复杂度，AI 解释了空间复杂度后，立马意识到这里有优化点。说明学习的语料中，有不少套路就是<strong>先说现有的复杂度，然后接着给出可以优化的地方</strong>。</p>
+</blockquote>
+<h1 id="优化方案"><a href="#优化方案" class="headerlink" title="优化方案"></a>优化方案</h1><p><strong>Human:</strong><br>那你继续优化下这里的代码</p>
+<p><strong>ChatGPT:</strong><br>当然，我们可以通过只使用两个变量来存储上一次的 up 和 down，从而将空间复杂度优化到 O(1)。下面是优化后的 Python 代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">maxTurbulenceSize</span>(<span class="params">self, arr: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        n = <span class="built_in">len</span>(arr)</span><br><span class="line">        up = down = res = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n):</span><br><span class="line">            <span class="keyword">if</span> arr[i] &gt; arr[i-<span class="number">1</span>]:</span><br><span class="line">                up = down + <span class="number">1</span></span><br><span class="line">                down = <span class="number">1</span></span><br><span class="line">            <span class="keyword">elif</span> arr[i] &lt; arr[i-<span class="number">1</span>]:</span><br><span class="line">                down = up + <span class="number">1</span></span><br><span class="line">                up = <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                up = down = <span class="number">1</span></span><br><span class="line">            res = <span class="built_in">max</span>(res, up, down)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<p>这段代码与之前的代码相比，主要的区别在于我们没有使用数组 up 和 down，而是使用了两个变量 up 和 down 来存储上一次的 up 和 down。同时，我们在每次更新 up 和 down 后，都会更新 res，使其始终为当前的最长湍流子数组的长度。最后，我们返回 res，即为最长湍流子数组的长度。</p>
+<blockquote>
+<p>如果是普通人，没做过这个题目的话，很难能想到用动态规划。就算是做过类似动态规划题目的人，可能也需要想一会才能找到如何定义状态和状态转移方程。那么这里 AI 是怎么思考的呢，我们继续问问它。</p>
+</blockquote>
+<h1 id="AI-的思考过程"><a href="#AI-的思考过程" class="headerlink" title="AI 的思考过程"></a>AI 的思考过程</h1><p><strong>Human:</strong><br>这道题的关键是你前面说的</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">我们可以使用两个动态规划数组 up 和 down，其中 up<span class="selector-attr">[i]</span> 表示以 arr<span class="selector-attr">[i]</span> 结尾，且 arr<span class="selector-attr">[i]</span> &gt; arr<span class="selector-attr">[i-1]</span> 的最长湍流子数组的长度，down<span class="selector-attr">[i]</span> 表示以 arr<span class="selector-attr">[i]</span> 结束，且 arr<span class="selector-attr">[i]</span> &lt; arr<span class="selector-attr">[i-1]</span> 的最长湍流子数组的长度。</span><br></pre></td></tr></table></figure>
+<p>你是怎么想到这一点的？ 一步步给出你的思考过程</p>
+<p><strong>ChatGPT:</strong><br>这个问题的关键在于<strong>识别出它是一个动态规划问题，然后找出正确的状态定义和状态转移方程</strong>。</p>
+<ol>
+<li><span style="color:red;">识别动态规划问题</span>：这个问题要求我们找出数组中的最长湍流子数组，这是一个<strong>典型的最优化问题，而且我们可以通过子问题的最优解来构建原问题的最优解，因此我们可以考虑使用动态规划来解决这个问题</strong>。</li>
+<li><span style="color:red;">定义状态</span>：在动态规划问题中，<strong>我们需要定义一些状态，用来表示问题的某种情况</strong>。在这个问题中，我们可以定义两个状态 up[i] 和 down[i]，其中 up[i] 表示以 arr[i] 结尾，且 arr[i] &gt; arr[i-1] 的最长湍流子数组的长度，down[i] 表示以 arr[i] 结尾，且 arr[i] &lt; arr[i-1] 的最长湍流子数组的长度。这两个状态可以完全描述问题的所有情况。</li>
+<li><span style="color:red;">找出状态转移方程</span>：<strong>在定义了状态之后，我们需要找出状态之间的关系，即状态转移方程</strong>。在这个问题中，我们可以发现，如果 arr[i] &gt; arr[i-1]，那么 up[i] 应该是 down[i-1] + 1，因为我们可以在 arr[i-1] 结尾的下降子数组后面加上 arr[i]，形成一个更长的湍流子数组；同理，如果 arr[i] &lt; arr[i-1]，那么 down[i] 应该是 up[i-1] + 1。如果 arr[i] &#x3D;&#x3D; arr[i-1]，那么 up[i] 和 down[i] 都应该是 1，因为 arr[i] 不能和 arr[i-1] 形成湍流子数组。</li>
+</ol>
+<p>通过以上的思考过程，我们就可以得到这个问题的动态规划解法。</p>
+<blockquote>
+<p>这一段解释我给 AI 打满分，完美解释了解决动态规划题目的精髓。</p>
+</blockquote>
+<hr>
+<p><strong>Human:</strong><br>第二步定义状态，你为什么想到可以定义两个状态呢？ 我只想到了用一个 dp[i] 表示以 arr[i] 结尾的最长湍流子数组的长度。</p>
+<p><strong>ChatGPT:</strong><br><span style="color:red;">这是一个很好的问题。</span>在这个问题中，我们需要考虑的是湍流子数组的特性，即相邻元素之间的比较符号需要交替变化。这意味着，我们<strong>不能只关注子数组的长度，还需要关注子数组的结尾是上升还是下降</strong>。</p>
+<p>如果我们只使用一个 dp[i] 来表示以 arr[i] 结尾的最长湍流子数组的长度，那么我们就无法区分这个子数组是以一个上升段结束，还是以一个下降段结束。这就导致我们无法正确地更新 dp[i]，因为我们不知道 arr[i] 应该是大于 arr[i-1] 还是小于 arr[i-1]。</p>
+<p>因此，我们需要使用两个状态 up[i] 和 down[i]，其中 up[i] 表示以 arr[i] 结尾的最长湍流子数组是以一个上升段结束，down[i] 表示以 arr[i] 结尾的最长湍流子数组是以一个下降段结束。这样，我们就可以根据 arr[i] 和 arr[i-1] 的关系，正确地更新 up[i] 和 down[i]。</p>
+<p>总的来说，定义状态时，我们<strong>需要考虑到问题的所有特性，确保我们的状态可以完全描述问题的所有情况</strong>。在这个问题中，湍流子数组的特性就决定了我们需要使用两个状态来描述问题。</p>
+<blockquote>
+<p>再次给 AI 满分好评，这里竟然会说我的提问是一个好问题，有点像人类了，不，比人类做的还好。对于为啥能想到两个状态，它的回答也十分贴切，可能问一个人类算法高手，他都不一定能解释这么清楚。</p>
+</blockquote>
+<hr>
+<p><strong>Human:</strong><br>你上面说到 <code>这是一个典型的最优化问题，而且我们可以通过子问题的最优解来构建原问题的最优解，因此我们可以考虑使用动态规划来解决这个问题</code> ，这个最优化问题为啥你想到能通过子问题的最优解，然后想到用动态规划。这里你的思维过程是什么呢，可以一步步列出来吗？</p>
+<p><strong>ChatGPT:</strong><br>当然可以。在解决问题时，我们通常会根据问题的特性来选择合适的解决方法。对于动态规划，我们通常会在以下情况下考虑使用：</p>
+<ol>
+<li><strong>最优化问题</strong>：动态规划通常用于解决最优化问题，即问题的解存在多个，我们需要找到最优的解。在这个问题中，我们需要找到最长的湍流子数组，这是一个典型的最优化问题。</li>
+<li><strong>重叠子问题</strong>：动态规划的一个关键特性是重叠子问题，即大问题的解可以通过小问题的解来构建，而且这些小问题会被重复计算多次。在这个问题中，我们可以看到，为了找到以 arr[i] 结尾的最长湍流子数组，我们需要知道以 arr[i-1] 结尾的最长湍流子数组，这就是重叠子问题。</li>
+<li><strong>最优子结构</strong>：动态规划还需要问题具有最优子结构，即子问题的最优解能够构成原问题的最优解。在这个问题中，我们可以看到，最长的湍流子数组要么是以 arr[i-1] 结尾的最长湍流子数组加上 arr[i]，要么就是只包含 arr[i]，这就是最优子结构。</li>
+</ol>
+<p>通过以上的分析，我们可以看到这个问题满足动态规划的特性，因此我们可以考虑使用动态规划来解决这个问题。</p>
+<p>总的来说，解决问题的思维过程是：首先，我们需要理解问题，明确问题的需求；然后，我们需要分析问题，找出问题的特性；最后，我们需要根据问题的特性来选择合适的解决方法。在这个过程中，我们可能需要试验多种解决方法，通过比较它们的效率和准确性来选择最好的方法。</p>
+<blockquote>
+<p>和 ChatGPT 的完整对话内容见 <a target="_blank" rel="noopener" href="https://chat.openai.com/share/8c9c344c-966f-4c7d-8fa5-db2ca5cec345">这里</a></p>
+</blockquote>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：GPT4 解 Leetcode 题目：最大连续湍流子序列和</p><p>本文链接为：https://selfboot.cn/2023/06/09/2023-06-09-gpt4-leetcode-978/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/Python/"><i class="fa fa-tag"></i>Python</a><a href="/tags/GPT4/"><i class="fa fa-tag"></i>GPT4</a><a href="/tags/Leetcode/"><i class="fa fa-tag"></i>Leetcode</a></div><div class="post-nav"><a class="next" href="/2023/06/08/gpt4_leetcode_1318/">GPT4 解 Leetcode 题目：位操作</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/06/09/2023-06-09-gpt4-leetcode-978/';
+    this.page.identifier = '2023/06/09/2023-06-09-gpt4-leetcode-978/';
+    this.page.title = 'GPT4 解 Leetcode 题目：最大连续湍流子序列和';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/">法律普及</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/GPT4/" style="font-size: 15px;">GPT4</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15px;">Leetcode</a> <a href="/tags/%E6%B3%95%E5%BE%8B/" style="font-size: 15px;">法律</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2023/06/09/2023-06-09-gpt4-leetcode-978/">GPT4 解 Leetcode 题目：最大连续湍流子序列和</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/08/gpt4_leetcode_1318/">GPT4 解 Leetcode 题目：位操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/07/gpt4_heygen_video/">GPT 插件使用 AI 生成精美视频</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/06/gpt4_lawer_helper/">被裁员后的法律指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/05/gpt4_leetcode_1232/">GPT4 解 Leetcode 题目：判断是否一条直线</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/05/gpt4_write_cmd/">GPT4 帮忙写 sed, awk 数据处理命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/02/auto_compress_upload/">Mac 图片自动压缩上传 COS</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/01/gpt4_plugin_noteable/">GPT4 plugin 来做数据分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/31/gpt4_tutor_physics/">神奇 Prompt 让 GPT4 化身物理老师</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/29/gpt4_cal_date/">加班了多少天？GPT4 被绕晕了</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AI-%E7%9A%84%E8%A7%A3%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">AI 的解法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">优化方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AI-%E7%9A%84%E6%80%9D%E8%80%83%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">AI 的思考过程</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
