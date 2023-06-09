@@ -1,0 +1,27 @@
+name: SiteMap
+
+on:
+  workflow_run:
+    workflows: ["Wechat"]
+    types:
+      - completed
+    conclusions:
+      - success
+
+jobs:
+  job_name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Check out pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages 
+          path: public  # this will checkout the pages branch into a directory named 'public'
+      - name: Ping Google
+          run: curl https://www.google.com/ping?sitemap=https://selfboot.cn/sitemap.xml
+      - name: update baidu
+          run: curl -H 'Content-Type:text/plain' --data-binary @./public/sitemap.txt 'http://data.zz.baidu.com/urls?site=https://selfboot.cn&token=Ne0lpa8q4OnqJEC6'
