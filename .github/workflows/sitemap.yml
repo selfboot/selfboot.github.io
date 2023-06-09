@@ -22,6 +22,6 @@ jobs:
           ref: gh-pages 
           path: public  # this will checkout the pages branch into a directory named 'public'
       - name: Ping Google
-          run: curl https://www.google.com/ping?sitemap=https://selfboot.cn/sitemap.xml
+        run: curl https://www.google.com/ping?sitemap=https://selfboot.cn/sitemap.xml
       - name: update baidu
-          run: curl -H 'Content-Type:text/plain' --data-binary @./public/sitemap.txt 'http://data.zz.baidu.com/urls?site=https://selfboot.cn&token=Ne0lpa8q4OnqJEC6'
+        run: curl -H 'Content-Type:text/plain' --data-binary @./public/sitemap.txt 'http://data.zz.baidu.com/urls?site=https://selfboot.cn&token=Ne0lpa8q4OnqJEC6'
