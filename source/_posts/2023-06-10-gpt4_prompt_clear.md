@@ -109,9 +109,9 @@ OpenAI 支持给 GPT4 设定一个系统消息 `system message`。你可以在�
 
 以下是一个具体的例子，假设你想让GPT模型帮你将英文的日期格式转换为特定的中国日期格式，你可以这样构造你的prompt。
 
-![分隔符的作用不是百分百可靠](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_6.png)
+![few-shot 的威力](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_6.png)
 
-可以看到没有示例情况下给的输出，不是很符合要求。有了示例之后，就靠谱了很多。
+可以看到没有示例情况下给的输出，不是很符合要求。有了示例之后，就靠谱了很多。从实际体验来说，few-shot 有时候也不保证一定会产生高质量的回答，有时候 GPT4 模型依旧会产生预期外的数据。
 
 # 指定长度
 
