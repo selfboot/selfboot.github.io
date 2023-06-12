@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="掌握 GPT-4 提问技巧，提供引用文本是关键。本文详细解析了引用文本的重要性，如何有效地使用引用文本，以及如何从长文本中找到相关部分。我们还探讨了语义搜索的概念和工作原理，以及如何利用现有工具，如 ChatGPT 的 'Ask Your PDF' 插件和微软的 'New Bing'，来提高我们处理长文本的能力。无论你是 AI 新手，还是寻求提高查询效果的专业人士，这篇文章都将为你提供宝贵的指导和启示。"><title>GPT4 提问技巧二：提供参考文本 | Just For Fun</title><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.async = true; 
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script async type="text/javascript" src="https://cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">GPT4 提问技巧二：提供参考文本</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-link"> 链接</i></a><a href="/guestbook.html"><i class="fa fa-comments"> 留言</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">GPT4 提问技巧二：提供参考文本</h1><div class="post-meta">2023/06/12<span> | </span><span class="category"><a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/06/12/gpt4_prompt_reference/" href="/2023/06/12/gpt4_prompt_reference/#disqus_thread"></a><div class="post-content"><p>本文是 GPT4 提问技巧系列的第二篇，全部系列文章：</p>
+<ol>
+<li><a href="https://selfboot.cn/2023/06/10/gpt4_prompt_clear/">GPT4 提问技巧一：写清晰的说明</a>；</li>
+<li><a href="https://selfboot.cn/2023/06/12/gpt4_prompt_reference/">GPT4 提问技巧二：提供参考文本</a>；</li>
+</ol>
+<p>OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章，甚至编程。然而，即使是 GPT-4，也有其局限性，其中之一就是<strong>上下文长度的限制</strong>。GPT-4 的上下文长度限制是由其内部架构决定的，简单来说，GPT-4 在处理输入时，会将输入的文本转化为一系列的“令牌”（tokens）。然而，GPT-4 只能处理一定数量的令牌，这就是所谓的“上下文长度”。超过这个长度，GPT-4 就无法全面理解输入的内容，这可能会影响其生成的输出的质量。</p>
+<p>目前 OpenAI 的 GPT4 有两个模型，最多分别支持 8K 长度和 32K 长度的Token。其中 32K 长度 Token 之对少量人开放，大部分用的都是 4K 长度，因为 GPU 算力不够。好在随着 AI 的发展，应该会支持越来越长的 Token。OpenAI 也把支持更长的 token 作为 2023 年的主要目标了，参考 <a target="_blank" rel="noopener" href="https://website-nm4keew22-humanloopml.vercel.app/blog/openai-plans">OpenAI’s plans according to Sam Altman</a>。</p>
+<blockquote>
+<p>Longer context windows — Context windows as high as 1 million tokens are plausible in the near future.</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="引用文本的好处"><a href="#引用文本的好处" class="headerlink" title="引用文本的好处"></a>引用文本的好处</h1><p>为了更好使用 GPT4 这些有 token 限制的模型，我们可以<strong>提供引用文本（reference text）</strong>。这是因为引用文本可以帮助模型更好地理解你的问题，并提供更准确的答案。这里有几个原因：</p>
+<ol>
+<li><span style="color:red;">明确性</span>：引用文本可以帮助明确你的问题，例如，如果你在问一个关于特定法律条款的问题，提供该法律条款的文本可以帮助模型更准确地理解你的问题。</li>
+<li><span style="color:red;">上下文</span>：即使模型的上下文长度限制增加，它仍然需要理解你的问题的上下文，引用文本可以提供这种上下文。</li>
+<li><span style="color:red;">准确性</span>：引用文本可以帮助模型提供更准确的答案，模型可能会根据引用文本中的信息来生成答案，而不是仅仅依赖于它的训练数据。</li>
+<li><span style="color:red;">效率</span>：即使模型可以处理更长的上下文，提供引用文本仍然可以提高效率，这是因为模型不需要处理不相关的信息，而可以直接关注到你的问题和相关的上下文。</li>
+</ol>
+<p>所以，即使 OpenAI 的上下文长度限制增加，提供引用文本仍然是一个有用的策略。其实目前像 <a target="_blank" rel="noopener" href="https://www.anthropic.com/index/introducing-claude">Claude</a> 的模型，已经最大支持 100K 长度，大概是 7.6 万个英语单词，可以一次输入整本书籍让它分析了。</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_100K.png" alt="Claude 的 100K 长度支持"></p>
+<h1 id="短文本直接引用"><a href="#短文本直接引用" class="headerlink" title="短文本直接引用"></a>短文本直接引用</h1><p>对于文本比较短的引用，可以直接贴到提问里面即可，比如：</p>
+<ul>
+<li>如果你有一段关于气候变化的文章，并希望模型使用这篇文章的信息来回答问题，你可以这样提问：“根据以下关于气候变化的文章，全球变暖的主要原因是什么？”然后附上文章的内容。</li>
+<li>如果你有一份报告，并希望模型使用报告中的数据来回答问题，你可以这样提问：“根据以下的年度销售报告，我们的最畅销产品是什么？”然后附上报告的内容。</li>
+<li>如果你有一段法律条款，并希望模型使用这段条款来解释某个概念，你可以这样提问：“根据以下的法律条款，什么是知识产权？”然后附上法律条款的内容。</li>
+</ul>
+<p>目前使用 GPT4 的插件，也可以直接将网页链接里面的内容提供给 GPT 来作为引用文本。比如我可以直接让它总结我们第一篇<a href="https://selfboot.cn/2023/06/10/gpt4_prompt_clear/">GPT4 提问技巧一：写清晰的说明</a>的内容，如下</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_1.png" alt="GPT4 总结网页内容"></p>
+<h1 id="长文本引用相关部分"><a href="#长文本引用相关部分" class="headerlink" title="长文本引用相关部分"></a>长文本引用相关部分</h1><p>对于文本较长的引用，我们需要采取不同的策略。比如想让模型参考一本书或一篇长篇文章，可能需要<strong>选择最相关的部分，或者将关键信息提炼出来作为引用文本</strong>。如何从给定长文本找到和提问内容最相关的部分，最直观的方法就是关键词搜索。它通过在文本中查找与查询关键词完全匹配的词或短语来工作。这种方法的优点是简单易用，但缺点是它<code>无法理解语义相似性</code>。例如，如果你搜索”猫”，它不会返回包含”某种猫粮”或”宠物用品”的文档，除非这些确切的词在文档中出现。</p>
+<h2 id="Embedding-based-search"><a href="#Embedding-based-search" class="headerlink" title="Embedding-based search"></a>Embedding-based search</h2><p>目前 OpenAI 推荐的是另一种方法，叫做<code>语义搜索(Embedding-based Search)</code>。在这种方法中，查询和文档都被转换为高维空间中的向量（也称为 Embedding，本质是一串数字）。这些 embedding 捕获了文本的语义信息，使得语义上相似但字面上不同的词能够被匹配。例如，”猫”和某种”宠物用品”可能会有相似的 embedding，因此即使文档没有明确提到”猫”，也可能被返回为搜索结果。</p>
+<p>在进行语义搜索时，我们的目标是找到与我们的搜索查询在语义上最接近的文本。为了做到这一点，我们需要先将我们的文本和查询转换成一种可以比较的形式，这就是所谓的”嵌入(Embedding)”。</p>
+<ol>
+<li>预计算阶段：首先，我们需要处理我们的文本语料库。这可能是一本书、一组文章，或者任何其他形式的文本。我们将这个大的文本分割成更小的块，每个块的长度都在我们的模型的处理能力范围内。然后，使用模型将每个文本块转换成一个嵌入，这是一个数字向量，可以捕捉文本的语义信息。最后，我们将这些嵌入存储在一个<code>向量数据库</code>中，以便以后使用。</li>
+<li>实时计算阶段：搜索查询时，先将搜索内容转换成一个嵌入(Embedding)，然后，在向量数据库中查找最接近查询嵌入的文本嵌入，这些最接近的嵌入对应的文本块就是我们的搜索结果。</li>
+</ol>
+<p>这就是语义搜索的基本过程。虽然这个过程可能涉及到一些复杂的技术，但其核心思想其实很简单：我们只是在尝试找到与我们的查询在语义上最接近的文本。</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_embeding.png" alt="GPT4 语义搜索的步骤"></p>
+<p>关于 Embedding-based search 的更多内容，可以参考下面的文章：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb">Question answering using embeddings-based search</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.deepset.ai/blog/the-beginners-guide-to-text-embeddings">The Beginner’s Guide to Text Embeddings</a></li>
+<li><a target="_blank" rel="noopener" href="https://betterprogramming.pub/implementing-nearest-neighbour-search-with-elasticsearch-c59a8d33dd9d">Semantic Search With HuggingFace and Elasticsearch</a></li>
+</ul>
+<h2 id="丰富的工具箱"><a href="#丰富的工具箱" class="headerlink" title="丰富的工具箱"></a>丰富的工具箱</h2><p>好在大多时候普通人不需要了解这些技术背景，可以直接使用市面上的现成工具，比如 ChatGPT 的 “Ask Your PDF” 插件，就可以针对自己上传的 PDF 文件进行提问。这个插件将文档的内容转化为一个知识丰富的对话伙伴，能够根据文档内的信息提供详细的回答。不过这个插件目前还是有不少缺点，包括上传的文件大小限制，没法给出具体从 PDF 哪部分内容得出的结论，以及有时候会给出奇怪的回答。</p>
+<p>除了免费的 ChatGPT 插件，还有一些付费工具，用起来体验更好些。比如 <a target="_blank" rel="noopener" href="https://chatdoc.com/">chatdoc</a>，可以提供文件提问，同时在解答中会给出依据，还能方便跳转。随便找了一个法律裁判文书的 PDF ，然后问了几个问题，整体感觉比插件稍微好些。</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_chatdoc.png" alt="Chatdoc 回答还可以，不过引用部分有时候不准"></p>
+<p>除了插件，专业工具，微软也提供了带有 browsing 功能的 GPT4，也就是 New bing。它不仅仅是搜索和返回结果，还能借助 GPT 理解你的问题，根据搜索到的网页，重新组织语言，提供完整的答案。</p>
+<p>总的来说，尽可能的提供引用文本是一个很好的 Prompt 习惯，可以帮助我们在处理长篇文本的时候，更好地利用 GPT 的能力。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：GPT4 提问技巧二：提供参考文本</p><p>本文链接为：https://selfboot.cn/2023/06/12/gpt4_prompt_reference/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/GPT4/"><i class="fa fa-tag"></i>GPT4</a><a href="/tags/Prompt/"><i class="fa fa-tag"></i>Prompt</a></div><div class="post-nav"><a class="next" href="/2023/06/11/gpt4_leetcode_1802/">GPT4 解 Leetcode 题目：有界数组找最大值</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/06/12/gpt4_prompt_reference/';
+    this.page.identifier = '2023/06/12/gpt4_prompt_reference/';
+    this.page.title = 'GPT4 提问技巧二：提供参考文本';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/">法律普及</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">3</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/GPT4/" style="font-size: 15px;">GPT4</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Leetcode/" style="font-size: 15px;">Leetcode</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/JavaScript/" style="font-size: 15px;">JavaScript</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/GUI/" style="font-size: 15px;">GUI</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a> <a href="/tags/%E6%B3%95%E5%BE%8B/" style="font-size: 15px;">法律</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2023/06/12/gpt4_prompt_reference/">GPT4 提问技巧二：提供参考文本</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/11/gpt4_leetcode_1802/">GPT4 解 Leetcode 题目：有界数组找最大值</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/10/gpt4_prompt_clear/">GPT4 提问技巧一：写清晰的说明</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/09/gpt4_leetcode_978/">GPT4 解 Leetcode 题目：最大连续湍流子序列和</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/08/gpt4_leetcode_1318/">GPT4 解 Leetcode 题目：位操作</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/07/gpt4_heygen_video/">GPT 插件使用 AI 生成精美视频</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/06/gpt4_lawer_helper/">被裁员后的法律指南</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/05/gpt4_leetcode_1232/">GPT4 解 Leetcode 题目：判断是否一条直线</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/05/gpt4_write_cmd/">GPT4 帮忙写 sed, awk 数据处理命令</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/06/02/auto_compress_upload/">Mac 图片自动压缩上传 COS</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E6%96%87%E6%9C%AC%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-number">1.</span> <span class="toc-text">引用文本的好处</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9F%AD%E6%96%87%E6%9C%AC%E7%9B%B4%E6%8E%A5%E5%BC%95%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">短文本直接引用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%95%BF%E6%96%87%E6%9C%AC%E5%BC%95%E7%94%A8%E7%9B%B8%E5%85%B3%E9%83%A8%E5%88%86"><span class="toc-number">3.</span> <span class="toc-text">长文本引用相关部分</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Embedding-based-search"><span class="toc-number">3.1.</span> <span class="toc-text">Embedding-based search</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%B0%E5%AF%8C%E7%9A%84%E5%B7%A5%E5%85%B7%E7%AE%B1"><span class="toc-number">3.2.</span> <span class="toc-text">丰富的工具箱</span></a></li></ol></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
