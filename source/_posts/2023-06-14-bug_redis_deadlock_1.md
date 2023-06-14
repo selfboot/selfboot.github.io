@@ -117,7 +117,7 @@ print('all processes dead')
 
 注意这里 `unix_socket_path` 要改为自己 server 配置的 socket path。我们先启动发布者 feeder.py 往流里面写数据，再用 subscriber.py 来消费流。预期的正常表现(Redis server v=7.0.8上就是这个表现)是 subscriber 会持续取出 feeder 往流里面写入的数据，同时 redis 还能响应其他 client 的请求，server 的 CPU 占用也是在一个合理的水平上。
 
-但是在 7.2.0 版本(源码是 7.2.0-rc2，编译好的 server 版本是 v=7.1.241)上，这里就不太正常了。我们直接从 [Github Release 7.2-rc2](https://github.com/redis/redis/releases/tag/7.2-rc2) 下载 Reids 7.2 的源码，然后编译二进制。这里编译指令带上这两个 Flag `make REDIS_CFLAGS="-g -fno-omit-frame-pointer"`，方便后续分析工具能够拿到堆栈信息。复现步骤很简单，启动 Redis server，接着运行 feeder.py 和 subscriber.py 这两个脚本。我们会看到订阅者在处理部分流之后会阻塞住，不再有输出。同时 Redis 进程的 CPU 直接飙到了100%，新的 redis client 也连不上去服务器了，如下图。
+但是在 7.2.0 版本(源码是 7.2.0-rc2，编译好的 server 版本是 v=7.1.241)上，这里就不太正常了。我们直接从 [Github Release 7.2-rc2](https://github.com/redis/redis/releases/tag/7.2-rc2) 下载 Reids 7.2 的源码，然后编译二进制。这里编译指令带上这两个 Flag `make REDIS_CFLAGS="-Og -fno-omit-frame-pointer""`，方便后续分析工具能够拿到堆栈信息。复现步骤很简单，启动 Redis server，接着运行 feeder.py 和 subscriber.py 这两个脚本。我们会看到订阅者在处理部分流之后会阻塞住，不再有输出。同时 Redis 进程的 CPU 直接飙到了100%，新的 redis client 也连不上去服务器了，如下图。
 
 ![cpu 跑慢，同时新的 client 也连接失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230613_bug_redis_deadlock_cpu_busy.png)
 

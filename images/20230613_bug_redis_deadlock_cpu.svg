@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" width="1200" height="374" onload="init(evt)" viewBox="0 0 1200 374" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg version="1.1" width="1200" height="502" onload="init(evt)" viewBox="0 0 1200 502" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <!-- Flame graph stack visualization. See https://github.com/brendangregg/FlameGraph for latest version, and http://www.brendangregg.com/flamegraphs.html for examples. -->
 <!-- NOTES:  -->
 <defs>
@@ -421,1089 +421,1713 @@
 	}
 ]]>
 </script>
-<rect x="0.0" y="0" width="1200.0" height="374.0" fill="url(#background)"  />
+<rect x="0.0" y="0" width="1200.0" height="502.0" fill="url(#background)"  />
 <text id="title" x="600.00" y="24" >Flame Graph</text>
-<text id="details" x="10.00" y="357" > </text>
+<text id="details" x="10.00" y="485" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
 <text id="ignorecase" x="1174.00" y="24" >ic</text>
-<text id="matched" x="1090.00" y="357" > </text>
+<text id="matched" x="1090.00" y="485" > </text>
 <g id="frames">
 <g >
-<title>zfree (162 samples, 0.44%)</title><rect x="182.9" y="133" width="5.1" height="15.0" fill="rgb(239,146,17)" rx="2" ry="2" />
-<text  x="185.90" y="143.5" ></text>
+<title>string2ll (132 samples, 0.32%)</title><rect x="664.6" y="117" width="3.8" height="15.0" fill="rgb(223,70,39)" rx="2" ry="2" />
+<text  x="667.60" y="127.5" ></text>
 </g>
 <g >
-<title>enterExecutionUnit (9 samples, 0.02%)</title><rect x="135.3" y="181" width="0.3" height="15.0" fill="rgb(237,110,30)" rx="2" ry="2" />
-<text  x="138.32" y="191.5" ></text>
+<title>intrev64 (52 samples, 0.13%)</title><rect x="794.5" y="117" width="1.5" height="15.0" fill="rgb(237,110,51)" rx="2" ry="2" />
+<text  x="797.51" y="127.5" ></text>
 </g>
 <g >
-<title>zmalloc (162 samples, 0.44%)</title><rect x="948.5" y="101" width="5.1" height="15.0" fill="rgb(249,191,33)" rx="2" ry="2" />
-<text  x="951.45" y="111.5" ></text>
+<title>dictIncrUnsignedIntegerVal (82 samples, 0.20%)</title><rect x="649.7" y="149" width="2.4" height="15.0" fill="rgb(247,202,38)" rx="2" ry="2" />
+<text  x="652.69" y="159.5" ></text>
 </g>
 <g >
-<title>intrev64 (12 samples, 0.03%)</title><rect x="688.7" y="85" width="0.4" height="15.0" fill="rgb(254,75,32)" rx="2" ry="2" />
-<text  x="691.71" y="95.5" ></text>
+<title>dictGetKey (53 samples, 0.13%)</title><rect x="217.4" y="213" width="1.6" height="15.0" fill="rgb(244,12,29)" rx="2" ry="2" />
+<text  x="220.45" y="223.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned (23 samples, 0.06%)</title><rect x="855.1" y="69" width="0.7" height="15.0" fill="rgb(212,6,6)" rx="2" ry="2" />
-<text  x="858.09" y="79.5" ></text>
+<title>unblockClientWaitingData (11 samples, 0.03%)</title><rect x="1178.4" y="213" width="0.3" height="15.0" fill="rgb(224,118,2)" rx="2" ry="2" />
+<text  x="1181.40" y="223.5" ></text>
 </g>
 <g >
-<title>raxSeekGreatest (62 samples, 0.17%)</title><rect x="863.0" y="101" width="2.0" height="15.0" fill="rgb(254,133,15)" rx="2" ry="2" />
-<text  x="866.04" y="111.5" ></text>
+<title>__memcmp_avx2_movbe (91 samples, 0.22%)</title><rect x="706.1" y="85" width="2.7" height="15.0" fill="rgb(231,11,53)" rx="2" ry="2" />
+<text  x="709.13" y="95.5" ></text>
 </g>
 <g >
-<title>zrealloc (296 samples, 0.80%)</title><rect x="1130.4" y="101" width="9.4" height="15.0" fill="rgb(237,90,8)" rx="2" ry="2" />
-<text  x="1133.38" y="111.5" ></text>
+<title>lpNext (333 samples, 0.82%)</title><rect x="817.0" y="117" width="9.6" height="15.0" fill="rgb(214,88,13)" rx="2" ry="2" />
+<text  x="819.99" y="127.5" ></text>
 </g>
 <g >
-<title>raxIteratorAddChars.constprop.0 (57 samples, 0.15%)</title><rect x="861.2" y="69" width="1.8" height="15.0" fill="rgb(225,25,29)" rx="2" ry="2" />
-<text  x="864.23" y="79.5" ></text>
+<title>getLongLongFromObject (16 samples, 0.04%)</title><rect x="652.3" y="149" width="0.5" height="15.0" fill="rgb(217,50,20)" rx="2" ry="2" />
+<text  x="655.30" y="159.5" ></text>
 </g>
 <g >
-<title>decrRefCount (15 samples, 0.04%)</title><rect x="635.8" y="53" width="0.5" height="15.0" fill="rgb(222,122,13)" rx="2" ry="2" />
-<text  x="638.85" y="63.5" ></text>
+<title>getExpire (22 samples, 0.05%)</title><rect x="174.1" y="181" width="0.7" height="15.0" fill="rgb(230,210,45)" rx="2" ry="2" />
+<text  x="177.14" y="191.5" ></text>
 </g>
 <g >
-<title>expireIfNeeded (57 samples, 0.15%)</title><rect x="709.8" y="101" width="1.8" height="15.0" fill="rgb(238,149,27)" rx="2" ry="2" />
-<text  x="712.83" y="111.5" ></text>
+<title>streamDecodeID (391 samples, 0.96%)</title><rect x="867.6" y="117" width="11.4" height="15.0" fill="rgb(209,182,21)" rx="2" ry="2" />
+<text  x="870.63" y="127.5" ></text>
 </g>
 <g >
-<title>unblockClient (8 samples, 0.02%)</title><rect x="1178.2" y="181" width="0.2" height="15.0" fill="rgb(223,196,31)" rx="2" ry="2" />
-<text  x="1181.15" y="191.5" ></text>
+<title>zmalloc (8 samples, 0.02%)</title><rect x="547.7" y="85" width="0.2" height="15.0" fill="rgb(241,195,22)" rx="2" ry="2" />
+<text  x="550.67" y="95.5" ></text>
 </g>
 <g >
-<title>dictFetchValue (711 samples, 1.91%)</title><rect x="972.6" y="149" width="22.6" height="15.0" fill="rgb(233,102,2)" rx="2" ry="2" />
-<text  x="975.63" y="159.5" >d..</text>
+<title>hasActiveChildProcess (20 samples, 0.05%)</title><rect x="692.6" y="117" width="0.6" height="15.0" fill="rgb(225,43,36)" rx="2" ry="2" />
+<text  x="695.61" y="127.5" ></text>
 </g>
 <g >
-<title>connSocketEventHandler (32,987 samples, 88.80%)</title><rect x="130.6" y="245" width="1047.8" height="15.0" fill="rgb(230,198,4)" rx="2" ry="2" />
-<text  x="133.55" y="255.5" >connSocketEventHandler</text>
+<title>je_malloc_usable_size (298 samples, 0.73%)</title><rect x="1091.3" y="165" width="8.6" height="15.0" fill="rgb(220,187,17)" rx="2" ry="2" />
+<text  x="1094.29" y="175.5" ></text>
 </g>
 <g >
-<title>getTimeoutFromObjectOrReply (324 samples, 0.87%)</title><rect x="717.1" y="101" width="10.3" height="15.0" fill="rgb(217,104,30)" rx="2" ry="2" />
-<text  x="720.10" y="111.5" ></text>
+<title>keyIsExpired (17 samples, 0.04%)</title><rect x="734.3" y="101" width="0.5" height="15.0" fill="rgb(237,59,18)" rx="2" ry="2" />
+<text  x="737.32" y="111.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned_erms (80 samples, 0.22%)</title><rect x="1029.3" y="133" width="2.5" height="15.0" fill="rgb(254,58,10)" rx="2" ry="2" />
-<text  x="1032.30" y="143.5" ></text>
+<title>lpPrev (35 samples, 0.09%)</title><rect x="770.4" y="133" width="1.0" height="15.0" fill="rgb(210,183,22)" rx="2" ry="2" />
+<text  x="773.38" y="143.5" ></text>
 </g>
 <g >
-<title>xreadCommand (27 samples, 0.07%)</title><rect x="960.3" y="133" width="0.9" height="15.0" fill="rgb(206,20,49)" rx="2" ry="2" />
-<text  x="963.30" y="143.5" ></text>
+<title>dictSdsHash (407 samples, 1.00%)</title><rect x="709.3" y="85" width="11.8" height="15.0" fill="rgb(252,12,14)" rx="2" ry="2" />
+<text  x="712.26" y="95.5" ></text>
 </g>
 <g >
-<title>je_realloc (82 samples, 0.22%)</title><rect x="1187.2" y="293" width="2.6" height="15.0" fill="rgb(222,226,40)" rx="2" ry="2" />
-<text  x="1190.24" y="303.5" ></text>
+<title>removeClientFromTimeoutTable (23 samples, 0.06%)</title><rect x="1032.6" y="213" width="0.7" height="15.0" fill="rgb(222,58,48)" rx="2" ry="2" />
+<text  x="1035.62" y="223.5" ></text>
 </g>
 <g >
-<title>raxRemoveChild (675 samples, 1.82%)</title><rect x="1118.3" y="117" width="21.5" height="15.0" fill="rgb(244,227,50)" rx="2" ry="2" />
-<text  x="1121.34" y="127.5" >r..</text>
+<title>je_malloc (63 samples, 0.15%)</title><rect x="501.2" y="37" width="1.9" height="15.0" fill="rgb(207,180,12)" rx="2" ry="2" />
+<text  x="504.24" y="47.5" ></text>
 </g>
 <g >
-<title>zmalloc (171 samples, 0.46%)</title><rect x="561.0" y="37" width="5.4" height="15.0" fill="rgb(249,67,19)" rx="2" ry="2" />
-<text  x="564.01" y="47.5" ></text>
+<title>lpNext (58 samples, 0.14%)</title><rect x="768.7" y="133" width="1.7" height="15.0" fill="rgb(224,192,8)" rx="2" ry="2" />
+<text  x="771.70" y="143.5" ></text>
 </g>
 <g >
-<title>dictGenHashFunction (9 samples, 0.02%)</title><rect x="246.8" y="149" width="0.3" height="15.0" fill="rgb(232,93,14)" rx="2" ry="2" />
-<text  x="249.78" y="159.5" ></text>
+<title>__memcmp_avx2_movbe (207 samples, 0.51%)</title><rect x="759.6" y="133" width="6.0" height="15.0" fill="rgb(218,226,53)" rx="2" ry="2" />
+<text  x="762.56" y="143.5" ></text>
 </g>
 <g >
-<title>lookupKeyRead (8 samples, 0.02%)</title><rect x="385.8" y="117" width="0.2" height="15.0" fill="rgb(251,154,7)" rx="2" ry="2" />
-<text  x="388.79" y="127.5" ></text>
+<title>raxRemoveChild (740 samples, 1.82%)</title><rect x="1128.7" y="165" width="21.4" height="15.0" fill="rgb(231,3,11)" rx="2" ry="2" />
+<text  x="1131.68" y="175.5" >r..</text>
 </g>
 <g >
-<title>zmalloc (35 samples, 0.09%)</title><rect x="600.1" y="69" width="1.1" height="15.0" fill="rgb(214,198,23)" rx="2" ry="2" />
-<text  x="603.11" y="79.5" ></text>
+<title>encodeTimeoutKey (6 samples, 0.01%)</title><rect x="547.9" y="117" width="0.2" height="15.0" fill="rgb(244,172,44)" rx="2" ry="2" />
+<text  x="550.91" y="127.5" ></text>
 </g>
 <g >
-<title>dictEncObjKeyCompare (404 samples, 1.09%)</title><rect x="206.9" y="149" width="12.8" height="15.0" fill="rgb(214,84,29)" rx="2" ry="2" />
-<text  x="209.92" y="159.5" ></text>
+<title>raxAddChild (7 samples, 0.02%)</title><rect x="410.0" y="85" width="0.2" height="15.0" fill="rgb(222,176,5)" rx="2" ry="2" />
+<text  x="413.04" y="95.5" ></text>
 </g>
 <g >
-<title>raxSeek (21 samples, 0.06%)</title><rect x="389.0" y="117" width="0.7" height="15.0" fill="rgb(213,225,17)" rx="2" ry="2" />
-<text  x="392.03" y="127.5" ></text>
+<title>preventCommandPropagation (12 samples, 0.03%)</title><rect x="335.8" y="165" width="0.3" height="15.0" fill="rgb(206,90,39)" rx="2" ry="2" />
+<text  x="338.79" y="175.5" ></text>
 </g>
 <g >
-<title>dictFind (589 samples, 1.59%)</title><rect x="995.2" y="149" width="18.7" height="15.0" fill="rgb(206,11,43)" rx="2" ry="2" />
-<text  x="998.21" y="159.5" ></text>
+<title>siphash (340 samples, 0.84%)</title><rect x="711.2" y="69" width="9.9" height="15.0" fill="rgb(206,39,19)" rx="2" ry="2" />
+<text  x="714.21" y="79.5" ></text>
 </g>
 <g >
-<title>raxCompressNode (1,165 samples, 3.14%)</title><rect x="539.3" y="53" width="37.1" height="15.0" fill="rgb(228,22,22)" rx="2" ry="2" />
-<text  x="542.34" y="63.5" >rax..</text>
+<title>siphash (179 samples, 0.44%)</title><rect x="992.8" y="149" width="5.2" height="15.0" fill="rgb(223,0,50)" rx="2" ry="2" />
+<text  x="995.76" y="159.5" ></text>
 </g>
 <g >
-<title>dictGetVal (27 samples, 0.07%)</title><rect x="706.3" y="101" width="0.8" height="15.0" fill="rgb(208,139,28)" rx="2" ry="2" />
-<text  x="709.27" y="111.5" ></text>
+<title>raxSeekGreatest (364 samples, 0.89%)</title><rect x="894.8" y="101" width="10.5" height="15.0" fill="rgb(253,43,0)" rx="2" ry="2" />
+<text  x="897.75" y="111.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned_erms (32 samples, 0.09%)</title><rect x="445.7" y="69" width="1.0" height="15.0" fill="rgb(240,125,26)" rx="2" ry="2" />
-<text  x="448.67" y="79.5" ></text>
+<title>getLongLongFromObject (59 samples, 0.15%)</title><rect x="662.9" y="117" width="1.7" height="15.0" fill="rgb(223,196,4)" rx="2" ry="2" />
+<text  x="665.88" y="127.5" ></text>
 </g>
 <g >
-<title>dictVanillaFree (7 samples, 0.02%)</title><rect x="178.8" y="133" width="0.3" height="15.0" fill="rgb(238,115,2)" rx="2" ry="2" />
-<text  x="181.83" y="143.5" ></text>
+<title>dictEncObjHash (23 samples, 0.06%)</title><rect x="190.7" y="213" width="0.7" height="15.0" fill="rgb(250,59,4)" rx="2" ry="2" />
+<text  x="193.73" y="223.5" ></text>
 </g>
 <g >
-<title>string2ll.part.0 (33 samples, 0.09%)</title><rect x="943.2" y="101" width="1.1" height="15.0" fill="rgb(229,80,3)" rx="2" ry="2" />
-<text  x="946.21" y="111.5" ></text>
+<title>dictEncObjKeyCompare (286 samples, 0.70%)</title><rect x="596.9" y="101" width="8.3" height="15.0" fill="rgb(210,136,26)" rx="2" ry="2" />
+<text  x="599.90" y="111.5" ></text>
 </g>
 <g >
-<title>getLongLongFromObjectOrReply (172 samples, 0.46%)</title><rect x="711.6" y="101" width="5.5" height="15.0" fill="rgb(236,112,19)" rx="2" ry="2" />
-<text  x="714.64" y="111.5" ></text>
+<title>dictGetVal (5 samples, 0.01%)</title><rect x="219.0" y="213" width="0.1" height="15.0" fill="rgb(241,139,32)" rx="2" ry="2" />
+<text  x="221.98" y="223.5" ></text>
 </g>
 <g >
-<title>je_malloc (75 samples, 0.20%)</title><rect x="690.7" y="69" width="2.4" height="15.0" fill="rgb(232,9,47)" rx="2" ry="2" />
-<text  x="693.74" y="79.5" ></text>
+<title>__memcpy_avx_unaligned_erms (30 samples, 0.07%)</title><rect x="409.2" y="85" width="0.8" height="15.0" fill="rgb(230,46,23)" rx="2" ry="2" />
+<text  x="412.17" y="95.5" ></text>
 </g>
 <g >
-<title>updateClientMemUsageAndBucket (11 samples, 0.03%)</title><rect x="1174.5" y="165" width="0.3" height="15.0" fill="rgb(216,60,48)" rx="2" ry="2" />
-<text  x="1177.47" y="175.5" ></text>
+<title>memrev64 (39 samples, 0.10%)</title><rect x="407.0" y="85" width="1.2" height="15.0" fill="rgb(252,74,33)" rx="2" ry="2" />
+<text  x="410.03" y="95.5" ></text>
 </g>
 <g >
-<title>dictSdsHash (90 samples, 0.24%)</title><rect x="247.1" y="149" width="2.8" height="15.0" fill="rgb(207,180,42)" rx="2" ry="2" />
-<text  x="250.07" y="159.5" ></text>
+<title>dictFind (9 samples, 0.02%)</title><rect x="149.2" y="229" width="0.3" height="15.0" fill="rgb(223,13,28)" rx="2" ry="2" />
+<text  x="152.23" y="239.5" ></text>
 </g>
 <g >
-<title>redis-server (37,147 samples, 100.00%)</title><rect x="10.0" y="309" width="1180.0" height="15.0" fill="rgb(223,95,16)" rx="2" ry="2" />
-<text  x="13.00" y="319.5" >redis-server</text>
+<title>decrRefCount (27 samples, 0.07%)</title><rect x="1022.8" y="165" width="0.7" height="15.0" fill="rgb(221,125,10)" rx="2" ry="2" />
+<text  x="1025.75" y="175.5" ></text>
 </g>
 <g >
-<title>checkGoodReplicasStatus (20 samples, 0.05%)</title><rect x="283.6" y="149" width="0.6" height="15.0" fill="rgb(212,213,7)" rx="2" ry="2" />
-<text  x="286.60" y="159.5" ></text>
+<title>clientEvictionAllowed (7 samples, 0.02%)</title><rect x="243.0" y="197" width="0.2" height="15.0" fill="rgb(225,90,7)" rx="2" ry="2" />
+<text  x="246.03" y="207.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (91 samples, 0.24%)</title><rect x="632.9" y="53" width="2.9" height="15.0" fill="rgb(249,33,36)" rx="2" ry="2" />
-<text  x="635.93" y="63.5" ></text>
+<title>zrealloc (251 samples, 0.62%)</title><rect x="477.0" y="53" width="7.3" height="15.0" fill="rgb(245,220,21)" rx="2" ry="2" />
+<text  x="480.05" y="63.5" ></text>
 </g>
 <g >
-<title>xreadCommand (17,669 samples, 47.57%)</title><rect x="392.3" y="117" width="561.3" height="15.0" fill="rgb(239,195,24)" rx="2" ry="2" />
-<text  x="395.33" y="127.5" >xreadCommand</text>
+<title>zmalloc_used_memory (7 samples, 0.02%)</title><rect x="930.1" y="181" width="0.2" height="15.0" fill="rgb(247,136,8)" rx="2" ry="2" />
+<text  x="933.05" y="191.5" ></text>
 </g>
 <g >
-<title>blockForKeys (16 samples, 0.04%)</title><rect x="382.6" y="117" width="0.5" height="15.0" fill="rgb(213,125,1)" rx="2" ry="2" />
-<text  x="385.61" y="127.5" ></text>
+<title>ustime (24 samples, 0.06%)</title><rect x="927.5" y="181" width="0.7" height="15.0" fill="rgb(208,112,52)" rx="2" ry="2" />
+<text  x="930.53" y="191.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (40 samples, 0.11%)</title><rect x="245.3" y="133" width="1.3" height="15.0" fill="rgb(207,192,54)" rx="2" ry="2" />
-<text  x="248.29" y="143.5" ></text>
+<title>afterCommand (324 samples, 0.80%)</title><rect x="180.5" y="213" width="9.4" height="15.0" fill="rgb(226,209,8)" rx="2" ry="2" />
+<text  x="183.52" y="223.5" ></text>
 </g>
 <g >
-<title>dictIncrUnsignedIntegerVal (65 samples, 0.17%)</title><rect x="707.1" y="101" width="2.1" height="15.0" fill="rgb(205,103,50)" rx="2" ry="2" />
-<text  x="710.13" y="111.5" ></text>
+<title>dictEncObjKeyCompare (343 samples, 0.84%)</title><rect x="1017.2" y="181" width="10.0" height="15.0" fill="rgb(231,79,6)" rx="2" ry="2" />
+<text  x="1020.24" y="191.5" ></text>
 </g>
 <g >
-<title>raxRemove (6 samples, 0.02%)</title><rect x="1027.0" y="149" width="0.2" height="15.0" fill="rgb(218,74,23)" rx="2" ry="2" />
-<text  x="1030.04" y="159.5" ></text>
+<title>dictSdsKeyCompare (96 samples, 0.24%)</title><rect x="999.8" y="165" width="2.8" height="15.0" fill="rgb(243,123,48)" rx="2" ry="2" />
+<text  x="1002.78" y="175.5" ></text>
 </g>
 <g >
-<title>getLongLongFromObjectOrReply (6 samples, 0.02%)</title><rect x="383.8" y="117" width="0.1" height="15.0" fill="rgb(237,141,20)" rx="2" ry="2" />
-<text  x="386.76" y="127.5" ></text>
+<title>raxNewNode (6 samples, 0.01%)</title><rect x="546.7" y="85" width="0.2" height="15.0" fill="rgb(249,113,33)" rx="2" ry="2" />
+<text  x="549.72" y="95.5" ></text>
 </g>
 <g >
-<title>dictEncObjHash (99 samples, 0.27%)</title><rect x="145.3" y="149" width="3.2" height="15.0" fill="rgb(235,90,51)" rx="2" ry="2" />
-<text  x="148.32" y="159.5" ></text>
+<title>getDecodedObject (46 samples, 0.11%)</title><rect x="603.2" y="85" width="1.4" height="15.0" fill="rgb(248,227,10)" rx="2" ry="2" />
+<text  x="606.25" y="95.5" ></text>
 </g>
 <g >
-<title>zfree (93 samples, 0.25%)</title><rect x="1171.2" y="133" width="2.9" height="15.0" fill="rgb(205,28,50)" rx="2" ry="2" />
-<text  x="1174.19" y="143.5" ></text>
+<title>processCommandAndResetClient (15 samples, 0.04%)</title><rect x="176.6" y="229" width="0.5" height="15.0" fill="rgb(214,9,20)" rx="2" ry="2" />
+<text  x="179.64" y="239.5" ></text>
 </g>
 <g >
-<title>zfree (156 samples, 0.42%)</title><rect x="576.4" y="53" width="4.9" height="15.0" fill="rgb(205,62,53)" rx="2" ry="2" />
-<text  x="579.35" y="63.5" ></text>
+<title>listAddNodeTail (9 samples, 0.02%)</title><rect x="679.6" y="149" width="0.3" height="15.0" fill="rgb(253,201,39)" rx="2" ry="2" />
+<text  x="682.65" y="159.5" ></text>
 </g>
 <g >
-<title>raxPrev (21 samples, 0.06%)</title><rect x="941.9" y="85" width="0.7" height="15.0" fill="rgb(228,226,47)" rx="2" ry="2" />
-<text  x="944.94" y="95.5" ></text>
+<title>dictFreeUnlinkedEntry (90 samples, 0.22%)</title><rect x="940.1" y="181" width="2.6" height="15.0" fill="rgb(206,46,41)" rx="2" ry="2" />
+<text  x="943.12" y="191.5" ></text>
 </g>
 <g >
-<title>dictFind (266 samples, 0.72%)</title><rect x="973.2" y="133" width="8.5" height="15.0" fill="rgb(240,57,52)" rx="2" ry="2" />
-<text  x="976.23" y="143.5" ></text>
+<title>__memcpy_avx_unaligned (6 samples, 0.01%)</title><rect x="903.1" y="85" width="0.2" height="15.0" fill="rgb(216,80,14)" rx="2" ry="2" />
+<text  x="906.14" y="95.5" ></text>
 </g>
 <g >
-<title>dictGenHashFunction (31 samples, 0.08%)</title><rect x="647.7" y="69" width="1.0" height="15.0" fill="rgb(247,92,49)" rx="2" ry="2" />
-<text  x="650.73" y="79.5" ></text>
+<title>dictGenHashFunction (17 samples, 0.04%)</title><rect x="708.8" y="85" width="0.5" height="15.0" fill="rgb(205,147,20)" rx="2" ry="2" />
+<text  x="711.77" y="95.5" ></text>
 </g>
 <g >
-<title>addClientToTimeoutTable (4,933 samples, 13.28%)</title><rect x="444.5" y="85" width="156.7" height="15.0" fill="rgb(225,119,38)" rx="2" ry="2" />
-<text  x="447.52" y="95.5" >addClientToTimeoutTa..</text>
+<title>getExpire (75 samples, 0.18%)</title><rect x="732.1" y="69" width="2.2" height="15.0" fill="rgb(211,99,46)" rx="2" ry="2" />
+<text  x="735.15" y="79.5" ></text>
 </g>
 <g >
-<title>do_rallocx (52 samples, 0.14%)</title><rect x="513.7" y="37" width="1.7" height="15.0" fill="rgb(218,107,13)" rx="2" ry="2" />
-<text  x="516.71" y="47.5" ></text>
+<title>streamEncodeID (7 samples, 0.02%)</title><rect x="774.1" y="133" width="0.2" height="15.0" fill="rgb(222,220,43)" rx="2" ry="2" />
+<text  x="777.06" y="143.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned_erms (70 samples, 0.19%)</title><rect x="855.8" y="69" width="2.2" height="15.0" fill="rgb(225,211,32)" rx="2" ry="2" />
-<text  x="858.82" y="79.5" ></text>
+<title>lookupKey (869 samples, 2.14%)</title><rect x="151.4" y="213" width="25.2" height="15.0" fill="rgb(241,119,35)" rx="2" ry="2" />
+<text  x="154.43" y="223.5" >l..</text>
 </g>
 <g >
-<title>addClientToTimeoutTable (18 samples, 0.05%)</title><rect x="437.6" y="101" width="0.5" height="15.0" fill="rgb(212,52,50)" rx="2" ry="2" />
-<text  x="440.57" y="111.5" ></text>
+<title>zmalloc (144 samples, 0.35%)</title><rect x="1170.7" y="165" width="4.2" height="15.0" fill="rgb(234,100,28)" rx="2" ry="2" />
+<text  x="1173.71" y="175.5" ></text>
 </g>
 <g >
-<title>[Missed User Stack] (3,795 samples, 10.22%)</title><rect x="10.0" y="293" width="120.6" height="15.0" fill="rgb(220,197,37)" rx="2" ry="2" />
-<text  x="13.00" y="303.5" >[Missed User St..</text>
+<title>dictEncObjHash (8 samples, 0.02%)</title><rect x="987.0" y="197" width="0.3" height="15.0" fill="rgb(239,0,49)" rx="2" ry="2" />
+<text  x="990.05" y="207.5" ></text>
 </g>
 <g >
-<title>zmalloc (168 samples, 0.45%)</title><rect x="1165.4" y="117" width="5.3" height="15.0" fill="rgb(210,9,16)" rx="2" ry="2" />
-<text  x="1168.38" y="127.5" ></text>
+<title>ACLCheckAllPerm (537 samples, 1.32%)</title><rect x="263.2" y="181" width="15.6" height="15.0" fill="rgb(225,136,19)" rx="2" ry="2" />
+<text  x="266.25" y="191.5" ></text>
 </g>
 <g >
-<title>dictGenericDelete (1,223 samples, 3.29%)</title><rect x="149.2" y="149" width="38.8" height="15.0" fill="rgb(207,125,53)" rx="2" ry="2" />
-<text  x="152.20" y="159.5" >dic..</text>
+<title>dictEncObjKeyCompare (9 samples, 0.02%)</title><rect x="191.4" y="213" width="0.3" height="15.0" fill="rgb(206,118,36)" rx="2" ry="2" />
+<text  x="194.40" y="223.5" ></text>
 </g>
 <g >
-<title>do_rallocx (39 samples, 0.10%)</title><rect x="1178.4" y="293" width="1.2" height="15.0" fill="rgb(230,46,50)" rx="2" ry="2" />
-<text  x="1181.41" y="303.5" ></text>
+<title>dictFind (755 samples, 1.86%)</title><rect x="699.5" y="101" width="21.9" height="15.0" fill="rgb(240,122,28)" rx="2" ry="2" />
+<text  x="702.46" y="111.5" >d..</text>
 </g>
 <g >
-<title>je_free (55 samples, 0.15%)</title><rect x="188.0" y="149" width="1.8" height="15.0" fill="rgb(253,61,43)" rx="2" ry="2" />
-<text  x="191.05" y="159.5" ></text>
+<title>raxNewNode (502 samples, 1.23%)</title><rect x="496.5" y="53" width="14.6" height="15.0" fill="rgb(220,191,29)" rx="2" ry="2" />
+<text  x="499.54" y="63.5" ></text>
 </g>
 <g >
-<title>exitExecutionUnit (15 samples, 0.04%)</title><rect x="135.6" y="181" width="0.5" height="15.0" fill="rgb(213,219,8)" rx="2" ry="2" />
-<text  x="138.60" y="191.5" ></text>
+<title>call (22,101 samples, 54.33%)</title><rect x="279.7" y="181" width="641.0" height="15.0" fill="rgb(236,133,54)" rx="2" ry="2" />
+<text  x="282.66" y="191.5" >call</text>
 </g>
 <g >
-<title>commandTimeSnapshot (8 samples, 0.02%)</title><rect x="703.5" y="101" width="0.3" height="15.0" fill="rgb(211,182,48)" rx="2" ry="2" />
-<text  x="706.51" y="111.5" ></text>
+<title>getCommandFlags (13 samples, 0.03%)</title><rect x="244.2" y="197" width="0.4" height="15.0" fill="rgb(224,131,10)" rx="2" ry="2" />
+<text  x="247.22" y="207.5" ></text>
 </g>
 <g >
-<title>dictFind (507 samples, 1.36%)</title><rect x="756.4" y="85" width="16.1" height="15.0" fill="rgb(246,33,27)" rx="2" ry="2" />
-<text  x="759.40" y="95.5" ></text>
+<title>streamIteratorStop (24 samples, 0.06%)</title><rect x="905.8" y="133" width="0.7" height="15.0" fill="rgb(213,105,24)" rx="2" ry="2" />
+<text  x="908.83" y="143.5" ></text>
 </g>
 <g >
-<title>zmalloc (10 samples, 0.03%)</title><rect x="1174.1" y="133" width="0.4" height="15.0" fill="rgb(240,6,24)" rx="2" ry="2" />
-<text  x="1177.15" y="143.5" ></text>
+<title>zmalloc (137 samples, 0.34%)</title><rect x="916.2" y="149" width="4.0" height="15.0" fill="rgb(225,73,53)" rx="2" ry="2" />
+<text  x="919.22" y="159.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (178 samples, 0.48%)</title><rect x="1124.0" y="101" width="5.7" height="15.0" fill="rgb(218,130,19)" rx="2" ry="2" />
-<text  x="1127.02" y="111.5" ></text>
+<title>raxGetData (69 samples, 0.17%)</title><rect x="890.2" y="117" width="2.0" height="15.0" fill="rgb(246,70,43)" rx="2" ry="2" />
+<text  x="893.23" y="127.5" ></text>
 </g>
 <g >
-<title>siphash (145 samples, 0.39%)</title><rect x="1014.3" y="149" width="4.6" height="15.0" fill="rgb(215,139,12)" rx="2" ry="2" />
-<text  x="1017.27" y="159.5" ></text>
+<title>dictGenHashFunction (4 samples, 0.01%)</title><rect x="991.0" y="165" width="0.1" height="15.0" fill="rgb(228,58,18)" rx="2" ry="2" />
+<text  x="993.99" y="175.5" ></text>
 </g>
 <g >
-<title>dictFind (376 samples, 1.01%)</title><rect x="234.8" y="149" width="12.0" height="15.0" fill="rgb(243,103,52)" rx="2" ry="2" />
-<text  x="237.84" y="159.5" ></text>
+<title>do_rallocx (21 samples, 0.05%)</title><rect x="460.9" y="53" width="0.6" height="15.0" fill="rgb(252,27,46)" rx="2" ry="2" />
+<text  x="463.86" y="63.5" ></text>
 </g>
 <g >
-<title>je_free (45 samples, 0.12%)</title><rect x="384.4" y="117" width="1.4" height="15.0" fill="rgb(223,98,8)" rx="2" ry="2" />
-<text  x="387.36" y="127.5" ></text>
+<title>listAddNodeTail (388 samples, 0.95%)</title><rect x="636.9" y="133" width="11.2" height="15.0" fill="rgb(210,161,6)" rx="2" ry="2" />
+<text  x="639.87" y="143.5" ></text>
 </g>
 <g >
-<title>dictGetVal (17 samples, 0.05%)</title><rect x="222.0" y="165" width="0.6" height="15.0" fill="rgb(218,211,45)" rx="2" ry="2" />
-<text  x="225.04" y="175.5" ></text>
+<title>je_malloc (37 samples, 0.09%)</title><rect x="1090.2" y="165" width="1.1" height="15.0" fill="rgb(221,153,53)" rx="2" ry="2" />
+<text  x="1093.22" y="175.5" ></text>
 </g>
 <g >
-<title>removeClientFromTimeoutTable (28 samples, 0.08%)</title><rect x="1018.9" y="165" width="0.9" height="15.0" fill="rgb(250,40,45)" rx="2" ry="2" />
-<text  x="1021.88" y="175.5" ></text>
+<title>dictSdsKeyCompare (6 samples, 0.01%)</title><rect x="999.6" y="149" width="0.2" height="15.0" fill="rgb(214,196,15)" rx="2" ry="2" />
+<text  x="1002.61" y="159.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (273 samples, 0.73%)</title><rect x="551.4" y="37" width="8.7" height="15.0" fill="rgb(241,12,30)" rx="2" ry="2" />
-<text  x="554.41" y="47.5" ></text>
+<title>blockForKeys (6 samples, 0.01%)</title><rect x="334.0" y="165" width="0.2" height="15.0" fill="rgb(225,197,5)" rx="2" ry="2" />
+<text  x="337.05" y="175.5" ></text>
 </g>
 <g >
-<title>siphash (188 samples, 0.51%)</title><rect x="189.8" y="149" width="6.0" height="15.0" fill="rgb(237,15,21)" rx="2" ry="2" />
-<text  x="192.79" y="159.5" ></text>
+<title>removeClientFromMemUsageBucket (59 samples, 0.15%)</title><rect x="930.3" y="197" width="1.7" height="15.0" fill="rgb(250,207,10)" rx="2" ry="2" />
+<text  x="933.26" y="207.5" ></text>
 </g>
 <g >
-<title>enterExecutionUnit (118 samples, 0.32%)</title><rect x="222.9" y="165" width="3.7" height="15.0" fill="rgb(231,25,21)" rx="2" ry="2" />
-<text  x="225.86" y="175.5" ></text>
+<title>do_rallocx (21 samples, 0.05%)</title><rect x="1131.9" y="149" width="0.6" height="15.0" fill="rgb(217,118,6)" rx="2" ry="2" />
+<text  x="1134.90" y="159.5" ></text>
 </g>
 <g >
-<title>getDecodedObject (12 samples, 0.03%)</title><rect x="219.7" y="149" width="0.4" height="15.0" fill="rgb(252,170,36)" rx="2" ry="2" />
-<text  x="222.75" y="159.5" ></text>
+<title>dictObjHash (14 samples, 0.03%)</title><rect x="635.4" y="117" width="0.5" height="15.0" fill="rgb(220,59,22)" rx="2" ry="2" />
+<text  x="638.44" y="127.5" ></text>
 </g>
 <g >
-<title>zmalloc (178 samples, 0.48%)</title><rect x="681.6" y="69" width="5.6" height="15.0" fill="rgb(209,15,44)" rx="2" ry="2" />
-<text  x="684.56" y="79.5" ></text>
+<title>dictGenHashFunction (17 samples, 0.04%)</title><rect x="710.7" y="69" width="0.5" height="15.0" fill="rgb(237,91,50)" rx="2" ry="2" />
+<text  x="713.71" y="79.5" ></text>
 </g>
 <g >
-<title>siphash (166 samples, 0.45%)</title><rect x="1019.8" y="165" width="5.2" height="15.0" fill="rgb(214,138,27)" rx="2" ry="2" />
-<text  x="1022.77" y="175.5" ></text>
+<title>streamLastValidID (5,120 samples, 12.59%)</title><rect x="758.0" y="149" width="148.5" height="15.0" fill="rgb(239,59,36)" rx="2" ry="2" />
+<text  x="761.02" y="159.5" >streamLastValidID</text>
 </g>
 <g >
-<title>zmalloc (15 samples, 0.04%)</title><rect x="703.0" y="85" width="0.5" height="15.0" fill="rgb(208,138,20)" rx="2" ry="2" />
-<text  x="706.03" y="95.5" ></text>
+<title>je_malloc_usable_size (99 samples, 0.24%)</title><rect x="493.2" y="53" width="2.9" height="15.0" fill="rgb(244,55,41)" rx="2" ry="2" />
+<text  x="496.23" y="63.5" ></text>
 </g>
 <g >
-<title>je_realloc (22 samples, 0.06%)</title><rect x="1129.7" y="101" width="0.7" height="15.0" fill="rgb(249,184,38)" rx="2" ry="2" />
-<text  x="1132.68" y="111.5" ></text>
+<title>dictObjHash (236 samples, 0.58%)</title><rect x="991.1" y="165" width="6.9" height="15.0" fill="rgb(240,101,15)" rx="2" ry="2" />
+<text  x="994.11" y="175.5" ></text>
 </g>
 <g >
-<title>do_rallocx (21 samples, 0.06%)</title><rect x="547.7" y="37" width="0.7" height="15.0" fill="rgb(233,7,4)" rx="2" ry="2" />
-<text  x="550.73" y="47.5" ></text>
+<title>__memcpy_avx_unaligned_erms (26 samples, 0.06%)</title><rect x="903.3" y="85" width="0.8" height="15.0" fill="rgb(252,107,22)" rx="2" ry="2" />
+<text  x="906.31" y="95.5" ></text>
 </g>
 <g >
-<title>__strcasecmp_l_avx2 (1,426 samples, 3.84%)</title><rect x="337.3" y="117" width="45.3" height="15.0" fill="rgb(245,229,2)" rx="2" ry="2" />
-<text  x="340.31" y="127.5" >__st..</text>
+<title>decrRefCount (42 samples, 0.10%)</title><rect x="197.4" y="197" width="1.2" height="15.0" fill="rgb(251,102,39)" rx="2" ry="2" />
+<text  x="200.38" y="207.5" ></text>
 </g>
 <g >
-<title>dictObjHash (32 samples, 0.09%)</title><rect x="648.7" y="69" width="1.0" height="15.0" fill="rgb(233,205,39)" rx="2" ry="2" />
-<text  x="651.71" y="79.5" ></text>
+<title>enterExecutionUnit (20 samples, 0.05%)</title><rect x="184.0" y="181" width="0.6" height="15.0" fill="rgb(213,77,49)" rx="2" ry="2" />
+<text  x="186.97" y="191.5" ></text>
 </g>
 <g >
-<title>zrealloc (12 samples, 0.03%)</title><rect x="1170.7" y="117" width="0.4" height="15.0" fill="rgb(252,92,12)" rx="2" ry="2" />
-<text  x="1173.72" y="127.5" ></text>
+<title>dictGenericDelete (1,499 samples, 3.68%)</title><rect x="942.7" y="181" width="43.5" height="15.0" fill="rgb(247,170,26)" rx="2" ry="2" />
+<text  x="945.73" y="191.5" >dict..</text>
 </g>
 <g >
-<title>raxAddChild (1,104 samples, 2.97%)</title><rect x="504.3" y="53" width="35.0" height="15.0" fill="rgb(214,34,35)" rx="2" ry="2" />
-<text  x="507.27" y="63.5" >ra..</text>
+<title>dictEncObjHash (204 samples, 0.50%)</title><rect x="198.6" y="197" width="5.9" height="15.0" fill="rgb(232,60,20)" rx="2" ry="2" />
+<text  x="201.59" y="207.5" ></text>
 </g>
 <g >
-<title>zrealloc (299 samples, 0.80%)</title><rect x="529.8" y="37" width="9.5" height="15.0" fill="rgb(248,131,20)" rx="2" ry="2" />
-<text  x="532.85" y="47.5" ></text>
+<title>dictObjHash (166 samples, 0.41%)</title><rect x="605.8" y="101" width="4.8" height="15.0" fill="rgb(237,187,25)" rx="2" ry="2" />
+<text  x="608.80" y="111.5" ></text>
 </g>
 <g >
-<title>raxIteratorAddChars.constprop.0 (10 samples, 0.03%)</title><rect x="835.7" y="85" width="0.4" height="15.0" fill="rgb(215,46,51)" rx="2" ry="2" />
-<text  x="838.75" y="95.5" ></text>
+<title>listLinkNodeTail (14 samples, 0.03%)</title><rect x="648.1" y="133" width="0.4" height="15.0" fill="rgb(211,208,31)" rx="2" ry="2" />
+<text  x="651.12" y="143.5" ></text>
 </g>
 <g >
-<title>dictFindPositionForInsert (1,212 samples, 3.26%)</title><rect x="609.2" y="69" width="38.5" height="15.0" fill="rgb(217,62,43)" rx="2" ry="2" />
-<text  x="612.23" y="79.5" >dic..</text>
+<title>raxTryInsert (4,804 samples, 11.81%)</title><rect x="408.6" y="101" width="139.3" height="15.0" fill="rgb(227,92,12)" rx="2" ry="2" />
+<text  x="411.56" y="111.5" >raxTryInsert</text>
 </g>
 <g >
-<title>unblockClient (4,704 samples, 12.66%)</title><rect x="1025.0" y="165" width="149.5" height="15.0" fill="rgb(220,206,11)" rx="2" ry="2" />
-<text  x="1028.04" y="175.5" >unblockClient</text>
+<title>streamIteratorStop (11 samples, 0.03%)</title><rect x="757.7" y="149" width="0.3" height="15.0" fill="rgb(209,0,53)" rx="2" ry="2" />
+<text  x="760.70" y="159.5" ></text>
 </g>
 <g >
-<title>raxFind (78 samples, 0.21%)</title><rect x="386.6" y="117" width="2.4" height="15.0" fill="rgb(240,210,16)" rx="2" ry="2" />
-<text  x="389.55" y="127.5" ></text>
+<title>raxStart (70 samples, 0.17%)</title><rect x="771.7" y="133" width="2.0" height="15.0" fill="rgb(234,82,16)" rx="2" ry="2" />
+<text  x="774.68" y="143.5" ></text>
 </g>
 <g >
-<title>zfree (132 samples, 0.36%)</title><rect x="944.3" y="101" width="4.2" height="15.0" fill="rgb(241,53,18)" rx="2" ry="2" />
-<text  x="947.26" y="111.5" ></text>
+<title>raxFind (771 samples, 1.90%)</title><rect x="735.3" y="149" width="22.3" height="15.0" fill="rgb(223,92,4)" rx="2" ry="2" />
+<text  x="738.25" y="159.5" >r..</text>
 </g>
 <g >
-<title>dictGenericDelete (42 samples, 0.11%)</title><rect x="220.1" y="165" width="1.4" height="15.0" fill="rgb(253,66,29)" rx="2" ry="2" />
-<text  x="223.13" y="175.5" ></text>
+<title>getLongLongFromObject (137 samples, 0.34%)</title><rect x="653.9" y="133" width="3.9" height="15.0" fill="rgb(222,51,3)" rx="2" ry="2" />
+<text  x="656.86" y="143.5" ></text>
 </g>
 <g >
-<title>getDecodedObject (62 samples, 0.17%)</title><rect x="217.8" y="133" width="1.9" height="15.0" fill="rgb(235,57,49)" rx="2" ry="2" />
-<text  x="220.78" y="143.5" ></text>
+<title>updateClientMemUsageAndBucket (59 samples, 0.15%)</title><rect x="932.9" y="197" width="1.7" height="15.0" fill="rgb(213,133,26)" rx="2" ry="2" />
+<text  x="935.90" y="207.5" ></text>
 </g>
 <g >
-<title>getDecodedObject (46 samples, 0.12%)</title><rect x="1011.9" y="117" width="1.4" height="15.0" fill="rgb(254,56,15)" rx="2" ry="2" />
-<text  x="1014.86" y="127.5" ></text>
+<title>dictEncObjHash (16 samples, 0.04%)</title><rect x="939.7" y="181" width="0.4" height="15.0" fill="rgb(214,200,39)" rx="2" ry="2" />
+<text  x="942.65" y="191.5" ></text>
 </g>
 <g >
-<title>call (20,116 samples, 54.15%)</title><rect x="315.1" y="133" width="639.0" height="15.0" fill="rgb(210,54,45)" rx="2" ry="2" />
-<text  x="318.14" y="143.5" >call</text>
+<title>lpLast (8 samples, 0.02%)</title><rect x="768.5" y="133" width="0.2" height="15.0" fill="rgb(245,59,25)" rx="2" ry="2" />
+<text  x="771.46" y="143.5" ></text>
 </g>
 <g >
-<title>raxTryInsert (8 samples, 0.02%)</title><rect x="702.8" y="85" width="0.2" height="15.0" fill="rgb(221,45,15)" rx="2" ry="2" />
-<text  x="705.78" y="95.5" ></text>
+<title>streamLookupCG (111 samples, 0.27%)</title><rect x="906.5" y="149" width="3.2" height="15.0" fill="rgb(221,2,18)" rx="2" ry="2" />
+<text  x="909.53" y="159.5" ></text>
 </g>
 <g >
-<title>expireIfNeeded (42 samples, 0.11%)</title><rect x="255.1" y="149" width="1.3" height="15.0" fill="rgb(252,107,50)" rx="2" ry="2" />
-<text  x="258.07" y="159.5" ></text>
+<title>memrev64 (67 samples, 0.16%)</title><rect x="877.0" y="101" width="2.0" height="15.0" fill="rgb(209,14,42)" rx="2" ry="2" />
+<text  x="880.03" y="111.5" ></text>
 </g>
 <g >
-<title>je_malloc (88 samples, 0.24%)</title><rect x="1100.5" y="117" width="2.8" height="15.0" fill="rgb(206,29,7)" rx="2" ry="2" />
-<text  x="1103.55" y="127.5" ></text>
+<title>raxSeek (5 samples, 0.01%)</title><rect x="771.5" y="133" width="0.2" height="15.0" fill="rgb(242,88,19)" rx="2" ry="2" />
+<text  x="774.54" y="143.5" ></text>
 </g>
 <g >
-<title>decrRefCount (48 samples, 0.13%)</title><rect x="161.6" y="117" width="1.5" height="15.0" fill="rgb(234,214,40)" rx="2" ry="2" />
-<text  x="164.59" y="127.5" ></text>
+<title>incrRefCount (21 samples, 0.05%)</title><rect x="604.6" y="85" width="0.6" height="15.0" fill="rgb(229,36,15)" rx="2" ry="2" />
+<text  x="607.58" y="95.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (225 samples, 0.61%)</title><rect x="517.2" y="37" width="7.2" height="15.0" fill="rgb(252,171,22)" rx="2" ry="2" />
-<text  x="520.23" y="47.5" ></text>
+<title>dictGetVal (6 samples, 0.01%)</title><rect x="985.3" y="165" width="0.1" height="15.0" fill="rgb(233,87,32)" rx="2" ry="2" />
+<text  x="988.25" y="175.5" ></text>
 </g>
 <g >
-<title>getDecodedObject (23 samples, 0.06%)</title><rect x="647.0" y="53" width="0.7" height="15.0" fill="rgb(222,161,35)" rx="2" ry="2" />
-<text  x="650.00" y="63.5" ></text>
+<title>getDecodedObject (43 samples, 0.11%)</title><rect x="210.7" y="181" width="1.3" height="15.0" fill="rgb(236,40,7)" rx="2" ry="2" />
+<text  x="213.75" y="191.5" ></text>
 </g>
 <g >
-<title>raxCompressNode (5 samples, 0.01%)</title><rect x="456.4" y="69" width="0.2" height="15.0" fill="rgb(232,62,45)" rx="2" ry="2" />
-<text  x="459.43" y="79.5" ></text>
+<title>writeCommandsDeniedByDiskError (21 samples, 0.05%)</title><rect x="934.6" y="197" width="0.6" height="15.0" fill="rgb(208,129,43)" rx="2" ry="2" />
+<text  x="937.61" y="207.5" ></text>
 </g>
 <g >
-<title>dictObjKeyCompare (143 samples, 0.38%)</title><rect x="649.7" y="69" width="4.6" height="15.0" fill="rgb(230,93,16)" rx="2" ry="2" />
-<text  x="652.73" y="79.5" ></text>
+<title>blockClient (5 samples, 0.01%)</title><rect x="395.9" y="149" width="0.2" height="15.0" fill="rgb(215,116,51)" rx="2" ry="2" />
+<text  x="398.92" y="159.5" ></text>
 </g>
 <g >
-<title>expireIfNeeded (46 samples, 0.12%)</title><rect x="783.3" y="85" width="1.5" height="15.0" fill="rgb(250,219,44)" rx="2" ry="2" />
-<text  x="786.34" y="95.5" ></text>
+<title>__memcmp_avx2_movbe (78 samples, 0.19%)</title><rect x="599.9" y="85" width="2.2" height="15.0" fill="rgb(207,73,49)" rx="2" ry="2" />
+<text  x="602.88" y="95.5" ></text>
 </g>
 <g >
-<title>lpGet (240 samples, 0.65%)</title><rect x="904.3" y="85" width="7.7" height="15.0" fill="rgb(240,105,8)" rx="2" ry="2" />
-<text  x="907.33" y="95.5" ></text>
+<title>isInsideYieldingLongCommand (11 samples, 0.03%)</title><rect x="244.6" y="197" width="0.3" height="15.0" fill="rgb(220,119,20)" rx="2" ry="2" />
+<text  x="247.60" y="207.5" ></text>
 </g>
 <g >
-<title>do_rallocx (24 samples, 0.06%)</title><rect x="1123.3" y="101" width="0.7" height="15.0" fill="rgb(211,147,1)" rx="2" ry="2" />
-<text  x="1126.26" y="111.5" ></text>
+<title>evictClients (17 samples, 0.04%)</title><rect x="243.7" y="197" width="0.5" height="15.0" fill="rgb(247,86,17)" rx="2" ry="2" />
+<text  x="246.73" y="207.5" ></text>
 </g>
 <g >
-<title>intrev64 (724 samples, 1.95%)</title><rect x="881.3" y="85" width="23.0" height="15.0" fill="rgb(236,222,29)" rx="2" ry="2" />
-<text  x="884.33" y="95.5" >i..</text>
+<title>dictSdsKeyCompare (110 samples, 0.27%)</title><rect x="212.9" y="197" width="3.2" height="15.0" fill="rgb(227,52,46)" rx="2" ry="2" />
+<text  x="215.86" y="207.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (472 samples, 1.27%)</title><rect x="1103.3" y="117" width="15.0" height="15.0" fill="rgb(230,68,35)" rx="2" ry="2" />
-<text  x="1106.34" y="127.5" ></text>
+<title>dictGenHashFunction (9 samples, 0.02%)</title><rect x="1011.9" y="165" width="0.3" height="15.0" fill="rgb(205,176,31)" rx="2" ry="2" />
+<text  x="1014.94" y="175.5" ></text>
 </g>
 <g >
-<title>siphash (142 samples, 0.38%)</title><rect x="256.4" y="149" width="4.5" height="15.0" fill="rgb(245,210,2)" rx="2" ry="2" />
-<text  x="259.41" y="159.5" ></text>
+<title>dictGetKey (23 samples, 0.06%)</title><rect x="618.7" y="117" width="0.7" height="15.0" fill="rgb(231,102,34)" rx="2" ry="2" />
+<text  x="621.71" y="127.5" ></text>
 </g>
 <g >
-<title>enterExecutionUnit (17 samples, 0.05%)</title><rect x="141.0" y="149" width="0.6" height="15.0" fill="rgb(254,153,29)" rx="2" ry="2" />
-<text  x="144.03" y="159.5" ></text>
+<title>string2ll (46 samples, 0.11%)</title><rect x="657.8" y="133" width="1.4" height="15.0" fill="rgb(209,223,2)" rx="2" ry="2" />
+<text  x="660.84" y="143.5" ></text>
 </g>
 <g >
-<title>getLongLongFromObjectOrReply (83 samples, 0.22%)</title><rect x="720.3" y="85" width="2.6" height="15.0" fill="rgb(219,150,52)" rx="2" ry="2" />
-<text  x="723.28" y="95.5" ></text>
+<title>commandProcessed (17 samples, 0.04%)</title><rect x="189.9" y="213" width="0.5" height="15.0" fill="rgb(250,23,11)" rx="2" ry="2" />
+<text  x="192.92" y="223.5" ></text>
 </g>
 <g >
-<title>call (7 samples, 0.02%)</title><rect x="283.4" y="149" width="0.2" height="15.0" fill="rgb(233,54,14)" rx="2" ry="2" />
-<text  x="286.38" y="159.5" ></text>
+<title>zfree (143 samples, 0.35%)</title><rect x="973.9" y="133" width="4.1" height="15.0" fill="rgb(226,64,24)" rx="2" ry="2" />
+<text  x="976.85" y="143.5" ></text>
 </g>
 <g >
-<title>je_arena_ralloc_no_move (239 samples, 0.64%)</title><rect x="1179.6" y="293" width="7.6" height="15.0" fill="rgb(218,23,26)" rx="2" ry="2" />
-<text  x="1182.64" y="303.5" ></text>
+<title>trackingHandlePendingKeyInvalidations (94 samples, 0.23%)</title><rect x="338.6" y="165" width="2.8" height="15.0" fill="rgb(214,72,7)" rx="2" ry="2" />
+<text  x="341.63" y="175.5" ></text>
 </g>
 <g >
-<title>scriptIsTimedout (51 samples, 0.14%)</title><rect x="961.8" y="149" width="1.6" height="15.0" fill="rgb(252,167,51)" rx="2" ry="2" />
-<text  x="964.83" y="159.5" ></text>
+<title>raxIteratorAddChars (42 samples, 0.10%)</title><rect x="904.1" y="85" width="1.2" height="15.0" fill="rgb(227,197,40)" rx="2" ry="2" />
+<text  x="907.09" y="95.5" ></text>
 </g>
 <g >
-<title>je_malloc (95 samples, 0.26%)</title><rect x="548.4" y="37" width="3.0" height="15.0" fill="rgb(251,145,27)" rx="2" ry="2" />
-<text  x="551.40" y="47.5" ></text>
+<title>call (8 samples, 0.02%)</title><rect x="242.1" y="197" width="0.2" height="15.0" fill="rgb(233,224,52)" rx="2" ry="2" />
+<text  x="245.10" y="207.5" ></text>
 </g>
 <g >
-<title>je_free (55 samples, 0.15%)</title><rect x="179.1" y="133" width="1.7" height="15.0" fill="rgb(226,63,27)" rx="2" ry="2" />
-<text  x="182.06" y="143.5" ></text>
+<title>decrRefCount (52 samples, 0.13%)</title><rect x="1009.0" y="181" width="1.5" height="15.0" fill="rgb(234,95,3)" rx="2" ry="2" />
+<text  x="1011.98" y="191.5" ></text>
 </g>
 <g >
-<title>modulePostExecutionUnitOperations (25 samples, 0.07%)</title><rect x="260.9" y="165" width="0.8" height="15.0" fill="rgb(209,80,40)" rx="2" ry="2" />
-<text  x="263.92" y="175.5" ></text>
+<title>__strcasecmp_l_avx2 (383 samples, 0.94%)</title><rect x="229.7" y="197" width="11.1" height="15.0" fill="rgb(248,98,7)" rx="2" ry="2" />
+<text  x="232.69" y="207.5" ></text>
 </g>
 <g >
-<title>lpPrev (87 samples, 0.23%)</title><rect x="804.8" y="101" width="2.8" height="15.0" fill="rgb(252,108,32)" rx="2" ry="2" />
-<text  x="807.81" y="111.5" ></text>
+<title>__memcmp_avx2_movbe (48 samples, 0.12%)</title><rect x="162.1" y="181" width="1.4" height="15.0" fill="rgb(207,35,22)" rx="2" ry="2" />
+<text  x="165.10" y="191.5" ></text>
 </g>
 <g >
-<title>processCommand (32,987 samples, 88.80%)</title><rect x="130.6" y="197" width="1047.8" height="15.0" fill="rgb(224,34,23)" rx="2" ry="2" />
-<text  x="133.55" y="207.5" >processCommand</text>
+<title>__strcasecmp_avx2 (70 samples, 0.17%)</title><rect x="293.2" y="165" width="2.1" height="15.0" fill="rgb(208,0,16)" rx="2" ry="2" />
+<text  x="296.24" y="175.5" ></text>
 </g>
 <g >
-<title>listRewind (26 samples, 0.07%)</title><rect x="956.6" y="133" width="0.8" height="15.0" fill="rgb(220,174,48)" rx="2" ry="2" />
-<text  x="959.55" y="143.5" ></text>
+<title>je_free (58 samples, 0.14%)</title><rect x="668.8" y="149" width="1.7" height="15.0" fill="rgb(234,178,28)" rx="2" ry="2" />
+<text  x="671.83" y="159.5" ></text>
 </g>
 <g >
-<title>raxRemove (3,951 samples, 10.64%)</title><rect x="1045.6" y="133" width="125.5" height="15.0" fill="rgb(243,22,13)" rx="2" ry="2" />
-<text  x="1048.59" y="143.5" >raxRemove</text>
+<title>raxFindParentLink (45 samples, 0.11%)</title><rect x="1046.1" y="181" width="1.3" height="15.0" fill="rgb(248,101,54)" rx="2" ry="2" />
+<text  x="1049.10" y="191.5" ></text>
 </g>
 <g >
-<title>__strcasecmp_avx2 (35 samples, 0.09%)</title><rect x="265.1" y="149" width="1.1" height="15.0" fill="rgb(235,177,37)" rx="2" ry="2" />
-<text  x="268.11" y="159.5" ></text>
+<title>zmalloc (9 samples, 0.02%)</title><rect x="511.1" y="53" width="0.3" height="15.0" fill="rgb(227,146,53)" rx="2" ry="2" />
+<text  x="514.10" y="63.5" ></text>
 </g>
 <g >
-<title>siphash (542 samples, 1.46%)</title><rect x="664.3" y="69" width="17.3" height="15.0" fill="rgb(232,50,35)" rx="2" ry="2" />
-<text  x="667.34" y="79.5" ></text>
+<title>decrRefCount (28 samples, 0.07%)</title><rect x="961.3" y="133" width="0.9" height="15.0" fill="rgb(215,73,40)" rx="2" ry="2" />
+<text  x="964.35" y="143.5" ></text>
 </g>
 <g >
-<title>ACLCheckAllUserCommandPerm.part.0.isra.0 (4 samples, 0.01%)</title><rect x="265.0" y="149" width="0.1" height="15.0" fill="rgb(233,26,27)" rx="2" ry="2" />
-<text  x="267.98" y="159.5" ></text>
+<title>do_rallocx (31 samples, 0.08%)</title><rect x="492.3" y="53" width="0.9" height="15.0" fill="rgb(229,182,14)" rx="2" ry="2" />
+<text  x="495.33" y="63.5" ></text>
 </g>
 <g >
-<title>dictFind (36 samples, 0.10%)</title><rect x="705.1" y="101" width="1.2" height="15.0" fill="rgb(251,87,11)" rx="2" ry="2" />
-<text  x="708.13" y="111.5" ></text>
+<title>dictEncObjHash (386 samples, 0.95%)</title><rect x="585.7" y="101" width="11.2" height="15.0" fill="rgb(226,124,46)" rx="2" ry="2" />
+<text  x="588.70" y="111.5" ></text>
 </g>
 <g >
-<title>dictFind (7 samples, 0.02%)</title><rect x="135.1" y="181" width="0.2" height="15.0" fill="rgb(207,171,33)" rx="2" ry="2" />
-<text  x="138.09" y="191.5" ></text>
+<title>aeMain (35,718 samples, 87.80%)</title><rect x="146.7" y="389" width="1036.0" height="15.0" fill="rgb(230,55,22)" rx="2" ry="2" />
+<text  x="149.67" y="399.5" >aeMain</text>
 </g>
 <g >
-<title>decrRefCount (57 samples, 0.15%)</title><rect x="1010.0" y="117" width="1.9" height="15.0" fill="rgb(226,157,10)" rx="2" ry="2" />
-<text  x="1013.05" y="127.5" ></text>
+<title>aeProcessEvents (35,718 samples, 87.80%)</title><rect x="146.7" y="373" width="1036.0" height="15.0" fill="rgb(208,21,11)" rx="2" ry="2" />
+<text  x="149.67" y="383.5" >aeProcessEvents</text>
 </g>
 <g >
-<title>listUnlinkNode (28 samples, 0.08%)</title><rect x="228.8" y="165" width="0.9" height="15.0" fill="rgb(212,153,17)" rx="2" ry="2" />
-<text  x="231.77" y="175.5" ></text>
+<title>je_free (69 samples, 0.17%)</title><rect x="962.3" y="133" width="2.0" height="15.0" fill="rgb(254,21,31)" rx="2" ry="2" />
+<text  x="965.31" y="143.5" ></text>
 </g>
 <g >
-<title>processCommandAndResetClient (22,181 samples, 59.71%)</title><rect x="261.8" y="165" width="704.6" height="15.0" fill="rgb(236,222,13)" rx="2" ry="2" />
-<text  x="264.77" y="175.5" >processCommandAndResetClient</text>
+<title>je_malloc (53 samples, 0.13%)</title><rect x="469.3" y="37" width="1.6" height="15.0" fill="rgb(219,229,7)" rx="2" ry="2" />
+<text  x="472.33" y="47.5" ></text>
 </g>
 <g >
-<title>zfree (12 samples, 0.03%)</title><rect x="195.8" y="149" width="0.3" height="15.0" fill="rgb(213,208,31)" rx="2" ry="2" />
-<text  x="198.77" y="159.5" ></text>
+<title>zfree (151 samples, 0.37%)</title><rect x="980.5" y="149" width="4.3" height="15.0" fill="rgb(218,215,24)" rx="2" ry="2" />
+<text  x="983.46" y="159.5" ></text>
 </g>
 <g >
-<title>removeClientFromTimeoutTable (4,635 samples, 12.48%)</title><rect x="1027.2" y="149" width="147.3" height="15.0" fill="rgb(210,212,9)" rx="2" ry="2" />
-<text  x="1030.23" y="159.5" >removeClientFromTi..</text>
+<title>je_malloc_usable_size (218 samples, 0.54%)</title><rect x="673.3" y="149" width="6.3" height="15.0" fill="rgb(221,136,38)" rx="2" ry="2" />
+<text  x="676.33" y="159.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (66 samples, 0.18%)</title><rect x="180.8" y="133" width="2.1" height="15.0" fill="rgb(217,147,30)" rx="2" ry="2" />
-<text  x="183.80" y="143.5" ></text>
+<title>monotonicGetType (31 samples, 0.08%)</title><rect x="925.4" y="181" width="0.9" height="15.0" fill="rgb(226,125,11)" rx="2" ry="2" />
+<text  x="928.38" y="191.5" ></text>
 </g>
 <g >
-<title>string2ll.part.0 (138 samples, 0.37%)</title><rect x="723.0" y="85" width="4.4" height="15.0" fill="rgb(216,185,15)" rx="2" ry="2" />
-<text  x="726.01" y="95.5" ></text>
+<title>getExpire (28 samples, 0.07%)</title><rect x="175.6" y="165" width="0.8" height="15.0" fill="rgb(225,158,6)" rx="2" ry="2" />
+<text  x="178.59" y="175.5" ></text>
 </g>
 <g >
-<title>raxAddChild (14 samples, 0.04%)</title><rect x="456.0" y="69" width="0.4" height="15.0" fill="rgb(227,218,33)" rx="2" ry="2" />
-<text  x="458.99" y="79.5" ></text>
+<title>scriptIsTimedout (13 samples, 0.03%)</title><rect x="925.0" y="165" width="0.4" height="15.0" fill="rgb(205,169,34)" rx="2" ry="2" />
+<text  x="928.01" y="175.5" ></text>
 </g>
 <g >
-<title>dictSdsKeyCompare (267 samples, 0.72%)</title><rect x="774.9" y="85" width="8.4" height="15.0" fill="rgb(222,15,46)" rx="2" ry="2" />
-<text  x="777.85" y="95.5" ></text>
+<title>trackingHandlePendingKeyInvalidations (35 samples, 0.09%)</title><rect x="1033.3" y="213" width="1.0" height="15.0" fill="rgb(207,90,6)" rx="2" ry="2" />
+<text  x="1036.28" y="223.5" ></text>
 </g>
 <g >
-<title>scriptIsRunning (21 samples, 0.06%)</title><rect x="961.2" y="149" width="0.6" height="15.0" fill="rgb(215,225,2)" rx="2" ry="2" />
-<text  x="964.16" y="159.5" ></text>
+<title>__libc_start_call_main (35,718 samples, 87.80%)</title><rect x="146.7" y="421" width="1036.0" height="15.0" fill="rgb(232,43,39)" rx="2" ry="2" />
+<text  x="149.67" y="431.5" >__libc_start_call_main</text>
 </g>
 <g >
-<title>aeMain (32,987 samples, 88.80%)</title><rect x="130.6" y="261" width="1047.8" height="15.0" fill="rgb(215,175,19)" rx="2" ry="2" />
-<text  x="133.55" y="271.5" >aeMain</text>
+<title>lookupKey (8 samples, 0.02%)</title><rect x="150.2" y="229" width="0.2" height="15.0" fill="rgb(245,83,38)" rx="2" ry="2" />
+<text  x="153.15" y="239.5" ></text>
 </g>
 <g >
-<title>exitExecutionUnit (10 samples, 0.03%)</title><rect x="226.6" y="165" width="0.3" height="15.0" fill="rgb(243,138,28)" rx="2" ry="2" />
-<text  x="229.61" y="175.5" ></text>
+<title>zfree (6 samples, 0.01%)</title><rect x="986.0" y="165" width="0.2" height="15.0" fill="rgb(250,53,30)" rx="2" ry="2" />
+<text  x="989.03" y="175.5" ></text>
 </g>
 <g >
-<title>je_malloc (166 samples, 0.45%)</title><rect x="654.3" y="69" width="5.2" height="15.0" fill="rgb(218,135,11)" rx="2" ry="2" />
-<text  x="657.27" y="79.5" ></text>
+<title>raxRemoveChild (5 samples, 0.01%)</title><rect x="1175.5" y="181" width="0.1" height="15.0" fill="rgb(238,213,48)" rx="2" ry="2" />
+<text  x="1178.47" y="191.5" ></text>
 </g>
 <g >
-<title>lpLast (92 samples, 0.25%)</title><rect x="800.3" y="101" width="2.9" height="15.0" fill="rgb(250,10,36)" rx="2" ry="2" />
-<text  x="803.30" y="111.5" ></text>
+<title>ACLCheckAllPerm (6 samples, 0.01%)</title><rect x="229.0" y="197" width="0.1" height="15.0" fill="rgb(241,157,37)" rx="2" ry="2" />
+<text  x="231.96" y="207.5" ></text>
 </g>
 <g >
-<title>dictGetKey (18 samples, 0.05%)</title><rect x="221.5" y="165" width="0.5" height="15.0" fill="rgb(207,111,17)" rx="2" ry="2" />
-<text  x="224.46" y="175.5" ></text>
+<title>dictFind (11 samples, 0.03%)</title><rect x="150.4" y="213" width="0.3" height="15.0" fill="rgb(227,52,48)" rx="2" ry="2" />
+<text  x="153.39" y="223.5" ></text>
 </g>
 <g >
-<title>dictFind (696 samples, 1.87%)</title><rect x="198.0" y="165" width="22.1" height="15.0" fill="rgb(214,103,48)" rx="2" ry="2" />
-<text  x="201.02" y="175.5" >d..</text>
+<title>je_malloc_usable_size (118 samples, 0.29%)</title><rect x="526.6" y="53" width="3.4" height="15.0" fill="rgb(244,144,17)" rx="2" ry="2" />
+<text  x="529.56" y="63.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned_erms (44 samples, 0.12%)</title><rect x="1099.1" y="117" width="1.4" height="15.0" fill="rgb(210,163,9)" rx="2" ry="2" />
-<text  x="1102.12" y="127.5" ></text>
+<title>getCommandFlags (37 samples, 0.09%)</title><rect x="921.7" y="181" width="1.0" height="15.0" fill="rgb(215,34,14)" rx="2" ry="2" />
+<text  x="924.67" y="191.5" ></text>
 </g>
 <g >
-<title>monotonicGetType (32 samples, 0.09%)</title><rect x="957.4" y="133" width="1.0" height="15.0" fill="rgb(222,66,1)" rx="2" ry="2" />
-<text  x="960.38" y="143.5" ></text>
+<title>afterCommand (14 samples, 0.03%)</title><rect x="148.8" y="229" width="0.4" height="15.0" fill="rgb(218,219,29)" rx="2" ry="2" />
+<text  x="151.79" y="239.5" ></text>
 </g>
 <g >
-<title>dictFindPositionForInsert (34 samples, 0.09%)</title><rect x="687.2" y="85" width="1.1" height="15.0" fill="rgb(253,218,11)" rx="2" ry="2" />
-<text  x="690.21" y="95.5" ></text>
+<title>lookupKeyReadWithFlags (15 samples, 0.04%)</title><rect x="734.8" y="149" width="0.5" height="15.0" fill="rgb(216,76,9)" rx="2" ry="2" />
+<text  x="737.82" y="159.5" ></text>
 </g>
 <g >
-<title>processCommand (21,263 samples, 57.24%)</title><rect x="285.7" y="149" width="675.5" height="15.0" fill="rgb(245,212,29)" rx="2" ry="2" />
-<text  x="288.73" y="159.5" >processCommand</text>
+<title>dictSdsKeyCompare (7 samples, 0.02%)</title><rect x="611.6" y="85" width="0.2" height="15.0" fill="rgb(208,129,20)" rx="2" ry="2" />
+<text  x="614.63" y="95.5" ></text>
 </g>
 <g >
-<title>propagatePendingCommands (13 samples, 0.03%)</title><rect x="966.4" y="165" width="0.4" height="15.0" fill="rgb(225,104,5)" rx="2" ry="2" />
-<text  x="969.37" y="175.5" ></text>
+<title>dictInsertAtPosition (554 samples, 1.36%)</title><rect x="619.4" y="117" width="16.0" height="15.0" fill="rgb(251,96,20)" rx="2" ry="2" />
+<text  x="622.38" y="127.5" ></text>
 </g>
 <g >
-<title>handleClientsBlockedOnKeys (32,700 samples, 88.03%)</title><rect x="136.1" y="181" width="1038.7" height="15.0" fill="rgb(218,151,17)" rx="2" ry="2" />
-<text  x="139.08" y="191.5" >handleClientsBlockedOnKeys</text>
+<title>__memcpy_avx_unaligned (13 samples, 0.03%)</title><rect x="408.8" y="85" width="0.4" height="15.0" fill="rgb(242,66,44)" rx="2" ry="2" />
+<text  x="411.80" y="95.5" ></text>
 </g>
 <g >
-<title>raxSeekGreatest (849 samples, 2.29%)</title><rect x="836.1" y="85" width="26.9" height="15.0" fill="rgb(217,130,37)" rx="2" ry="2" />
-<text  x="839.07" y="95.5" >r..</text>
+<title>postExecutionUnitOperations (180 samples, 0.44%)</title><rect x="183.5" y="197" width="5.2" height="15.0" fill="rgb(245,75,13)" rx="2" ry="2" />
+<text  x="186.51" y="207.5" ></text>
 </g>
 <g >
-<title>lpPrev (467 samples, 1.26%)</title><rect x="927.1" y="85" width="14.8" height="15.0" fill="rgb(226,160,54)" rx="2" ry="2" />
-<text  x="930.11" y="95.5" ></text>
+<title>__memcpy_avx_unaligned (17 samples, 0.04%)</title><rect x="442.0" y="69" width="0.5" height="15.0" fill="rgb(221,225,15)" rx="2" ry="2" />
+<text  x="445.04" y="79.5" ></text>
 </g>
 <g >
-<title>raxPrev (12 samples, 0.03%)</title><rect x="826.5" y="101" width="0.4" height="15.0" fill="rgb(215,155,15)" rx="2" ry="2" />
-<text  x="829.51" y="111.5" ></text>
+<title>je_free (254 samples, 0.62%)</title><rect x="1082.9" y="165" width="7.3" height="15.0" fill="rgb(236,51,31)" rx="2" ry="2" />
+<text  x="1085.85" y="175.5" ></text>
 </g>
 <g >
-<title>zfree (17 samples, 0.05%)</title><rect x="953.6" y="117" width="0.5" height="15.0" fill="rgb(220,103,41)" rx="2" ry="2" />
-<text  x="956.60" y="127.5" ></text>
+<title>dictVanillaFree (546 samples, 1.34%)</title><rect x="962.2" y="149" width="15.8" height="15.0" fill="rgb(252,55,7)" rx="2" ry="2" />
+<text  x="965.16" y="159.5" ></text>
 </g>
 <g >
-<title>__strcasecmp_l_avx2 (476 samples, 1.28%)</title><rect x="266.2" y="149" width="15.1" height="15.0" fill="rgb(221,155,41)" rx="2" ry="2" />
-<text  x="269.22" y="159.5" ></text>
+<title>dictGenHashFunction (21 samples, 0.05%)</title><rect x="605.2" y="101" width="0.6" height="15.0" fill="rgb(215,80,13)" rx="2" ry="2" />
+<text  x="608.19" y="111.5" ></text>
 </g>
 <g >
-<title>raxFind (596 samples, 1.60%)</title><rect x="807.6" y="101" width="18.9" height="15.0" fill="rgb(217,222,19)" rx="2" ry="2" />
-<text  x="810.57" y="111.5" ></text>
+<title>zfree (117 samples, 0.29%)</title><rect x="912.8" y="149" width="3.4" height="15.0" fill="rgb(251,153,28)" rx="2" ry="2" />
+<text  x="915.82" y="159.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (48 samples, 0.13%)</title><rect x="1001.3" y="133" width="1.5" height="15.0" fill="rgb(218,207,33)" rx="2" ry="2" />
-<text  x="1004.31" y="143.5" ></text>
+<title>keyIsExpired (8 samples, 0.02%)</title><rect x="176.4" y="197" width="0.2" height="15.0" fill="rgb(235,7,16)" rx="2" ry="2" />
+<text  x="179.40" y="207.5" ></text>
 </g>
 <g >
-<title>isPausedActions (29 samples, 0.08%)</title><rect x="284.8" y="149" width="0.9" height="15.0" fill="rgb(249,159,17)" rx="2" ry="2" />
-<text  x="287.80" y="159.5" ></text>
+<title>main (35,718 samples, 87.80%)</title><rect x="146.7" y="405" width="1036.0" height="15.0" fill="rgb(231,216,25)" rx="2" ry="2" />
+<text  x="149.67" y="415.5" >main</text>
 </g>
 <g >
-<title>dictFreeUnlinkedEntry (13 samples, 0.03%)</title><rect x="148.5" y="149" width="0.4" height="15.0" fill="rgb(251,8,35)" rx="2" ry="2" />
-<text  x="151.47" y="159.5" ></text>
+<title>enterExecutionUnit (11 samples, 0.03%)</title><rect x="149.5" y="229" width="0.3" height="15.0" fill="rgb(220,80,12)" rx="2" ry="2" />
+<text  x="152.49" y="239.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (151 samples, 0.41%)</title><rect x="659.5" y="69" width="4.8" height="15.0" fill="rgb(231,116,23)" rx="2" ry="2" />
-<text  x="662.54" y="79.5" ></text>
+<title>je_malloc_usable_size (113 samples, 0.28%)</title><rect x="628.0" y="101" width="3.3" height="15.0" fill="rgb(223,70,50)" rx="2" ry="2" />
+<text  x="631.02" y="111.5" ></text>
 </g>
 <g >
-<title>readQueryFromClient (32,987 samples, 88.80%)</title><rect x="130.6" y="229" width="1047.8" height="15.0" fill="rgb(245,16,46)" rx="2" ry="2" />
-<text  x="133.55" y="239.5" >readQueryFromClient</text>
+<title>je_malloc (77 samples, 0.19%)</title><rect x="445.3" y="69" width="2.3" height="15.0" fill="rgb(231,107,7)" rx="2" ry="2" />
+<text  x="448.34" y="79.5" ></text>
 </g>
 <g >
-<title>zfree (16 samples, 0.04%)</title><rect x="599.6" y="69" width="0.5" height="15.0" fill="rgb(235,128,5)" rx="2" ry="2" />
-<text  x="602.60" y="79.5" ></text>
+<title>enterExecutionUnit (168 samples, 0.41%)</title><rect x="219.5" y="213" width="4.9" height="15.0" fill="rgb(231,202,29)" rx="2" ry="2" />
+<text  x="222.51" y="223.5" ></text>
 </g>
 <g >
-<title>releaseBlockedEntry (5 samples, 0.01%)</title><rect x="1177.3" y="181" width="0.1" height="15.0" fill="rgb(215,216,41)" rx="2" ry="2" />
-<text  x="1180.26" y="191.5" ></text>
+<title>releaseBlockedEntry (5 samples, 0.01%)</title><rect x="177.1" y="229" width="0.1" height="15.0" fill="rgb(205,90,34)" rx="2" ry="2" />
+<text  x="180.07" y="239.5" ></text>
 </g>
 <g >
-<title>ACLCheckAllPerm (25 samples, 0.07%)</title><rect x="264.2" y="149" width="0.8" height="15.0" fill="rgb(223,172,36)" rx="2" ry="2" />
-<text  x="267.19" y="159.5" ></text>
+<title>incrCommandStatsOnError (60 samples, 0.15%)</title><rect x="922.7" y="181" width="1.8" height="15.0" fill="rgb(219,99,3)" rx="2" ry="2" />
+<text  x="925.74" y="191.5" ></text>
 </g>
 <g >
-<title>incrRefCount (11 samples, 0.03%)</title><rect x="728.5" y="101" width="0.4" height="15.0" fill="rgb(210,164,8)" rx="2" ry="2" />
-<text  x="731.54" y="111.5" ></text>
+<title>scriptIsTimedout (18 samples, 0.04%)</title><rect x="927.0" y="181" width="0.5" height="15.0" fill="rgb(215,185,35)" rx="2" ry="2" />
+<text  x="930.01" y="191.5" ></text>
 </g>
 <g >
-<title>LRU_CLOCK (16 samples, 0.04%)</title><rect x="428.6" y="101" width="0.5" height="15.0" fill="rgb(230,41,13)" rx="2" ry="2" />
-<text  x="431.58" y="111.5" ></text>
+<title>raxGetData (62 samples, 0.15%)</title><rect x="911.0" y="133" width="1.8" height="15.0" fill="rgb(244,27,24)" rx="2" ry="2" />
+<text  x="914.03" y="143.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (105 samples, 0.28%)</title><rect x="768.9" y="69" width="3.3" height="15.0" fill="rgb(241,161,45)" rx="2" ry="2" />
-<text  x="771.88" y="79.5" ></text>
+<title>dictSdsKeyCompare (172 samples, 0.42%)</title><rect x="611.8" y="101" width="5.0" height="15.0" fill="rgb(240,100,40)" rx="2" ry="2" />
+<text  x="614.83" y="111.5" ></text>
 </g>
 <g >
-<title>raxStop (22 samples, 0.06%)</title><rect x="865.0" y="101" width="0.7" height="15.0" fill="rgb(252,200,40)" rx="2" ry="2" />
-<text  x="868.01" y="111.5" ></text>
+<title>dictObjHash (10 samples, 0.02%)</title><rect x="1003.1" y="181" width="0.3" height="15.0" fill="rgb(226,69,35)" rx="2" ry="2" />
+<text  x="1006.09" y="191.5" ></text>
 </g>
 <g >
-<title>lpNext (50 samples, 0.13%)</title><rect x="803.2" y="101" width="1.6" height="15.0" fill="rgb(213,114,13)" rx="2" ry="2" />
-<text  x="806.22" y="111.5" ></text>
+<title>dictObjectDestructor (11 samples, 0.03%)</title><rect x="985.4" y="165" width="0.3" height="15.0" fill="rgb(234,229,21)" rx="2" ry="2" />
+<text  x="988.42" y="175.5" ></text>
 </g>
 <g >
-<title>streamIteratorGetID (13 samples, 0.03%)</title><rect x="391.9" y="117" width="0.4" height="15.0" fill="rgb(232,154,34)" rx="2" ry="2" />
-<text  x="394.92" y="127.5" ></text>
+<title>dictGetVal (22 samples, 0.05%)</title><rect x="649.0" y="149" width="0.7" height="15.0" fill="rgb(210,60,26)" rx="2" ry="2" />
+<text  x="652.05" y="159.5" ></text>
 </g>
 <g >
-<title>dictEncObjHash (52 samples, 0.14%)</title><rect x="971.0" y="149" width="1.6" height="15.0" fill="rgb(240,212,36)" rx="2" ry="2" />
-<text  x="973.98" y="159.5" ></text>
+<title>raxIteratorAddChars (4 samples, 0.01%)</title><rect x="894.6" y="101" width="0.2" height="15.0" fill="rgb(220,185,47)" rx="2" ry="2" />
+<text  x="897.64" y="111.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned_erms (77 samples, 0.21%)</title><rect x="483.8" y="53" width="2.5" height="15.0" fill="rgb(221,184,1)" rx="2" ry="2" />
-<text  x="486.85" y="63.5" ></text>
+<title>__memcmp_avx2_movbe (63 samples, 0.15%)</title><rect x="1020.9" y="165" width="1.9" height="15.0" fill="rgb(212,160,16)" rx="2" ry="2" />
+<text  x="1023.93" y="175.5" ></text>
 </g>
 <g >
-<title>decrRefCount (88 samples, 0.24%)</title><rect x="215.0" y="133" width="2.8" height="15.0" fill="rgb(221,34,11)" rx="2" ry="2" />
-<text  x="217.98" y="143.5" ></text>
+<title>all (40,682 samples, 100%)</title><rect x="10.0" y="453" width="1180.0" height="15.0" fill="rgb(229,122,13)" rx="2" ry="2" />
+<text  x="13.00" y="463.5" ></text>
 </g>
 <g >
-<title>raxIteratorAddChars (99 samples, 0.27%)</title><rect x="858.1" y="69" width="3.1" height="15.0" fill="rgb(232,40,36)" rx="2" ry="2" />
-<text  x="861.08" y="79.5" ></text>
+<title>je_malloc_usable_size (134 samples, 0.33%)</title><rect x="503.1" y="37" width="3.9" height="15.0" fill="rgb(252,138,50)" rx="2" ry="2" />
+<text  x="506.06" y="47.5" ></text>
 </g>
 <g >
-<title>lookupKeyRead (1,469 samples, 3.95%)</title><rect x="750.0" y="101" width="46.6" height="15.0" fill="rgb(240,76,39)" rx="2" ry="2" />
-<text  x="752.98" y="111.5" >look..</text>
+<title>raxFind (6 samples, 0.01%)</title><rect x="910.9" y="133" width="0.1" height="15.0" fill="rgb(237,4,23)" rx="2" ry="2" />
+<text  x="913.85" y="143.5" ></text>
 </g>
 <g >
-<title>__strcasecmp_avx2 (82 samples, 0.22%)</title><rect x="334.7" y="117" width="2.6" height="15.0" fill="rgb(221,190,4)" rx="2" ry="2" />
-<text  x="337.71" y="127.5" ></text>
+<title>dictFetchValue (568 samples, 1.40%)</title><rect x="987.3" y="197" width="16.5" height="15.0" fill="rgb(223,73,19)" rx="2" ry="2" />
+<text  x="990.28" y="207.5" ></text>
 </g>
 <g >
-<title>je_free (255 samples, 0.69%)</title><rect x="1037.5" y="133" width="8.1" height="15.0" fill="rgb(240,3,38)" rx="2" ry="2" />
-<text  x="1040.49" y="143.5" ></text>
+<title>zmalloc (6 samples, 0.01%)</title><rect x="1177.6" y="181" width="0.2" height="15.0" fill="rgb(233,159,0)" rx="2" ry="2" />
+<text  x="1180.61" y="191.5" ></text>
 </g>
 <g >
-<title>checkType (11 samples, 0.03%)</title><rect x="383.1" y="117" width="0.4" height="15.0" fill="rgb(214,4,48)" rx="2" ry="2" />
-<text  x="386.12" y="127.5" ></text>
+<title>dictGetKey (11 samples, 0.03%)</title><rect x="984.9" y="165" width="0.4" height="15.0" fill="rgb(250,17,48)" rx="2" ry="2" />
+<text  x="987.93" y="175.5" ></text>
 </g>
 <g >
-<title>dictGenHashFunction (10 samples, 0.03%)</title><rect x="772.5" y="85" width="0.3" height="15.0" fill="rgb(254,125,2)" rx="2" ry="2" />
-<text  x="775.50" y="95.5" ></text>
+<title>_dictExpandIfNeeded (711 samples, 1.75%)</title><rect x="563.8" y="101" width="20.7" height="15.0" fill="rgb(243,13,24)" rx="2" ry="2" />
+<text  x="566.83" y="111.5" ></text>
 </g>
 <g >
-<title>dictObjHash (58 samples, 0.16%)</title><rect x="982.1" y="133" width="1.9" height="15.0" fill="rgb(253,142,48)" rx="2" ry="2" />
-<text  x="985.13" y="143.5" ></text>
+<title>dictGenHashFunction (4 samples, 0.01%)</title><rect x="1027.2" y="181" width="0.1" height="15.0" fill="rgb(225,172,40)" rx="2" ry="2" />
+<text  x="1030.19" y="191.5" ></text>
 </g>
 <g >
-<title>firePostExecutionUnitJobs (21 samples, 0.06%)</title><rect x="227.5" y="165" width="0.6" height="15.0" fill="rgb(219,106,52)" rx="2" ry="2" />
-<text  x="230.47" y="175.5" ></text>
+<title>unblockClientOnKey (10 samples, 0.02%)</title><rect x="1182.4" y="245" width="0.3" height="15.0" fill="rgb(244,173,18)" rx="2" ry="2" />
+<text  x="1185.40" y="255.5" ></text>
 </g>
 <g >
-<title>decrRefCount (50 samples, 0.13%)</title><rect x="643.8" y="37" width="1.6" height="15.0" fill="rgb(254,226,16)" rx="2" ry="2" />
-<text  x="646.79" y="47.5" ></text>
+<title>ustime (21 samples, 0.05%)</title><rect x="223.8" y="197" width="0.6" height="15.0" fill="rgb(222,141,30)" rx="2" ry="2" />
+<text  x="226.77" y="207.5" ></text>
 </g>
 <g >
-<title>dictGenHashFunction (10 samples, 0.03%)</title><rect x="148.9" y="149" width="0.3" height="15.0" fill="rgb(219,159,9)" rx="2" ry="2" />
-<text  x="151.88" y="159.5" ></text>
+<title>dictGetVal (8 samples, 0.02%)</title><rect x="1032.4" y="197" width="0.2" height="15.0" fill="rgb(208,212,14)" rx="2" ry="2" />
+<text  x="1035.38" y="207.5" ></text>
 </g>
 <g >
-<title>zrealloc (312 samples, 0.84%)</title><rect x="566.4" y="37" width="10.0" height="15.0" fill="rgb(233,24,19)" rx="2" ry="2" />
-<text  x="569.44" y="47.5" ></text>
+<title>checkGoodReplicasStatus (24 samples, 0.06%)</title><rect x="242.3" y="197" width="0.7" height="15.0" fill="rgb(241,94,20)" rx="2" ry="2" />
+<text  x="245.33" y="207.5" ></text>
 </g>
 <g >
-<title>dictSdsKeyCompare (162 samples, 0.44%)</title><rect x="249.9" y="149" width="5.2" height="15.0" fill="rgb(248,174,5)" rx="2" ry="2" />
-<text  x="252.93" y="159.5" ></text>
+<title>je_malloc_usable_size (85 samples, 0.21%)</title><rect x="461.5" y="53" width="2.4" height="15.0" fill="rgb(231,20,9)" rx="2" ry="2" />
+<text  x="464.47" y="63.5" ></text>
 </g>
 <g >
-<title>dictEncObjHash (55 samples, 0.15%)</title><rect x="196.1" y="165" width="1.8" height="15.0" fill="rgb(236,65,16)" rx="2" ry="2" />
-<text  x="199.15" y="175.5" ></text>
+<title>dictSdsKeyCompare (11 samples, 0.03%)</title><rect x="210.4" y="181" width="0.3" height="15.0" fill="rgb(214,219,32)" rx="2" ry="2" />
+<text  x="213.43" y="191.5" ></text>
 </g>
 <g >
-<title>dictSetVal (20 samples, 0.05%)</title><rect x="709.2" y="101" width="0.6" height="15.0" fill="rgb(239,122,24)" rx="2" ry="2" />
-<text  x="712.19" y="111.5" ></text>
+<title>dictAddRaw (3,033 samples, 7.46%)</title><rect x="548.3" y="133" width="88.0" height="15.0" fill="rgb(211,184,0)" rx="2" ry="2" />
+<text  x="551.28" y="143.5" >dictAddRaw</text>
 </g>
 <g >
-<title>zfree (167 samples, 0.45%)</title><rect x="173.3" y="117" width="5.3" height="15.0" fill="rgb(247,87,22)" rx="2" ry="2" />
-<text  x="176.28" y="127.5" ></text>
+<title>exitExecutionUnit (12 samples, 0.03%)</title><rect x="149.8" y="229" width="0.4" height="15.0" fill="rgb(224,181,26)" rx="2" ry="2" />
+<text  x="152.81" y="239.5" ></text>
 </g>
 <g >
-<title>listAddNodeTail (11 samples, 0.03%)</title><rect x="749.6" y="101" width="0.4" height="15.0" fill="rgb(253,98,3)" rx="2" ry="2" />
-<text  x="752.63" y="111.5" ></text>
+<title>dictGetKey (15 samples, 0.04%)</title><rect x="1031.9" y="197" width="0.5" height="15.0" fill="rgb(205,95,19)" rx="2" ry="2" />
+<text  x="1034.95" y="207.5" ></text>
 </g>
 <g >
-<title>dictAddRaw (43 samples, 0.12%)</title><rect x="703.8" y="101" width="1.3" height="15.0" fill="rgb(235,144,10)" rx="2" ry="2" />
-<text  x="706.76" y="111.5" ></text>
+<title>processCommand (23,556 samples, 57.90%)</title><rect x="247.0" y="197" width="683.3" height="15.0" fill="rgb(225,4,31)" rx="2" ry="2" />
+<text  x="250.00" y="207.5" >processCommand</text>
 </g>
 <g >
-<title>decrRefCount (7 samples, 0.02%)</title><rect x="206.7" y="149" width="0.2" height="15.0" fill="rgb(236,11,45)" rx="2" ry="2" />
-<text  x="209.69" y="159.5" ></text>
+<title>initACLKeyResultCache (20 samples, 0.05%)</title><rect x="271.8" y="165" width="0.6" height="15.0" fill="rgb(212,174,40)" rx="2" ry="2" />
+<text  x="274.80" y="175.5" ></text>
 </g>
 <g >
-<title>authRequired (64 samples, 0.17%)</title><rect x="281.3" y="149" width="2.1" height="15.0" fill="rgb(225,104,23)" rx="2" ry="2" />
-<text  x="284.34" y="159.5" ></text>
+<title>zmalloc (143 samples, 0.35%)</title><rect x="507.0" y="37" width="4.1" height="15.0" fill="rgb(210,181,0)" rx="2" ry="2" />
+<text  x="509.95" y="47.5" ></text>
 </g>
 <g >
-<title>je_realloc (12 samples, 0.03%)</title><rect x="524.4" y="37" width="0.4" height="15.0" fill="rgb(244,224,43)" rx="2" ry="2" />
-<text  x="527.38" y="47.5" ></text>
+<title>unblockClientOnKey (34,534 samples, 84.89%)</title><rect x="177.4" y="229" width="1001.6" height="15.0" fill="rgb(235,109,40)" rx="2" ry="2" />
+<text  x="180.36" y="239.5" >unblockClientOnKey</text>
 </g>
 <g >
-<title>ACLCheckAllUserCommandPerm.part.0.isra.0 (201 samples, 0.54%)</title><rect x="308.7" y="133" width="6.4" height="15.0" fill="rgb(216,124,31)" rx="2" ry="2" />
-<text  x="311.72" y="143.5" ></text>
+<title>cleanupACLKeyResultCache (4 samples, 0.01%)</title><rect x="271.7" y="165" width="0.1" height="15.0" fill="rgb(243,100,28)" rx="2" ry="2" />
+<text  x="274.69" y="175.5" ></text>
 </g>
 <g >
-<title>all (37,147 samples, 100%)</title><rect x="10.0" y="325" width="1180.0" height="15.0" fill="rgb(227,101,3)" rx="2" ry="2" />
-<text  x="13.00" y="335.5" ></text>
+<title>zmalloc (151 samples, 0.37%)</title><rect x="643.7" y="117" width="4.4" height="15.0" fill="rgb(247,140,22)" rx="2" ry="2" />
+<text  x="646.74" y="127.5" ></text>
 </g>
 <g >
-<title>dictSetVal (13 samples, 0.03%)</title><rect x="688.3" y="85" width="0.4" height="15.0" fill="rgb(219,92,36)" rx="2" ry="2" />
-<text  x="691.29" y="95.5" ></text>
+<title>propagatePendingCommands (41 samples, 0.10%)</title><rect x="188.7" y="197" width="1.2" height="15.0" fill="rgb(217,202,46)" rx="2" ry="2" />
+<text  x="191.73" y="207.5" ></text>
 </g>
 <g >
-<title>getDecodedObject (19 samples, 0.05%)</title><rect x="1013.3" y="133" width="0.6" height="15.0" fill="rgb(247,131,20)" rx="2" ry="2" />
-<text  x="1016.32" y="143.5" ></text>
+<title>dictGetVal (10 samples, 0.02%)</title><rect x="692.0" y="117" width="0.3" height="15.0" fill="rgb(222,2,10)" rx="2" ry="2" />
+<text  x="695.01" y="127.5" ></text>
 </g>
 <g >
-<title>je_free (59 samples, 0.16%)</title><rect x="454.1" y="69" width="1.9" height="15.0" fill="rgb(241,72,19)" rx="2" ry="2" />
-<text  x="457.12" y="79.5" ></text>
+<title>dictObjKeyCompare (63 samples, 0.15%)</title><rect x="998.0" y="165" width="1.8" height="15.0" fill="rgb(214,50,51)" rx="2" ry="2" />
+<text  x="1000.95" y="175.5" ></text>
 </g>
 <g >
-<title>intrev64 (91 samples, 0.24%)</title><rect x="728.9" y="101" width="2.9" height="15.0" fill="rgb(209,68,54)" rx="2" ry="2" />
-<text  x="731.89" y="111.5" ></text>
+<title>streamEncodeID (313 samples, 0.77%)</title><rect x="879.0" y="117" width="9.1" height="15.0" fill="rgb(247,142,21)" rx="2" ry="2" />
+<text  x="881.97" y="127.5" ></text>
 </g>
 <g >
-<title>raxGenericInsert (4,502 samples, 12.12%)</title><rect x="456.6" y="69" width="143.0" height="15.0" fill="rgb(228,25,29)" rx="2" ry="2" />
-<text  x="459.59" y="79.5" >raxGenericInsert</text>
+<title>je_malloc_usable_size (147 samples, 0.36%)</title><rect x="447.6" y="69" width="4.2" height="15.0" fill="rgb(208,41,20)" rx="2" ry="2" />
+<text  x="450.58" y="79.5" ></text>
 </g>
 <g >
-<title>dictSdsKeyCompare (9 samples, 0.02%)</title><rect x="772.2" y="69" width="0.3" height="15.0" fill="rgb(208,7,34)" rx="2" ry="2" />
-<text  x="775.22" y="79.5" ></text>
+<title>dictSdsHash (180 samples, 0.44%)</title><rect x="163.8" y="181" width="5.3" height="15.0" fill="rgb(236,154,10)" rx="2" ry="2" />
+<text  x="166.84" y="191.5" ></text>
 </g>
 <g >
-<title>lookupKeyReadWithFlags (984 samples, 2.65%)</title><rect x="229.7" y="165" width="31.2" height="15.0" fill="rgb(240,208,21)" rx="2" ry="2" />
-<text  x="232.66" y="175.5" >lo..</text>
+<title>raxGenericInsert (9 samples, 0.02%)</title><rect x="408.3" y="101" width="0.3" height="15.0" fill="rgb(222,109,36)" rx="2" ry="2" />
+<text  x="411.30" y="111.5" ></text>
 </g>
 <g >
-<title>processCommandAndResetClient (6 samples, 0.02%)</title><rect x="1177.1" y="181" width="0.2" height="15.0" fill="rgb(231,171,27)" rx="2" ry="2" />
-<text  x="1180.07" y="191.5" ></text>
+<title>je_malloc (70 samples, 0.17%)</title><rect x="524.5" y="53" width="2.0" height="15.0" fill="rgb(252,130,11)" rx="2" ry="2" />
+<text  x="527.47" y="63.5" ></text>
 </g>
 <g >
-<title>updateClientMemUsageAndBucket (92 samples, 0.25%)</title><rect x="963.4" y="149" width="3.0" height="15.0" fill="rgb(227,35,29)" rx="2" ry="2" />
-<text  x="966.45" y="159.5" ></text>
+<title>mustObeyClient (5 samples, 0.01%)</title><rect x="246.9" y="197" width="0.1" height="15.0" fill="rgb(210,54,12)" rx="2" ry="2" />
+<text  x="249.86" y="207.5" ></text>
 </g>
 <g >
-<title>lpFirst (41 samples, 0.11%)</title><rect x="796.6" y="101" width="1.3" height="15.0" fill="rgb(251,134,20)" rx="2" ry="2" />
-<text  x="799.65" y="111.5" ></text>
+<title>commandTimeSnapshot (7 samples, 0.02%)</title><rect x="648.5" y="149" width="0.2" height="15.0" fill="rgb(208,155,7)" rx="2" ry="2" />
+<text  x="651.53" y="159.5" ></text>
 </g>
 <g >
-<title>dictGenHashFunction (11 samples, 0.03%)</title><rect x="1013.9" y="149" width="0.4" height="15.0" fill="rgb(221,156,39)" rx="2" ry="2" />
-<text  x="1016.92" y="159.5" ></text>
+<title>isPausedActions (67 samples, 0.16%)</title><rect x="244.9" y="197" width="2.0" height="15.0" fill="rgb(251,136,27)" rx="2" ry="2" />
+<text  x="247.92" y="207.5" ></text>
 </g>
 <g >
-<title>raxIteratorAddChars (21 samples, 0.06%)</title><rect x="835.1" y="85" width="0.6" height="15.0" fill="rgb(238,29,43)" rx="2" ry="2" />
-<text  x="838.08" y="95.5" ></text>
+<title>removeClientFromTimeoutTable (4,861 samples, 11.95%)</title><rect x="1036.8" y="197" width="141.0" height="15.0" fill="rgb(219,144,10)" rx="2" ry="2" />
+<text  x="1039.79" y="207.5" >removeClientFromT..</text>
 </g>
 <g >
-<title>dictIncrUnsignedIntegerVal (9 samples, 0.02%)</title><rect x="222.6" y="165" width="0.3" height="15.0" fill="rgb(239,25,2)" rx="2" ry="2" />
-<text  x="225.58" y="175.5" ></text>
+<title>dictSdsKeyCompare (155 samples, 0.38%)</title><rect x="723.0" y="101" width="4.5" height="15.0" fill="rgb(250,170,51)" rx="2" ry="2" />
+<text  x="726.04" y="111.5" ></text>
 </g>
 <g >
-<title>streamIteratorGetID (2,421 samples, 6.52%)</title><rect x="865.7" y="101" width="76.9" height="15.0" fill="rgb(230,66,7)" rx="2" ry="2" />
-<text  x="868.70" y="111.5" >streamIt..</text>
+<title>scriptIsRunning (19 samples, 0.05%)</title><rect x="932.0" y="197" width="0.5" height="15.0" fill="rgb(230,101,32)" rx="2" ry="2" />
+<text  x="934.97" y="207.5" ></text>
 </g>
 <g >
-<title>intrev64 (178 samples, 0.48%)</title><rect x="1031.8" y="133" width="5.7" height="15.0" fill="rgb(234,150,32)" rx="2" ry="2" />
-<text  x="1034.84" y="143.5" ></text>
+<title>releaseBlockedEntry (3,358 samples, 8.25%)</title><rect x="935.2" y="213" width="97.4" height="15.0" fill="rgb(243,25,30)" rx="2" ry="2" />
+<text  x="938.22" y="223.5" >releaseBloc..</text>
 </g>
 <g >
-<title>processInputBuffer (32,987 samples, 88.80%)</title><rect x="130.6" y="213" width="1047.8" height="15.0" fill="rgb(231,183,30)" rx="2" ry="2" />
-<text  x="133.55" y="223.5" >processInputBuffer</text>
+<title>zrealloc (10 samples, 0.02%)</title><rect x="546.4" y="69" width="0.3" height="15.0" fill="rgb(222,96,20)" rx="2" ry="2" />
+<text  x="549.43" y="79.5" ></text>
 </g>
 <g >
-<title>main (32,987 samples, 88.80%)</title><rect x="130.6" y="277" width="1047.8" height="15.0" fill="rgb(209,8,19)" rx="2" ry="2" />
-<text  x="133.55" y="287.5" >main</text>
+<title>enterExecutionUnit (21 samples, 0.05%)</title><rect x="920.7" y="181" width="0.6" height="15.0" fill="rgb(238,0,42)" rx="2" ry="2" />
+<text  x="923.71" y="191.5" ></text>
 </g>
 <g >
-<title>dictSdsKeyCompare (6 samples, 0.02%)</title><rect x="246.6" y="133" width="0.2" height="15.0" fill="rgb(220,173,4)" rx="2" ry="2" />
-<text  x="249.59" y="143.5" ></text>
+<title>dictDelete (11 samples, 0.03%)</title><rect x="190.4" y="213" width="0.3" height="15.0" fill="rgb(235,4,42)" rx="2" ry="2" />
+<text  x="193.41" y="223.5" ></text>
 </g>
 <g >
-<title>listNext (76 samples, 0.20%)</title><rect x="954.1" y="133" width="2.5" height="15.0" fill="rgb(216,191,38)" rx="2" ry="2" />
-<text  x="957.14" y="143.5" ></text>
+<title>je_malloc (97 samples, 0.24%)</title><rect x="670.5" y="149" width="2.8" height="15.0" fill="rgb(235,109,38)" rx="2" ry="2" />
+<text  x="673.51" y="159.5" ></text>
 </g>
 <g >
-<title>getTimeoutFromObjectOrReply (13 samples, 0.03%)</title><rect x="383.9" y="117" width="0.5" height="15.0" fill="rgb(217,141,11)" rx="2" ry="2" />
-<text  x="386.95" y="127.5" ></text>
+<title>unblockClientWaitingData (21 samples, 0.05%)</title><rect x="1177.8" y="197" width="0.6" height="15.0" fill="rgb(238,139,39)" rx="2" ry="2" />
+<text  x="1180.79" y="207.5" ></text>
 </g>
 <g >
-<title>dictGenHashFunction (14 samples, 0.04%)</title><rect x="981.7" y="133" width="0.4" height="15.0" fill="rgb(246,194,31)" rx="2" ry="2" />
-<text  x="984.68" y="143.5" ></text>
+<title>dictFind (888 samples, 2.18%)</title><rect x="191.7" y="213" width="25.7" height="15.0" fill="rgb(223,8,26)" rx="2" ry="2" />
+<text  x="194.69" y="223.5" >d..</text>
 </g>
 <g >
-<title>siphash (373 samples, 1.00%)</title><rect x="784.8" y="85" width="11.8" height="15.0" fill="rgb(211,147,38)" rx="2" ry="2" />
-<text  x="787.80" y="95.5" ></text>
+<title>streamCompareID (35 samples, 0.09%)</title><rect x="336.1" y="165" width="1.1" height="15.0" fill="rgb(229,75,16)" rx="2" ry="2" />
+<text  x="339.14" y="175.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (51 samples, 0.14%)</title><rect x="980.0" y="117" width="1.6" height="15.0" fill="rgb(213,188,25)" rx="2" ry="2" />
-<text  x="983.00" y="127.5" ></text>
+<title>expireIfNeeded (234 samples, 0.58%)</title><rect x="727.5" y="101" width="6.8" height="15.0" fill="rgb(236,87,23)" rx="2" ry="2" />
+<text  x="730.54" y="111.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned (23 samples, 0.06%)</title><rect x="1028.6" y="133" width="0.7" height="15.0" fill="rgb(208,105,35)" rx="2" ry="2" />
-<text  x="1031.57" y="143.5" ></text>
+<title>firePostExecutionUnitJobs (21 samples, 0.05%)</title><rect x="180.9" y="197" width="0.6" height="15.0" fill="rgb(213,48,51)" rx="2" ry="2" />
+<text  x="183.90" y="207.5" ></text>
 </g>
 <g >
-<title>dictObjKeyCompare (137 samples, 0.37%)</title><rect x="984.0" y="133" width="4.3" height="15.0" fill="rgb(227,135,44)" rx="2" ry="2" />
-<text  x="986.97" y="143.5" ></text>
+<title>getTimeoutFromObjectOrReply (319 samples, 0.78%)</title><rect x="659.2" y="149" width="9.2" height="15.0" fill="rgb(234,51,39)" rx="2" ry="2" />
+<text  x="662.17" y="159.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned (21 samples, 0.06%)</title><rect x="483.2" y="53" width="0.6" height="15.0" fill="rgb(214,146,11)" rx="2" ry="2" />
-<text  x="486.18" y="63.5" ></text>
+<title>raxPrev (59 samples, 0.15%)</title><rect x="865.9" y="117" width="1.7" height="15.0" fill="rgb(244,223,5)" rx="2" ry="2" />
+<text  x="868.92" y="127.5" ></text>
 </g>
 <g >
-<title>hasActiveChildProcess (20 samples, 0.05%)</title><rect x="228.1" y="165" width="0.7" height="15.0" fill="rgb(211,214,2)" rx="2" ry="2" />
-<text  x="231.13" y="175.5" ></text>
+<title>raxStop (17 samples, 0.04%)</title><rect x="906.0" y="117" width="0.5" height="15.0" fill="rgb(251,108,8)" rx="2" ry="2" />
+<text  x="909.04" y="127.5" ></text>
 </g>
 <g >
-<title>zrealloc (31 samples, 0.08%)</title><rect x="598.6" y="53" width="1.0" height="15.0" fill="rgb(243,89,8)" rx="2" ry="2" />
-<text  x="601.62" y="63.5" ></text>
+<title>raxTryInsert (7 samples, 0.02%)</title><rect x="548.1" y="117" width="0.2" height="15.0" fill="rgb(250,22,54)" rx="2" ry="2" />
+<text  x="551.08" y="127.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (264 samples, 0.71%)</title><rect x="429.2" y="101" width="8.4" height="15.0" fill="rgb(224,196,38)" rx="2" ry="2" />
-<text  x="432.18" y="111.5" ></text>
+<title>_dictExpandIfNeeded (37 samples, 0.09%)</title><rect x="552.0" y="117" width="1.1" height="15.0" fill="rgb(231,218,17)" rx="2" ry="2" />
+<text  x="555.02" y="127.5" ></text>
 </g>
 <g >
-<title>afterCommand (30 samples, 0.08%)</title><rect x="130.6" y="181" width="0.9" height="15.0" fill="rgb(233,166,45)" rx="2" ry="2" />
-<text  x="133.55" y="191.5" ></text>
+<title>dictGenHashFunction (12 samples, 0.03%)</title><rect x="163.5" y="181" width="0.3" height="15.0" fill="rgb(245,212,27)" rx="2" ry="2" />
+<text  x="166.50" y="191.5" ></text>
 </g>
 <g >
-<title>zmalloc (173 samples, 0.47%)</title><rect x="697.3" y="69" width="5.5" height="15.0" fill="rgb(229,110,43)" rx="2" ry="2" />
-<text  x="700.28" y="79.5" ></text>
+<title>streamIteratorGetID (3,923 samples, 9.64%)</title><rect x="774.3" y="133" width="113.8" height="15.0" fill="rgb(240,160,47)" rx="2" ry="2" />
+<text  x="777.26" y="143.5" >streamIterator..</text>
 </g>
 <g >
-<title>blockForKeys (8,354 samples, 22.49%)</title><rect x="438.1" y="101" width="265.4" height="15.0" fill="rgb(226,77,49)" rx="2" ry="2" />
-<text  x="441.14" y="111.5" >blockForKeys</text>
+<title>decrRefCount (35 samples, 0.09%)</title><rect x="960.0" y="149" width="1.0" height="15.0" fill="rgb(241,55,22)" rx="2" ry="2" />
+<text  x="962.99" y="159.5" ></text>
 </g>
 <g >
-<title>trackingHandlePendingKeyInvalidations (23 samples, 0.06%)</title><rect x="1177.4" y="181" width="0.8" height="15.0" fill="rgb(250,86,1)" rx="2" ry="2" />
-<text  x="1180.42" y="191.5" ></text>
+<title>getLongLongFromObjectOrReply (8 samples, 0.02%)</title><rect x="334.7" y="165" width="0.2" height="15.0" fill="rgb(233,54,52)" rx="2" ry="2" />
+<text  x="337.69" y="175.5" ></text>
 </g>
 <g >
-<title>firePostExecutionUnitJobs (115 samples, 0.31%)</title><rect x="141.6" y="149" width="3.6" height="15.0" fill="rgb(228,173,36)" rx="2" ry="2" />
-<text  x="144.57" y="159.5" ></text>
+<title>raxSetData (8 samples, 0.02%)</title><rect x="547.1" y="85" width="0.2" height="15.0" fill="rgb(222,87,37)" rx="2" ry="2" />
+<text  x="550.09" y="95.5" ></text>
 </g>
 <g >
-<title>dictDelete (113 samples, 0.30%)</title><rect x="131.5" y="181" width="3.6" height="15.0" fill="rgb(228,20,6)" rx="2" ry="2" />
-<text  x="134.50" y="191.5" ></text>
+<title>dictGetKey (22 samples, 0.05%)</title><rect x="986.2" y="181" width="0.6" height="15.0" fill="rgb(248,169,27)" rx="2" ry="2" />
+<text  x="989.21" y="191.5" ></text>
 </g>
 <g >
-<title>zmalloc (160 samples, 0.43%)</title><rect x="524.8" y="37" width="5.0" height="15.0" fill="rgb(227,184,32)" rx="2" ry="2" />
-<text  x="527.76" y="47.5" ></text>
+<title>do_rallocx (20 samples, 0.05%)</title><rect x="1182.7" y="421" width="0.6" height="15.0" fill="rgb(247,38,13)" rx="2" ry="2" />
+<text  x="1185.69" y="431.5" ></text>
 </g>
 <g >
-<title>dictEncObjKeyCompare (304 samples, 0.82%)</title><rect x="1003.7" y="133" width="9.6" height="15.0" fill="rgb(213,155,22)" rx="2" ry="2" />
-<text  x="1006.66" y="143.5" ></text>
+<title>dictSdsKeyCompare (18 samples, 0.04%)</title><rect x="1023.5" y="165" width="0.6" height="15.0" fill="rgb(209,94,45)" rx="2" ry="2" />
+<text  x="1026.54" y="175.5" ></text>
 </g>
 <g >
-<title>raxSeek (1,138 samples, 3.06%)</title><rect x="826.9" y="101" width="36.1" height="15.0" fill="rgb(226,152,27)" rx="2" ry="2" />
-<text  x="829.89" y="111.5" >rax..</text>
+<title>je_free (34 samples, 0.08%)</title><rect x="978.0" y="149" width="1.0" height="15.0" fill="rgb(242,81,27)" rx="2" ry="2" />
+<text  x="981.00" y="159.5" ></text>
 </g>
 <g >
-<title>dictDelete (1,602 samples, 4.31%)</title><rect x="145.3" y="165" width="50.8" height="15.0" fill="rgb(217,21,32)" rx="2" ry="2" />
-<text  x="148.26" y="175.5" >dictD..</text>
+<title>raxRemove (9 samples, 0.02%)</title><rect x="1036.5" y="197" width="0.3" height="15.0" fill="rgb(250,228,2)" rx="2" ry="2" />
+<text  x="1039.53" y="207.5" ></text>
 </g>
 <g >
-<title>__memcpy_avx_unaligned (16 samples, 0.04%)</title><rect x="1098.6" y="117" width="0.5" height="15.0" fill="rgb(235,29,28)" rx="2" ry="2" />
-<text  x="1101.61" y="127.5" ></text>
+<title>lookupKeyRead (1,893 samples, 4.65%)</title><rect x="679.9" y="149" width="54.9" height="15.0" fill="rgb(229,201,2)" rx="2" ry="2" />
+<text  x="682.91" y="159.5" >looku..</text>
 </g>
 <g >
-<title>siphash (217 samples, 0.58%)</title><rect x="988.3" y="133" width="6.9" height="15.0" fill="rgb(242,107,28)" rx="2" ry="2" />
-<text  x="991.32" y="143.5" ></text>
+<title>raxReallocForData (7 samples, 0.02%)</title><rect x="546.9" y="85" width="0.2" height="15.0" fill="rgb(208,93,52)" rx="2" ry="2" />
+<text  x="549.89" y="95.5" ></text>
 </g>
 <g >
-<title>lpNext (477 samples, 1.28%)</title><rect x="912.0" y="85" width="15.1" height="15.0" fill="rgb(208,55,53)" rx="2" ry="2" />
-<text  x="914.95" y="95.5" ></text>
+<title>__memcpy_avx_unaligned_erms (36 samples, 0.09%)</title><rect x="1081.8" y="165" width="1.0" height="15.0" fill="rgb(206,78,21)" rx="2" ry="2" />
+<text  x="1084.78" y="175.5" ></text>
 </g>
 <g >
-<title>dictObjKeyCompare (10 samples, 0.03%)</title><rect x="646.7" y="53" width="0.3" height="15.0" fill="rgb(251,118,40)" rx="2" ry="2" />
-<text  x="649.68" y="63.5" ></text>
+<title>je_malloc (112 samples, 0.28%)</title><rect x="637.8" y="117" width="3.3" height="15.0" fill="rgb(247,89,25)" rx="2" ry="2" />
+<text  x="640.82" y="127.5" ></text>
 </g>
 <g >
-<title>dictEncObjKeyCompare (10 samples, 0.03%)</title><rect x="608.9" y="69" width="0.3" height="15.0" fill="rgb(253,227,11)" rx="2" ry="2" />
-<text  x="611.91" y="79.5" ></text>
+<title>dictFind (521 samples, 1.28%)</title><rect x="987.5" y="181" width="15.1" height="15.0" fill="rgb(234,173,46)" rx="2" ry="2" />
+<text  x="990.45" y="191.5" ></text>
 </g>
 <g >
-<title>preventCommandPropagation (16 samples, 0.04%)</title><rect x="386.0" y="117" width="0.6" height="15.0" fill="rgb(219,52,33)" rx="2" ry="2" />
-<text  x="389.04" y="127.5" ></text>
+<title>getDecodedObject (48 samples, 0.12%)</title><rect x="216.1" y="197" width="1.3" height="15.0" fill="rgb(243,93,4)" rx="2" ry="2" />
+<text  x="219.05" y="207.5" ></text>
 </g>
 <g >
-<title>afterCommand (143 samples, 0.38%)</title><rect x="140.7" y="165" width="4.5" height="15.0" fill="rgb(206,75,51)" rx="2" ry="2" />
-<text  x="143.68" y="175.5" ></text>
+<title>dictEncObjKeyCompare (9 samples, 0.02%)</title><rect x="553.7" y="117" width="0.3" height="15.0" fill="rgb(207,28,14)" rx="2" ry="2" />
+<text  x="556.71" y="127.5" ></text>
 </g>
 <g >
-<title>raxStop (10 samples, 0.03%)</title><rect x="391.6" y="117" width="0.3" height="15.0" fill="rgb(234,0,45)" rx="2" ry="2" />
-<text  x="394.60" y="127.5" ></text>
+<title>connSocketEventHandler (35,718 samples, 87.80%)</title><rect x="146.7" y="341" width="1036.0" height="15.0" fill="rgb(252,179,30)" rx="2" ry="2" />
+<text  x="149.67" y="351.5" >connSocketEventHandler</text>
 </g>
 <g >
-<title>je_malloc (59 samples, 0.16%)</title><rect x="515.4" y="37" width="1.8" height="15.0" fill="rgb(211,215,34)" rx="2" ry="2" />
-<text  x="518.36" y="47.5" ></text>
+<title>processCommandAndResetClient (35,718 samples, 87.80%)</title><rect x="146.7" y="293" width="1036.0" height="15.0" fill="rgb(242,20,24)" rx="2" ry="2" />
+<text  x="149.67" y="303.5" >processCommandAndResetClient</text>
 </g>
 <g >
-<title>string2ll (19 samples, 0.05%)</title><rect x="942.6" y="101" width="0.6" height="15.0" fill="rgb(220,38,44)" rx="2" ry="2" />
-<text  x="945.61" y="111.5" ></text>
+<title>listUnlinkNode (68 samples, 0.17%)</title><rect x="224.4" y="213" width="2.0" height="15.0" fill="rgb(222,197,18)" rx="2" ry="2" />
+<text  x="227.38" y="223.5" ></text>
 </g>
 <g >
-<title>raxStart (60 samples, 0.16%)</title><rect x="389.7" y="117" width="1.9" height="15.0" fill="rgb(216,222,3)" rx="2" ry="2" />
-<text  x="392.70" y="127.5" ></text>
+<title>ustime (9 samples, 0.02%)</title><rect x="1178.8" y="213" width="0.2" height="15.0" fill="rgb(221,164,20)" rx="2" ry="2" />
+<text  x="1181.77" y="223.5" ></text>
 </g>
 <g >
-<title>intrev64 (234 samples, 0.63%)</title><rect x="446.7" y="69" width="7.4" height="15.0" fill="rgb(220,195,34)" rx="2" ry="2" />
-<text  x="449.68" y="79.5" ></text>
+<title>dictGenHashFunction (6 samples, 0.01%)</title><rect x="164.6" y="165" width="0.2" height="15.0" fill="rgb(239,167,26)" rx="2" ry="2" />
+<text  x="167.60" y="175.5" ></text>
 </g>
 <g >
-<title>lpGet (74 samples, 0.20%)</title><rect x="797.9" y="101" width="2.4" height="15.0" fill="rgb(252,19,8)" rx="2" ry="2" />
-<text  x="800.95" y="111.5" ></text>
+<title>getLongLongFromObjectOrReply (222 samples, 0.55%)</title><rect x="662.0" y="133" width="6.4" height="15.0" fill="rgb(225,13,7)" rx="2" ry="2" />
+<text  x="664.98" y="143.5" ></text>
 </g>
 <g >
-<title>getDecodedObject (41 samples, 0.11%)</title><rect x="645.4" y="37" width="1.3" height="15.0" fill="rgb(207,80,25)" rx="2" ry="2" />
-<text  x="648.38" y="47.5" ></text>
+<title>lpBytes (18 samples, 0.04%)</title><rect x="810.6" y="101" width="0.5" height="15.0" fill="rgb(223,211,45)" rx="2" ry="2" />
+<text  x="813.61" y="111.5" ></text>
 </g>
 <g >
-<title>decrRefCount (25 samples, 0.07%)</title><rect x="1002.9" y="133" width="0.8" height="15.0" fill="rgb(239,203,26)" rx="2" ry="2" />
-<text  x="1005.87" y="143.5" ></text>
+<title>lookupKeyReadWithFlags (905 samples, 2.22%)</title><rect x="150.4" y="229" width="26.2" height="15.0" fill="rgb(235,212,52)" rx="2" ry="2" />
+<text  x="153.39" y="239.5" >l..</text>
 </g>
 <g >
-<title>dictFreeUnlinkedEntry (622 samples, 1.67%)</title><rect x="158.8" y="133" width="19.8" height="15.0" fill="rgb(228,9,10)" rx="2" ry="2" />
-<text  x="161.82" y="143.5" ></text>
+<title>isInsideYieldingLongCommand (31 samples, 0.08%)</title><rect x="924.5" y="181" width="0.9" height="15.0" fill="rgb(229,23,6)" rx="2" ry="2" />
+<text  x="927.48" y="191.5" ></text>
 </g>
 <g >
-<title>__libc_start_call_main (32,987 samples, 88.80%)</title><rect x="130.6" y="293" width="1047.8" height="15.0" fill="rgb(211,141,31)" rx="2" ry="2" />
-<text  x="133.55" y="303.5" >__libc_start_call_main</text>
+<title>je_arena_ralloc_no_move (164 samples, 0.40%)</title><rect x="1183.3" y="421" width="4.7" height="15.0" fill="rgb(218,184,11)" rx="2" ry="2" />
+<text  x="1186.27" y="431.5" ></text>
 </g>
 <g >
-<title>dictEncObjKeyCompare (326 samples, 0.88%)</title><rect x="636.3" y="53" width="10.4" height="15.0" fill="rgb(244,119,7)" rx="2" ry="2" />
-<text  x="639.32" y="63.5" ></text>
+<title>zmalloc (8 samples, 0.02%)</title><rect x="920.5" y="165" width="0.2" height="15.0" fill="rgb(247,173,10)" rx="2" ry="2" />
+<text  x="923.48" y="175.5" ></text>
 </g>
 <g >
-<title>trackingHandlePendingKeyInvalidations (60 samples, 0.16%)</title><rect x="958.4" y="133" width="1.9" height="15.0" fill="rgb(213,168,2)" rx="2" ry="2" />
-<text  x="961.40" y="143.5" ></text>
+<title>checkType (15 samples, 0.04%)</title><rect x="334.2" y="165" width="0.5" height="15.0" fill="rgb(227,114,38)" rx="2" ry="2" />
+<text  x="337.22" y="175.5" ></text>
 </g>
 <g >
-<title>evictClients (18 samples, 0.05%)</title><rect x="284.2" y="149" width="0.6" height="15.0" fill="rgb(212,66,51)" rx="2" ry="2" />
-<text  x="287.23" y="159.5" ></text>
+<title>zfree (709 samples, 1.74%)</title><rect x="1150.1" y="165" width="20.6" height="15.0" fill="rgb(224,21,47)" rx="2" ry="2" />
+<text  x="1153.15" y="175.5" ></text>
 </g>
 <g >
-<title>je_malloc (168 samples, 0.45%)</title><rect x="731.8" y="101" width="5.3" height="15.0" fill="rgb(243,2,24)" rx="2" ry="2" />
-<text  x="734.78" y="111.5" ></text>
+<title>__memcpy_avx_unaligned (7 samples, 0.02%)</title><rect x="1081.6" y="165" width="0.2" height="15.0" fill="rgb(215,30,35)" rx="2" ry="2" />
+<text  x="1084.58" y="175.5" ></text>
 </g>
 <g >
-<title>zfree (806 samples, 2.17%)</title><rect x="1139.8" y="117" width="25.6" height="15.0" fill="rgb(206,223,2)" rx="2" ry="2" />
-<text  x="1142.78" y="127.5" >z..</text>
+<title>dictEncObjHash (247 samples, 0.61%)</title><rect x="949.5" y="165" width="7.2" height="15.0" fill="rgb(250,51,33)" rx="2" ry="2" />
+<text  x="952.49" y="175.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (379 samples, 1.02%)</title><rect x="492.2" y="53" width="12.1" height="15.0" fill="rgb(237,125,36)" rx="2" ry="2" />
-<text  x="495.23" y="63.5" ></text>
+<title>scriptIsTimedout (13 samples, 0.03%)</title><rect x="932.5" y="197" width="0.4" height="15.0" fill="rgb(225,100,0)" rx="2" ry="2" />
+<text  x="935.52" y="207.5" ></text>
 </g>
 <g >
-<title>expireIfNeeded (17 samples, 0.05%)</title><rect x="226.9" y="165" width="0.6" height="15.0" fill="rgb(249,173,33)" rx="2" ry="2" />
-<text  x="229.93" y="175.5" ></text>
+<title>dictObjKeyCompare (14 samples, 0.03%)</title><rect x="635.9" y="117" width="0.4" height="15.0" fill="rgb(231,188,41)" rx="2" ry="2" />
+<text  x="638.85" y="127.5" ></text>
 </g>
 <g >
-<title>je_realloc (29 samples, 0.08%)</title><rect x="560.1" y="37" width="0.9" height="15.0" fill="rgb(226,205,42)" rx="2" ry="2" />
-<text  x="563.09" y="47.5" ></text>
+<title>blockClient (5,078 samples, 12.48%)</title><rect x="401.0" y="133" width="147.3" height="15.0" fill="rgb(236,165,2)" rx="2" ry="2" />
+<text  x="403.99" y="143.5" >blockClient</text>
 </g>
 <g >
-<title>dictSdsHash (64 samples, 0.17%)</title><rect x="772.8" y="85" width="2.1" height="15.0" fill="rgb(254,13,23)" rx="2" ry="2" />
-<text  x="775.82" y="95.5" ></text>
+<title>xreadCommand (19,914 samples, 48.95%)</title><rect x="342.6" y="165" width="577.6" height="15.0" fill="rgb(216,124,15)" rx="2" ry="2" />
+<text  x="345.58" y="175.5" >xreadCommand</text>
 </g>
 <g >
-<title>je_malloc_usable_size (320 samples, 0.86%)</title><rect x="163.1" y="117" width="10.2" height="15.0" fill="rgb(205,135,28)" rx="2" ry="2" />
-<text  x="166.11" y="127.5" ></text>
+<title>dictGetNext (7 samples, 0.02%)</title><rect x="986.8" y="181" width="0.2" height="15.0" fill="rgb(210,14,15)" rx="2" ry="2" />
+<text  x="989.85" y="191.5" ></text>
 </g>
 <g >
-<title>listAddNodeTail (431 samples, 1.16%)</title><rect x="689.1" y="85" width="13.7" height="15.0" fill="rgb(235,187,27)" rx="2" ry="2" />
-<text  x="692.09" y="95.5" ></text>
+<title>keyIsExpired (119 samples, 0.29%)</title><rect x="730.9" y="85" width="3.4" height="15.0" fill="rgb(237,121,36)" rx="2" ry="2" />
+<text  x="733.87" y="95.5" ></text>
 </g>
 <g >
-<title>je_malloc (186 samples, 0.50%)</title><rect x="486.3" y="53" width="5.9" height="15.0" fill="rgb(231,8,28)" rx="2" ry="2" />
-<text  x="489.33" y="63.5" ></text>
+<title>zfree (133 samples, 0.33%)</title><rect x="533.2" y="69" width="3.9" height="15.0" fill="rgb(227,11,13)" rx="2" ry="2" />
+<text  x="536.20" y="79.5" ></text>
 </g>
 <g >
-<title>hasActiveChildProcess (36 samples, 0.10%)</title><rect x="727.4" y="101" width="1.1" height="15.0" fill="rgb(226,148,28)" rx="2" ry="2" />
-<text  x="730.40" y="111.5" ></text>
+<title>processCommand (35,718 samples, 87.80%)</title><rect x="146.7" y="277" width="1036.0" height="15.0" fill="rgb(231,68,15)" rx="2" ry="2" />
+<text  x="149.67" y="287.5" >processCommand</text>
 </g>
 <g >
-<title>je_malloc_usable_size (394 samples, 1.06%)</title><rect x="737.1" y="101" width="12.5" height="15.0" fill="rgb(214,12,47)" rx="2" ry="2" />
-<text  x="740.12" y="111.5" ></text>
+<title>streamIteratorStart (613 samples, 1.51%)</title><rect x="888.1" y="133" width="17.7" height="15.0" fill="rgb(228,139,53)" rx="2" ry="2" />
+<text  x="891.05" y="143.5" ></text>
 </g>
 <g >
-<title>commandTimeSnapshot (9 samples, 0.02%)</title><rect x="383.5" y="117" width="0.3" height="15.0" fill="rgb(227,31,44)" rx="2" ry="2" />
-<text  x="386.47" y="127.5" ></text>
+<title>dictSdsKeyCompare (47 samples, 0.12%)</title><rect x="171.4" y="197" width="1.3" height="15.0" fill="rgb(218,34,40)" rx="2" ry="2" />
+<text  x="174.39" y="207.5" ></text>
 </g>
 <g >
-<title>dictAddRaw (2,707 samples, 7.29%)</title><rect x="601.2" y="85" width="86.0" height="15.0" fill="rgb(214,159,14)" rx="2" ry="2" />
-<text  x="604.22" y="95.5" >dictAddRaw</text>
+<title>dictTypeExpandAllowed (28 samples, 0.07%)</title><rect x="616.8" y="101" width="0.8" height="15.0" fill="rgb(247,29,12)" rx="2" ry="2" />
+<text  x="619.82" y="111.5" ></text>
 </g>
 <g >
-<title>zmalloc (545 samples, 1.47%)</title><rect x="581.3" y="53" width="17.3" height="15.0" fill="rgb(207,77,46)" rx="2" ry="2" />
-<text  x="584.31" y="63.5" ></text>
+<title>raxLowWalk (9 samples, 0.02%)</title><rect x="1047.4" y="181" width="0.3" height="15.0" fill="rgb(214,170,47)" rx="2" ry="2" />
+<text  x="1050.41" y="191.5" ></text>
 </g>
 <g >
-<title>intrev64 (18 samples, 0.05%)</title><rect x="1026.5" y="149" width="0.5" height="15.0" fill="rgb(231,114,16)" rx="2" ry="2" />
-<text  x="1029.47" y="159.5" ></text>
+<title>firePostExecutionUnitJobs (136 samples, 0.33%)</title><rect x="184.8" y="181" width="3.9" height="15.0" fill="rgb(208,106,2)" rx="2" ry="2" />
+<text  x="187.79" y="191.5" ></text>
 </g>
 <g >
-<title>dictEncObjHash (64 samples, 0.17%)</title><rect x="606.9" y="69" width="2.0" height="15.0" fill="rgb(209,72,35)" rx="2" ry="2" />
-<text  x="609.88" y="79.5" ></text>
+<title>dictGetVal (5 samples, 0.01%)</title><rect x="150.7" y="213" width="0.2" height="15.0" fill="rgb(211,20,43)" rx="2" ry="2" />
+<text  x="153.71" y="223.5" ></text>
 </g>
 <g >
-<title>__memcmp_avx2_movbe (93 samples, 0.25%)</title><rect x="203.7" y="149" width="3.0" height="15.0" fill="rgb(227,166,25)" rx="2" ry="2" />
-<text  x="206.74" y="159.5" ></text>
+<title>zrealloc (259 samples, 0.64%)</title><rect x="511.4" y="53" width="7.5" height="15.0" fill="rgb(233,52,33)" rx="2" ry="2" />
+<text  x="514.36" y="63.5" ></text>
 </g>
 <g >
-<title>releaseBlockedEntry (1,640 samples, 4.41%)</title><rect x="966.8" y="165" width="52.1" height="15.0" fill="rgb(225,52,30)" rx="2" ry="2" />
-<text  x="969.78" y="175.5" >relea..</text>
+<title>raxIteratorPrevStep (38 samples, 0.09%)</title><rect x="866.5" y="101" width="1.1" height="15.0" fill="rgb(222,31,16)" rx="2" ry="2" />
+<text  x="869.53" y="111.5" ></text>
 </g>
 <g >
-<title>dictObjectDestructor (8 samples, 0.02%)</title><rect x="178.6" y="133" width="0.2" height="15.0" fill="rgb(212,133,51)" rx="2" ry="2" />
-<text  x="181.58" y="143.5" ></text>
+<title>streamLookupCG (42 samples, 0.10%)</title><rect x="337.2" y="165" width="1.2" height="15.0" fill="rgb(208,16,47)" rx="2" ry="2" />
+<text  x="340.21" y="175.5" ></text>
 </g>
 <g >
-<title>listNext (71 samples, 0.19%)</title><rect x="1174.8" y="181" width="2.3" height="15.0" fill="rgb(212,17,33)" rx="2" ry="2" />
-<text  x="1177.82" y="191.5" ></text>
+<title>afterCommand (24 samples, 0.06%)</title><rect x="333.4" y="165" width="0.6" height="15.0" fill="rgb(242,162,6)" rx="2" ry="2" />
+<text  x="336.35" y="175.5" ></text>
 </g>
 <g >
-<title>je_malloc_usable_size (131 samples, 0.35%)</title><rect x="693.1" y="69" width="4.2" height="15.0" fill="rgb(238,43,42)" rx="2" ry="2" />
-<text  x="696.12" y="79.5" ></text>
+<title>raxNewNode (494 samples, 1.21%)</title><rect x="518.9" y="69" width="14.3" height="15.0" fill="rgb(208,41,21)" rx="2" ry="2" />
+<text  x="521.87" y="79.5" ></text>
+</g>
+<g >
+<title>addClientToTimeoutTable (13 samples, 0.03%)</title><rect x="400.6" y="133" width="0.4" height="15.0" fill="rgb(207,190,11)" rx="2" ry="2" />
+<text  x="403.59" y="143.5" ></text>
+</g>
+<g >
+<title>dictSdsHash (66 samples, 0.16%)</title><rect x="169.5" y="197" width="1.9" height="15.0" fill="rgb(245,61,2)" rx="2" ry="2" />
+<text  x="172.47" y="207.5" ></text>
+</g>
+<g >
+<title>__memcpy_avx_unaligned_erms (63 samples, 0.15%)</title><rect x="1037.9" y="181" width="1.9" height="15.0" fill="rgb(249,182,21)" rx="2" ry="2" />
+<text  x="1040.92" y="191.5" ></text>
+</g>
+<g >
+<title>raxSeekGreatest (18 samples, 0.04%)</title><rect x="905.3" y="117" width="0.5" height="15.0" fill="rgb(245,203,27)" rx="2" ry="2" />
+<text  x="908.31" y="127.5" ></text>
+</g>
+<g >
+<title>dictSdsHash (21 samples, 0.05%)</title><rect x="722.4" y="101" width="0.6" height="15.0" fill="rgb(215,61,24)" rx="2" ry="2" />
+<text  x="725.43" y="111.5" ></text>
+</g>
+<g >
+<title>listNext (111 samples, 0.27%)</title><rect x="1179.0" y="245" width="3.3" height="15.0" fill="rgb(220,221,53)" rx="2" ry="2" />
+<text  x="1182.04" y="255.5" ></text>
+</g>
+<g >
+<title>zrealloc (373 samples, 0.92%)</title><rect x="1139.3" y="149" width="10.8" height="15.0" fill="rgb(237,57,0)" rx="2" ry="2" />
+<text  x="1142.33" y="159.5" ></text>
+</g>
+<g >
+<title>getLongLongFromObject (19 samples, 0.05%)</title><rect x="661.4" y="133" width="0.6" height="15.0" fill="rgb(248,69,8)" rx="2" ry="2" />
+<text  x="664.43" y="143.5" ></text>
+</g>
+<g >
+<title>siphash (154 samples, 0.38%)</title><rect x="200.0" y="181" width="4.5" height="15.0" fill="rgb(231,41,42)" rx="2" ry="2" />
+<text  x="203.04" y="191.5" ></text>
+</g>
+<g >
+<title>handleClientsBlockedOnKey (35,576 samples, 87.45%)</title><rect x="147.1" y="245" width="1031.9" height="15.0" fill="rgb(244,130,24)" rx="2" ry="2" />
+<text  x="150.14" y="255.5" >handleClientsBlockedOnKey</text>
+</g>
+<g >
+<title>__memcpy_avx_unaligned_erms (53 samples, 0.13%)</title><rect x="442.5" y="69" width="1.6" height="15.0" fill="rgb(205,132,53)" rx="2" ry="2" />
+<text  x="445.53" y="79.5" ></text>
+</g>
+<g >
+<title>zmalloc (143 samples, 0.35%)</title><rect x="472.7" y="37" width="4.1" height="15.0" fill="rgb(238,122,41)" rx="2" ry="2" />
+<text  x="475.67" y="47.5" ></text>
+</g>
+<g >
+<title>zfree (69 samples, 0.17%)</title><rect x="1175.6" y="181" width="2.0" height="15.0" fill="rgb(229,207,34)" rx="2" ry="2" />
+<text  x="1178.61" y="191.5" ></text>
+</g>
+<g >
+<title>handleClientsBlockedOnKeys (35,718 samples, 87.80%)</title><rect x="146.7" y="261" width="1036.0" height="15.0" fill="rgb(219,82,52)" rx="2" ry="2" />
+<text  x="149.67" y="271.5" >handleClientsBlockedOnKeys</text>
+</g>
+<g >
+<title>intrev64 (100 samples, 0.25%)</title><rect x="404.1" y="85" width="2.9" height="15.0" fill="rgb(241,104,51)" rx="2" ry="2" />
+<text  x="407.13" y="95.5" ></text>
+</g>
+<g >
+<title>je_realloc (27 samples, 0.07%)</title><rect x="463.9" y="53" width="0.8" height="15.0" fill="rgb(246,220,21)" rx="2" ry="2" />
+<text  x="466.94" y="63.5" ></text>
+</g>
+<g >
+<title>siphash (135 samples, 0.33%)</title><rect x="606.7" y="85" width="3.9" height="15.0" fill="rgb(222,42,19)" rx="2" ry="2" />
+<text  x="609.70" y="95.5" ></text>
+</g>
+<g >
+<title>ustime (42 samples, 0.10%)</title><rect x="341.4" y="165" width="1.2" height="15.0" fill="rgb(236,211,46)" rx="2" ry="2" />
+<text  x="344.36" y="175.5" ></text>
+</g>
+<g >
+<title>je_malloc_usable_size (329 samples, 0.81%)</title><rect x="964.3" y="133" width="9.6" height="15.0" fill="rgb(247,61,2)" rx="2" ry="2" />
+<text  x="967.31" y="143.5" ></text>
+</g>
+<g >
+<title>__memcmp_avx2_movbe (48 samples, 0.12%)</title><rect x="208.0" y="181" width="1.4" height="15.0" fill="rgb(251,23,26)" rx="2" ry="2" />
+<text  x="211.05" y="191.5" ></text>
+</g>
+<g >
+<title>je_malloc_usable_size (62 samples, 0.15%)</title><rect x="470.9" y="37" width="1.8" height="15.0" fill="rgb(242,211,14)" rx="2" ry="2" />
+<text  x="473.87" y="47.5" ></text>
+</g>
+<g >
+<title>encodeTimeoutKey (219 samples, 0.54%)</title><rect x="1039.8" y="181" width="6.3" height="15.0" fill="rgb(237,38,21)" rx="2" ry="2" />
+<text  x="1042.75" y="191.5" ></text>
+</g>
+<g >
+<title>raxCompressNode (4 samples, 0.01%)</title><rect x="410.2" y="85" width="0.2" height="15.0" fill="rgb(212,166,53)" rx="2" ry="2" />
+<text  x="413.25" y="95.5" ></text>
+</g>
+<g >
+<title>intrev64 (290 samples, 0.71%)</title><rect x="868.6" y="101" width="8.4" height="15.0" fill="rgb(249,108,46)" rx="2" ry="2" />
+<text  x="871.62" y="111.5" ></text>
+</g>
+<g >
+<title>raxGenericInsert (4,701 samples, 11.56%)</title><rect x="410.4" y="85" width="136.3" height="15.0" fill="rgb(209,43,44)" rx="2" ry="2" />
+<text  x="413.36" y="95.5" >raxGenericInsert</text>
+</g>
+<g >
+<title>dictSetVal (8 samples, 0.02%)</title><rect x="652.1" y="149" width="0.2" height="15.0" fill="rgb(226,28,35)" rx="2" ry="2" />
+<text  x="655.06" y="159.5" ></text>
+</g>
+<g >
+<title>lpGet (79 samples, 0.19%)</title><rect x="766.2" y="133" width="2.3" height="15.0" fill="rgb(231,206,11)" rx="2" ry="2" />
+<text  x="769.17" y="143.5" ></text>
+</g>
+<g >
+<title>scriptIsRunning (25 samples, 0.06%)</title><rect x="926.3" y="181" width="0.7" height="15.0" fill="rgb(206,137,26)" rx="2" ry="2" />
+<text  x="929.28" y="191.5" ></text>
+</g>
+<g >
+<title>lpPrev (329 samples, 0.81%)</title><rect x="826.6" y="117" width="9.6" height="15.0" fill="rgb(239,61,40)" rx="2" ry="2" />
+<text  x="829.65" y="127.5" ></text>
+</g>
+<g >
+<title>dictFind (953 samples, 2.34%)</title><rect x="1003.8" y="197" width="27.6" height="15.0" fill="rgb(232,52,44)" rx="2" ry="2" />
+<text  x="1006.76" y="207.5" >d..</text>
+</g>
+<g >
+<title>dictVanillaFree (10 samples, 0.02%)</title><rect x="985.7" y="165" width="0.3" height="15.0" fill="rgb(253,174,45)" rx="2" ry="2" />
+<text  x="988.74" y="175.5" ></text>
+</g>
+<g >
+<title>dictSdsKeyCompare (10 samples, 0.02%)</title><rect x="721.1" y="85" width="0.3" height="15.0" fill="rgb(245,162,43)" rx="2" ry="2" />
+<text  x="724.07" y="95.5" ></text>
+</g>
+<g >
+<title>afterCommand (27 samples, 0.07%)</title><rect x="278.9" y="181" width="0.7" height="15.0" fill="rgb(213,81,45)" rx="2" ry="2" />
+<text  x="281.85" y="191.5" ></text>
+</g>
+<g >
+<title>dictFindPositionForInsert (7 samples, 0.02%)</title><rect x="636.3" y="133" width="0.2" height="15.0" fill="rgb(238,198,24)" rx="2" ry="2" />
+<text  x="639.26" y="143.5" ></text>
+</g>
+<g >
+<title>encodeTimeoutKey (169 samples, 0.42%)</title><rect x="403.3" y="101" width="4.9" height="15.0" fill="rgb(207,215,22)" rx="2" ry="2" />
+<text  x="406.26" y="111.5" ></text>
+</g>
+<g >
+<title>getDecodedObject (37 samples, 0.09%)</title><rect x="617.6" y="101" width="1.1" height="15.0" fill="rgb(212,105,38)" rx="2" ry="2" />
+<text  x="620.64" y="111.5" ></text>
+</g>
+<g >
+<title>decrRefCount (34 samples, 0.08%)</title><rect x="209.4" y="181" width="1.0" height="15.0" fill="rgb(221,42,44)" rx="2" ry="2" />
+<text  x="212.44" y="191.5" ></text>
+</g>
+<g >
+<title>dictSdsKeyCompare (10 samples, 0.02%)</title><rect x="603.0" y="85" width="0.2" height="15.0" fill="rgb(205,193,17)" rx="2" ry="2" />
+<text  x="605.96" y="95.5" ></text>
+</g>
+<g >
+<title>unblockClient (4,968 samples, 12.21%)</title><rect x="1034.3" y="213" width="144.1" height="15.0" fill="rgb(252,1,54)" rx="2" ry="2" />
+<text  x="1037.30" y="223.5" >unblockClient</text>
+</g>
+<g >
+<title>streamLookupConsumer (7 samples, 0.02%)</title><rect x="338.4" y="165" width="0.2" height="15.0" fill="rgb(212,64,11)" rx="2" ry="2" />
+<text  x="341.43" y="175.5" ></text>
+</g>
+<g >
+<title>raxNewNode (417 samples, 1.03%)</title><rect x="464.7" y="53" width="12.1" height="15.0" fill="rgb(212,34,31)" rx="2" ry="2" />
+<text  x="467.72" y="63.5" ></text>
+</g>
+<g >
+<title>dictFreeUnlinkedEntry (972 samples, 2.39%)</title><rect x="956.7" y="165" width="28.1" height="15.0" fill="rgb(219,57,25)" rx="2" ry="2" />
+<text  x="959.65" y="175.5" >d..</text>
+</g>
+<g >
+<title>siphash (148 samples, 0.36%)</title><rect x="164.8" y="165" width="4.3" height="15.0" fill="rgb(254,188,32)" rx="2" ry="2" />
+<text  x="167.77" y="175.5" ></text>
+</g>
+<g >
+<title>expireIfNeeded (11 samples, 0.03%)</title><rect x="692.3" y="117" width="0.3" height="15.0" fill="rgb(219,109,21)" rx="2" ry="2" />
+<text  x="695.30" y="127.5" ></text>
+</g>
+<g >
+<title>xreadCommand (63 samples, 0.15%)</title><rect x="928.2" y="181" width="1.9" height="15.0" fill="rgb(246,64,41)" rx="2" ry="2" />
+<text  x="931.23" y="191.5" ></text>
+</g>
+<g >
+<title>listRewind (64 samples, 0.16%)</title><rect x="277.0" y="165" width="1.8" height="15.0" fill="rgb(234,186,47)" rx="2" ry="2" />
+<text  x="279.97" y="175.5" ></text>
+</g>
+<g >
+<title>lpValidateNext (100 samples, 0.25%)</title><rect x="814.1" y="101" width="2.9" height="15.0" fill="rgb(209,126,10)" rx="2" ry="2" />
+<text  x="817.09" y="111.5" ></text>
+</g>
+<g >
+<title>intrev64 (158 samples, 0.39%)</title><rect x="1040.4" y="165" width="4.5" height="15.0" fill="rgb(245,123,27)" rx="2" ry="2" />
+<text  x="1043.36" y="175.5" ></text>
+</g>
+<g >
+<title>raxLowWalk (991 samples, 2.44%)</title><rect x="1099.9" y="165" width="28.8" height="15.0" fill="rgb(225,210,35)" rx="2" ry="2" />
+<text  x="1102.94" y="175.5" >ra..</text>
+</g>
+<g >
+<title>dictGenHashFunction (6 samples, 0.01%)</title><rect x="606.5" y="85" width="0.2" height="15.0" fill="rgb(253,75,19)" rx="2" ry="2" />
+<text  x="609.53" y="95.5" ></text>
+</g>
+<g >
+<title>zmalloc (323 samples, 0.79%)</title><rect x="537.1" y="69" width="9.3" height="15.0" fill="rgb(224,97,7)" rx="2" ry="2" />
+<text  x="540.06" y="79.5" ></text>
+</g>
+<g >
+<title>getBlockedTypeByType (16 samples, 0.04%)</title><rect x="146.7" y="245" width="0.4" height="15.0" fill="rgb(210,180,9)" rx="2" ry="2" />
+<text  x="149.67" y="255.5" ></text>
+</g>
+<g >
+<title>dictDelete (1,640 samples, 4.03%)</title><rect x="939.5" y="197" width="47.5" height="15.0" fill="rgb(250,125,22)" rx="2" ry="2" />
+<text  x="942.48" y="207.5" >dict..</text>
+</g>
+<g >
+<title>dictGenHashFunction (12 samples, 0.03%)</title><rect x="588.2" y="85" width="0.3" height="15.0" fill="rgb(225,148,2)" rx="2" ry="2" />
+<text  x="591.17" y="95.5" ></text>
+</g>
+<g >
+<title>dictFindPositionForInsert (2,232 samples, 5.49%)</title><rect x="554.0" y="117" width="64.7" height="15.0" fill="rgb(239,16,19)" rx="2" ry="2" />
+<text  x="556.97" y="127.5" >dictFin..</text>
+</g>
+<g >
+<title>__strcasecmp_avx2 (19 samples, 0.05%)</title><rect x="229.1" y="197" width="0.6" height="15.0" fill="rgb(247,184,10)" rx="2" ry="2" />
+<text  x="232.14" y="207.5" ></text>
+</g>
+<g >
+<title>zfree (12 samples, 0.03%)</title><rect x="547.3" y="85" width="0.4" height="15.0" fill="rgb(230,151,44)" rx="2" ry="2" />
+<text  x="550.33" y="95.5" ></text>
+</g>
+<g >
+<title>incrRefCount (30 samples, 0.07%)</title><rect x="212.0" y="181" width="0.9" height="15.0" fill="rgb(213,159,28)" rx="2" ry="2" />
+<text  x="214.99" y="191.5" ></text>
+</g>
+<g >
+<title>je_realloc (64 samples, 0.16%)</title><rect x="1188.0" y="421" width="1.9" height="15.0" fill="rgb(217,97,28)" rx="2" ry="2" />
+<text  x="1191.03" y="431.5" ></text>
+</g>
+<g >
+<title>dictFind (19 samples, 0.05%)</title><rect x="691.5" y="117" width="0.5" height="15.0" fill="rgb(205,137,39)" rx="2" ry="2" />
+<text  x="694.45" y="127.5" ></text>
+</g>
+<g >
+<title>__memcmp_avx2_movbe (35 samples, 0.09%)</title><rect x="610.6" y="85" width="1.0" height="15.0" fill="rgb(249,31,16)" rx="2" ry="2" />
+<text  x="613.62" y="95.5" ></text>
+</g>
+<g >
+<title>getTimeoutFromObjectOrReply (15 samples, 0.04%)</title><rect x="334.9" y="165" width="0.5" height="15.0" fill="rgb(221,35,45)" rx="2" ry="2" />
+<text  x="337.92" y="175.5" ></text>
+</g>
+<g >
+<title>exitExecutionUnit (8 samples, 0.02%)</title><rect x="184.6" y="181" width="0.2" height="15.0" fill="rgb(231,145,6)" rx="2" ry="2" />
+<text  x="187.55" y="191.5" ></text>
+</g>
+<g >
+<title>incrRefCount (29 samples, 0.07%)</title><rect x="1026.4" y="165" width="0.8" height="15.0" fill="rgb(231,88,26)" rx="2" ry="2" />
+<text  x="1029.35" y="175.5" ></text>
+</g>
+<g >
+<title>je_free (42 samples, 0.10%)</title><rect x="444.1" y="69" width="1.2" height="15.0" fill="rgb(208,47,11)" rx="2" ry="2" />
+<text  x="447.12" y="79.5" ></text>
+</g>
+<g >
+<title>dictObjectDestructor (40 samples, 0.10%)</title><rect x="961.0" y="149" width="1.2" height="15.0" fill="rgb(217,36,53)" rx="2" ry="2" />
+<text  x="964.00" y="159.5" ></text>
+</g>
+<g >
+<title>postExecutionUnitOperations (14 samples, 0.03%)</title><rect x="335.4" y="165" width="0.4" height="15.0" fill="rgb(221,85,17)" rx="2" ry="2" />
+<text  x="338.38" y="175.5" ></text>
+</g>
+<g >
+<title>lpFirst (21 samples, 0.05%)</title><rect x="765.6" y="133" width="0.6" height="15.0" fill="rgb(252,123,29)" rx="2" ry="2" />
+<text  x="768.56" y="143.5" ></text>
+</g>
+<g >
+<title>LRU_CLOCK (336 samples, 0.83%)</title><rect x="681.7" y="117" width="9.8" height="15.0" fill="rgb(207,17,44)" rx="2" ry="2" />
+<text  x="684.71" y="127.5" ></text>
+</g>
+<g >
+<title>listNext (158 samples, 0.39%)</title><rect x="272.4" y="165" width="4.6" height="15.0" fill="rgb(215,59,1)" rx="2" ry="2" />
+<text  x="275.38" y="175.5" ></text>
+</g>
+<g >
+<title>lpBytes (215 samples, 0.53%)</title><rect x="796.0" y="117" width="6.3" height="15.0" fill="rgb(251,171,11)" rx="2" ry="2" />
+<text  x="799.02" y="127.5" ></text>
+</g>
+<g >
+<title>lpPrev (102 samples, 0.25%)</title><rect x="811.1" y="101" width="3.0" height="15.0" fill="rgb(237,157,18)" rx="2" ry="2" />
+<text  x="814.13" y="111.5" ></text>
+</g>
+<g >
+<title>dictSetVal (14 samples, 0.03%)</title><rect x="636.5" y="133" width="0.4" height="15.0" fill="rgb(251,176,8)" rx="2" ry="2" />
+<text  x="639.46" y="143.5" ></text>
+</g>
+<g >
+<title>scriptIsRunning (9 samples, 0.02%)</title><rect x="924.7" y="165" width="0.3" height="15.0" fill="rgb(222,136,6)" rx="2" ry="2" />
+<text  x="927.75" y="175.5" ></text>
+</g>
+<g >
+<title>lpLast (254 samples, 0.62%)</title><rect x="809.6" y="117" width="7.4" height="15.0" fill="rgb(218,126,44)" rx="2" ry="2" />
+<text  x="812.62" y="127.5" ></text>
+</g>
+<g >
+<title>dictEncObjHash (21 samples, 0.05%)</title><rect x="553.1" y="117" width="0.6" height="15.0" fill="rgb(210,193,11)" rx="2" ry="2" />
+<text  x="556.10" y="127.5" ></text>
+</g>
+<g >
+<title>lpSkip (91 samples, 0.22%)</title><rect x="836.2" y="117" width="2.6" height="15.0" fill="rgb(234,193,6)" rx="2" ry="2" />
+<text  x="839.19" y="127.5" ></text>
+</g>
+<g >
+<title>dictGenericDelete (19 samples, 0.05%)</title><rect x="1031.4" y="197" width="0.5" height="15.0" fill="rgb(229,107,47)" rx="2" ry="2" />
+<text  x="1034.40" y="207.5" ></text>
+</g>
+<g >
+<title>streamDecodeID (4 samples, 0.01%)</title><rect x="773.9" y="133" width="0.2" height="15.0" fill="rgb(226,22,30)" rx="2" ry="2" />
+<text  x="776.95" y="143.5" ></text>
+</g>
+<g >
+<title>memrev64 (59 samples, 0.15%)</title><rect x="886.3" y="101" width="1.8" height="15.0" fill="rgb(230,219,9)" rx="2" ry="2" />
+<text  x="889.34" y="111.5" ></text>
+</g>
+<g >
+<title>raxSeek (451 samples, 1.11%)</title><rect x="892.2" y="117" width="13.1" height="15.0" fill="rgb(234,6,47)" rx="2" ry="2" />
+<text  x="895.23" y="127.5" ></text>
+</g>
+<g >
+<title>ACLSelectorCheckCmd (12 samples, 0.03%)</title><rect x="271.3" y="165" width="0.4" height="15.0" fill="rgb(240,162,48)" rx="2" ry="2" />
+<text  x="274.34" y="175.5" ></text>
+</g>
+<g >
+<title>lookupKey (1,435 samples, 3.53%)</title><rect x="693.2" y="117" width="41.6" height="15.0" fill="rgb(247,221,6)" rx="2" ry="2" />
+<text  x="696.19" y="127.5" >loo..</text>
+</g>
+<g >
+<title>je_realloc (18 samples, 0.04%)</title><rect x="1138.8" y="149" width="0.5" height="15.0" fill="rgb(220,107,45)" rx="2" ry="2" />
+<text  x="1141.81" y="159.5" ></text>
+</g>
+<g >
+<title>raxCompressNode (1,191 samples, 2.93%)</title><rect x="484.3" y="69" width="34.6" height="15.0" fill="rgb(223,92,34)" rx="2" ry="2" />
+<text  x="487.33" y="79.5" >ra..</text>
+</g>
+<g >
+<title>processCommandAndResetClient (24,420 samples, 60.03%)</title><rect x="226.9" y="213" width="708.3" height="15.0" fill="rgb(217,175,36)" rx="2" ry="2" />
+<text  x="229.90" y="223.5" >processCommandAndResetClient</text>
+</g>
+<g >
+<title>zmalloc (143 samples, 0.35%)</title><rect x="631.3" y="101" width="4.1" height="15.0" fill="rgb(226,138,8)" rx="2" ry="2" />
+<text  x="634.30" y="111.5" ></text>
+</g>
+<g >
+<title>hasActiveChildProcess (17 samples, 0.04%)</title><rect x="150.9" y="213" width="0.5" height="15.0" fill="rgb(208,155,36)" rx="2" ry="2" />
+<text  x="153.94" y="223.5" ></text>
+</g>
+<g >
+<title>dictGetKey (8 samples, 0.02%)</title><rect x="169.2" y="197" width="0.3" height="15.0" fill="rgb(223,20,45)" rx="2" ry="2" />
+<text  x="172.24" y="207.5" ></text>
+</g>
+<g >
+<title>zmalloc (111 samples, 0.27%)</title><rect x="530.0" y="53" width="3.2" height="15.0" fill="rgb(212,125,45)" rx="2" ry="2" />
+<text  x="532.98" y="63.5" ></text>
+</g>
+<g >
+<title>exitExecutionUnit (12 samples, 0.03%)</title><rect x="921.3" y="181" width="0.4" height="15.0" fill="rgb(251,221,37)" rx="2" ry="2" />
+<text  x="924.32" y="191.5" ></text>
+</g>
+<g >
+<title>connUnixEventHandler (35,718 samples, 87.80%)</title><rect x="146.7" y="357" width="1036.0" height="15.0" fill="rgb(234,219,47)" rx="2" ry="2" />
+<text  x="149.67" y="367.5" >connUnixEventHandler</text>
+</g>
+<g >
+<title>redis-server (40,682 samples, 100.00%)</title><rect x="10.0" y="437" width="1180.0" height="15.0" fill="rgb(241,75,35)" rx="2" ry="2" />
+<text  x="13.00" y="447.5" >redis-server</text>
+</g>
+<g >
+<title>blockForKeys (8,704 samples, 21.40%)</title><rect x="396.1" y="149" width="252.4" height="15.0" fill="rgb(253,103,7)" rx="2" ry="2" />
+<text  x="399.06" y="159.5" >blockForKeys</text>
+</g>
+<g >
+<title>__memcpy_avx_unaligned (22 samples, 0.05%)</title><rect x="1037.3" y="181" width="0.6" height="15.0" fill="rgb(213,31,21)" rx="2" ry="2" />
+<text  x="1040.29" y="191.5" ></text>
+</g>
+<g >
+<title>zrealloc (20 samples, 0.05%)</title><rect x="1174.9" y="165" width="0.6" height="15.0" fill="rgb(242,46,3)" rx="2" ry="2" />
+<text  x="1177.89" y="175.5" ></text>
+</g>
+<g >
+<title>dictAddRaw (11 samples, 0.03%)</title><rect x="648.7" y="149" width="0.3" height="15.0" fill="rgb(252,188,14)" rx="2" ry="2" />
+<text  x="651.73" y="159.5" ></text>
+</g>
+<g >
+<title>getDecodedObject (79 samples, 0.19%)</title><rect x="1024.1" y="165" width="2.3" height="15.0" fill="rgb(236,94,40)" rx="2" ry="2" />
+<text  x="1027.06" y="175.5" ></text>
+</g>
+<g >
+<title>je_malloc (176 samples, 0.43%)</title><rect x="622.9" y="101" width="5.1" height="15.0" fill="rgb(214,197,45)" rx="2" ry="2" />
+<text  x="625.91" y="111.5" ></text>
+</g>
+<g >
+<title>dictTypeExpandAllowed (67 samples, 0.16%)</title><rect x="582.5" y="85" width="2.0" height="15.0" fill="rgb(230,14,26)" rx="2" ry="2" />
+<text  x="585.51" y="95.5" ></text>
+</g>
+<g >
+<title>dictSdsKeyCompare (6 samples, 0.01%)</title><rect x="169.1" y="181" width="0.1" height="15.0" fill="rgb(246,45,47)" rx="2" ry="2" />
+<text  x="172.07" y="191.5" ></text>
+</g>
+<g >
+<title>decrRefCount (42 samples, 0.10%)</title><rect x="584.5" y="101" width="1.2" height="15.0" fill="rgb(224,139,17)" rx="2" ry="2" />
+<text  x="587.48" y="111.5" ></text>
+</g>
+<g >
+<title>dictGetKey (18 samples, 0.04%)</title><rect x="1002.6" y="181" width="0.5" height="15.0" fill="rgb(210,53,28)" rx="2" ry="2" />
+<text  x="1005.57" y="191.5" ></text>
+</g>
+<g >
+<title>raxPrev (5 samples, 0.01%)</title><rect x="771.4" y="133" width="0.1" height="15.0" fill="rgb(251,11,46)" rx="2" ry="2" />
+<text  x="774.39" y="143.5" ></text>
+</g>
+<g >
+<title>lpFirst (39 samples, 0.10%)</title><rect x="802.3" y="117" width="1.1" height="15.0" fill="rgb(239,118,19)" rx="2" ry="2" />
+<text  x="805.26" y="127.5" ></text>
+</g>
+<g >
+<title>readQueryFromClient (35,718 samples, 87.80%)</title><rect x="146.7" y="325" width="1036.0" height="15.0" fill="rgb(245,97,51)" rx="2" ry="2" />
+<text  x="149.67" y="335.5" >readQueryFromClient</text>
+</g>
+<g >
+<title>[Missed User Stack] (4,712 samples, 11.58%)</title><rect x="10.0" y="421" width="136.7" height="15.0" fill="rgb(247,163,32)" rx="2" ry="2" />
+<text  x="13.00" y="431.5" >[Missed User Stack]</text>
+</g>
+<g >
+<title>decrRefCount (28 samples, 0.07%)</title><rect x="602.1" y="85" width="0.9" height="15.0" fill="rgb(241,118,18)" rx="2" ry="2" />
+<text  x="605.15" y="95.5" ></text>
+</g>
+<g >
+<title>processInputBuffer (35,718 samples, 87.80%)</title><rect x="146.7" y="309" width="1036.0" height="15.0" fill="rgb(217,210,38)" rx="2" ry="2" />
+<text  x="149.67" y="319.5" >processInputBuffer</text>
+</g>
+<g >
+<title>getDecodedObject (42 samples, 0.10%)</title><rect x="1030.2" y="181" width="1.2" height="15.0" fill="rgb(246,123,49)" rx="2" ry="2" />
+<text  x="1033.18" y="191.5" ></text>
+</g>
+<g >
+<title>expireIfNeeded (126 samples, 0.31%)</title><rect x="172.7" y="197" width="3.7" height="15.0" fill="rgb(223,80,17)" rx="2" ry="2" />
+<text  x="175.75" y="207.5" ></text>
+</g>
+<g >
+<title>authRequired (45 samples, 0.11%)</title><rect x="240.8" y="197" width="1.3" height="15.0" fill="rgb(235,96,45)" rx="2" ry="2" />
+<text  x="243.80" y="207.5" ></text>
+</g>
+<g >
+<title>modulePostExecutionUnitOperations (69 samples, 0.17%)</title><rect x="181.5" y="197" width="2.0" height="15.0" fill="rgb(236,48,25)" rx="2" ry="2" />
+<text  x="184.51" y="207.5" ></text>
+</g>
+<g >
+<title>intrev64 (207 samples, 0.51%)</title><rect x="880.3" y="101" width="6.0" height="15.0" fill="rgb(245,24,2)" rx="2" ry="2" />
+<text  x="883.34" y="111.5" ></text>
+</g>
+<g >
+<title>je_realloc (15 samples, 0.04%)</title><rect x="496.1" y="53" width="0.4" height="15.0" fill="rgb(235,34,4)" rx="2" ry="2" />
+<text  x="499.10" y="63.5" ></text>
+</g>
+<g >
+<title>keyIsExpired (56 samples, 0.14%)</title><rect x="174.8" y="181" width="1.6" height="15.0" fill="rgb(219,163,13)" rx="2" ry="2" />
+<text  x="177.78" y="191.5" ></text>
+</g>
+<g >
+<title>ACLSelectorCheckCmd (170 samples, 0.42%)</title><rect x="266.4" y="149" width="4.9" height="15.0" fill="rgb(222,77,4)" rx="2" ry="2" />
+<text  x="269.41" y="159.5" ></text>
+</g>
+<g >
+<title>je_malloc_usable_size (51 samples, 0.13%)</title><rect x="979.0" y="149" width="1.5" height="15.0" fill="rgb(237,157,6)" rx="2" ry="2" />
+<text  x="981.99" y="159.5" ></text>
+</g>
+<g >
+<title>zfree (10 samples, 0.02%)</title><rect x="920.2" y="165" width="0.3" height="15.0" fill="rgb(211,26,37)" rx="2" ry="2" />
+<text  x="923.19" y="175.5" ></text>
+</g>
+<g >
+<title>siphash (174 samples, 0.43%)</title><rect x="1012.2" y="165" width="5.0" height="15.0" fill="rgb(221,159,7)" rx="2" ry="2" />
+<text  x="1015.20" y="175.5" ></text>
+</g>
+<g >
+<title>incrRefCount (14 samples, 0.03%)</title><rect x="668.4" y="149" width="0.4" height="15.0" fill="rgb(245,141,21)" rx="2" ry="2" />
+<text  x="671.42" y="159.5" ></text>
+</g>
+<g >
+<title>je_malloc_usable_size (217 samples, 0.53%)</title><rect x="1132.5" y="149" width="6.3" height="15.0" fill="rgb(254,179,37)" rx="2" ry="2" />
+<text  x="1135.51" y="159.5" ></text>
+</g>
+<g >
+<title>encodeTimeoutKey (8 samples, 0.02%)</title><rect x="1036.3" y="197" width="0.2" height="15.0" fill="rgb(242,87,8)" rx="2" ry="2" />
+<text  x="1039.30" y="207.5" ></text>
+</g>
+<g >
+<title>siphash (176 samples, 0.43%)</title><rect x="951.5" y="149" width="5.2" height="15.0" fill="rgb(214,19,42)" rx="2" ry="2" />
+<text  x="954.55" y="159.5" ></text>
+</g>
+<g >
+<title>lookupKeyReadWithFlags (1,858 samples, 4.57%)</title><rect x="680.9" y="133" width="53.9" height="15.0" fill="rgb(243,31,6)" rx="2" ry="2" />
+<text  x="683.93" y="143.5" >looku..</text>
+</g>
+<g >
+<title>raxGetData (81 samples, 0.20%)</title><rect x="907.4" y="133" width="2.3" height="15.0" fill="rgb(250,41,10)" rx="2" ry="2" />
+<text  x="910.40" y="143.5" ></text>
+</g>
+<g >
+<title>raxStop (8 samples, 0.02%)</title><rect x="773.7" y="133" width="0.2" height="15.0" fill="rgb(218,171,24)" rx="2" ry="2" />
+<text  x="776.71" y="143.5" ></text>
+</g>
+<g >
+<title>je_malloc_usable_size (92 samples, 0.23%)</title><rect x="641.1" y="117" width="2.6" height="15.0" fill="rgb(212,69,23)" rx="2" ry="2" />
+<text  x="644.07" y="127.5" ></text>
+</g>
+<g >
+<title>__strcasecmp_l_avx2 (1,313 samples, 3.23%)</title><rect x="295.3" y="165" width="38.1" height="15.0" fill="rgb(211,20,23)" rx="2" ry="2" />
+<text  x="298.27" y="175.5" >__s..</text>
+</g>
+<g >
+<title>intrev64 (5 samples, 0.01%)</title><rect x="408.2" y="101" width="0.1" height="15.0" fill="rgb(205,115,6)" rx="2" ry="2" />
+<text  x="411.16" y="111.5" ></text>
+</g>
+<g >
+<title>ACLCheckAllUserCommandPerm (270 samples, 0.66%)</title><rect x="263.5" y="165" width="7.8" height="15.0" fill="rgb(250,32,45)" rx="2" ry="2" />
+<text  x="266.51" y="175.5" ></text>
+</g>
+<g >
+<title>dictObjKeyCompare (42 samples, 0.10%)</title><rect x="610.6" y="101" width="1.2" height="15.0" fill="rgb(206,176,8)" rx="2" ry="2" />
+<text  x="613.62" y="111.5" ></text>
+</g>
+<g >
+<title>lpValidateNext (924 samples, 2.27%)</title><rect x="838.8" y="117" width="26.8" height="15.0" fill="rgb(234,182,36)" rx="2" ry="2" />
+<text  x="841.83" y="127.5" >l..</text>
+</g>
+<g >
+<title>raxIteratorPrevStep (10 samples, 0.02%)</title><rect x="865.6" y="117" width="0.3" height="15.0" fill="rgb(226,31,26)" rx="2" ry="2" />
+<text  x="868.63" y="127.5" ></text>
+</g>
+<g >
+<title>dictEncObjHash (233 samples, 0.57%)</title><rect x="1010.5" y="181" width="6.7" height="15.0" fill="rgb(245,99,3)" rx="2" ry="2" />
+<text  x="1013.49" y="191.5" ></text>
+</g>
+<g >
+<title>raxAddChild (1,120 samples, 2.75%)</title><rect x="451.8" y="69" width="32.5" height="15.0" fill="rgb(230,196,31)" rx="2" ry="2" />
+<text  x="454.84" y="79.5" >ra..</text>
+</g>
+<g >
+<title>lookupKeyReadWithFlags (5 samples, 0.01%)</title><rect x="1182.3" y="245" width="0.1" height="15.0" fill="rgb(229,4,2)" rx="2" ry="2" />
+<text  x="1185.26" y="255.5" ></text>
+</g>
+<g >
+<title>raxRemove (4,406 samples, 10.83%)</title><rect x="1047.7" y="181" width="127.8" height="15.0" fill="rgb(214,195,16)" rx="2" ry="2" />
+<text  x="1050.67" y="191.5" >raxRemove</text>
+</g>
+<g >
+<title>dictSdsKeyCompare (99 samples, 0.24%)</title><rect x="1027.3" y="181" width="2.9" height="15.0" fill="rgb(213,36,31)" rx="2" ry="2" />
+<text  x="1030.31" y="191.5" ></text>
+</g>
+<g >
+<title>dictIncrUnsignedIntegerVal (13 samples, 0.03%)</title><rect x="219.1" y="213" width="0.4" height="15.0" fill="rgb(225,75,5)" rx="2" ry="2" />
+<text  x="222.13" y="223.5" ></text>
+</g>
+<g >
+<title>getExpire (21 samples, 0.05%)</title><rect x="730.3" y="85" width="0.6" height="15.0" fill="rgb(214,85,38)" rx="2" ry="2" />
+<text  x="733.26" y="95.5" ></text>
+</g>
+<g >
+<title>siphash (289 samples, 0.71%)</title><rect x="588.5" y="85" width="8.4" height="15.0" fill="rgb(250,108,6)" rx="2" ry="2" />
+<text  x="591.51" y="95.5" ></text>
+</g>
+<g >
+<title>addClientToTimeoutTable (5,029 samples, 12.36%)</title><rect x="402.0" y="117" width="145.9" height="15.0" fill="rgb(247,4,45)" rx="2" ry="2" />
+<text  x="405.04" y="127.5" >addClientToTimeout..</text>
+</g>
+<g >
+<title>streamLookupConsumer (106 samples, 0.26%)</title><rect x="909.7" y="149" width="3.1" height="15.0" fill="rgb(245,155,46)" rx="2" ry="2" />
+<text  x="912.75" y="159.5" ></text>
+</g>
+<g >
+<title>zmalloc (8 samples, 0.02%)</title><rect x="476.8" y="53" width="0.2" height="15.0" fill="rgb(251,149,1)" rx="2" ry="2" />
+<text  x="479.81" y="63.5" ></text>
+</g>
+<g >
+<title>getLongLongFromObjectOrReply (221 samples, 0.54%)</title><rect x="652.8" y="149" width="6.4" height="15.0" fill="rgb(207,120,49)" rx="2" ry="2" />
+<text  x="655.76" y="159.5" ></text>
+</g>
+<g >
+<title>memrev64 (40 samples, 0.10%)</title><rect x="1044.9" y="165" width="1.2" height="15.0" fill="rgb(215,7,17)" rx="2" ry="2" />
+<text  x="1047.94" y="175.5" ></text>
+</g>
+<g >
+<title>dictEncObjKeyCompare (288 samples, 0.71%)</title><rect x="204.5" y="197" width="8.4" height="15.0" fill="rgb(222,228,38)" rx="2" ry="2" />
+<text  x="207.51" y="207.5" ></text>
+</g>
+<g >
+<title>dictGetKey (37 samples, 0.09%)</title><rect x="721.4" y="101" width="1.0" height="15.0" fill="rgb(225,198,18)" rx="2" ry="2" />
+<text  x="724.36" y="111.5" ></text>
+</g>
+<g >
+<title>unblockClient (5 samples, 0.01%)</title><rect x="177.2" y="229" width="0.2" height="15.0" fill="rgb(252,218,40)" rx="2" ry="2" />
+<text  x="180.22" y="239.5" ></text>
+</g>
+<g >
+<title>postExecutionUnitOperations (19 samples, 0.05%)</title><rect x="226.4" y="213" width="0.5" height="15.0" fill="rgb(205,105,47)" rx="2" ry="2" />
+<text  x="229.35" y="223.5" ></text>
+</g>
+<g >
+<title>lpGet (215 samples, 0.53%)</title><rect x="803.4" y="117" width="6.2" height="15.0" fill="rgb(231,172,11)" rx="2" ry="2" />
+<text  x="806.39" y="127.5" ></text>
+</g>
+<g >
+<title>commandProcessed (17 samples, 0.04%)</title><rect x="243.2" y="197" width="0.5" height="15.0" fill="rgb(239,67,19)" rx="2" ry="2" />
+<text  x="246.23" y="207.5" ></text>
+</g>
+<g >
+<title>dictObjKeyCompare (13 samples, 0.03%)</title><rect x="1003.4" y="181" width="0.4" height="15.0" fill="rgb(234,97,46)" rx="2" ry="2" />
+<text  x="1006.38" y="191.5" ></text>
+</g>
+<g >
+<title>dictFind (409 samples, 1.01%)</title><rect x="157.4" y="197" width="11.8" height="15.0" fill="rgb(215,224,12)" rx="2" ry="2" />
+<text  x="160.38" y="207.5" ></text>
+</g>
+<g >
+<title>__memcmp_avx2_movbe (46 samples, 0.11%)</title><rect x="998.3" y="149" width="1.3" height="15.0" fill="rgb(205,31,23)" rx="2" ry="2" />
+<text  x="1001.27" y="159.5" ></text>
 </g>
 </g>
 </svg>
