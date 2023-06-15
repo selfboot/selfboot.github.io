@@ -9,7 +9,7 @@ description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积
 
 在 [神奇 Prompt 让 GPT4 化身英语老师](https://selfboot.cn/2023/05/26/gpt4_tutor_english/)和[神奇 Prompt 让 GPT4 化身物理老师](https://selfboot.cn/2023/05/26/gpt4_tutor_physics/)中，已经看到了 GPT4 进行教学的可能性。数学和其他学科比，更加的深奥难懂，GPT 刚出来的时候，连简单的加减乘除都做不对。现在我们尝试来让 GPT4 教我们大学微积分，当然这里用了插件 Wolfram，主要完成计算和绘图功能。
 
-第一步依然是把 [prompt](https://raw.githubusercontent.com/JushBJJ/Mr.-Ranedeer-AI-Tutor/main/Mr_Ranedeer.json) 复制给 GPT 作为初始问题，然后用 `/language 简体中文` 指定后续的语言，接着指定想学习大学的微积分，让它循序渐进给我们讲解。最终的微积分学习助手配置如下：
+第一步依然是把 [prompt](https://gist.githubusercontent.com/selfboot/1322b0f58882e7459b4842b997786e63/raw/7d33bc7e02bec43d77b1d06287b5963f3ce166cd/Mr_Ranedeer.md) 复制给 GPT 作为初始问题，然后用 `/language 简体中文` 指定后续的语言，接着指定想学习大学的微积分，让它循序渐进给我们讲解。最终的微积分学习助手配置如下：
 
 - 🎯深度：大学
 - 🧠学习方式：循序渐进

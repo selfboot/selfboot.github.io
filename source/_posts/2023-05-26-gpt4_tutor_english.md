@@ -13,7 +13,7 @@ description: 本页面详细介绍了如何使用GPT-4作为您的个人英语�
 
 # Prompt 加载
 
-> 直接把 [prompt](https://raw.githubusercontent.com/JushBJJ/Mr.-Ranedeer-AI-Tutor/main/Mr_Ranedeer.json) 复制给 GPT 作为初始问题。
+> 直接把 [prompt](https://gist.githubusercontent.com/selfboot/1322b0f58882e7459b4842b997786e63/raw/7d33bc7e02bec43d77b1d06287b5963f3ce166cd/Mr_Ranedeer.md) 复制给 GPT 作为初始问题。
 
 <b>Question:</b>
 {
