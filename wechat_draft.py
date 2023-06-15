@@ -35,15 +35,17 @@ def get_access_token(appid, appsecret):
 
 def replace_image_urls(html_content, access_token):
     # Define a regular expression to match image URLs
-    pattern = r'src="[^"]*"'
+    pattern = r'src="[^"]*.png"'
 
     def process_url(match):
         # Extract the original URL from the match object
         original_url = match.group(0)[5:-1]
         # Process the URL and return the new URL
         new_url = upload_image_to_wechat(access_token, original_url)
-        return f'src="{new_url}"'
-
+        if new_url:
+            return f'src="{new_url}"'
+        return ""
+    
     # Use the re.sub function to replace all image URLs
     new_html = re.sub(pattern, process_url, html_content)
     return new_html
@@ -58,13 +60,17 @@ def md_to_valid_html(accesstoken, md_file):
     html_path = Path(gh_pages_pre) / file_path / 'index.html'
     print(html_path)
 
+    if not html_path.exists():
+        print(f"{html_path} not exists")
+        return None, None, None
+    
     with open(html_path, 'r') as f:
         html_content = f.read()
         
     html_content, title = adapt_wechat(html_content)
     html_content = replace_image_urls(html_content, accesstoken)
-    # with open('test.html', 'w') as f:
-    #     f.write(html_content)
+    with open('test.html', 'w') as f:
+        f.write(html_content)
 
     parts = p.stem.split('-')
     link = "https://selfboot.cn/" + file_path
@@ -76,7 +82,11 @@ def upload_image_to_wechat(access_token, cos_url):
     image_file = io.BytesIO(response.content)
     url = f"https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={access_token}"
     image_file.seek(0)
-    image = Image.open(image_file)
+    try:
+        image = Image.open(image_file)
+    except Exception as e:
+        print(f"Failed to open image file {e}")
+        return None
     image_type = image.format.lower()
     image_file.seek(0)
     mime_type = 'image/' + image_type if image_type else 'application/octet-stream'
@@ -196,12 +206,12 @@ def add_draft(access_token, filename):
     headers = {'Content-Type': 'application/json'}  # Add this line
     data = json.dumps({"articles": [article]}, ensure_ascii=False).encode('utf-8') 
     response = requests.post(url, data=data, headers=headers)  # Modify this line
-    data = response.json()
-    if "media_id" in data:
+    if response and "media_id" in response.json():
+        data = response.json()
         print("Draft created successfully.")
         return data["media_id"]
     else:
-        print(f"Failed to create draft. Error code: {data['errcode']}, Error message: {data['errmsg']}")
+        print(f"Failed to create draft. Error response: {response}")
         return None
 
 def process_add_mdfiles(md_files):
