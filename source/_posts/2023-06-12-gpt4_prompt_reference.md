@@ -12,6 +12,7 @@ description: 掌握 GPT-4 提问技巧，提供引用文本是关键。本文详
 1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
 2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
 3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
+4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
 
 OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章，甚至编程。然而，即使是 GPT-4，也有其局限性，其中之一就是**上下文长度的限制**。GPT-4 的上下文长度限制是由其内部架构决定的，简单来说，GPT-4 在处理输入时，会将输入的文本转化为一系列的“令牌”（tokens）。然而，GPT-4 只能处理一定数量的令牌，这就是所谓的“上下文长度”。超过这个长度，GPT-4 就无法全面理解输入的内容，这可能会影响其生成的输出的质量。
 
