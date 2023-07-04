@@ -72,11 +72,74 @@ $ perf record --call-graph dwarf ./my_program
 
 虽然 DWARF 信息对于调试非常有用，但基于 eBPF 的工具不能读取 DWARF 里面的堆栈信息。在 eBPF 中使用另外方法读取堆栈信息，那就是帧指针(frame pointer)，帧指针可以为我们提供完整的堆栈跟踪。帧指针是 perf 的默认堆栈遍历，也是目前 bcc-tools 或 bpftrace 唯一支持的堆栈遍历技术。
 
-为了在生成的二进制文件中保留帧指针，要确保在编译程序时启用帧指针。这可以通过使用编译器标志来完成，例如在 GCC 中使用 `-fno-omit-frame-pointer`。
+为了在生成的二进制文件中保留帧指针，要确保在编译程序时启用帧指针。这可以通过使用编译器标志来完成，例如在 GCC 中使用 `-fno-omit-frame-pointer`。下面是一个简单的示例代码：
 
+```c++
+// fp_demo_write.cpp
+#include <unistd.h>
+#include <chrono>
+#include <thread>
 
+void functionA() {
+    const char* message = "Inside functionA\n";
+    write(STDOUT_FILENO, message, 16);
+    // cout 的函数调用堆栈不在 main 中;
+    // std::cout << "Inside functionA" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
 
-可以在项目的默认编译选项中加上 `-fno-omit-frame-pointer`，方便后面进行分析。在Linux 发行版 fedora 的 wiki 上可以看到有人就提议，默认开启 [Changes/fno-omit-frame-pointer](https://fedoraproject.org/wiki/Changes/fno-omit-frame-pointer)，并列举了这样做的好处以及可能的性能损失。
+void functionB() {
+    functionA();
+    const char* message = "Inside functionB\n";
+    write(STDOUT_FILENO, message, 16);
+}
+
+void functionC() {
+    functionB();
+    const char* message = "Inside functionC\n";
+    write(STDOUT_FILENO, message, 16);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
+
+int main() {
+    while (true) {
+        functionC();
+    }
+    return 0;
+}
+```
+
+用 `-fno-omit-frame-pointer` 编译后，可以用 profile 拿到 cpu 耗时的函数调用堆栈，之后用 FlameGraph 可以拿到 cpu 火焰图。
+
+```shell
+$ g++ fp_demo_write.cpp -fno-omit-frame-pointer -o fp_demo_write
+$ profile -F 999 -U -f --pid $(pgrep fp_demo_write)  60 > fp_demo_write.stack
+$ ../FlameGraph/flamegraph.pl fp_demo_write.stack > fp_demo_write.svg
+```
+
+这里 CPU 火焰图如下，可以看到整体函数调用链路，以及各种操作的耗时：
+
+![fno-omit-frame-pointer拿到完整的函数堆栈](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_write.svg)
+
+上面示例函数中，我们用 `write(STDOUT_FILENO, message, 16);` 来打印字符串，这里一开始用了c++的 `std::cout` 来打印，结果 cpu 火焰图有点和预期不一样，可以看到和 `__libc_start_call_main` 同级别的，有一个 unknown 函数帧，然后在这里面有 `write` 和 `std::basic_ostream<char, std::char_traits<char> >::~basic_ostream()` 函数。
+
+![cout 拿到的函数堆栈里面有 unknown 部分](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_cout.svg)
+
+理论上这里所有的函数都应该在 main 的函数栈里面的，但是现在并列有了一个 `unknown` 的调用堆栈。可能是和 C++ 标准库 glibc 的内部工作方式和缓冲机制有关，在使用 `std::cout` 写入数据时，数据不会立即写入标准输出，而是存储在内部缓冲区中，直到缓冲区满或显式刷新。这里的输出由 glibc 控制，所以调用堆栈不在 main 中。 
+
+如果想验证我们的二进制文件是否有帧指针的信息，可以用 `objdump` 拿到反汇编内容，然后看函数的开始指令是不是 `push %rbp; mov %rsp,%rbp` 即可。对于前面的例子，我们可以看到反汇编结果如下：
+
+![验证二进制汇编中有帧指针 rbp](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_rbp.png)
+
+GCC/G++ 编译器中，是否默认使用`-fno-omit-frame-pointer`选项依赖于编译器的版本和目标架构。在某些版本和/或架构上，可能默认保留帧指针。如果没有保留帧指针，生成的二进制汇编代码中就没有相关 rbp 的部分。在我的机器上，默认编译也是有帧指针的，用 `-O2` 开启编译优化后生成的二进制中就没有帧指针了，如下所示：
+
+![二进制汇编中没有帧指针 rbp](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_no_rbp.png)
+
+再用 `profile` 来分析的话，就拿不到完整的函数调用栈信息了，如下图：
+
+![没有帧指针，拿函数堆栈失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_write_no.svg)
+
+在实际的项目开发中，建议在默认编译选项中加上 `-fno-omit-frame-pointer`，方便后面进行分析。在Linux 发行版 fedora 的 wiki 上可以看到有人就提议，默认开启 [Changes/fno-omit-frame-pointer](https://fedoraproject.org/wiki/Changes/fno-omit-frame-pointer)，并列举了这样做的好处以及可能的性能损失。
 
 ## 复杂 C++ 项目编译
 
@@ -86,7 +149,7 @@ $ perf record --call-graph dwarf ./my_program
 
 我们知道C++有两种链接方式，静态链接和动态链接。静态链接是在编译时将所有库文件的代码合并到一个单一的可执行文件中，这意味着可执行文件包含了它所需要的所有代码，不依赖于外部的库文件。与静态链接不同，动态链接不会将库代码合并到可执行文件中。相反，它在运行时动态地加载库，这意味着可执行文件只包含对库的引用，而不是库的实际代码。
 
-下面是静态链接和动态链接的特点：
+下面是静态链接和动态链接的一些特点：
 
 | 特点       | 静态链接                          | 动态链接                          |
 |------------|---------------------------------|---------------------------------|
@@ -97,7 +160,8 @@ $ perf record --call-graph dwarf ./my_program
 | 内存占用       | 通常较高，每个实例都有其自己的库副本                  | 通常较低，多个实例可以共享同一份库的内存          |
 | 兼容性        | 可以更好地控制版本，因为库是嵌入的，不受外部库更新的影响 | 可能面临兼容性问题，如果外部库更新并且不向后兼容   |
 
-对于一个大型 C++项目来说，项目模块之间所有可能的依赖关系可以归类为下图的几种情形：
+对于一个大型 C++项目来说，具体选择哪种链接方式可能看团队的权衡。总的来说，项目模块之间所有可能的依赖关系可以归类为下图的几种情形：
+
 ![C++ 项目的依赖关系](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230703_c++_frame_pointer_stack_depend.svg)
 
 图片由 [Graphviz](https://graphviz.org/) 渲染，图片源码如下：
@@ -132,12 +196,25 @@ digraph G {
 
 这其中最常见的依赖方式是**静态链接库依赖其他静态链接库，动态链接库依赖其他动态链接库**。动态库 A 依赖静态库 B 是可行的，并且在某些情况下是有意义的。例如，如果静态库 B 包含一些不经常变化的代码，而动态库 A 包含一些经常更新的代码。不推荐在静态库 B 中依赖动态库 A，因为静态库通常被视为独立的代码块，不依赖于外部的动态链接。
 
-### 编译选项与依赖
+### 静态依赖下的编译
 
-接下来我们分析静态链接和动态链接情况下，编译选项 `-fno-omit-frame-pointer` 如何影响生成的二进制文件的堆栈信息，其实主要是解决下面的疑问：
+接下来我们分析在静态链接情况下，如果中间有第三方依赖没有带编译选项 `-fno-omit-frame-pointer`，会带来怎么样的影响。
 
-- 如果我们的项目依赖静态(动态)库 A，A 在编译的时候，没有带堆栈信息，那么最后项目中会不会丢失 A 中的函数调用堆栈呢？
-- 如果我们的项目依赖静态(动态)库 B，B 编译的时候带了堆栈信息，但是项目本身编译的时候没带堆栈，那么最后会保留 B 中堆栈信息吗？
+假设有一个 main.cpp 依赖了 utils.cpp 和静态库 static_A，静态库 static_A 依赖了静态库 static_B，这里static_A 编译的时候没带上 -fno-omit-frame-pointer，但是其他都带了-fno-omit-frame-pointer，最终生成的二进制文件中，各静态库和 cpp 文件中的函数会有帧指针吗？这种情况下 eBPF 和 BCC 的工具能最大程序的解析出堆栈信息吗？
+
+我们在本地创建一个完整的示例项目，包含上面的各种依赖关系。然后在编译生成的二进制文件中，发现 static_A 里面的函数没有帧指针，但是 static_B 和其他函数都有帧指针。在生成的 cpu 火焰图中，拿到的函数调用堆栈是错乱的，如下图：
+
+![中间静态库丢失了帧指针](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main.svg)
+
+正常如果没丢失帧指针的话，火焰图应该如下图所示：
+
+![整体没有丢失帧指针](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_fp.svg)
+
+通过上面的实验看到，profile 工具分析性能时，依赖帧指针来重建调用堆栈。即使**只丢失中间某个依赖库的帧指针**，整体函数的调用堆栈就会错乱，并不是只丢失这中间的部分函数调用堆栈。
+
+还是上面的场景，如果我们在依赖的最底层 static_B 编译的时候不保存堆栈信息，但是其他部分都不保存，那么生成的二进制文件中，只有 static_B 中的函数没有帧指针。再次用 profile 分析 cpu 堆栈，发现虽然只是最后一层函数调用没有帧指针，但是 BCC tools 分析拿到的堆栈信息还是有问题，如下图，`printStaticA` 和 `function_entry` 被混到了同一层。
+
+![整体没有丢失帧指针](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_error.svg)
 
 ## 更多文章
 
