@@ -1,5 +1,5 @@
 ---
-title: GPT4 代码解释器
+title: GPT4 代码解释器：当 AI 可以执行代码
 tags:
   - GPT4
 category: 人工智能
