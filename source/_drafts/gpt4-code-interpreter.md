@@ -27,6 +27,10 @@ OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/
 
 代码解释器带来的最引人注目的功能之一就是数据可视化。代码解释器使 GPT-4 能够生成广泛的数据可视化，包括 3D 曲面图、散点图、径向条形图和树形图等。
 
+[New York City Airbnb Open Data](https://www.kaggle.com/datasets/dgomonov/new-york-city-airbnb-open-data/code?resource=download) 上面有一个Airbnb给的纽约在2019年的[租房数据集](https://www.kaggle.com/datasets/dgomonov/new-york-city-airbnb-open-data/download?datasetVersionNumber=3)。
+
+
+
 ## 面临的限制
 
 ### 语言和库的限制
