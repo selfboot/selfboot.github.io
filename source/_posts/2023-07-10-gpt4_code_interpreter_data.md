@@ -4,8 +4,10 @@ tags:
   - GPT4
 category: 人工智能
 toc: true
-description: 
+date: 2023-07-10 20:59:54
+description:
 ---
+
 
 OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/chatgpt-plugins) 中介绍了插件功能，当时就提到了两个十分重要，并且 OpenAI 自己托管的插件 `web browser` 和 `code interpreter`，关于代码解释器(code interpreter)，原文是这样说的：
 
@@ -130,4 +132,4 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 当然还要时刻注意 OpenAI 代码解释器的一些限制，具体可以看我的这篇文章：[GPT4 代码解释器：资源限制详解](https://selfboot.cn/2023/07/09/gpt4_code_interpreter_limit/)。
 
-备注：本文中的数据集来源自公开数据集，已经脱敏处理，可以在 [Google Drive](https://drive.google.com/drive/folders/1CFByB6K0x8XYu8jGo3_XPbHW_7T1dvfw?usp=sharing) 下载。
+备注：本文中的数据集可以在 [Google Drive](https://drive.google.com/drive/folders/1CFByB6K0x8XYu8jGo3_XPbHW_7T1dvfw?usp=sharing) 下载。
