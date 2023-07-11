@@ -5,9 +5,8 @@ tags:
 category: 人工智能
 toc: true
 date: 2023-07-10 20:59:54
-description:
+description: 这篇文章详细阐述了GPT-4代码解释器在数据分析方面的强大能力。通过深入浅出的方式，揭示了GPT-4如何处理和解析大量数据，生动展示了GPT-4在数据分析中的应用，对于希望深入理解GPT-4数据处理能力的读者来说，这是一篇必读的文章。
 ---
-
 
 OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/chatgpt-plugins) 中介绍了插件功能，当时就提到了两个十分重要，并且 OpenAI 自己托管的插件 `web browser` 和 `code interpreter`，关于代码解释器(code interpreter)，原文是这样说的：
 
