@@ -202,6 +202,8 @@ cores_estimated
 
 接着尝试了增加计算任务的计算量（增大矩阵的大小），并且增加任务的数量，然而运行时间超过了执行环境的时长限制，所以<span style="color:red">没有拿到核数限制</span>。
 
+<span style='color:red'> 2023.07.17 更新：</span>在 [GPT4 代码解释器：OpenAI 提供了多少 CPU](https://selfboot.cn/2023/07/09/gpt4_code_interpreter_cpu/) 一文中，重新补充了这里的内容，并拿到了一个预估的 CPU 核数限制。
+
 ## Python 库限制
 
 这里的执行环境目前只支持 Python 语言，我们知道 Python 中有特别多的第三方库，可以用来完成各种任务。因为不能访问网络，所以我们不能安装库，只能用预先安装的库，那么 OpenAI 到底预先安装了哪些库呢，来让 ChatGPT 自己打印出来看看。这次提问可以很直白了，**当前运行环境安装了哪些Python的库呢？**然后就拿到了代码如下：
