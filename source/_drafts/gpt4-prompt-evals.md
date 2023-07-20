@@ -14,6 +14,10 @@ description: 深入探索 GPT-4 提问技巧系列的第六篇文章，
 4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
 5. [GPT4 提问技巧五：借助外部工具]()；
 
+[大家都在吐槽GPT-4变「笨」了，可能是架构重新设计惹的祸](https://mp.weixin.qq.com/s/S_fuP4mQBFqMzNYtNr4ysQ)
+
+[研究实锤GPT-4真变笨了：3个月内数学能力雪崩式下降，代码能力也变差](https://mp.weixin.qq.com/s/rzM-2cZ0B_WrSH-Vk2vCfg)
+
 ## 简单匹配评测
 
 `evals/registry/data/chinese_chu_ci/samples.jsonl` 中是《楚辞》相关的匹配评测集，其中一条记录如下格式，给定了 Prompt 和期待的回答：
