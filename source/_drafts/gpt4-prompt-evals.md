@@ -88,3 +88,27 @@ $ cat /tmp/evallogs/230719083815WL3TWHO2_gpt-4_chinese_chu_ci.jsonl
     "created_at":"2023-07-19 08:38:20.270555+00:00"
 }
 ```
+
+## 翻译质量评测
+
+除了前面简单的匹配评测，OpenAI 还提供了翻译质量的评测。和前面匹配评测的区别在于，这里不能直接判断 GPT 模型生成的结果是否和数据集中期望的结果一致，而是通过一种算法，对模型翻译的文本和人工翻译的文本打分。
+
+中文翻译的评测数据集在 `evals/registry/data/chinese_hard_translations/samples.jsonl`，如下：
+
+![中文翻译质量评测语料数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230720_gpt4_prompt_evals_transdata.png)
+
+每条评测记录包括 Prompt，中文文本以及人工翻译的参考文本。如这个测试集名字 `chinese_hard_translations` 所言，这里的中文确实都是一些比较难翻译的中文语料，比如下面这种，一遍可能都读不通顺：
+
+> 我背有点驼，妈妈说“你的背得背背背背佳“
+> 你去班上数数数数数不好的有多少
+
+这里评测记录的翻译 Prompt 值得学习：
+
+> Given a text representing, provide the English translation of the text. You **MUST NOT** provide any explanation in the output other than the translation itself. You **MUST** paraphrase rather than translate word for word, with **ALL** of the original meanings preserved.
+
+![中文翻译示例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230720_gpt4_prompt_evals_transtest.png)
+
+
+"I have a bit of a hunchback. My mom says, 'You have to work on improving your posture.'"
+
+"My back is slightly hunched, and my mother tells me, 'You need to significantly better your posture.'"
