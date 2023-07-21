@@ -2,12 +2,20 @@ layout: page
 copyright: true
 donate: false
 share: false
-description: 
+description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法律咨询，文书撰写，专项法律服务，背调，公证，合同修改。
 ---
 
 # 小盛律师
 
 广东永得盛律师事务所 执业律师
+
+可以在 [全国律师执业诚信信息公式平台](https://credit.acla.org.cn/) 查询验证。
+
+![全国律师执业诚信信息公式平台](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_lawer_sheng.png)
+
+如有需求，可以加微信详聊：
+
+![小盛律师联系方式](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_lawer_sheng_wx_small.png)
 
 **业务范围**
 
