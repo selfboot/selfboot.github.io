@@ -6,7 +6,7 @@ toc: true
 description: 深入探索 GPT-4 提问技巧系列的第六篇文章，
 ---
 
-本文是 GPT4 提问技巧系列的第六篇，全部系列文章：
+本文是 GPT4 提问技巧系列的第六篇(严格来说，这一篇不算是 GPT-4 的提问题技巧了，不过为了延续这一个系列的名字，这里也就继续用这个标题了)，全部系列文章：
 
 1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
 2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
@@ -14,9 +14,23 @@ description: 深入探索 GPT-4 提问技巧系列的第六篇文章，
 4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
 5. [GPT4 提问技巧五：借助外部工具]()；
 
-[大家都在吐槽GPT-4变「笨」了，可能是架构重新设计惹的祸](https://mp.weixin.qq.com/s/S_fuP4mQBFqMzNYtNr4ysQ)
+OpenAI 的 GPT 模型一直在不断进化，从 GPT-3 到 GPT-3.5，再到现在强大的 GPT-4，每一步都伴随着各种优化措施，使 AI 的回答变得越来越智能。然而，即使是同一版本的模型，使用不同的提示词也会产生质量各异的回答。这就引出了一个挑战：如何判断某个改变是否真正提升了AI的回答质量？换句话说，我们如何得出 GPT-4 比 GPT-3 更强大，或者哪个提示词效果更佳的结论？
 
-[研究实锤GPT-4真变笨了：3个月内数学能力雪崩式下降，代码能力也变差](https://mp.weixin.qq.com/s/rzM-2cZ0B_WrSH-Vk2vCfg)
+这个问题并不容易解答。我们可能会看到一些例子，这些例子似乎暗示了新的改变带来了更好的效果。但是，由于我们只看到了少数几个例子，我们很难确定这是否是真正的改进，还是仅仅是随机运气的结果。更复杂的是，可能存在这样的情况：这个改变在某些输入下提升了效果，但在其他输入下却降低了效果。
+
+<!--more-->
+
+近期，GPT-4 就因为这个问题受到了一些质疑。有人认为 OpenAI 为了节省算力，偷偷降低了模型的效果。例如，一篇公众号文章[《大家都在吐槽GPT-4变‘笨’了，可能是架构重新设计惹的祸》](https://mp.weixin.qq.com/s/S_fuP4mQBFqMzNYtNr4ysQ)就对此进行了讨论。在OpenAI的官方论坛上，也有很多类似的声音，如“[Has There Been A Recent Decrease In GPT-4 Quality?](https://community.openai.com/t/has-there-been-a-recent-decrease-in-gpt-4-quality/207392)”的讨论。甚至有人发表了[论文](https://mp.weixin.qq.com/s/rzM-2cZ0B_WrSH-Vk2vCfg)，试图证明GPT-4的能力确实有所下降。
+
+为了消除这些疑虑，同时也为了让开发者能更方便地评估模型的质量，OpenAI 决定开源他们的评测方法——Evals。这个工具的目标就是帮助我们更**准确地评估我们的系统改进**，让我们能够基于数据，而不是猜测，来决定我们的下一步行动。接下来，我将详细介绍这个工具的使用方法和评测标准，以便大家更好地理解和使用它。
+
+## 评测原则和设计
+
+什么是一个好的评测设计呢？OpenAI 在 [Strategy: Test changes systematically](https://platform.openai.com/docs/guides/gpt-best-practices/strategy-test-changes-systematically) 中给出了一个不错的答案:
+
+- 代表现实世界的使用场景（或至少是多样化的）：测试用例覆盖到许多使用场景，包括常见的和边缘的情况。
+- 包含**许多测试用例**以获得更大的统计能力：评测结果需要有较高的置信度。
+- 易于自动化或重复：为了确保评测结果的可靠性，我们需要能够轻松地重复评测过程。
 
 ## 简单匹配评测
 
@@ -112,3 +126,30 @@ $ cat /tmp/evallogs/230719083815WL3TWHO2_gpt-4_chinese_chu_ci.jsonl
 "I have a bit of a hunchback. My mom says, 'You have to work on improving your posture.'"
 
 "My back is slightly hunched, and my mother tells me, 'You need to significantly better your posture.'"
+
+## 其他的一些评测
+
+截止 2023 年 7 月，OpenAI 的 evals 里提供了 423 个评测集，涵盖了日语，韩语，中文等语言，十分丰富。中文这里还有一些其他的评测，还比较有意思的，感兴趣的可以去看看。
+
+**回答小说作者**。评测集在 `evals/registry/data/chinese_famous_novel/samples.jsonl`，比如 “小说《一地鸡毛》的作者是谁?只回答作者名称,不要额外附加其他内容”。
+
+**发音判断**。提示词：下面这句话中是否存在发音一样的中文单词（两个汉字及以上），若存在返回是，若不存在返回否。你只需要输出`是`或者`否`。评测集在 `evals/registry/data/chinese_homonym/samples.jsonl`，里面还有歌词，比如“生活像一把无情的雕刻刀，改变了我们的样子。”。
+
+**猜字谜**。提示词：
+
+> 根据我给的描述猜出一个字(请从汉字的字形、发音、意义以及字的拆分组合等角度考虑)。首先提供你的推理，然后提供用英文方括号括[]起来的最终答案。
+
+评测集在 `evals/registry/data/Chinese_character_riddles/samples.jsonl`，例子都还挺有意思，比如：
+> “一只黑狗，不叫不吼。” 。
+> 小屋四四方，不见门和窗，有人犯了法，把他往里装。
+> 田字露脚又露头，花果山上到处游，见人就把冤来报，戴上帽子问根由。
+
+**同音语义理解**。这个是多选题，提示词：
+
+> The following are multiple choice questions (with answers) about Chinese homonym. Answer the question with english letter \"A\", \"B\" only, without explanation. Reply with only the option letter.
+
+评测集在 `evals/registry/data/chinese_homophonic/chinese_homophonic.jsonl`，一些例子：
+
+> 剩女产生的原因有个：一是谁都看不上，二是谁都看不上。这句话中的\"看不上\"是相同的意思吗？\nA. 相同\nB. 不同"
+> 关于穿衣服，冬天能穿多少穿多少，夏天能穿多少穿多少。这句话中的\"多少\"是相同的意思吗？\nA. 相同\nB. 不同
+> 孙悟空的金箍棒不见了，去询问土地公公，孙悟空：\"我的金箍棒在哪里？\" 土地公公：\"大圣，你的金箍，棒就棒在特别配你的发型\"。请问土地公公回答的对吗？\nA. 不对\nB. 对
