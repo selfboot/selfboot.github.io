@@ -53,7 +53,18 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 
 ## 函数调用(function call)
 
-除了提供代码执行环境，
+除了提供了代码执行环境，OpenAI 在 2023.06.13 号的文章：[Function calling and other API updates](https://openai.com/blog/function-calling-and-other-api-updates) 中宣布支持 `Function calling`。在 Function calling 问世以前，如果想通过自然语言来调用函数，需要先用自然语言让模型解析出调用的函数以及参数，这个过程既复杂又容易出错。
+
+让我们以一个天气查询的例子来说明。假设我们有一个函数 `get_weather(location: string, date: string)`，它可以查询指定日期和地点的天气。在 Function calling 问世以前，如果我们想让 GPT 模型帮我们调用这个函数，我们可能会写下这样的 Prompt：
+
+> 我有一个函数 get_weather(location: string, date: string) 来拿指定地点的天气信息，对于下面的提问，你要提取里面的关键信息 location 和 date，并以 json 输出。
+> 提问内容是： 明天广州的天气如何？
+
+可能得到下面的结果，然后解析这里的返回，再去调用我们自己的函数拿到结果。这中间模型可能会返回非json的内容，或者返回的日期也不对，需要去处理这些异常情况。
+
+![Function calling之前的做法](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230723_gpt4_prompt_tools_function_before.png)
+
+有了 Function calling，我们可以直接问“明天广州的天气如何？”，同时把函数传递给模型。然后 GPT-4 会智能地输出一个包含调用该函数所需参数的 JSON 对象。后面可以直接根据这个 JSON 对象来调用函数了。注意这里的模型是 OpenAI 专门微调过的，输出会更加稳定和准确。
 
 ## 外部集成：langchain
 
