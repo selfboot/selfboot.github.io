@@ -44,9 +44,17 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 
 有时候一些看起来很简单的计算任务，GPT4 同样搞不定。比如在之前的这篇文章 [加班了多少天？GPT4 被绕晕了](https://selfboot.cn/2023/05/29/gpt4_cal_date/)，GPT 并不能直接给出加班天数。但是可以编写一个正确的程序，来计算出总的加班天数。
 
-正是因为 GPT4 配合代码执行，能大幅提高 GPT4 的能力。所以 OpenAI 自己也提供了代码解析器，生成的代码可以直接在 ChatGPT 的沙箱解析器执行，后续我会专门写一篇文章来介绍代码解析器的用法。
+正是因为 GPT4 配合代码执行，能大幅提高 GPT4 的能力。所以 OpenAI 自己也提供了 Code Interpreter(代码解析器)，生成的代码可以直接在 ChatGPT 的沙箱解析器执行，我专门写过几篇文章来介绍代码解析器的用法。
+
+- [GPT4 代码解释器：资源限制详解](https://selfboot.cn/2023/07/09/gpt4_code_interpreter_limit/)
+- [代码解释器：OpenAI 提供了多少 CPU](https://selfboot.cn/2023/07/17/gpt4_code_interpreter_cpu/)
+- [代码解释器：自然语言处理图片](https://selfboot.cn/2023/07/12/gpt4_code_interpreter_image/)
+- [代码解释器：数据分析与可视化](https://selfboot.cn/2023/07/10/gpt4_code_interpreter_data/)
 
 ## 函数调用(function call)
 
+除了提供代码执行环境，
+
+## 外部集成：langchain
 
 
