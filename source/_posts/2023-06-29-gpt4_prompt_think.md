@@ -14,6 +14,7 @@ description: 深入探索 GPT-4 提问技巧系列的第四篇文章，了解如
 3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
 4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
 5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 在我们的生活中，当面临复杂问题时，通常需要花费一些时间来深思熟虑。正如一位作家在撰写一篇文章时需要时间来组织思路和打磨措辞，或者一位棋手在对弈时需要时间来分析局势和制定策略一样，深思熟虑是一种必要的过程。人工智能也有类似的需求，确切地说，GPT 也需要一些时间来为我们提供更深入、更精确的答案。
 
