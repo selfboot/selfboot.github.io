@@ -3,7 +3,7 @@ title: GPT4 提问技巧六：系统基准评测
 category: 人工智能
 tags: [GPT4, Prompt]
 toc: true
-description: 深入探索 GPT-4 提问技巧系列的第六篇文章，
+description: 深入探索 GPT-4 提问技巧系列的第六篇文章，主要介绍OpenAI开源的evals系统评测工具。Evals覆盖多种语言，包含大量用例，评估维度丰富。文中列举了中文评测集的例子，如楚辞、翻译、字谜等，介绍了匹配评测和翻译评分的方法。Evals可以帮助开发者全面评估GPT性能，判断不同模型版本或提示词的优劣。
 ---
 
 本文是 GPT4 提问技巧系列的第六篇(严格来说，这一篇不算是 GPT-4 的提问题技巧了，不过为了延续这一个系列的名字，这里也就继续用这个标题了)，全部系列文章：
@@ -12,8 +12,8 @@ description: 深入探索 GPT-4 提问技巧系列的第六篇文章，
 2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
 3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
 4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. [GPT4 提问技巧五：借助外部工具]()；
-6. [GPT4 提问技巧六：系统基准评测]()；
+5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+7. [GPT4 提问技巧六：系统基准评测]()；
 
 OpenAI 的 GPT 模型一直在不断进化，从 GPT-3 到 GPT-3.5，再到现在强大的 GPT-4，每一步都伴随着各种优化措施，使 AI 的回答变得越来越智能。然而，即使是同一版本的模型，使用不同的提示词也会产生质量各异的回答。这就引出了一个挑战：如何判断某个改变是否真正提升了AI的回答质量？换句话说，我们如何得出 GPT-4 比 GPT-3 更强大，或者哪个提示词效果更佳的结论？
 
@@ -141,21 +141,23 @@ $ cat /tmp/evallogs/230719083815WL3TWHO2_gpt-4_chinese_chu_ci.jsonl
 
 
 > "I have a bit of a hunchback. My mom says, 'You have to work on improving your posture.'"
+>   
 > "My back is slightly hunched, and my mother tells me, 'You need to significantly better your posture.'"
 
 ## 其他的一些评测
 
-截止 2023 年 7 月，OpenAI 的 evals 里提供了 423 个评测集，涵盖了日语，韩语，中文等语言，十分丰富。中文这里还有一些其他的评测，还比较有意思的，感兴趣的可以去看看。
+截止 2023 年 7 月，OpenAI 的 evals 里提供了 423 个评测集，涵盖了日语，韩语，中文等语言，十分丰富。中文这里还有一些其他的评测，还比较有意思的，感兴趣的可以去看看。下面是一些示例：
 
-**回答小说作者**。评测集在 `evals/registry/data/chinese_famous_novel/samples.jsonl`，比如 “小说《一地鸡毛》的作者是谁?只回答作者名称,不要额外附加其他内容”。
+**回答小说作者**。评测集在 [chinese_famous_novel](https://github.com/openai/evals/tree/main/evals/registry/data/chinese_famous_novel)，比如 “小说《一地鸡毛》的作者是谁?只回答作者名称,不要额外附加其他内容”。
 
-**发音判断**。提示词：下面这句话中是否存在发音一样的中文单词（两个汉字及以上），若存在返回是，若不存在返回否。你只需要输出`是`或者`否`。评测集在 `evals/registry/data/chinese_homonym/samples.jsonl`，里面还有歌词，比如“生活像一把无情的雕刻刀，改变了我们的样子。”。
+**发音判断**。提示词：下面这句话中是否存在发音一样的中文单词（两个汉字及以上），若存在返回是，若不存在返回否。你只需要输出`是`或者`否`。评测集在 [chinese_homonym](https://github.com/openai/evals/tree/main/evals/registry/data/chinese_homonym)，里面还有歌词，比如“生活像一把无情的雕刻刀，改变了我们的样子。”。
 
 **猜字谜**。提示词：
 
 > 根据我给的描述猜出一个字(请从汉字的字形、发音、意义以及字的拆分组合等角度考虑)。首先提供你的推理，然后提供用英文方括号括[]起来的最终答案。
 
-评测集在 `evals/registry/data/Chinese_character_riddles/samples.jsonl`，例子都还挺有意思，比如：
+评测集在 [Chinese_character_riddles](https://github.com/openai/evals/tree/main/evals/registry/data/Chinese_character_riddles)，例子都还挺有意思，比如：
+
 > “一只黑狗，不叫不吼。” 。
 > 小屋四四方，不见门和窗，有人犯了法，把他往里装。
 > 田字露脚又露头，花果山上到处游，见人就把冤来报，戴上帽子问根由。
@@ -164,9 +166,10 @@ $ cat /tmp/evallogs/230719083815WL3TWHO2_gpt-4_chinese_chu_ci.jsonl
 
 > The following are multiple choice questions (with answers) about Chinese homonym. Answer the question with english letter \"A\", \"B\" only, without explanation. Reply with only the option letter.
 
-评测集在 `evals/registry/data/chinese_homophonic/chinese_homophonic.jsonl`，一些例子：
+评测集在 [chinese_homophonic](https://github.com/openai/evals/tree/main/evals/registry/data/chinese_homophonic)，一些例子：
 
 > 剩女产生的原因有个：一是谁都看不上，二是谁都看不上。这句话中的\"看不上\"是相同的意思吗？\nA. 相同\nB. 不同"
 > 关于穿衣服，冬天能穿多少穿多少，夏天能穿多少穿多少。这句话中的\"多少\"是相同的意思吗？\nA. 相同\nB. 不同
 > 孙悟空的金箍棒不见了，去询问土地公公，孙悟空：\"我的金箍棒在哪里？\" 土地公公：\"大圣，你的金箍，棒就棒在特别配你的发型\"。请问土地公公回答的对吗？\nA. 不对\nB. 对
 
+实际上，中文数据集在整个评测集中只占据了一小部分。OpenAI 提供的评测用例非常丰富，可以帮助我们全面地评估模型的性能。在这篇文章中，我们只是简单地了解了 OpenAI 的 eval 评测示例。但是，这只是冰山一角。为了更深入地理解这个评测库，我们需要从代码的角度进行分析。在接下来的文章中，我们将深入探讨 eval 评测库的内部结构，以及如何使用这个库来进行更复杂、更精细的模型评估。
