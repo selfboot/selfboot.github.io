@@ -51,7 +51,7 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 - [代码解释器：自然语言处理图片](https://selfboot.cn/2023/07/12/gpt4_code_interpreter_image/)
 - [代码解释器：数据分析与可视化](https://selfboot.cn/2023/07/10/gpt4_code_interpreter_data/)
 
-## 函数调用(function call)
+## 函数支持：function calling
 
 除了提供了代码执行环境，OpenAI 在 2023.06.13 号的文章：[Function calling and other API updates](https://openai.com/blog/function-calling-and-other-api-updates) 中宣布支持 `Function calling`。在 Function calling 问世以前，如果想通过自然语言来调用函数，需要先用自然语言让模型解析出调用的函数以及参数，这个过程既复杂又容易出错。
 
@@ -67,5 +67,8 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 有了 Function calling，我们可以直接问“明天广州的天气如何？”，同时把函数传递给模型。然后 GPT-4 会智能地输出一个包含调用该函数所需参数的 JSON 对象。后面可以直接根据这个 JSON 对象来调用函数了。注意这里的模型是 OpenAI 专门微调过的，输出会更加稳定和准确。
 
 ## 外部集成：langchain
+
+有了 Code Interpreter，在 ChatGPT 官方应用里可以方便地执行代码，有了 function calling，开发起各种应用的时候也能方便的和现有系统中的各种 API 对接。但是，使用 OpenAI 的 API 来开发的时候，还是要处理不少问题，这其中有很多是共性问题，比如：
+
 
 
