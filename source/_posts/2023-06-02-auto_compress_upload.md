@@ -1,6 +1,7 @@
 ---
 title: Mac 图片自动压缩上传 COS
 date: 2023-06-02 19:36:08
+updated: 2023-07-28 22:00:00
 category: 工具介绍
 tags: [GPT4, 教程]  
 toc: true 
@@ -352,3 +353,53 @@ end run
 实现的结果，指定一个目录，后面往这个目录新增加的 png，都自动压缩，在前缀加上当前日期，然后传输到腾讯云 COS 上。完整的对话在[这里](https://chat.openai.com/share/724a1870-7524-4ed7-be08-c22c2b4acfb3)。
 
 ![最终自动化工具](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_auto_compress_upload_final.png)
+
+# 后续优化
+
+_2023.07.28 更新_
+
+上面的自动化脚本在单机执行的时候，没啥问题。但是我的图片其实在 git 仓库的，有时候在 1 台电脑处理完上传 cos ，然后提交了 git。在另一台电脑上 pull 下来后，新增加的图片又会被加日期前缀和上传 cos，有点傻了。于是直接把上面的脚本给 ChatGPT，让它判断如果图片有日期前缀，就不做处理了。改动比较小：
+
+```bash
+# before
+	set baseName to first text item of fileName
+	if baseName does not start with currentDate then
+# after
+	set regexMatch to do shell script "if [[ " & baseName & " =~ ^[0-9]{8}_ ]]; then echo 'true'; else echo 'false'; fi"
+	if regexMatch is "false" then
+```
+
+再后来又发现，这里其实不止 png 图片，我会经常传一些 svg，gif, webp, jpeg 格式的图片，这一类一般都是压缩好了，只用加个日期前缀，然后进行上传就行。继续让 ChatGPT 改脚本，最后脚本如下：
+
+```bash
+on run {input, parameters}
+	set currentDate to do shell script "date '+%Y%m%d'"
+	tell application "System Events"
+		repeat with i in input
+			set filePath to POSIX path of i
+			set fileExtension to name extension of i
+			set folderName to do shell script "dirname " & filePath
+			set fileName to name of i
+			set AppleScript's text item delimiters to "."
+			set baseName to first text item of fileName
+			set regexMatch to do shell script "if [[ " & baseName & " =~ ^[0-9]{8}_ ]]; then echo 'true'; else echo 'false'; fi"
+			if fileExtension is "png" and regexMatch is "false" then
+				do shell script "/opt/homebrew/bin/pngquant --force --ext .png " & quoted form of filePath
+				set newBaseName to currentDate & "_" & baseName
+				set newFileName to newBaseName & "." & fileExtension
+				set name of i to newFileName
+				set newFilePath to folderName & "/" & newFileName
+			else if fileExtension is in {"webp", "jpeg", "gif"} and regexMatch is "false" then
+				set newBaseName to currentDate & "_" & baseName
+				set newFileName to newBaseName & "." & fileExtension
+				set name of i to newFileName
+				set newFilePath to folderName & "/" & newFileName
+			else if regexMatch is "true" then
+				set newFilePath to filePath
+			end if
+			set uploadCommand to "/opt/homebrew/Caskroom/miniconda/base/bin/coscmd upload " & quoted form of newFilePath & " /"
+			do shell script uploadCommand
+		end repeat
+	end tell
+end run
+```
