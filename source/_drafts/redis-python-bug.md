@@ -124,9 +124,14 @@ if __name__ == '__main__':
 
 如果在Redis server 在云环境，延迟 > 5ms，那么这里 `sleep(0.001)` 就能复现问题。我的 Redis client 和 server 都在一台机，网络耗时可以忽略。通过不断实验，发现这里 `asyncio.sleep(0.000001)` 能稳定复现，下面是在我本地，sleep 不同时间的执行结果：
 
-![ChatGPT 故障整体修复时间节点](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230726_redis_python_bug_reproduce.png)
+![Bug 的复现过程](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230726_redis_python_bug_reproduce.png)
 
-可以看到在 `sleep(0.000001)` 情况下，这里后续的 Redis 命令结果全部不对，每个命令都是上一个命令的结果。回到 OpenAI 的故障描述，就能解释为啥一个人看到了其他人的数据。因为这中间有取消的 redis 异步请求任务，导致结果全部串了。
+可以看到在 `sleep(0.000001)` 情况下，这里后续的 Redis 命令结果全部不对，每个命令都是上一个命令的结果。回到 OpenAI 的故障描述，就能解释为啥一个人看到了其他人的数据。因为这中间有取消的 redis 异步请求任务，导致结果错乱，读串了。
 
 ## 源码剖析
 
+## 
+
+[Release](https://github.com/redis/redis-py/releases)
+
+![Redis python 的修复记录](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230728_redis_python_bug_release.png)
