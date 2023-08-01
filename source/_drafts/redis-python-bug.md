@@ -1,9 +1,6 @@
 ---
-title: 深入分析让 ChatGPT 停机的 Redis Bug
-tags:
-  - GPT4
-  - Python
-  - Redis
+title: 解密 ChatGPT 停机事件：Redis Bug 的深度分析
+tags: [ChatGPT, Python, Redis]
 category: 源码剖析
 toc: true
 description: 
@@ -168,7 +165,7 @@ print("_read_response", "".join(traceback.format_stack()))
 
 注意上面 `connection.py` 部分的行数可能和[实际代码](https://github.com/redis/redis-py/tree/v4.5.1)对不上，因为加了一些调试代码，影响了行数计算。取消的任务，可以看到抛出了 `asyncio.CancelledError` 异常，那么具体是在哪里抛出这个异常呢？
 
-### 取消抛出异常
+### 异常抛出位置
 
 还是通过不断的加日志，定位到了 [connection.py](https://github.com/redis/redis-py/blob/v4.5.1/redis/asyncio/connection.py#L341C12-L341C12)，感觉应该在 `data = await self._stream.readline()` 中，这里的 `_stream` 是一个 `asyncio.StreamReader` 对象，它在读出一行内容的时候抛出了异常。如何确认这一点呢？尝试在这里添加 try 来捕获异常即可，不过开始的时候在这里捕获 `Exception` 异常，结果发现捕获不到。后来问了 ChatGPT，才知道在 Python 3.8 及更高版本中，`asyncio.CancelledError` 不再从 Exception 基类派生，而是直接从 `BaseException` 派生。于是改为下面的代码，验证了猜想。
 
@@ -184,7 +181,7 @@ async def _readline(self) -> bytes:
     # ...
 ```
 
-### 回复错乱分析
+### 回复数据错乱
 
 一个请求的执行流程已经很清晰了，但是还没有解决我们的疑问，**为什么取消一个任务后，后续请求会读串**。这里继续添加日志，在每个请求的开始部分打印请求命令( execute_command 里面添加日志)，然后打印解析出来的回包(_read_response 里面添加日志)，执行后结果如下：
 
@@ -192,11 +189,11 @@ async def _readline(self) -> bytes:
 
 这里涉及到 Redis 回复的协议解析，Redis 使用的`RESP（Redis Serialization Protocol）`协议是一种简单、高效并且便于人直接阅读的基于文本的协议。它支持多种数据类型，包括字符串、数组和整数。客户端发送的命令请求和服务器的响应都遵循这个协议。具体格式的技术细节可以参考官方文档 [RESP protocol spec](https://redis.io/docs/reference/protocol-spec/)。
 
-通过上面的截图可以看出来，这里 bug 的根本原因在于，如果异步请求成功被 server 处理，那么在 redline 读取出回复前就抛出了异常。后续的请求在调用 readline 的时候，会读到这个被取消请求的回复。
+通过上面的截图可以看出来，这里 bug 的根本原因在于，**如果异步请求成功被 server 处理，那么在 redline 读取出回复前就抛出了异常。后续的请求在调用 readline 的时候，会读到这个被取消请求的回复**。
 
 ## Bug 修复
 
-这里的修复过程也不是很顺利，中间有的修复代码和测试代码都是有问题的，下面来看看。
+对 Python 的异步库和 Reids-py 的实现细节不是很清楚，所以这里就直接看官方的修复代码了。不过官方修复过程也不是很顺利，中间有的**修复代码和测试代码都是有问题的**，下面来看看。
 
 ### 修复失败
 
@@ -212,21 +209,47 @@ async def _readline(self) -> bytes:
 
 ![错误的测试用例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_repair_error_test.png)
 
-这里 `sleep` 的时间是 1s，这时候这个读请求早执行完了的，所以取消操作其实没生效。这里复现的一个关键点就在于，要卡一个很精确的时间点，保证请求被处理，但是回复内容还没被解析。这个修复后面被回滚了，不过这里也引出一个问题，就是测试要如何卡这个时间点，让 bug 能在有问题的版本稳定复现。
+这里 `sleep` 的时间是 1s，这时候这个读请求早执行完了的，所以取消操作其实没生效。这里复现的一个关键点就在于，**要卡一个很精确的时间点**，保证请求被处理，但是回复内容还没被解析。这个修复后面被回滚了，不过这里也引出一个问题，就是测试要如何卡这个时间点，让 bug 能在有问题的版本稳定复现。
 
-### 如何稳定复现
+### 稳定复现
 
 随后，有开发者起了一个新的 [Issue 2665](https://github.com/redis/redis-py/issues/2665)，来讨论这里如何**稳定复现**。做法很简单，起了一个 proxy server，来中转 client 和 server 的通信。中转的时候，不论是请求还是响应，都延迟 0.1s。这相当于伪造了一个通信延迟 0.1s 的网络环境，然后就能稳定控制 cancel 异步操作的时机了。
 
-完整的代码见 [redis_cancel.py](https://gist.github.com/selfboot/9cb19090008d0d560f22fba31e82c2cc)。
+其中中转 proxy 的部分代码如下：
+
+```python
+class DelayProxy:
+
+    def __init__(self, addr, redis_addr, delay: float):
+        self.addr = addr
+        self.redis_addr = redis_addr
+        self.delay = delay
+
+    async def start(self):
+        server = await asyncio.start_server(self.handle, *self.addr)
+        asyncio.create_task(server.serve_forever())
+
+    async def handle(self, reader, writer):
+        # establish connection to redis
+        redis_reader, redis_writer = await asyncio.open_connection(*self.redis_addr)
+        pipe1 = asyncio.create_task(pipe(reader, redis_writer, self.delay, 'to redis:'))
+        pipe2 = asyncio.create_task(pipe(redis_reader, writer, self.delay, 'from redis:'))
+        await asyncio.gather(pipe1, pipe2)
+```
+
+完整的复现代码见 [redis_cancel.py](https://gist.github.com/selfboot/9cb19090008d0d560f22fba31e82c2cc)。
+
+针对这里复现的问题，有人接着提交了 [Pull 2666](https://github.com/redis/redis-py/pull/2666) 中，对应提交 [5acbde355058ab7d9c2f95bcef3993ab4134e342](https://github.com/redis/redis-py/commit/5acbde355058ab7d9c2f95bcef3993ab4134e342) 被放在 v4.5.4，也确实修复了这个 bug，测试脚本无法复现。
 
 ### 最终修复
 
-后面又有一个 [Pull 2695](https://github.com/redis/redis-py/pull/2695)，修复这个问题还有其他问题。这个 Issue 的讨论比较乱，看不太清具体哪个版本修复了这个问题。不过根据 [Release](https://github.com/redis/redis-py/releases) 页面的版本日志，可以看到 4.5.5 版本修复了这个问题，如下图：
+后面又有一个 [Pull 2695](https://github.com/redis/redis-py/pull/2695) 来修复这个问题。这个 pull 的内容比较多，还包括部分回滚 `v4.5.3` 的代码，直接看有点乱。
+
+好在根据 [Release](https://github.com/redis/redis-py/releases) 页面的版本日志，可以看到 4.5.5 版本修复了这个问题，如下图：
 
 ![Redis python 的修复记录](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230728_redis_python_bug_release.png)
 
-这个 pull 的内容比较多，还包括部分回滚 v4.5.4 的代码，直接看有点乱。于是直接看 v4.5.5 和 v4.5.3 代码变更中相关内容的修改。
+于是尝试直接看 `v4.5.5` 和 `v4.5.1` 中相关的变更代码来理解这里的修复方案。
 
 ### 修复验证
 
