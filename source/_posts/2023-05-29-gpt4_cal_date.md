@@ -1,8 +1,8 @@
 ---
-title: 加班了多少天？GPT4 被绕晕了
+title: 加班了多少天？ChatGPT 被绕晕了
 date: 2023-05-29 21:01:48
 category: 人工智能
-tags: [GPT4, Prompt]  
+tags: [ChatGPT, Prompt]  
 toc: true 
 description: 探索人工智能的无限可能性，本页面详细介绍了如何使用GPT-4进行日期计算，包括如何计算特定日期范围内的星期六数量，并排除中国的法定节假日和调班日。我们通过实际案例，展示了GPT-4在处理复杂问题时的表现，以及如何通过编程让AI更好地完成任务。
 ---

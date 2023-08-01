@@ -1,6 +1,6 @@
 ---
-title: GPT4 代码解释器：OpenAI 提供了多少 CPU
-tags: GPT4
+title: ChatGPT 代码解释器：OpenAI 提供了多少 CPU
+tags: ChatGPT
 category: 人工智能
 toc: true
 description: 本文探讨了 OpenAI GPT-4 代码解释器中的 CPU 核心数量。通过实验确定了 GPT-4 能够提供的 CPU 核心数量并解决了一些遇到的问题，包括无法正确估算 CPU 核心数量的问题以及如何改善并行计算效率的问题。

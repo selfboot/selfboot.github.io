@@ -1,7 +1,6 @@
 ---
-title: 大语言模型 Claude2 和 GPT4 实测对比
-tags:
-  - GPT4
+title: 大语言模型 Claude2 和 ChatGPT 实测对比
+tags: ChatGPT
 category: 人工智能
 toc: true
 date: 2023-07-20 23:33:57

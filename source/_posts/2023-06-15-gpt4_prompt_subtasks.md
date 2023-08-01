@@ -1,20 +1,20 @@
 ---
-title: GPT4 提问技巧三：复杂任务拆分
+title: ChatGPT Prompt 最佳指南三：复杂任务拆分
 date: 2023-06-15 21:57:55
 category: 人工智能
-tags: [GPT4, Prompt]
+tags: [ChatGPT, Prompt]
 toc: true
 updated: 2023-06-29 22:00:01
-description: 文章详细介绍了如何使用 GPT4 来拆分复杂任务，包括理解 GPT4 的能力和限制，以及如何在这些限制内有效地拆分问题。文章通过实例展示了如何将复杂任务拆分成更简单的子任务，以帮助 GPT4 更有效地理解和处理问题，从而提供更好的答案。
+description: 文章详细介绍了如何使用 GPT4 来拆分复杂任务，包括理解 ChatGPT 的能力和限制，以及如何在这些限制内有效地拆分问题。文章通过实例展示了如何将复杂任务拆分成更简单的子任务，以帮助 ChatGPT 更有效地理解和处理问题，从而提供更好的答案。
 ---
-本文是 GPT4 提问技巧系列的第三篇，全部系列文章：
+本文是 ChatGPT Prompt 最佳指南系列的第三篇，全部系列文章：
 
-1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
-2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
-3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
-4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
-6. [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
+1. [ChatGPT Prompt 最佳指南一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
+2. [ChatGPT Prompt 最佳指南二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
+3. [ChatGPT Prompt 最佳指南三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
+4. [ChatGPT Prompt 最佳指南四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
+5. [ChatGPT Prompt 最佳指南五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. [ChatGPT Prompt 最佳指南六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 在我们日常生活中，无论是烹饪一道复杂的菜肴，还是组装一台复杂的机器，我们都会自然而然地将复杂的任务拆分成一系列更简单、更易于管理的子任务。这种策略也同样适用于计算机领域。想象一下，如果没有函数这种工具，我们如何能够有效地编写和管理复杂的代码呢？函数的发明，实际上就是为了将复杂的任务拆分成更小、更具体的子任务，使得代码更易于理解和维护。
 

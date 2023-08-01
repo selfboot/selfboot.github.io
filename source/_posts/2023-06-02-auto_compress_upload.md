@@ -3,7 +3,7 @@ title: Mac 图片自动压缩上传 COS
 date: 2023-06-02 19:36:08
 updated: 2023-07-28 22:00:00
 category: 工具介绍
-tags: [GPT4, 教程]  
+tags: [ChatGPT, 教程]  
 toc: true 
 description: 本篇文章详细讲解如何在 macOS 中通过 AppleScript 实现监控文件夹并自动进行图片压缩及文件重命名，最后上传到腾讯云 COS 的过程。涉及技术包括 AppleScript、pngquant 图片压缩工具以及腾讯云 COS 的命令行工具 coscmd。本教程适合对自动化文件处理感兴趣的 macOS 用户参考。
 ---

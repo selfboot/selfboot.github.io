@@ -1,6 +1,6 @@
 ---
-title: GPT4 代码解释器：资源限制详解
-tags: GPT4
+title: ChatGPT 代码解释器：资源限制详解
+tags: ChatGPT
 category: 人工智能
 toc: true
 description: 本文详细讲了下 OpenAI 的 ChatGPT中代码解释器的限制，包括上传文件大小限制，内存限制，cpu限制，运行时间限制，网络访问权限限制。在了解这些限制的前提下，才能用好这里 AI 的能力。

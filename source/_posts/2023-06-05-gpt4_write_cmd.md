@@ -1,8 +1,8 @@
 ---
-title: GPT4 帮忙写 sed, awk 数据处理命令
+title: ChatGPT 帮忙写 sed, awk 数据处理命令
 date: 2023-06-05 21:30:15
 category: 工具介绍
-tags: [GPT4]
+tags: [ChatGPT]
 toc: true
 description: 在这篇博客中，我们将探索如何利用 AWK 和 SED 进行复杂的文本处理，同时展示了如何使用 OpenAI 的 GPT-4 模型来帮助我们编写命令和解决问题。我们将深入解析各种实际示例，包括如何过滤和排序数据，如何进行文本替换，以及如何删除或修改特定行。这篇文章不仅为你提供了深入理解 AWK 和 SED 的机会，还展示了人工智能如何帮助我们更有效地进行编程和数据处理。
 ---

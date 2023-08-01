@@ -2,7 +2,7 @@
 title: GPT 插件使用 AI 生成精美视频
 date: 2023-06-07 22:12:33
 category: 人工智能
-tags: [GPT4, Plugin]  
+tags: [ChatGPT, Plugin]  
 toc: true
 description: 这篇文章介绍了如何使用 GPT 插件和 Heygen AI 视频生成器，只需输入文字和图片，就能生成精美的视频。文章还详细比较了其他视频生成工具，如 Lumen5、InVideo、Animaker 和 Renderforest，以及它们的价格计划。无论你是想制作产品演示、教育视频还是个人故事，这些工具都能帮你轻松完成。随着技术的发展，这些工具的成本预期会降低，使更多的人能够使用它们。
 ---

@@ -1,8 +1,8 @@
 ---
-title: 神奇 Prompt 让 GPT4 化身物理老师
+title: 神奇 Prompt 让 ChatGPT 化身物理老师
 date: 2023-05-31 10:03:57
 category: 人工智能
-tags: [GPT4, Prompt]  
+tags: [ChatGPT, Prompt]  
 toc: true 
 description: 我们展示了如何使用GPT-4作为你的物理教师。本页面详细介绍了个性化的学习计划设置，并通过高中物理的实例来实践这一过程。无论你是想复习基础知识，还是想进一步探索物理学的复杂领域，这里都将提供你所需要的帮助。
 ---

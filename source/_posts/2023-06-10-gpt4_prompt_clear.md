@@ -1,10 +1,10 @@
 ---
-title: GPT4 提问技巧一：写清晰的说明
+title: ChatGPT Prompt 最佳指南一：写清晰的说明
 date: 2023-06-10 12:49:42
 category: 人工智能
-tags: [GPT4, Prompt]
+tags: [ChatGPT, Prompt]
 toc: true
-description: 这篇文章详细解释了如何有效地与OpenAI的GPT4进行交流，以获取更准确的答案。文章首先解释了什么是prompt，为什么它如此重要，然后根据OpenAI的官方文档，介绍了六种与GPT4交流的技巧，包括写清晰的说明、提供参考文本、将复杂任务分解为更简单的子任务、给GPT时间“思考”、使用外部工具和系统地测试变化。文章还提供了一些实用的示例，帮助读者更好地理解这些技巧。这是一篇对于任何希望更有效地使用GPT4的人都非常有用的指南。
+description: 这篇文章详细解释了如何有效地与 ChatGPT 进行交流，以获取更准确的答案。文章首先解释了什么是prompt，为什么它如此重要，然后根据 OpenAI 的官方文档，介绍了六种与 ChatGPT 交流的技巧，包括写清晰的说明、提供参考文本、将复杂任务分解为更简单的子任务、给GPT时间“思考”、使用外部工具和系统地测试变化。文章还提供了一些实用的示例，帮助读者更好地理解这些技巧。这是一篇对于任何希望更有效地使用 ChatGPT 的人都非常有用的指南。
 ---
 
 在人工智能的世界里，我们常常听到一个词——"prompt"。那么，什么是prompt呢？简单来说，prompt就是我们给AI的指令或问题，它是我们与AI进行交流的桥梁。就像我们在与人交谈时，我们的问题或话题就是对话的引子，同样，prompt就是我们与AI对话的引子。
@@ -13,13 +13,13 @@ description: 这篇文章详细解释了如何有效地与OpenAI的GPT4进行交
 
 在GPT4问世以来，我们发现如何有效地进行 prompt，成为了一个重要的话题。[OpenAI的官方文档](https://platform.openai.com/docs/guides/gpt-best-practices) 中详细介绍了如何更好地与GPT4进行交流，给出了六种技巧，分别是:
 
-1. <span style="color:red;">写清晰的说明</span>：GPT 没有读心术，因此如果你想要一个简短的输出，可以直接告诉它在100字左右。如果你想要一个小朋友能听懂的解释，可以直接告诉它讲给10岁的小朋友听，尽量浅显易懂些。详细讨论见文章[GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)。
+1. <span style="color:red;">写清晰的说明</span>：GPT 没有读心术，因此如果你想要一个简短的输出，可以直接告诉它在100字左右。如果你想要一个小朋友能听懂的解释，可以直接告诉它讲给10岁的小朋友听，尽量浅显易懂些。详细讨论见文章[ChatGPT Prompt 最佳指南一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)。
 <!--more-->
-2. <span style="color:red;">提供参考文本</span>：GPT 比最能侃的人还能侃，回答可能会胡编乱造，可能会南辕北辙。就像一些练习册可以帮助学生在考试中做得更好一样，你可以向GPT提供参考文本，帮助它回答的更精准可靠。详细讨论见文章[GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)。
-3. <span style="color:red;">将复杂任务分解为更简单的子任务</span>：太复杂的任务，目前的 GPT4 处理起来还有点费劲儿，出错率比较高。因此需要你把任务拆分到 GPT4 可以处理的粒度，自己再组装每一步的结果，详细讨论见文章[GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)。
-4. <span style="color:red;">给GPT时间“思考”</span>：如果被问到 17 乘以 28，人们不会立即知道答案，但可以花时间算出来。同样你需要 GPT 用推理链来一步步思考，而不是立马给出一个错误的答案，详细讨论见文章 [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. <span style="color:red;">使用外部工具</span>：人之所以成为万物主宰，很大原因就是会用工具。同样，你可以通过将其他工具的输出提供给 GPT4，来补偿 GPT4 的弱点。例如，代码执行引擎可以帮助 GPT4 做数学和运行代码，详细讨论见文章 [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
-6. <span style="color:red;">系统地测试变化</span>：如果你能够系统地评估 GPT4 的能力，那么就能逐渐优化提高它的能力了。某些情况下，对 prompt 的修改可能会在某些个别的例子上提高表现，但在更具代表性的例子上导致整体表现下降。因此，为了确保 prompt 的改变效果是正面的，需要定义一个全面的测试套件。OpenAI开源了 evals 评测工具，具体见文章 [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
+2. <span style="color:red;">提供参考文本</span>：GPT 比最能侃的人还能侃，回答可能会胡编乱造，可能会南辕北辙。就像一些练习册可以帮助学生在考试中做得更好一样，你可以向GPT提供参考文本，帮助它回答的更精准可靠。详细讨论见文章[ChatGPT Prompt 最佳指南二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)。
+3. <span style="color:red;">将复杂任务分解为更简单的子任务</span>：太复杂的任务，目前的 GPT4 处理起来还有点费劲儿，出错率比较高。因此需要你把任务拆分到 GPT4 可以处理的粒度，自己再组装每一步的结果，详细讨论见文章[ChatGPT Prompt 最佳指南三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)。
+4. <span style="color:red;">给GPT时间“思考”</span>：如果被问到 17 乘以 28，人们不会立即知道答案，但可以花时间算出来。同样你需要 GPT 用推理链来一步步思考，而不是立马给出一个错误的答案，详细讨论见文章 [ChatGPT Prompt 最佳指南四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
+5. <span style="color:red;">使用外部工具</span>：人之所以成为万物主宰，很大原因就是会用工具。同样，你可以通过将其他工具的输出提供给 GPT4，来补偿 GPT4 的弱点。例如，代码执行引擎可以帮助 GPT4 做数学和运行代码，详细讨论见文章 [ChatGPT Prompt 最佳指南五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. <span style="color:red;">系统地测试变化</span>：如果你能够系统地评估 GPT4 的能力，那么就能逐渐优化提高它的能力了。某些情况下，对 prompt 的修改可能会在某些个别的例子上提高表现，但在更具代表性的例子上导致整体表现下降。因此，为了确保 prompt 的改变效果是正面的，需要定义一个全面的测试套件。OpenAI开源了 evals 评测工具，具体见文章 [ChatGPT Prompt 最佳指南六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 本篇文章主要讲解第一种策略: `Write clear instructions`。我将会分享一些实用的技巧，帮助你更好地与GPT4进行交流，让AI更好地理解你的需求，从而提供更准确的答案。
 

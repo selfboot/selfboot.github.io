@@ -1,8 +1,8 @@
 ---
-title: GPT4 plugin 来做数据分析
+title: ChatGPT plugin 来做数据分析
 date: 2023-06-01 13:16:35
 category: 人工智能
-tags: [GPT4, Plugin]  
+tags: [ChatGPT, Plugin]  
 toc: true
 description: 本文详细介绍如何利用 GPT4 的 noteable 插件进行数据分析，包括利用 AI 总结中国过去十年的出生人口趋势，分析用户留存率，以及找出某些日子都活跃的用户。让我们一起探索 AI 在数据分析中的应用，提高工作效率。
 ---

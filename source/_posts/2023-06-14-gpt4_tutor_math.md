@@ -1,8 +1,8 @@
 ---
-title: 神奇 Prompt 让 GPT4 化身数学老师
+title: 神奇 Prompt 让 ChatGPT 化身数学老师
 date: 2023-06-14 22:53:09
 category: 人工智能
-tags: [GPT4, Prompt]  
+tags: [ChatGPT, Prompt]  
 toc: true 
 description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积分老师，讲解了函数，极限和连续性，微分和积分等概念。
 ---

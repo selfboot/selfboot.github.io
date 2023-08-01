@@ -1,20 +1,20 @@
 ---
-title: GPT4 提问技巧二：提供参考文本
+title: ChatGPT Prompt 最佳指南二：提供参考文本
 date: 2023-06-12 22:02:01
 category: 人工智能
-tags: [GPT4, Prompt]
+tags: [ChatGPT, Prompt]
 toc: true
-description: 掌握 GPT-4 提问技巧，提供引用文本是关键。本文详细解析了引用文本的重要性，如何有效地使用引用文本，以及如何从长文本中找到相关部分。我们还探讨了语义搜索的概念和工作原理，以及如何利用现有工具，如 ChatGPT 的 'Ask Your PDF' 插件和微软的 'New Bing'，来提高我们处理长文本的能力。无论你是 AI 新手，还是寻求提高查询效果的专业人士，这篇文章都将为你提供宝贵的指导和启示。
+description: 掌握 ChatGPT 提问技巧，提供引用文本是关键。本文详细解析了引用文本的重要性，如何有效地使用引用文本，以及如何从长文本中找到相关部分。我们还探讨了语义搜索的概念和工作原理，以及如何利用现有工具，如 ChatGPT 的 'Ask Your PDF' 插件和微软的 'New Bing'，来提高我们处理长文本的能力。无论你是 AI 新手，还是寻求提高查询效果的专业人士，这篇文章都将为你提供宝贵的指导和启示。
 ---
 
-本文是 GPT4 提问技巧系列的第二篇，全部系列文章：
+本文是 ChatGPT Prompt 最佳指南系列的第二篇，全部系列文章：
 
-1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
-2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
-3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
-4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
-6. [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
+1. [ChatGPT Prompt 最佳指南一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
+2. [ChatGPT Prompt 最佳指南二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
+3. [ChatGPT Prompt 最佳指南三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
+4. [ChatGPT Prompt 最佳指南四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
+5. [ChatGPT Prompt 最佳指南五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. [ChatGPT Prompt 最佳指南六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章，甚至编程。然而，即使是 GPT-4，也有其局限性，其中之一就是**上下文长度的限制**。GPT-4 的上下文长度限制是由其内部架构决定的，简单来说，GPT-4 在处理输入时，会将输入的文本转化为一系列的“令牌”（tokens）。然而，GPT-4 只能处理一定数量的令牌，这就是所谓的“上下文长度”。超过这个长度，GPT-4 就无法全面理解输入的内容，这可能会影响其生成的输出的质量。
 

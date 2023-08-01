@@ -1,7 +1,6 @@
 ---
-title: GPT4 代码解释器：数据分析与可视化
-tags:
-  - GPT4
+title: ChatGPT 代码解释器：数据分析与可视化
+tags: ChatGPT
 category: 人工智能
 toc: true
 date: 2023-07-10 20:59:54

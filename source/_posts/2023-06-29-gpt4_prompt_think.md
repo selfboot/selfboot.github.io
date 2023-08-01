@@ -1,20 +1,20 @@
 ---
-title: GPT4 提问技巧四：给模型思考时间
+title: ChatGPT Prompt 最佳指南四：给模型思考时间
 date: 2023-06-29 23:07:10
 category: 人工智能
-tags: [GPT4, Prompt]
+tags: [ChatGPT, Prompt]
 toc: true
-description: 深入探索 GPT-4 提问技巧系列的第四篇文章，了解如何通过精心设计的提示词让 GPT-4 模型有更多的“思考时间”。学习如何通过更精细的提示和问题分解来引导模型进行深入分析，从而获得更深入、更精确的答案。适用于 AI 爱好者和开发者。
+description: 深入探索 ChatGPT 提问技巧系列的第四篇文章，了解如何通过精心设计的提示词让 GPT-4 模型有更多的“思考时间”。学习如何通过更精细的提示和问题分解来引导模型进行深入分析，从而获得更深入、更精确的答案。适用于 AI 爱好者和开发者。
 ---
 
-本文是 GPT4 提问技巧系列的第四篇，全部系列文章：
+本文是 ChatGPT Prompt 最佳指南系列的第四篇，全部系列文章：
 
-1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
-2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
-3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
-4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
-6. [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
+1. [ChatGPT Prompt 最佳指南一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
+2. [ChatGPT Prompt 最佳指南二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
+3. [ChatGPT Prompt 最佳指南三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
+4. [ChatGPT Prompt 最佳指南四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
+5. [ChatGPT Prompt 最佳指南五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. [ChatGPT Prompt 最佳指南六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 在我们的生活中，当面临复杂问题时，通常需要花费一些时间来深思熟虑。正如一位作家在撰写一篇文章时需要时间来组织思路和打磨措辞，或者一位棋手在对弈时需要时间来分析局势和制定策略一样，深思熟虑是一种必要的过程。人工智能也有类似的需求，确切地说，GPT 也需要一些时间来为我们提供更深入、更精确的答案。
 

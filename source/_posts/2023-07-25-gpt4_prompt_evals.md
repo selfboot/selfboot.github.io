@@ -1,22 +1,20 @@
 ---
-title: GPT4 提问技巧六：系统基准评测
-tags:
-  - GPT4
-  - Prompt
+title: ChatGPT Prompt 最佳指南六：系统基准评测
+tags: [ChatGPT, Prompt]
 category: 人工智能
 toc: true
-description: 深入探索 GPT-4 提问技巧系列的第六篇文章，主要介绍OpenAI开源的evals系统评测工具。Evals覆盖多种语言，包含大量用例，评估维度丰富。文中列举了中文评测集的例子，如楚辞、翻译、字谜等，介绍了匹配评测和翻译评分的方法。Evals可以帮助开发者全面评估GPT性能，判断不同模型版本或提示词的优劣。
+description: ChatGPT Prompt 最佳指南系列的第六篇文章，主要介绍 OpenAI开源的evals系统评测工具。Evals覆盖多种语言，包含大量用例，评估维度丰富。文中列举了中文评测集的例子，如楚辞、翻译、字谜等，介绍了匹配评测和翻译评分的方法。Evals可以帮助开发者全面评估GPT性能，判断不同模型版本或提示词的优劣。
 date: 2023-07-25 07:32:53
 ---
 
-本文是 GPT4 提问技巧系列的第六篇(严格来说，这一篇不算是 GPT-4 的提问题技巧了，不过为了延续这一个系列的名字，这里也就继续用这个标题了)，全部系列文章：
+本文是 ChatGPT Prompt 最佳指南系列的第六篇，全部系列文章：
 
-1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
-2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
-3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
-4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
-6. [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
+1. [ChatGPT Prompt 最佳指南一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
+2. [ChatGPT Prompt 最佳指南二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
+3. [ChatGPT Prompt 最佳指南三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
+4. [ChatGPT Prompt 最佳指南四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
+5. [ChatGPT Prompt 最佳指南五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. [ChatGPT Prompt 最佳指南六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 OpenAI 的 GPT 模型一直在不断进化，从 GPT-3 到 GPT-3.5，再到现在强大的 GPT-4，每一步都伴随着各种优化措施，使 AI 的回答变得越来越智能。然而，即使是同一版本的模型，使用不同的提示词也会产生质量各异的回答。这就引出了一个挑战：如何判断某个改变是否真正提升了AI的回答质量？换句话说，我们如何得出 GPT-4 比 GPT-3 更强大，或者哪个提示词效果更佳的结论？
 

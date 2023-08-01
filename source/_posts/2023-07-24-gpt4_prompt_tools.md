@@ -1,22 +1,20 @@
 ---
-title: GPT4 提问技巧五：借助外部工具
-tags:
-  - GPT4
-  - Prompt
+title: ChatGPT Prompt 最佳指南五：借助外部工具
+tags: [ChatGPT, Prompt]
 category: 人工智能
 toc: true
-description: 深入探索 GPT-4 提问技巧系列的第五篇文章，介绍了如何利用外部工具提升GPT4的能力,包括代码执行器可以运行GPT4生成的代码;函数调用可以直接调用语言描述的函数;LangChain提供了一系列工具和框架,实现与外部世界的数据和服务的连接。
+description: 深入探索 ChatGPT Prompt 最佳指南系列的第五篇文章，介绍了如何利用外部工具提升 ChatGPT 的能力,包括代码解释器可以运行 ChatGPT 生成的代码;函数调用可以直接调用语言描述的函数;LangChain 提供了一系列工具和框架, 实现与外部世界的数据和服务的连接。
 date: 2023-07-24 13:12:48
 ---
 
-本文是 GPT4 提问技巧系列的第五篇（严格来说，这一篇不算是 GPT-4 的提问题技巧了，不过为了延续这一个系列的名字，这里也就继续用这个标题了），全部系列文章：
+本文是 ChatGPT Prompt 最佳指南系列的第五篇，全部系列文章：
 
-1. [GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
-2. [GPT4 提问技巧二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
-3. [GPT4 提问技巧三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
-4. [GPT4 提问技巧四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
-5. [GPT4 提问技巧五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
-6. [GPT4 提问技巧六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
+1. [ChatGPT Prompt 最佳指南一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)；
+2. [ChatGPT Prompt 最佳指南二：提供参考文本](https://selfboot.cn/2023/06/12/gpt4_prompt_reference/)；
+3. [ChatGPT Prompt 最佳指南三：复杂任务拆分](https://selfboot.cn/2023/06/15/gpt4_prompt_subtasks/)；
+4. [ChatGPT Prompt 最佳指南四：给模型思考时间](https://selfboot.cn/2023/06/29/gpt4_prompt_think/)；
+5. [ChatGPT Prompt 最佳指南五：借助外部工具](https://selfboot.cn/2023/07/24/gpt4_prompt_tools/)；
+6. [ChatGPT Prompt 最佳指南六：系统基准评测](https://selfboot.cn/2023/07/25/gpt4_prompt_evals/)；
 
 GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限性。比如信息缺乏时效性，无法访问互联网或者外部数据库，缺乏深度专业知识特别是数学计算能力，处理复杂数据的能力有限等。在上面这些领域现在已经有专业软件工具，可以弥补 GPT4 能力上的不足。我们可以将 GPT4 和外部工具结合起来，从而更大限度的发挥 GPT4 模型的能力。
 

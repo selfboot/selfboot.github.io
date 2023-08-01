@@ -1,8 +1,6 @@
 ---
-title: 解锁 GPT4 的潜能：在复杂业务开发中用好 AI
-tags:
-  - GPT4
-  - C++
+title: 解锁 ChatGPT 的潜能：在复杂业务开发中用好 AI
+tags: [ChatGPT, C++]
 category: 项目实践
 toc: true
 description: 本文深入探讨了如何结合人的专业知识和 GPT-4 的文本生成能力来提高工作效率，通过具体的业务示例，我们分析了 GPT-4在生成测试代码、优化代码和翻译代码等方面的应用。

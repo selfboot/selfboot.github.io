@@ -1,8 +1,8 @@
 ---
-title: 神奇 Prompt 让 GPT4 化身英语老师
+title: 神奇 Prompt 让 ChatGPT 化身英语老师
 date: 2023-05-26 20:08:45
 category: 人工智能
-tags: [GPT4, Prompt]  
+tags: [ChatGPT, Prompt]  
 toc: true 
 description: 本页面详细介绍了如何使用GPT-4作为您的个人英语老师，包括如何设置学习偏好，如何进行阅读理解训练，以及如何学习英语语法和词汇。我们通过实际对话，展示了GPT-4在教学中的应用，以及如何通过智能提示（Prompt）进行有效的学习。无论您是英语初学者，还是希望提高英语水平，这里都能为您提供有价值的参考。
 ---

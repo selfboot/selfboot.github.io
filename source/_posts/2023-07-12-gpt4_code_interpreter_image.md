@@ -1,6 +1,6 @@
 ---
-title: GPT4 代码解释器：自然语言处理图片
-tags: GPT4
+title: ChatGPT 代码解释器：自然语言处理图片
+tags: ChatGPT
 category: 人工智能
 toc: true
 description: 本文探索了GPT-4的代码解释器在图像处理方面的应用，包括基本图像处理和GIF动画制作。讨论了使用OpenAI预装的Python库，如Pillow等来处理图像。同时，文章也指出了代码解释器在图像处理中的一些局限性，以及在执行环境中可能遇到的问题。
