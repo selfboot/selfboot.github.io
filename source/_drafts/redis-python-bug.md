@@ -3,7 +3,7 @@ title: 解密 ChatGPT 停机事件：Redis Bug 的深度分析
 tags: [ChatGPT, Python, Redis]
 category: 源码剖析
 toc: true
-description: 
+description: 深入分析了导致 ChatGPT 故障的 Redis 客户端 bug，异步命令被取消后，连接状态混乱，后续请求读取到错误数据。最终修复方案是遇到取消直接关闭连接，后续请求会重新建立连接，避免复用有问题的连接。文章梳理了bug的成因、复现、修复过程，也为开发者提供了调试异步连接问题的经验。
 ---
 
 2023.03.20 号，OpenAI 的 ChatGPT 服务曾经中断了一段时间，随后 OpenAI 发了一篇公告 [March 20 ChatGPT outage: Here’s what happened](https://openai.com/blog/march-20-chatgpt-outage) 把这里的来龙去脉讲了一下。OpenAI 在公告里说明了本次故障的影响范围、补救策略、部分技术细节以及改进措施，还是很值得学习的。
@@ -12,7 +12,7 @@ description:
 
 ![ChatGPT 故障整体修复时间节点](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230726_redis_python_bug_incident.png)
 
-这个故障是由 Redis 的 Python 客户端 Bug 引发的，在 Github 上有关于这个 bug 的讨论。这个 bug 的修复过程并不顺利，有不少讨论和修复尝试，比如 [Issue 2624](https://github.com/redis/redis-py/issues/2624)，[Pull 2641](https://github.com/redis/redis-py/pull/2641)，[Issue 2665](https://github.com/redis/redis-py/issues/2665)，[Pull 2695](https://github.com/redis/redis-py/pull/2695)。看过这些后，似乎还是不能理解这里的修复，只好深入读读代码，看看这里的 bug 原因以及修复过程到底是怎么回事，顺便整理成这篇文章。
+这个故障是由 Redis 的 Python 客户端 Bug 引发的，在 Github 上有关于这个 bug 的讨论。这个 bug 的修复过程并不顺利，有不少讨论和修复尝试，比如 [Issue 2624](https://github.com/redis/redis-py/issues/2624)，[PR 2641](https://github.com/redis/redis-py/pull/2641)，[Issue 2665](https://github.com/redis/redis-py/issues/2665)，[PR 2695](https://github.com/redis/redis-py/pull/2695)。看过这些后，似乎还是不能理解这里的修复，只好深入读读代码，看看这里的 bug 原因以及修复过程到底是怎么回事，顺便整理成这篇文章。
 
 <!--more-->
 
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
 ## 源码剖析
 
-之前没有怎么了解过 redis-py 的实现，为了快速定位这里的 bug 原因，最好的办法就是**加日志**。为了能够在改了代码后立马看到效果，把 redis-py 仓库 clone 到本地，用 `git checkout v4.5.1` 切换到了 4.5.1 分支。接着 conda 创建了一个新的虚拟环境，在这个新环境安装本地的库，这里用 `pip install -e .` ，带上 `-e` 后，本地的代码变更后就会立马生效。
+之前没有怎么了解过 redis-py 的实现，为了快速定位这里的 bug 原因，最好的办法就是**加日志**。为了能够立即看到代码改动的效果，先把 redis-py 仓库 clone 到本地，然后用 `git checkout v4.5.1` 命令切换到 4.5.1 分支。接着用 conda 创建了一个新的虚拟环境，在这个新环境安装本地的库，这里用 `pip install -e .` ，带上 `-e` 后，本地的代码变更后就会立马生效。
 
 官方的 redis-py 库写的还是比较清晰的，从 [client.py](https://github.com/redis/redis-py/blob/v4.5.1/redis/asyncio/client.py) 入手，能很快找到一些线索。比如 `execute_command` 函数，应该就是执行某个具体的命令，可以在 finally 的代码块里面加上日志 `print("execute_command finally", *args)` 来确认这一点。
 
@@ -197,7 +197,7 @@ async def _readline(self) -> bytes:
 
 ### 错误的修复方案
 
-第一次修复尝试是在 [pull 2641](https://github.com/redis/redis-py/pull/2641) 中，有人提交了修复方案，关键部分在于：
+第一次修复尝试是在 [PR 2641](https://github.com/redis/redis-py/pull/2641) 中，有人提交了修复方案，关键部分在于：
 
 ![修复的代码比对](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_repair_error.png)
 
@@ -239,7 +239,7 @@ class DelayProxy:
 
 完整的复现代码见 [redis_cancel.py](https://gist.github.com/selfboot/9cb19090008d0d560f22fba31e82c2cc)。
 
-针对这里的复现，有人接着提交了 [Pull 2666](https://github.com/redis/redis-py/pull/2666) 中，对应 commit [5acbde3](https://github.com/redis/redis-py/commit/5acbde355058ab7d9c2f95bcef3993ab4134e342) 被放在 v4.5.4，在所有的命令操作场景中都用 `asyncio.shield` 禁止取消操作，关键部分的改动如下：
+针对这里的复现，chayim 接着提交了 [PR 2666](https://github.com/redis/redis-py/pull/2666) 中，对应 commit [5acbde3](https://github.com/redis/redis-py/commit/5acbde355058ab7d9c2f95bcef3993ab4134e342) 被放在 v4.5.4，在所有的命令操作场景中都用 `asyncio.shield` 禁止取消操作，关键部分的改动如下：
 
 ![asyncio.shield 加保护](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230802_redis_python_bug_shield_everywhere.png)
 
@@ -264,24 +264,82 @@ async def execute_command(self, *args, **options):
 > [EXCEPTION] ('GET', 'foo')
 > try again, we did not cancel the task in time
 
-可以看到加了 `asyncio.shield` 后，异步任务并没有在原来的 `data = await self._stream.readline()`(见前面对这里的说明) 位置抛出异常，而是正常执行完了异步的 get 操作，拿到结果 'foo' 后在 `await asyncio.shield` 这里才最终抛出 asyncio.CancelledError 异常。
-### 最终修复
+可以看到加了 `asyncio.shield` 后，异步任务并没有在原来的 `data = await self._stream.readline()`(见前面对这里的说明) 位置抛出异常，而是正常执行完了异步的 get 操作，拿到结果 'foo' 后在 `await asyncio.shield` 这里才最终抛出 asyncio.CancelledError 异常。本次 PR 还提交了能稳定复现的测试用例，在 [tests/test_asyncio/test_cwe_404.py](https://github.com/redis/redis-py/pull/2666/files#diff-a90c3a19dad7803c9726358f223a3b7b8fb23ccb1d573d580d6640f04fdd3f27) 中，基本思想还是用代理模拟延迟时间。
 
-上面的修复看似解决了问题，不过 [kristjanvalur](https://github.com/kristjanvalur) 对这个修复方案很不满意，在 [Pull 2666](https://github.com/redis/redis-py/pull/2666) 中也直接跟贴评论了。其实前面也提过，这种延迟异常抛出的做法，导致没法真正取消一个异步请求，在某些场景下甚至导致死锁。kristjanvalur 在这个 pull 中也给出了一个示例代码，来证明完全有可能导致死锁问题。
+### 背景与最终修复
 
-好事做到底，kristjanvalur 接着提了一个新的 [Pull 2695](https://github.com/redis/redis-py/pull/2695)。这个 pull 的内容比较多，包括回滚 `v4.5.3` 和 `4.5.4` 中 shield 相关的代码，直接看有点乱。
+上面的修复看似解决了问题，不过 [kristjanvalur](https://github.com/kristjanvalur) 对这个修复方案很不满意，在 [PR 2666](https://github.com/redis/redis-py/pull/2666) 中也直接跟贴评论了。其实前面也提过，这种延迟异常抛出的做法，导致没法真正取消一个异步请求，在某些场景下甚至导致死锁。kristjanvalur 在这个 PR 中也给出了一个示例代码，来证明完全有可能导致死锁问题。
 
-好在根据 [Release](https://github.com/redis/redis-py/releases) 页面的版本日志，可以看到 4.5.5 版本修复了这个问题，如下图：
+好事做到底，kristjanvalur 接着提了一个新的 [PR 2695](https://github.com/redis/redis-py/pull/2695)。这个 PR 的内容比较多，包括回滚 `v4.5.3` 和 `4.5.4` 中 shield 相关的代码，然后修复导致 ChatGPT 读错数据的的 [Issue 2624](https://github.com/redis/redis-py/issues/2624)，并提供了一个单元测试。
+
+再多说一点这里的背景，kristjanvalur 2022年就为 `asyncio/client.py` 贡献了很多代码，包括 [PR 2104: Catch Exception and not BaseException in the Connection](https://github.com/redis/redis-py/pull/2104)，也就是只有遇到 Exception 情况才会关闭连接。正是这个改动，导致了某些场景下包含错误数据的连接，会被放回去连接池，具体讨论可以看 [Issue 2499: BaseException at I/O corrupts Connection](https://github.com/redis/redis-py/issues/2499)，这次的 bug 也是这个改动带来的。
+
+具体修复方案的核心代码如下，在 [read_response](https://github.com/redis/redis-py/blob/f056118224e851915922de02ec40f2d16c9e4dd7/redis/asyncio/connection.py#L831C15-L831C28) 中增加了对 BaseException 的异常处理，默认是直接断开连接。
+
+![异常直接断开连接](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230802_redis_python_bug_disconnect.png)
+
+### 最终的验证过程
+
+根据 [Release](https://github.com/redis/redis-py/releases) 页面的版本日志，可以看到 4.5.5 版本合并了 PR 2695，如下图：
 
 ![Redis python 的修复记录](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230728_redis_python_bug_release.png)
 
-于是尝试直接看 `v4.5.5` 和 `v4.5.1` 中相关的变更代码来理解这里的修复方案。
-
-### 修复验证
-
-切换分支到 `v4.5.5`，重新安装，然后再次用上面的复现脚本尝试验证，得到结果如下：
+切换到 `v4.5.5` 分支，然后再次用上面的复现脚本尝试验证，得到结果如下：
 
 ![已经修复好的输出](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_log_succ.png)
 
-至此，这个 bug 彻底修复了。
+至此，这个 bug 彻底修复了。再来加日志对上面的理解过程做一些验证，比如：
 
+1. 取消任务的时候，这里会断开连接；
+2. 下一次拿连接的时候，会用到一个新的连接；
+
+这里在准备断开连接和新建连接的地方加上日志，通过 `id(self._reader)` 来验证确实建了新的 `asyncio.StreamReader` 对象。 如下：
+
+```python
+--- a/redis/asyncio/connection.py
++++ b/redis/asyncio/connection.py
+@@ -638,6 +638,8 @@ class Connection:
+             task = callback(self)
+             if task and inspect.isawaitable(task):
+                 await task
++
++        print(f'[log] New Connection {id(self._reader)} {id(self._writer)}')
+
+     async def _connect(self):
+         """Create a TCP socket connection"""
+@@ -866,6 +868,7 @@ class Connection:
+             # relies on this behaviour when doing Command/Response pairs.
+             # See #1128.
+             if disconnect_on_error:
++                print(f'[log] disconnecting {id(self._reader)} {id(self._writer)}')
+                 await self.disconnect(nowait=True)
+             raise
+```
+
+得到的输出如下，可以看到在取消任务时，立马断开了连接，这时候 id=4388303056 的 stream read 被销毁。接下来的 redis 操作新创建了 connection，并且分配了新的 id=4388321104 的 stream read。
+
+> [log] New Connection 4388303056 4385849616
+> [log] disconnecting 4388303056 4385849616
+> managed to cancel the task, connection is left open with unread response
+> [log] New Connection 4388321104 4385849616
+> bar: b'bar'
+> ping: True
+> foo: b'foo'
+
+整体的修复思路清晰了，就是对于异常的请求 client，直接关闭 connection，这样会清理读写流。下一次再有新的请求，用一个新的流，就不会有读乱的问题了。
+
+## 简单总结
+
+OpenAI 公开了一个**故障状态页面**，实时展示各项服务的运行情况。当 ChatGPT 不可用时，用户可以第一时间在状态页面上确认，而不是盲目猜测问题出在自己这边。这种高透明度的做法值得学习，首先它体现了对用户的尊重和负责，不轻易封锁消息。其次也有利于公司积极主动应对问题，而不是回避或隐瞒。
+
+OpenAI **公布的技术细节**相当翔实，这也体现了其高度透明的态度。报告中还特别说明了问题仅存在于非常短的窗口，并列出了各种补救和防范措施，包括新增校验逻辑、日志记录、提升容错性等。这些细节无不显示 OpenAI 对用户隐私和产品质量的高度重视。然后通过详细分析本次 ChatGPT 服务中断的技术原因，我们也可以获得以下启示:
+
+首先，这充分说明了开源社区力量的伟大。从最初的问题报告，到错误修复方案的提交，再到提供稳定复现手段，以及最终合理修复方案的实现，整个过程都有开源社区参与者的贡献。正是因为这样的协作，一个严重的 bug 才能在短时间内系统性地被分析并修复。
+
+其次，这也体现了定位难以稳定复现的 bug 需要技巧。使用代理服务器来模拟网络延迟，创造出错误触发的时机窗口,为确认和定位 bug 提供了重要支持。这种手段对处理各类偶发的异常问题具有借鉴意义。
+
+另外，这也展示了异步编程的难点。理解一个异步任务流的执行需要对代码细节有非常强的把握。打印日志和添加断点是必要手段，同时需要对语言和库的行为有充分理解，才能分析出问题的根源所在。
+
+最后，这个案例也彰显了优秀开源项目的价值。不仅要提供可靠的功能实现，还需要有完善的文档、注释和测试代码。这是开源项目能够长期发展的基石。读者可以通过这种源码级的调试分析，掌握定位难点问题的技巧，提高自己的编程能力。也希望本文对需要深入理解开源项目实现的读者有所启发和帮助。
+
+> 最后总结部分是 claude2 写的，感觉还可以？虽然有点说教的感觉。
