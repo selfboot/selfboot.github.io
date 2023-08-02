@@ -1,9 +1,13 @@
 ---
-title: 解密 ChatGPT 停机事件：Redis Bug 的深度分析
-tags: [ChatGPT, Python, Redis]
+title: 解密 ChatGPT 数据泄露：Redis Bug 的深度分析
+tags:
+  - ChatGPT
+  - Python
+  - Redis
 category: 源码剖析
 toc: true
 description: 深入分析了导致 ChatGPT 故障的 Redis 客户端 bug，异步命令被取消后，连接状态混乱，后续请求读取到错误数据。最终修复方案是遇到取消直接关闭连接，后续请求会重新建立连接，避免复用有问题的连接。文章梳理了bug的成因、复现、修复过程，也为开发者提供了调试异步连接问题的经验。
+date: 2023-08-02 22:42:36
 ---
 
 2023.03.20 号，OpenAI 的 ChatGPT 服务曾经中断了一段时间，随后 OpenAI 发了一篇公告 [March 20 ChatGPT outage: Here’s what happened](https://openai.com/blog/march-20-chatgpt-outage) 把这里的来龙去脉讲了一下。OpenAI 在公告里说明了本次故障的影响范围、补救策略、部分技术细节以及改进措施，还是很值得学习的。
