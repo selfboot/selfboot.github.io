@@ -1,7 +1,6 @@
 layout: page
 copyright: true
 donate: false
-share: false
 description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法律咨询，文书撰写，专项法律服务，背调，公证，合同修改。
 ---
 

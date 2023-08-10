@@ -1,8 +1,7 @@
 layout: page
 copyright: false
 donate: false
-share: false
-comments: false
+description: 后台开发工程师, 科幻小说爱好者，三体粉丝，ChatGPT 重度使用者，AI 降临派。
 ---
 
 <link rel="stylesheet" type="text/css" href="css/github_card.css">
