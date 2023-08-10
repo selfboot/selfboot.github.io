@@ -6,7 +6,7 @@ category: 法律普及
 toc: true
 copyright: false
 donate: false
-description: 
+description: 通过详细剖析非法经营罪的立法目的和适用前提，指出非法加经营不等于非法经营罪，此罪须基于严重扰乱市场秩序。并举实例说明如果扩大解释该罪将违反罪刑相当原则，最后明确私开培训机构不应构成非法经营罪。旨在纠正非法经营罪适用中的错观念，呼吁关注行为的社会危害性，避免滥用刑法压制正常经济活动。
 ---
 
 > 本文转载自 [罗翔说刑法: 非法+经营+数额较大=非法经营罪？？？](https://mp.weixin.qq.com/s/wkcX5eElF11Uzx3PjD0SGw)，原作者 **罗翔**。
