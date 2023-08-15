@@ -113,6 +113,6 @@ date: 2023-08-13 20:05:49
 离婚可能会结束一段婚姻，但它绝不能阻碍子女成长中的阳光和温暖。夫妻双方需要携手努力，为子女创造一个美好的明天。
 
 ---
-也可以扫码关注[小盛律师](https://selfboot.cn/links)的公众号，及时收到更新通知～
+欢迎扫码关注[小盛律师](https://selfboot.cn/links)的公众号，及时收到更新通知～
 
 ![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
