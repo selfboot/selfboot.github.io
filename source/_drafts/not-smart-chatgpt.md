@@ -80,3 +80,42 @@ ChatGPT 表现的很不错，直接告诉可以使用 Python 的 `pytz` 库来�
 
 难道广州的房东经常不退租客押金，被 ChatGPT 都从网上学到了？有点让人啼笑皆非了。不止在 ChatGPT3.5 下会有这个问题，最新的 GPT4 模型，也是会有同样的问题。
 
+## 不能激活的插件
+
+OpenAI 的 ChatGPT 是离线训练的模型，里面会缺少一些比较新的知识。[Langchain](https://python.langchain.com/docs/get_started/introduction.html) 是一个最近刚出来的 LLM 开发框架，ChatGPT 没有其相关知识。为了能够让它回答 langchain 的问题，我开了 Webpolit 插件，并且提供给他文档地址，然后提问如下：
+
+> 参考 https://python.langchain.com/docs/get_started/quickstart 这里 langchain 的文档，帮我给指定中文文本分类，提取下面信息，并输出 json。
+> 
+> cityzone：提取文本里有提到的位置信息
+> customreplycontent：生成一段回复
+
+然后 GPT4 就自信的说，根据文档和需求，可以用下面的脚本来完成任务。
+
+```python
+from langchain import Langchain
+
+# 创建 Langchain 实例
+lc = Langchain()
+
+# 定义分析文本的函数
+@lc.register
+def analyze_text(text: str) -> dict:
+    cityzone = 提取位置信息(text)
+    customreplycontent = 生成一段回复(text)
+    return {
+        "cityzone": cityzone,
+        "customreplycontent": customreplycontent
+    }
+
+# 定义提取位置信息的函数
+@lc.register
+def 提取位置信息(text: str) -> str:
+    # 这里添加你的逻辑来提取位置信息
+    return "上海"
+
+# ...
+```
+
+这个大聪明怎么忽然这么笨啦？`提取位置信息(text)` 这都能拿出来作为 python 代码，也太敷衍了。就这还大言不惭，让我通过安装 Langchain 库并运行上述代码来测试这个脚本。没办法，只好提醒他用插件重新读文档来实现，终于变聪明了。
+
+![用插件学习后的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230821_not_smart_chatgpt_webpolit.png)
