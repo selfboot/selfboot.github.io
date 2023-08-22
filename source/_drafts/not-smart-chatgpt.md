@@ -1,15 +1,15 @@
 ---
-title: 日常真实例子告诉你 ChatGPT 能有多笨！
+title: 真实例子告诉你 ChatGPT 能有多会编答案！
 tags: [ChatGPT, Prompt]
 category: 人工智能
 toc: true
-description: 本文记录了笔者在日常使用 ChatGPT 过程中发现的各种错误回答。从pytz库的时区设置错误，到ChatGPT自编的房东不退押金案例，每一个案例都揭示了当前AI仍存在的理解误区。我们要做的就是，认识到 AI 的局限，并更好地利用 AI。
+description: 本文记录了笔者在日常使用 ChatGPT 过程中发现的各种胡编乱造的回答。从pytz库的时区设置错误，到ChatGPT自编的房东不退押金案例，每一个案例都揭示了当前 AI 仍存在的问题。我们要做的就是，认识到 AI 的局限，并更好地利用 AI。
 date: 
 ---
 
-GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通人类的能力。我的日常也原来越离不开 ChatGPT 了，它大大提高了日常的工作效率，也教会了一些之前很难获得的知识。然而，正如许多伟大的发明一样，ChatGPT 也并非完美无缺。它时而会犯错，给出一些错误的回答。
+GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通人类。我的日常也原来越离不开 ChatGPT 了，它大大提高了日常的工作效率。然而，在使用中发现 ChatGPT 还是
 
-本文将记录**日常使用** ChatGPT 过程中发现的一些 AI 错误回答，就像记录孩子成长过程中的出丑时刻一样。等到有一天 AI “长大成人”，也能一起回顾这些“小时候”的出丑时刻。
+本文记录**日常使用** ChatGPT 过程中发现的一些错误回答，就像记录孩子成长过程中的出丑时刻一样。等到有一天 AI “长大成人”，也能一起回顾这些“小时候”的出丑时刻。
 
 ![ChatGPT 的错误回答集锦](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230817_not_smart_chatgpt_robot.png)
 
@@ -120,3 +120,71 @@ def 提取位置信息(text: str) -> str:
 
 ![用插件学习后的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230821_not_smart_chatgpt_webpolit.png)
 
+## 图像识别错误
+
+有一个图片，我用红色标记了其中一部分，然后想把这部分替换为其他图片。自己不熟悉 opencv 的代码，也不太懂图片处理，想着让 ChatGPT 的 [Code Interpreter](https://selfboot.cn/2023/07/12/gpt4_code_interpreter_image/) 帮我写个简单的代码来处理一下。于是给它传了图片，然后提问：
+
+> 如何用 python 识别这个图片里红色方框的坐标位置，并且把里面的内容替换为其他内容
+
+ChatGPT 给出了自己的步骤，看起来是很合理：
+
+1. 读取图像。
+2. 识别红色方框的坐标位置。
+3. 截取该区域并替换为所需内容。
+4. 将替换的内容粘贴回原始图像。
+
+然后就是第一步，识别红色方框的坐标位置。信誓旦旦说成功识别了红色方框的坐标位置，它位于图像的 (562,474) 位置，并具有 142 的宽度和 172 的高度。还好心好意地用**蓝色方框**在图片上标记了出来，如下图：
+
+![图像识别错误的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230822_not_smart_chatgpt_cv.png)
+
+把图像中的脸部识别成了红色方框部分，看了下代码，应该是颜色的阈值没设置对导致的。
+
+## 画不出来的链表图
+
+之前读《Redis 设计与实现》这本书的时候，看到作者说配图全部是用 [Graphviz](http://graphviz.org/) 生成的，还给出了所有配图的源码 [redisbook1e-gallery](https://github.com/huangz1990/redisbook1e-gallery)。当时就觉得用源码生成图片也太酷了，还打开 Graphviz 的官网看了下，奈何文档看起来太多了，上手需要点时间，就搁置了。
+
+最近刚好想用 Graphviz 画一个简单的图，想着让 ChatGPT 生成源码，岂不快哉？动动嘴图片就出来了，这多好。于是就提问如下：
+
+> 你是一个 Graphviz 绘图的专家，帮我用 markdown 输出下面描述中的图片的制作代码，要求绘的图简单清晰，结构工整。
+> 
+> 图片描述：有一个int 的链表，里面从头往尾部元素值分别是 1 ，2,3，... ，100，其中有一个箭头指向头部，箭头上有文字 head，有一个带有标题 tail 的箭头指向链表尾部。
+
+ChatGPT 果然会！给出了一个不错的源码，还好心好意提醒我可以将此代码粘贴到一个 Graphviz 编辑器（例如 [WebGraphviz](http://www.webgraphviz.com/)）中，然后生成链表的图像。
+
+```shell
+digraph LinkedList {
+    rankdir=LR;
+    node [shape=record];
+    
+    // 定义头部和尾部标签
+    head [label="head", shape=plaintext];
+    tail [label="tail", shape=plaintext];
+    
+    // 定义链表节点
+    node1 [label="{ 1 | <p1> }"];
+    node2 [label="{ 2 | <p2> }"];
+    node3 [label="{ 3 | <p3> }"];
+    ellipsis [label="...", shape=plaintext];
+    node100 [label="{ 100 | }"];
+    
+    // 定义箭头和连接
+    head -> node1 [dir=back, constraint=false];
+    node1:p1 -> node2;
+    node2:p2 -> node3;
+    node3:p3 -> ellipsis;
+    ellipsis -> node100;
+    tail -> node100 [dir=back, constraint=false];
+    
+    // 定义排列
+    { rank=same; head tail }
+}
+```
+
+于是我就拿源码贴过去，发现语法都有错误，生成的图片也不对。head 和 tail 画不对，还多了个 svg 出来，如下图了：
+
+![画不出一个简单链表 digraph 的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230822_not_smart_chatgpt_graphviz.png)
+
+然后试着换了各种更加清晰的提示词，ChatGPT 总是给不出正确的源码，给的许多源码也都有语法错误。难道数据集中没有很多Graphviz 绘图的语料，导致 ChatGPT 没有学会？
+
+---
+通过这些日常真实案例，我们可以看到当前 ChatGPT 在回答一些问题时，仍会胡编乱造一些**看起来很正确**的答案。但是我们不应因此否定 ChatGPT 的价值，更不应该弃之不用。认识到其局限并合理使用，才是我们应有的态度。
