@@ -1,5 +1,5 @@
 ---
-title: 笨笨的 ChatGPT：日常使用中发现的 AI 错误大盘点
+title: 日常真实例子告诉你 ChatGPT 能有多笨！
 tags: [ChatGPT, Prompt]
 category: 人工智能
 toc: true
@@ -119,3 +119,4 @@ def 提取位置信息(text: str) -> str:
 这个大聪明怎么忽然这么笨啦？`提取位置信息(text)` 这都能拿出来作为 python 代码，也太敷衍了。就这还大言不惭，让我通过安装 Langchain 库并运行上述代码来测试这个脚本。没办法，只好提醒他用插件重新读文档来实现，终于变聪明了。
 
 ![用插件学习后的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230821_not_smart_chatgpt_webpolit.png)
+
