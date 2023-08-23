@@ -1,13 +1,15 @@
 ---
-title: 真实例子告诉你 ChatGPT 能有多会编答案！
-tags: [ChatGPT, Prompt]
+title: 真实例子告诉你 ChatGPT 是多会胡编乱造！
+tags:
+  - ChatGPT
+  - Prompt
 category: 人工智能
 toc: true
-description: 本文记录了笔者在日常使用 ChatGPT 过程中发现的各种胡编乱造的回答。从pytz库的时区设置错误，到ChatGPT自编的房东不退押金案例，每一个案例都揭示了当前 AI 仍存在的问题。我们要做的就是，认识到 AI 的局限，并更好地利用 AI。
-date: 
+description: 文章归纳了 ChatGPT 在日常使用中的各类错误回答，如时区设置、法律案例、代码实现、图像识别等都曾出现过失误，虽然它看似智能，但仍存在局限。这些实例提示我们注意验证AI输出，而不是盲目依赖。合理使用ChatGPT，认识其优劣，才能发挥其价值。我们不应因其偶尔的失误否定AI，而应客观理性地对待当前AI水平。
+date: 2023-08-23 08:03:32
 ---
 
-GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通人类。我的日常也原来越离不开 ChatGPT 了，它大大提高了日常的工作效率。然而，在使用中发现 ChatGPT 还是
+GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通人类。我的日常也原来越离不开 ChatGPT 了，它大大提高了日常的工作效率。然而，在使用中发现 ChatGPT 还是有时会犯一些“幼稚”的错误，就像一个正在成长的孩子偶尔会出现的调皮行为。
 
 本文记录**日常使用** ChatGPT 过程中发现的一些错误回答，就像记录孩子成长过程中的出丑时刻一样。等到有一天 AI “长大成人”，也能一起回顾这些“小时候”的出丑时刻。
 
@@ -15,7 +17,7 @@ GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通
 
 <!-- more -->
 
-本文的记录均基于 OpenAI 的 GPT 模型，如果没做特殊说明，都是最新的 GPT4 模型。本文会在个人博客持续更新，记录日常使用中发现的各种好玩儿的答案。
+本文的记录均基于 OpenAI 的 GPT 模型，如果没做特殊说明，都是最新的 GPT4 模型。本文会在个人博客**持续更新**，记录日常使用中发现的各种好玩儿的回答。
 
 ## pytz 的北京时区
 
@@ -64,9 +66,9 @@ ChatGPT 表现的很不错，直接告诉可以使用 Python 的 `pytz` 库来�
 现在你的任务是对用户咨询的问题进行归类、总结，并尝试回答。
 你需要输出一个 json，包括下面字段:
 
-"isneedlawer": true/false, # 用户是否需要律师的帮忙
-"customreplycontent": "", # 针对问题给出的一个法律建议，如果无法律建议，则为空字符串,
-"cityzone": "", # 问题涉及的地点，精确到城市即可，比如广州市。如何没有地点信息，则为空字符串,
+"isneedlawer": true/false， # 用户是否需要律师的帮忙
+"customreplycontent": ""， # 针对问题给出的一个法律建议，如果无法律建议，则为空字符串，
+"cityzone": ""， # 问题涉及的地点，精确到城市即可，比如广州市。如何没有地点信息，则为空字符串，
 "abstract": "" # 问题的简单概述，不超过 200 字，要包含用户主要传达的信息"
 
 输出一定要是 json，如果做不到，那么请输出一个空的 json。
@@ -103,7 +105,7 @@ def analyze_text(text: str) -> dict:
     cityzone = 提取位置信息(text)
     customreplycontent = 生成一段回复(text)
     return {
-        "cityzone": cityzone,
+        "cityzone": cityzone，
         "customreplycontent": customreplycontent
     }
 
@@ -133,11 +135,11 @@ ChatGPT 给出了自己的步骤，看起来是很合理：
 3. 截取该区域并替换为所需内容。
 4. 将替换的内容粘贴回原始图像。
 
-然后就是第一步，识别红色方框的坐标位置。信誓旦旦说成功识别了红色方框的坐标位置，它位于图像的 (562,474) 位置，并具有 142 的宽度和 172 的高度。还好心好意地用**蓝色方框**在图片上标记了出来，如下图：
+然后就是第一步，识别红色方框的坐标位置。信誓旦旦说成功识别了红色方框的坐标位置，它位于图像的 (562，474) 位置，并具有 142 的宽度和 172 的高度。还好心好意地用**蓝色方框**在图片上标记了出来，如下图：
 
 ![图像识别错误的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230822_not_smart_chatgpt_cv.png)
 
-把图像中的脸部识别成了红色方框部分，看了下代码，应该是颜色的阈值没设置对导致的。
+把图像中的脸部识别成了红色方框部分，看了下代码，应该是颜色的阈值没设置对导致的。后面把任务拆分了下，让它只识别红色方框位置，同时把方框的红色搞得稍微粗了些，ChatGPT 就能正常识别了。
 
 ## 画不出来的链表图
 
@@ -147,7 +149,7 @@ ChatGPT 给出了自己的步骤，看起来是很合理：
 
 > 你是一个 Graphviz 绘图的专家，帮我用 markdown 输出下面描述中的图片的制作代码，要求绘的图简单清晰，结构工整。
 > 
-> 图片描述：有一个int 的链表，里面从头往尾部元素值分别是 1 ，2,3，... ，100，其中有一个箭头指向头部，箭头上有文字 head，有一个带有标题 tail 的箭头指向链表尾部。
+> 图片描述：有一个int 的链表，里面从头往尾部元素值分别是 1 ，2，3，... ，100，其中有一个箭头指向头部，箭头上有文字 head，有一个带有标题 tail 的箭头指向链表尾部。
 
 ChatGPT 果然会！给出了一个不错的源码，还好心好意提醒我可以将此代码粘贴到一个 Graphviz 编辑器（例如 [WebGraphviz](http://www.webgraphviz.com/)）中，然后生成链表的图像。
 
@@ -157,23 +159,23 @@ digraph LinkedList {
     node [shape=record];
     
     // 定义头部和尾部标签
-    head [label="head", shape=plaintext];
-    tail [label="tail", shape=plaintext];
+    head [label="head"， shape=plaintext];
+    tail [label="tail"， shape=plaintext];
     
     // 定义链表节点
     node1 [label="{ 1 | <p1> }"];
     node2 [label="{ 2 | <p2> }"];
     node3 [label="{ 3 | <p3> }"];
-    ellipsis [label="...", shape=plaintext];
+    ellipsis [label="..."， shape=plaintext];
     node100 [label="{ 100 | }"];
     
     // 定义箭头和连接
-    head -> node1 [dir=back, constraint=false];
+    head -> node1 [dir=back， constraint=false];
     node1:p1 -> node2;
     node2:p2 -> node3;
     node3:p3 -> ellipsis;
     ellipsis -> node100;
-    tail -> node100 [dir=back, constraint=false];
+    tail -> node100 [dir=back， constraint=false];
     
     // 定义排列
     { rank=same; head tail }
@@ -187,4 +189,4 @@ digraph LinkedList {
 然后试着换了各种更加清晰的提示词，ChatGPT 总是给不出正确的源码，给的许多源码也都有语法错误。难道数据集中没有很多Graphviz 绘图的语料，导致 ChatGPT 没有学会？
 
 ---
-通过这些日常真实案例，我们可以看到当前 ChatGPT 在回答一些问题时，仍会胡编乱造一些**看起来很正确**的答案。但是我们不应因此否定 ChatGPT 的价值，更不应该弃之不用。认识到其局限并合理使用，才是我们应有的态度。
+通过这些日常真实案例，我们可以看到当前 ChatGPT 在回答一些问题时，仍会胡编乱造一些**看起来很正确**的答案。但是我们不应因此否定 ChatGPT 的价值，更不应该弃之不用。**认识到其局限并合理使用**，才是我们应有的态度。
