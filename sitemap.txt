@@ -1,3 +1,5 @@
+https://selfboot.cn/2023/08/02/redis_python_bug/
+https://selfboot.cn/2023/08/05/divorce_legal_longtime/
 https://selfboot.cn/2023/08/08/http_100_continue/
 https://selfboot.cn/2023/08/10/crime_illegal_business/
 https://selfboot.cn/2023/08/13/divorce_legal_children/
@@ -8,6 +10,8 @@ https://selfboot.cn/2023/08/23/not-smart-chatgpt/
 https://selfboot.cn/aboutme.html
 https://selfboot.cn/google0b4c8a25b65d7c2a.html
 https://selfboot.cn/links.html
+https://selfboot.cn/2023/05/26/gpt4_tutor_english/
+https://selfboot.cn/2023/05/29/gpt4_cal_date/
 https://selfboot.cn/2023/05/31/gpt4_tutor_physics/
 https://selfboot.cn/2023/06/01/gpt4_plugin_noteable/
 https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/
@@ -37,10 +41,6 @@ https://selfboot.cn/2023/07/24/gpt4_prompt_tools/
 https://selfboot.cn/2023/07/25/gpt4_prompt_evals/
 https://selfboot.cn/2023/07/28/chatgpt_hacking/
 https://selfboot.cn/2023/07/29/divorce_legal_money_parent/
-https://selfboot.cn/2023/08/02/redis_python_bug/
-https://selfboot.cn/2023/08/05/divorce_legal_longtime/
-https://selfboot.cn/2014/12/26/django_start/
-https://selfboot.cn/2014/12/28/love_gmail/
 https://selfboot.cn/2015/01/02/realworld_fish/
 https://selfboot.cn/2015/01/11/django_start(2)/
 https://selfboot.cn/2015/09/23/something_about_bit_operation/
@@ -70,8 +70,6 @@ https://selfboot.cn/2019/11/01/self_rent_do/
 https://selfboot.cn/2019/11/02/self-rent-done/
 https://selfboot.cn/2023/05/24/gpt4_teach_option/
 https://selfboot.cn/2023/05/25/more-lottery/
-https://selfboot.cn/2023/05/26/gpt4_tutor_english/
-https://selfboot.cn/2023/05/29/gpt4_cal_date/
 https://selfboot.cn/2013/06/07/hack_the_browser/
 https://selfboot.cn/2013/06/11/vim_plugins/
 https://selfboot.cn/2013/06/16/how_to_use_the_network/
@@ -91,6 +89,8 @@ https://selfboot.cn/2014/11/03/vim_plugin_with_python/
 https://selfboot.cn/2014/11/11/osx_app_summary/
 https://selfboot.cn/2014/11/30/jekyll_to_hexo/
 https://selfboot.cn/2014/12/21/add_blog_to_google/
+https://selfboot.cn/2014/12/26/django_start/
+https://selfboot.cn/2014/12/28/love_gmail/
 https://selfboot.cn/404.html
 https://selfboot.cn/2023/06/02/auto_compress_upload/
 https://selfboot.cn/2020/10/18/gz_house_money/
