@@ -188,5 +188,35 @@ digraph LinkedList {
 
 然后试着换了各种更加清晰的提示词，ChatGPT 总是给不出正确的源码，给的许多源码也都有语法错误。难道数据集中没有很多Graphviz 绘图的语料，导致 ChatGPT 没有学会？
 
+## 代码解释器库缺失
+
+ChatGPT 的 [Code Interpreter](https://selfboot.cn/2023/07/10/gpt4_code_interpreter_data/) 还是很好用的，不用自己写代码就能用来分析数据，并进行可视化。有次使用过程中，需要对数据中的**中文内容进行分词**，想到了 [jieba 分词](https://github.com/fxsjy/jieba)，但是怕 ChatGPT 的代码解释器环境没有安装这个包，于是就问了下 ChatGPT：
+
+> 你可以用一些中文分词库，比如 jieba 吗？
+
+ChatGPT 就自信回答当然可以使用 jieba 分词库来更准确地分析中文文本，还说这个库能够更好地识别中文词汇和短语。然后就开始刷刷刷写代码了：
+
+```python
+import jieba
+
+# Using jieba to tokenize the consultation texts
+jieba_words = jieba.cut(consultation_texts)
+
+# Counting the frequency of each word using jieba tokenization
+jieba_word_counts = Counter(jieba_words)
+
+# Finding and returning the top 50 most common words using jieba tokenization
+top_50_jieba_words = [word for word, _ in jieba_word_counts.most_common(50) if word.strip() and word not in '.,;:!?。，；：！？']
+
+# Returning the top 50 words with jieba
+top_50_jieba_words
+```
+
+然后 ChatGPT 就开始运行代码，果不其然，发现没有安装 jieba 这个库 `No module named 'jieba'`。然后终于意识到当前环境中没有安装 jieba 分词库，所以无法直接使用。
+
+![Code interpreter 加载 jieba 库失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230825_not_smart_chatgpt_jieba.png)
+
+这个例子其实 AI 的表现也是可以理解的，毕竟这种错误人也经常犯，经常是代码跑一般才发现没有安装某个库。不过 AI 还是可以表现的更好些，可以在跑失败的时候，告诉我怎么**手动在当前环境安装这个库**。毕竟，你都知道我想用这个库，而你也有方法安装这个库，那为啥不告诉我呢？看来还是不够聪明呀～
+
 ---
 通过这些日常真实案例，我们可以看到当前 ChatGPT 在回答一些问题时，仍会胡编乱造一些**看起来很正确**的答案。但是我们不应因此否定 ChatGPT 的价值，更不应该弃之不用。**认识到其局限并合理使用**，才是我们应有的态度。
