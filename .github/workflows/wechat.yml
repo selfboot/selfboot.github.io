@@ -28,10 +28,9 @@ jobs:
       - name: Debug
         run: |
           git log --oneline -n 2
-          git diff --name-only --diff-filter=A HEAD^ HEAD
-      - name: Get .md files
+      - name: Get new files in source/_posts
         run: |
-          echo "MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep '\.md$' | xargs)" >> $GITHUB_ENV
+          echo "MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep 'source/_posts/' | xargs)" >> $GITHUB_ENV
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run script
