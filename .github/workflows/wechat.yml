@@ -29,10 +29,8 @@ jobs:
         run: git log --oneline -n 2
 
       # 获取最近一次提交中新增加 md 文件，或者从其他目录重命名到 source/_posts 的新文件
-      # 使用 set -e 确保任何命令失败都会导致整个步骤失败
       - name: Get new files in source/_posts
         run: |
-          set -e
           MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep 'source/_posts/.*\.md$'; git diff --name-status --find-renames HEAD^ HEAD | awk '/^R/ && !/source\/_posts\/.* -> source\/_posts\// {print $NF}' | grep 'source/_posts/.*\.md$')
           echo "MD_FILES=${MD_FILES}" >> $GITHUB_ENV
       - name: Install dependencies
