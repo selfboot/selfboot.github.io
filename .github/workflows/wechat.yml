@@ -19,18 +19,22 @@ jobs:
       - name: Check out pages branch
         uses: actions/checkout@v2
         with:
-          ref: gh-pages 
-          path: public  # this will checkout the pages branch into a directory named 'public'
+          ref: gh-pages
+          path: public  # 将 pages 分支检出到名为 'public' 的目录
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.11
       - name: Debug
-        run: |
-          git log --oneline -n 2
+        run: git log --oneline -n 2
+
+      # 获取最近一次提交中新增加 md 文件，或者从其他目录重命名到 source/_posts 的新文件
+      # 使用 set -e 确保任何命令失败都会导致整个步骤失败
       - name: Get new files in source/_posts
         run: |
-          echo "MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep 'source/_posts/' | xargs)" >> $GITHUB_ENV
+          set -e
+          MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep 'source/_posts/.*\.md$'; git diff --name-status --find-renames HEAD^ HEAD | awk '/^R/ && !/source\/_posts\/.* -> source\/_posts\// {print $NF}' | grep 'source/_posts/.*\.md$')
+          echo "MD_FILES=${MD_FILES}" >> $GITHUB_ENV
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run script
