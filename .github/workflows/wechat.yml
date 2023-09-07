@@ -31,7 +31,10 @@ jobs:
       # 获取最近一次提交中新增加 md 文件，或者从其他目录重命名到 source/_posts 的新文件
       - name: Get new files in source/_posts
         run: |
-          MD_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep 'source/_posts/.*\.md$'; git diff --name-status --find-renames HEAD^ HEAD | awk '/^R/ && !/source\/_posts\/.* -> source\/_posts\// {print $NF}' | grep 'source/_posts/.*\.md$')
+          set +e
+          NEW_FILES=$(git diff --name-only --diff-filter=A HEAD^ HEAD | grep 'source/_posts/.*\.md$' || true)
+          RENAMED_FILES=$(git diff --name-status --find-renames HEAD^ HEAD | awk '/^R/ && !/source\/_posts\/.* -> source\/_posts\// {print $NF}' | grep 'source/_posts/.*\.md$' || true)
+          MD_FILES="${NEW_FILES}${NEW_FILES:+\n}${RENAMED_FILES}"
           echo "MD_FILES=${MD_FILES}" >> $GITHUB_ENV
       - name: Install dependencies
         run: pip install -r requirements.txt
