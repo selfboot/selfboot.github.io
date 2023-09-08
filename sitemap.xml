@@ -2,6 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://selfboot.cn/2023/08/02/redis_python_bug/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/08/05/divorce_legal_longtime/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/08/08/http_100_continue/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/08/10/crime_illegal_business/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2023/08/13/divorce_legal_children/</loc>
     
     <lastmod>2023-09-08</lastmod>
@@ -110,6 +146,87 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/2023/07/23/divorce_legal_money/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/05/gpt4_write_cmd/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/06/gpt4_lawer_helper/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/07/gpt4_heygen_video/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/08/gpt4_leetcode_1318/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/09/gpt4_leetcode_978/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/10/gpt4_prompt_clear/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/11/gpt4_leetcode_1802/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2023/06/12/gpt4_prompt_reference/</loc>
     
     <lastmod>2023-09-08</lastmod>
@@ -209,87 +326,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/06/01/gpt4_plugin_noteable/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/05/gpt4_write_cmd/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/06/gpt4_lawer_helper/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/07/gpt4_heygen_video/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/08/gpt4_leetcode_1318/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/09/gpt4_leetcode_978/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/10/gpt4_prompt_clear/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/11/gpt4_leetcode_1802/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/2023/07/17/gpt4_code_interpreter_cpu/</loc>
     
     <lastmod>2023-09-08</lastmod>
@@ -309,15 +345,6 @@
   
   <url>
     <loc>https://selfboot.cn/2023/07/21/divorce_legal_knowlage/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/07/23/divorce_legal_money/</loc>
     
     <lastmod>2023-09-08</lastmod>
     
@@ -354,51 +381,6 @@
   
   <url>
     <loc>https://selfboot.cn/2023/07/29/divorce_legal_money_parent/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/08/02/redis_python_bug/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/08/05/divorce_legal_longtime/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/08/08/http_100_continue/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/08/10/crime_illegal_business/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/11/05/dns_theory/</loc>
     
     <lastmod>2023-09-08</lastmod>
     
@@ -533,87 +515,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2014/12/26/django_start/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/12/28/love_gmail/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/01/02/realworld_fish/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/01/11/django_start(2)/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/09/23/something_about_bit_operation/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/10/13/pages_count/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/10/15/lightweight-GUI/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/10/23/marketing/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/11/03/howto_find_algorithm/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/2016/12/28/py_encode_decode/</loc>
     
     <lastmod>2023-09-08</lastmod>
@@ -704,6 +605,15 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/2023/06/01/gpt4_plugin_noteable/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2013/06/07/hack_the_browser/</loc>
     
     <lastmod>2023-09-08</lastmod>
@@ -758,6 +668,15 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/2014/08/08/python_copy/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2014/08/10/python_decorator/</loc>
     
     <lastmod>2023-09-08</lastmod>
@@ -777,15 +696,6 @@
   
   <url>
     <loc>https://selfboot.cn/2014/08/21/regular_expression_all/</loc>
-    
-    <lastmod>2023-09-08</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/08/08/python_copy/</loc>
     
     <lastmod>2023-09-08</lastmod>
     
@@ -839,7 +749,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2014/11/11/osx_app_summary/</loc>
+    <loc>https://selfboot.cn/2014/11/03/vim_plugin_with_python/</loc>
     
     <lastmod>2023-09-08</lastmod>
     
@@ -848,7 +758,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2014/11/03/vim_plugin_with_python/</loc>
+    <loc>https://selfboot.cn/2014/11/11/osx_app_summary/</loc>
     
     <lastmod>2023-09-08</lastmod>
     
@@ -867,6 +777,96 @@
   
   <url>
     <loc>https://selfboot.cn/2014/12/21/add_blog_to_google/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/12/26/django_start/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2014/12/28/love_gmail/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/01/02/realworld_fish/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/01/11/django_start(2)/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/09/23/something_about_bit_operation/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/10/13/pages_count/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/10/15/lightweight-GUI/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/10/23/marketing/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/11/03/howto_find_algorithm/</loc>
+    
+    <lastmod>2023-09-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2015/11/05/dns_theory/</loc>
     
     <lastmod>2023-09-08</lastmod>
     
@@ -983,49 +983,7 @@
 
   
   <url>
-    <loc>https://selfboot.cn/tags/%E6%80%BB%E7%BB%93/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/%E8%A7%81%E9%97%BB/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/Protocol/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/DNS/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/%E6%80%9D%E8%80%83/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/Python/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/%E6%96%B9%E6%B3%95/</loc>
+    <loc>https://selfboot.cn/tags/%E6%B3%95%E5%BE%8B/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1033,20 +991,6 @@
   
   <url>
     <loc>https://selfboot.cn/tags/C/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/Flask/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/Thread/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1074,6 +1018,13 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/tags/Python/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/tags/%E6%95%99%E7%A8%8B/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
@@ -1081,7 +1032,91 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/tags/%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/%E6%96%B9%E6%B3%95/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/tags/Google/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/%E6%80%9D%E8%80%83/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/JavaScript/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/Django/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/DNS/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/%E8%A7%81%E9%97%BB/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/GUI/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/Protocol/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/Flask/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/Thread/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/tags/Plugin/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1110,41 +1145,6 @@
   
   <url>
     <loc>https://selfboot.cn/tags/Issue/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/JavaScript/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/Django/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/GUI/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/%E6%B3%95%E5%BE%8B/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/tags/Plugin/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1181,49 +1181,7 @@
 
   
   <url>
-    <loc>https://selfboot.cn/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</loc>
-    <lastmod>2023-09-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/</loc>
+    <loc>https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1244,7 +1202,49 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/</loc>
+    <loc>https://selfboot.cn/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2023-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</loc>
     <lastmod>2023-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
