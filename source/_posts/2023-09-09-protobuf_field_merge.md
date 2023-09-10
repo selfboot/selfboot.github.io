@@ -14,6 +14,8 @@ date: 2023-09-09 22:19:40
 
 之前在实际业务中遇到过一个 Protobuf 序列化消息导致存储失败的问题，当时这个问题差点导致重大故障，但是也没写文章好好沉淀下来。刚好最近又遇到另一个 Protobuf 的问题，在写完 [C++ 中使用 Protobuf 诡异的字段丢失问题排查](https://selfboot.cn/2023/09/07/protobuf_redefine/) 后，又想起前面的这个问题，这里再补一篇文章，好好介绍上次的踩坑过程。
 
+![Protobuf 序列化消息引起的存储失败问题分析](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230910_protobuf_field_merge_summary.png)
+
 <!-- more -->
 
 ## 故障回顾
