@@ -6,7 +6,9 @@ description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法�
 
 广东瑞轩律师事务所-执业律师。如有法律事务需求，可以加微信详聊：
 
-![小盛律师联系方式](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_lawer_sheng_wx_small.png)
+<div style="display: flex; justify-content: space-start;">
+ <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_lawer_sheng_wx_small.png" style="height: 200px;">
+</div>
 
 ## 小盛律师
 
@@ -47,6 +49,9 @@ description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法�
 刑事案件
 - [小盛律师解读帮信罪：条文、案例、防范与问答](https://selfboot.cn/2023/08/16/assisting_in_fraud/)
 
-更多文章可以在 [法律普及](https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/) 专栏看到，也可以关注公众号接收文章更新。
+更多文章可以在 [法律普及](https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/) 专栏看到，也可以关注小盛律师的小红书、抖音、公众号哦。
 
-![小盛律师的公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+<div style="display: flex; justify-content: space-start;">
+  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230912_wx_qrcode.png" style="height: 200px;">
+  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230912_xhs_qrcode.png" style="height: 200px;">
+</div>
