@@ -1,6 +1,6 @@
 title: 更换博客系统——从jekyll到hexo
 date: 2014-11-30
-tags: [教程, JavaScript]
+tags: [教程, 前端]
 category: 工具介绍
 description: 探索从Jekyll到Hexo的迁移过程，了解两者的区别和优势。这篇文章详细介绍了迁移的步骤，包括如何安装Hexo，如何迁移博客文章，以及如何自定义主题。如果你正在考虑更换博客平台，这篇文章将为你提供宝贵的参考信息。 
 ---
