@@ -4,7 +4,7 @@ tags: [ChatGPT, 前端]
 mathjax: true
 category: 项目实践
 toc: true
-description: 
+description: 本文记录作为后端开发，在 ChatGPT 指导下从零开发浏览器油猴脚本的过程。涵盖了油猴脚本工作原理、调试前端样式、捕捉 DOM 变化、添加交互等技巧。成功实现了在 ChatGPT 页面抓取Latex 数学公式文本的功能。分享了利用 ChatGPT 学习新技能、提升解决问题能力的独特经历。
 ---
 
 可以跟着 ChatGPT 老师学前端？听起来有点不可思议，毕竟前端很多和 UI 有关，和没有**多模态能力**的 ChatGPT 沟通前端，想想都有点难。不过最近在 ChatGPT 的帮助下，很快就写了一个[油猴插件](https://greasyfork.org/en/scripts/475169-chatgpt-export)，能够在 ChatGPT 的聊天界面上，复制数学公式的 Latex 文本。
@@ -19,7 +19,7 @@ description:
 
 ## 油猴脚本背景
 
-刚好最近看的一本书提到了**向量内积**，就在 ChatGPT 上深入了解了下这里的数学知识。然后想把聊天页面这里的公式复制到 markdown 笔记中去，发现直接复制内容不太可行。
+刚好最近看的一本书提到了**向量内积**，就在 ChatGPT 上深入了解了下这里的[数学知识](https://selfboot.cn/2023/09/14/chatgpt_math_product/)。然后想把聊天页面这里的公式复制到 markdown 笔记中去，发现直接复制内容不太可行。
 
 打开浏览器的开发者工具，看到在 html 中其实有公式的 Latex 文本表示，复制后可以在 [mathjax](https://www.mathjax.org/#demo) 查看转换后的公式：
 
@@ -36,9 +36,60 @@ description:
 > ...
 > 复制 annotation encoding="application/x-tex" 里面的内容
 
-很快一个简单的雏形脚本就出来了，不过安装脚本后，没看到复制按钮。对于动态加载的内容，上面脚本依赖的 `window.load` 事件可能不会完全起作用。因为在 window.load 触发时，这些动态元素可能还没有加载。在这种情况下，一个更可靠的方法是使用 `MutationObserver` 来监听 DOM 变化。当新的 **.math** 元素被添加到 DOM 时，MutationObserver 将触发，然后可以相应地添加复制按钮。
+很快一个简单的雏形脚本就出来了，不过安装脚本后，没看到复制按钮。就去追问 ChatGPT 老师，结果告诉我对于动态加载的内容，上面脚本依赖的 `window.load` 事件可能不会完全起作用。因为在 window.load 触发时，这些动态元素可能还没有加载。在这种情况下，一个更可靠的方法是使用 `MutationObserver` 来监听 DOM 变化。当新的 **.math** 元素被添加到 DOM 时，MutationObserver 将触发，然后可以相应地添加复制按钮。
 
+然后给了新的脚本逻辑，定义了一个 addCopyButtons 函数，该函数执行与之前相同的任务：查找所有 .math 元素并添加复制按钮。然后，使用 MutationObserver 来监视页面上所有新添加或删除的节点。每当 DOM 发生变化时，addCopyButtons 函数都会被调用，从而确保所有新的 .math 元素也会获得复制按钮。
 
+```javascript
+  // Initial adding
+  addCopyButtons();
+
+  // Observe for new formulas
+  const observer = new MutationObserver(() => {
+    console.log("DOM has changed, rechecking...");
+    addCopyButtons();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+```
+
+用这个脚本后，**打开页面直接卡死**了，看来脚本有某种形式的无限循环或者过度的资源消耗。然后直接把当前代码全部给 ChatGPT，让他帮忙排查卡死的原因，找到了 3 个可能导致性能问题的地方：
+
+1. MutationObserver 触发过于频繁: 如果页面的 DOM 频繁地变化，MutationObserver 可能会触发很多次，导致 addCopyButtons 函数也被频繁地调用。
+2. 复杂的 DOM 查询: document.querySelectorAll 和 div.querySelector 可能在复杂的 DOM 结构中变得相对缓慢。
+3. 事件监听器积累: 每次 addCopyButtons 被调用时，你都会给新创建的按钮添加一个点击事件监听器。如果这个函数被多次调用，同一个元素可能会绑定多个相同的事件监听器。
+
+接着让它修改上面的脚本，增加了一个简单的防抖（debounce）机制来限制 MutationObserver 触发的频率，另外避免重复添加相同的事件监听器。修改部分主要如下：
+
+```javascript
+(function() {
+    ...
+    const addCopyButtons = () => {
+      const mathDivs = document.querySelectorAll('.math, .math-inline, .math-display');
+        mathDivs.forEach(div => {
+          if (div.getAttribute('data-copy-button-added') === 'true') return;
+          div.setAttribute('data-copy-button-added', 'true');
+          ...
+      }
+    ...
+    };
+
+    const debounceAddCopyButtons = () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(addCopyButtons, 300);
+    };
+
+    addCopyButtons();  // Run once initially
+
+    const observer = new MutationObserver(() => {
+        console.log("DOM has changed, rechecking...");
+        debounceAddCopyButtons();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+})();    
+```
+
+到这里插件基本能工作了，但是复制按钮的样式和 ChatGPT 自带的复制按钮不一样，而且复制成功后没有提示。为了追求完美，这里接续优化。
 ## 复刻前端样式
 
 对于一个前端零基础的后台开发来说，根本不知道怎么调这些 CSS 样式。这里我想要在每个公式后面的复制按钮，能够和 ChatGPT 自己的复制按钮保持完全一致。在浏览器的开发者工具里，直接复制图标的 SVG 标签过来：
@@ -53,7 +104,7 @@ stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://w
 
 发现确实有图标，但是**样式不太对，颜色和鼠标停留上去都没效果**，更不用说暗黑模式下的颜色适配了。之前从 GPT 那里学到过，这里样式一般是通过 tag 的 class 来设定的，刚好看到 svg 标签外层有一个 button，里面有很多 class，于是把这个 button 以及它的 class 也都复制过来，样式基本就一致了。
 
-为了了解某个 class 各自到底负责什么样式，之前都是在开发者工具去掉之后看看效果，不过有了 ChatGPT 还可以直接问它了：
+为了了解某个 class 各自到底负责什么样式，之前都是在开发者工具去掉之后看效果对比，不过有了 ChatGPT 还可以直接问它了：
 
 > 帮我解释下这里每个 class 负责什么样式：
 > class="flex ml-auto gap-2 rounded-md p-1 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400"
@@ -78,11 +129,11 @@ stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://w
 暗黑模式 + 禁用（Disabled）状态
 - disabled:dark:hover:text-gray-400: 在暗黑模式下，如果元素被禁用，鼠标悬停时设置文本颜色为中灰色。
 
-这些类名各自负责一个很小但明确的样式设置，这是 Tailwind CSS 的工作方式。通过组合这些类名，可以非常灵活地构建复杂的样式。通过上面的设置，复制按钮和原生的已经保持一致了。这里点原生的复制按钮，复制成功后，图标会变成一个对号，然后又变回去了，目前脚本里的还做不到。
+这些类名各自负责一个很小但明确的样式设置，这是 Tailwind CSS 的工作方式。通过组合这些类名，可以非常灵活地构建复杂的样式。通过上面的设置，复制按钮和原生的已经保持一致了。**美中不足的是，点原生的复制按钮，复制成功后，图标会变成一个对号，然后又变回去了，目前脚本里的还做不到**。
 
 ## 捕捉动态内容
 
-为了追求完美的效果，我想在油猴脚本里实现同样的效果。这里首先得知道 ChatGPT 的对号是什么 html 内容。于是问了下：
+为了追求完美的效果，我想在油猴脚本里实现同样的点击效果。这里首先得知道 ChatGPT 的复制成功对号提示是什么图形。于是问了下：
 
 > 有个svg 的 button，点击后会变成另一个 svg，但是很快就变回去了。我想看下中间变到的 svg，这里要怎么做？
 
@@ -95,7 +146,7 @@ ChatGPT 给了几个思路：
 
 前面几个方法都不太可行，第 1 个方法，没来的及复制就变回去了。第 2、3 个方法，我不知道怎么找到触发 SVG 变化的 JavaScript 代码。第 4 个方法，因为这里没触发网络请求，所以不适用。
 
-其实断点这个方法看起来最实用，中间让 ChatGPT 一步步的讲这里怎么用断点。因为直接看 Script 的代码找触发 SVG 变化的部分有难度，ChatGPT 推荐用浏览器开发者工具的"Event Listeners"（事件监听器）功能来查找这个按钮的点击事件。但是我看了 button 元素的 Click 事件，通过事件找到的 JS 代码也不太对。不要慌，继续追问 ChatGPT 老师：
+其实断点这个方法看起来最实用，因为直接看 Script 的代码找触发 SVG 变化的部分有难度，ChatGPT 推荐用浏览器开发者工具的"Event Listeners"（事件监听器）功能来查找这个按钮的点击事件。但是我看了 button 元素的 Click 事件，通过事件找到的 JS 代码也不太对。不要慌，继续追问 ChatGPT 老师：
 
 > 我找不到这里是哪个事件监听，有没有更方便的方法。
 
@@ -119,7 +170,7 @@ if (e.target.closest('button')) {  // 检查点击的是否是 button 或其子�
 
 3、使用 `MutationObserver`。这是一个更高级的方案，通过 MutationObserver API 可以监听 DOM 的变更，包括元素的添加和删除。
 
-正是这第三个方法，让我成功拿到了变化后的图标内容。这里提示问题也很简单，就是直接让他显示 DOM 变化的内容：
+正是这第三个方法，让我成功拿到了变化后的图标内容。这里提示词也很简单，如下：
 
 > 这里使用了 MutationObserver，我能在页面发生 dom 变化的时候，就直接输出变化的那一小块吗?
 
@@ -173,9 +224,10 @@ observer.observe(document.body, config);
 </button>
 ```
 
+有了这个 svg 图标，就好办了，剩下的是点击的时候用这个图标替换原来的。先把这个 html 定义为 copiedButton，然后让 ChatGPT 添加点击事件的代码。 
 ## 设置复制动作
 
-接下来就是让他帮我在脚本里添加上复制动作效果了。提问的时候，需要把**目前版本的脚本带上去**，这点很重要，因为这样它就会在当前的代码上下文做改动。提示词如下：
+这里提问的时候，需要把**目前版本的脚本带上去**，这点很重要，因为这样它就会在当前的代码上下文做改动。提示词如下：
 
 > 我想给下面的油猴脚本增加一个动作：
 > 
@@ -208,7 +260,7 @@ copyButton.addEventListener('click', () => {
 
 这里还温馨提示**发现我代码里有一个问题**：在创建 copyButton 时，你再次用了一个**同名的局部变量**。这会导致原始的 copyButton（存储按钮 HTML 的那个）被覆盖。为了避免这个问题，你应该给用于存储 HTML 的 copyButton 变量和用于创建实际 DOM 元素的 copyButton 变量使用不同的名字。
 
-不过我没注意到这个问题，改了后 button 没了，变成了 `[object HTMLSpanElement]`，再次提问后，ChatGPT 耐心又给我解释了一遍。这是因为 copyButton 是一个 `HTMLSpanElement` 对象，将其设置为自己的 innerHTML 会导致其变成字符串 "[object HTMLSpanElement]"。解决这个问题的一个方法是使用不同的变量名存储 HTML 内容和 DOM 元素。这样，你就可以在需要的时候分别引用它们。关键代码如下：
+不过**我没注意到这个问题**，改了后发现 button 没了，变成了 [object HTMLSpanElement]。再次提问 ChatGPT，才知道 copyButton 是一个 HTMLSpanElement 对象，将其设置为自己的 innerHTML 会导致其变成字符串 "[object HTMLSpanElement]"。解决这个问题的方法是使用不同的变量名存储 HTML 内容和 DOM 元素。这样，就可以在需要的时候分别引用它们。关键代码如下：
 
 ```javascript
 const copyButtonHtml = `<button **** </button>` // 这里名字由 copyButton 改为 copyButtonHtml
@@ -223,3 +275,5 @@ copyButton.innerHTML = copyButtonHtml;
 ## 意外的结尾
 
 发布完插件，再来体验的时候，忽然发现官方**自带的复制功能**，就可以导出当前聊天会话的 markdown 内容，也包括了公式里的 latex 文本，所以这个脚本**多少有点鸡肋**。不过这个过程，还是学到了很多前端的知识，对 ChatGPT 的能力也有了更深的认识，还是很值得的。
+
+也欢迎大家试试这个脚本，毕竟可以只复制一个公式，而不是整段内容～
