@@ -1,10 +1,13 @@
 ---
 title: ChatGPT 老师教我写前端：从零写油猴脚本
-tags: [ChatGPT, 前端]
+tags:
+  - ChatGPT
+  - 前端
 mathjax: true
 category: 项目实践
 toc: true
 description: 本文记录作为后端开发，在 ChatGPT 指导下从零开发浏览器油猴脚本的过程。涵盖了油猴脚本工作原理、调试前端样式、捕捉 DOM 变化、添加交互等技巧。成功实现了在 ChatGPT 页面抓取Latex 数学公式文本的功能。分享了利用 ChatGPT 学习新技能、提升解决问题能力的独特经历。
+date: 2023-09-15 07:50:38
 ---
 
 可以跟着 ChatGPT 老师学前端？听起来有点不可思议，毕竟前端很多和 UI 有关，和没有**多模态能力**的 ChatGPT 沟通前端，想想都有点难。不过最近在 ChatGPT 的帮助下，很快就写了一个[油猴插件](https://greasyfork.org/en/scripts/475169-chatgpt-export)，能够在 ChatGPT 的聊天界面上，复制数学公式的 Latex 文本。
