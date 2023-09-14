@@ -49,9 +49,10 @@ description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法�
 刑事案件
 - [小盛律师解读帮信罪：条文、案例、防范与问答](https://selfboot.cn/2023/08/16/assisting_in_fraud/)
 
-更多文章可以在 [法律普及](https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/) 专栏看到，也可以关注小盛律师的小红书、抖音、公众号哦。
+更多文章可以在 [法律普及](https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/) 专栏看到，也可以关注小盛律师的微信公众号、小红书、抖音哦。
 
 <div style="display: flex; justify-content: space-start;">
-  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230912_wx_qrcode.png" style="height: 200px;">
-  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230912_xhs_qrcode.png" style="height: 200px;">
+  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_xhs_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_dy_qrcode.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
 </div>
