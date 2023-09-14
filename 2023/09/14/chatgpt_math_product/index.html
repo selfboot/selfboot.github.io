@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="本文通俗易懂地解释了向量点积和余弦相似度的计算原理、多维向量表示及其在自然语言处理等领域的应用，并给出了具体的数学公式和代码实现示例。有助于深刻理解向量相似度度量的本质，掌握运用点积和余弦相似度的技巧。"><title>跟 ChatGPT 学数学：理解向量点积和余弦相似度</title><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.async = true; 
+  hm.src = 'https://hm.baidu.com/hm.js?' + 'fd3ab4b3c488cbb43afa1c2669f06648';
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script async type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script async type="text/javascript" src="https://cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">跟 ChatGPT 学数学：理解向量点积和余弦相似度</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-user-graduate"> 小盛律师</i></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"> 法律普及</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">跟 ChatGPT 学数学：理解向量点积和余弦相似度</h1><div class="post-meta">2023/09/14<span> | </span><span class="category"><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/09/14/chatgpt_math_product/" href="/2023/09/14/chatgpt_math_product/#disqus_thread"></a><div class="post-content"><p>最近在看一本机器学习的书，看到这么一句话 “<strong>通过计算两个向量的点积可以知道它们之间的相似度。</strong>“，这里之前一直一知半解，这次打算深入理解下。</p>
+<p>那么怎么理解上面这句话呢？ChatGPT 的解释总结一下就是，<code>点积（Dot Product）</code>是一种数学运算，用于衡量两个向量的相似度。当两个向量完全相同时，点积会达到最大值。当两个向量垂直时，点积为0。点积的结果受向量长度的影响，所以在比较相似度时，常常会将向量单位化。通过点积，可以量化两个向量的相似度，这在各种应用场景中（如自然语言处理、图像识别等）都非常有用。</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_chatgpt_math_product_index.png" alt="向量点积的理解"></p>
+<span id="more"></span>
+
+<p>解释很笼统，是这么个道理，但是还是有很多疑问，比如：</p>
+<ul>
+<li>怎么理解这里的相似？</li>
+<li>为啥要用点积衡量相似度？</li>
+<li>怎么理解多维向量？</li>
+<li>向量是怎么得出来的？</li>
+<li>具体计算步骤是怎么样的？</li>
+<li>应用场景有哪些？</li>
+</ul>
+<h2 id="怎么理解相似？"><a href="#怎么理解相似？" class="headerlink" title="怎么理解相似？"></a>怎么理解相似？</h2><p>首先来看第一个问题，怎么理解这里向量的相似？两个向量的相似度并不是类似于数字的相等，而是更多地关注于两个向量是否“<strong>指向</strong>”相同或相似的方向。在<strong>不同的应用场景下，相似度的概念也可能有所不同</strong>，但通常包括以下几个方面：</p>
+<ul>
+<li>方向：向量的方向是相似度最直观的一面。在二维或三维空间里，你可以直观地想象两个向量是否大致指向同一方向。如果两个向量之间的夹角趋近于0度，那么它们就被认为是非常相似的。</li>
+<li>长度：向量的长度（或模）也可以是衡量相似度的一个因素，尤其是在需要考虑“强度”或“大小”的场合。然而，在很多应用中，例如文本相似度计算，通常会忽略向量长度的影响，只考虑方向。</li>
+<li>度量方法：不同的度量方法会给出不同类型的相似性信息。除了点积外，还有余弦相似度、欧氏距离、曼哈顿距离等多种方法。<ul>
+<li>点积: 如前所述，主要衡量方向和长度。</li>
+<li>余弦相似度(Cosine Similarity): 只考虑方向，不考虑长度。是点积的一个归一化版本。</li>
+<li>欧氏距离: 衡量两点之间的“距离”，而非方向。</li>
+</ul>
+</li>
+</ul>
+<p>在不同的应用领域，相似度的解释和重要性也会有所不同。例如，在自然语言处理中，词向量的相似度常用于衡量词语的<strong>语义相似性</strong>；在推荐系统中，可能用于衡量<strong>用户或物品的相似性</strong>。</p>
+<p>概括一下就是，两个向量的相似度是一个多面的概念，<strong>取决于你关注的是方向、长度，还是其他特性</strong>，以及你所处的具体应用场景。</p>
+<h2 id="为啥用点积衡量？"><a href="#为啥用点积衡量？" class="headerlink" title="为啥用点积衡量？"></a>为啥用点积衡量？</h2><p>好了，了解了什么是相似，那么这里就有另一个问题，为啥要用点积来衡量？点积有以下几个重要性质，使其适用于衡量向量间的相似度：</p>
+<ul>
+<li>夹角的度量：点积与两向量之间的夹角有关。当两个向量的方向完全相同（即夹角为0度）时，点积最大。反之，当两个向量正交（即夹角为90度）时，点积为零。</li>
+<li>长度的影响：点积同时考虑了向量的长度和方向。因此，长的、方向相似的向量会有更大的点积。</li>
+<li>计算简便：点积计算相对简单，只涉及基础的算术运算，这使得它在大规模数据处理中非常实用。</li>
+<li>可解释性：点积的结果可以轻易地通过夹角和长度进行解释，这在许多应用场景（如自然语言处理、推荐系统等）中是有用的。</li>
+<li>线性性质：点积满足分配律和结合律，这意味着它可以轻易地应用于更复杂的数学结构和算法中。</li>
+</ul>
+<p>因此，通过计算两个向量的点积，我们可以快速有效地获得它们之间的相似度信息。</p>
+<h2 id="怎么理解多维"><a href="#怎么理解多维" class="headerlink" title="怎么理解多维?"></a>怎么理解多维?</h2><p>前面说的向量，不是 2 维和 3 维空间里的向量，其实可以扩展到更高维度。多维向量的相似度实际上是对高维空间中两点关系的一种量化，与<strong>二维或三维空间的概念在本质上是相同的</strong>，只不过更难以直观地想象。在多维空间中，我们依然可以使用点积、余弦相似度、欧氏距离等方法来计算向量的相似度。</p>
+<p>多维向量的点积是所有维度上对应元素相乘然后求和，这个值反映了两个向量在多维空间中的相似程度。数学表达式与低维空间中的相同。假设我们有两个 n 维向量 $ A &#x3D; [a_1, a_2, \ldots, a_n] $ 和 $ B &#x3D; [b_1, b_2, \ldots, b_n] $，点积定义为：<br>$$ A \cdot B &#x3D; \sum_{i&#x3D;1}^{n} a_i \times b_i $$</p>
+<p>每个向量的范数（长度）定义为：<br>$$ | A | &#x3D; \sqrt{\sum_{i&#x3D;1}^{n} a_i^2} , \quad | B | &#x3D; \sqrt{\sum_{i&#x3D;1}^{n} b_i^2} $$</p>
+<p>之间的夹角 θ 的余弦值定义为：<br>$$ \cos(\theta) &#x3D; \frac{A \cdot B}{| A | \times | B |} $$</p>
+<p>这个定义在二维、三维以及任何更高维的向量空间中都是成立的，因为它是基于向量点积和范数（向量的长度）的基础性质来定义的，而这些性质在所有维度中都是一致的。</p>
+<p>在机器学习、数据挖掘、自然语言处理等多种应用场景下，多维向量的相似度计算都起着关键作用。例如，在文本分类、推荐系统、图像识别等问题中，都会用到这些相似度或距离计算方法。</p>
+<p>因此，即使在多维空间中，我们依然可以通过这些方法有效地量化向量间的相似度或差异性。只是与低维空间相比，高维空间更容易受到“<strong>维度灾难</strong>”（Curse of Dimensionality）的影响，这可能会让某些距离或相似度计算方法在应用上变得不那么直观或有效。</p>
+<h2 id="怎么找到合适的向量？"><a href="#怎么找到合适的向量？" class="headerlink" title="怎么找到合适的向量？"></a>怎么找到合适的向量？</h2><p>其实对于自然语言处理或者其他领域来说，计算向量点积和余弦相似度从来不是难点，难点在于<strong>找出一组合适的高维向量，能够提取出关键信息</strong>，从而通过计算它们的点积来评估相似性。生成向量的方法有很多，比如：</p>
+<p>基于词袋模型（Bag-of-Words）：</p>
+<ul>
+<li>词频（TF）：仅使用词频（Term Frequency）来表示文本。</li>
+<li>TF-IDF（Term Frequency-Inverse Document Frequency）：使用词频（TF）和逆文档频率（IDF）的乘积来表示文本。</li>
+</ul>
+<p>基于词嵌入（Word Embeddings）：</p>
+<ul>
+<li>Word2Vec：利用神经网络模型来构建高维的词向量。</li>
+<li>GloVe（Global Vectors for Word Representation）：通过全局统计信息来构建词向量。</li>
+<li>FastText：与 Word2Vec 类似，但考虑了词内的子结构（如字符 n-grams）。</li>
+</ul>
+<p>基于语言模型：</p>
+<ul>
+<li>BERT（Bidirectional Encoder Representations from Transformers）：使用 Transformer 模型，并考虑了上下文信息。</li>
+<li>GPT（Generative Pre-trained Transformer）：类似于 BERT，但通常用于生成任务。</li>
+</ul>
+<p>选择哪种方法取决于具体的应用场景、可用资源以及所需的准确性。通常，更复杂的方法（如 BERT 或 GPT）能提供更高的准确性，但计算成本也更高。</p>
+<h2 id="具体计算步骤"><a href="#具体计算步骤" class="headerlink" title="具体计算步骤"></a>具体计算步骤</h2><p>向量点积和余弦相似度具体是怎么计算呢？下图是一个简单示例，有两个3维向量，\( \mathbf{A} &#x3D; [2, 4, 3] \) 和 \( \mathbf{B} &#x3D; [1, 3, 2] \)</p>
+<p><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230912_chatgpt_math_product_3d_vector.png" alt="三维向量的可视化"></p>
+<h3 id="人工计算"><a href="#人工计算" class="headerlink" title="人工计算"></a>人工计算</h3><p>给定两个 \( n \)-维向量 ，它们的点积计算公式为：</p>
+<p>\[<br>\mathbf{A} \cdot \mathbf{B} &#x3D; a_1 \cdot b_1 + a_2 \cdot b_2 + \ldots + a_n \cdot b_n<br>\]</p>
+<p>在这个例子中：</p>
+<p>\[<br>\mathbf{A} \cdot \mathbf{B} &#x3D; 2 \times 1 + 4 \times 3 + 3 \times 2 &#x3D; 2 + 12 + 6 &#x3D; 20<br>\]</p>
+<p>余弦相似度是通过计算两个向量的点积并将其<strong>归一化</strong>得到的，具体计算公式为：</p>
+<p>\[<br>\text{Cosine Similarity} &#x3D; \frac{\mathbf{A} \cdot \mathbf{B}}{| \mathbf{A} | \times | \mathbf{B} |}<br>\]</p>
+<p>其中，\( | \mathbf{A} | \) 和 \( | \mathbf{B} | \) 是两个向量的模（长度），可以通过以下公式计算：</p>
+<p>\[<br>| \mathbf{A} | &#x3D; \sqrt{a_1^2 + a_2^2 + \ldots + a_n^2}<br>\]<br>\[<br>| \mathbf{B} | &#x3D; \sqrt{b_1^2 + b_2^2 + \ldots + b_n^2}<br>\]</p>
+<p>在这个例子中，余弦相似度计算如下：</p>
+<p>\[<br>\text{Cosine Similarity} &#x3D; \frac{20}{\sqrt{2^2 + 4^2 + 3^2} \times \sqrt{1^2 + 3^2 + 2^2}} \approx \frac{20}{\sqrt{29} \times \sqrt{14}} \approx 0.993<br>\]</p>
+<p>点积为20，这是一个相对较大的值，说明两个向量在多维空间中有很好的对齐性。余弦相似度接近1（最大值为1），表示两个向量几乎指向相同的方向。</p>
+<h3 id="程序计算"><a href="#程序计算" class="headerlink" title="程序计算"></a>程序计算</h3><p>实际中，都是通过程序直接来计算的。下面例子中，我们用 Python 随机生成两个 100 维的向量，计算它们的点积和余弦相似度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 随机生成两个 100 维的向量</span></span><br><span class="line">vector1 = np.random.rand(<span class="number">100</span>)</span><br><span class="line">vector2 = np.random.rand(<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算点积</span></span><br><span class="line">dot_product = np.dot(vector1, vector2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算余弦相似度</span></span><br><span class="line">cos_similarity = dot_product / (np.linalg.norm(vector1) * np.linalg.norm(vector2))</span><br><span class="line"></span><br><span class="line">dot_product, cos_similarity</span><br></pre></td></tr></table></figure>
+
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>最后来看看点积有哪些应用场景。在自然语言处理（NLP）领域，点积和余弦相似度有着广泛的应用。下面是一些具体的例子：</p>
+<ul>
+<li>文本相似性和文档检索：通过计算文档或句子的词向量（通常是TF-IDF或词嵌入向量）的点积或余弦相似度，可以快速找出内容相似的文档或句子。这在信息检索、文档分类和聚类等任务中非常有用。</li>
+<li>词义相似性：词嵌入技术（如Word2Vec、GloVe等）生成的词向量可以用点积或余弦相似度来衡量词义的相似性或相关性。</li>
+<li>机器翻译：在序列到序列的模型，比如 Transformer 中，注意力机制经常使用点积来计算不同词或短语之间的关联强度。</li>
+<li>情感分析：在情感分析中，可以通过计算文本与预定义情感词的点积或余弦相似度，来评估文本的情感倾向。</li>
+</ul>
+<p>这些只是点积和余弦相似度在自然语言处理中应用的一部分，其实还有更多的用途和扩展。</p>
+<p>通过和 ChatGPT 不断沟通，和对它回答的一些验证，慢慢对向量的点积和余弦相似度有了一个比较清晰的认识，看来后面可以跟着老师学更多数学知识了。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target=_blank>个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：跟 ChatGPT 学数学：理解向量点积和余弦相似度</p><p>本文链接为：https://selfboot.cn/2023/09/14/chatgpt_math_product/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> &uarr;<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/ChatGPT/"><i class="fa fa-tag"></i>ChatGPT</a><a href="/tags/%E6%95%B0%E5%AD%A6/"><i class="fa fa-tag"></i>数学</a></div><div class="post-nav"><a class="next" href="/2023/09/09/protobuf_field_merge/">Protobuf 序列化消息引起的存储失败问题分析</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/09/14/chatgpt_math_product/';
+    this.page.identifier = '2023/09/14/chatgpt_math_product/';
+    this.page.title = '跟 ChatGPT 学数学：理解向量点积和余弦相似度';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://selfboot.cn"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">20</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/">法律普及</a><span class="category-list-count">14</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">4</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%B3%95%E5%BE%8B/" style="font-size: 15px;">法律</a> <a href="/tags/ChatGPT/" style="font-size: 15px;">ChatGPT</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15px;">Issue</a> <a href="/tags/ebpf/" style="font-size: 15px;">ebpf</a> <a href="/tags/Go/" style="font-size: 15px;">Go</a> <a href="/tags/%E5%A9%9A%E5%A7%BB%E5%AE%B6%E5%BA%AD/" style="font-size: 15px;">婚姻家庭</a> <a href="/tags/%E5%88%91%E4%BA%8B/" style="font-size: 15px;">刑事</a> <a href="/tags/%E5%8A%B3%E5%8A%A8%E7%BA%A0%E7%BA%B7/" style="font-size: 15px;">劳动纠纷</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 15px;">数学</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 15px;">前端</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a></div></div><!-- Debug: page.path = 2023/09/14/chatgpt_math_product/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul><li><a href="/2023/09/14/chatgpt_math_product/" title="跟 ChatGPT 学数学：理解向量点积和余弦相似度">跟 ChatGPT 学数学：理解向量点积和余弦相似度</a></li><li><a href="/2023/09/09/protobuf_field_merge/" title="Protobuf 序列化消息引起的存储失败问题分析">Protobuf 序列化消息引起的存储失败问题分析</a></li><li><a href="/2023/09/07/protobuf_redefine/" title="C++ 中使用 Protobuf 诡异的字段丢失问题排查">C++ 中使用 Protobuf 诡异的字段丢失问题排查</a></li><li><a href="/2023/09/04/batch_docx_replace/" title="用 Python 模板库 docxtpl 批量制作 Word 文档">用 Python 模板库 docxtpl 批量制作 Word 文档</a></li><li><a href="/2023/08/25/gpt4_code_interpreter_module/" title="ChatGPT 代码解释器：离线安装不支持的 Python 包">ChatGPT 代码解释器：离线安装不支持的 Python 包</a></li><li><a href="/2023/08/23/not-smart-chatgpt/" title="真实例子告诉你 ChatGPT 是多会胡编乱造！">真实例子告诉你 ChatGPT 是多会胡编乱造！</a></li><li><a href="/2023/08/08/http_100_continue/" title="由 HTTP Header 引起的请求超时问题排查">由 HTTP Header 引起的请求超时问题排查</a></li><li><a href="/2023/08/02/redis_python_bug/" title="解密 ChatGPT 数据泄露：Redis Bug 的深度分析">解密 ChatGPT 数据泄露：Redis Bug 的深度分析</a></li><li><a href="/2023/07/28/chatgpt_hacking/" title="提示词破解：绕过 ChatGPT 的安全审查">提示词破解：绕过 ChatGPT 的安全审查</a></li><li><a href="/2023/07/25/gpt4_prompt_evals/" title="ChatGPT Prompt 最佳指南六：系统基准评测">ChatGPT Prompt 最佳指南六：系统基准评测</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3%E7%9B%B8%E4%BC%BC%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">怎么理解相似？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E5%95%A5%E7%94%A8%E7%82%B9%E7%A7%AF%E8%A1%A1%E9%87%8F%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">为啥用点积衡量？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E7%90%86%E8%A7%A3%E5%A4%9A%E7%BB%B4"><span class="toc-number">3.</span> <span class="toc-text">怎么理解多维?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E6%89%BE%E5%88%B0%E5%90%88%E9%80%82%E7%9A%84%E5%90%91%E9%87%8F%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">怎么找到合适的向量？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E8%AE%A1%E7%AE%97%E6%AD%A5%E9%AA%A4"><span class="toc-number">5.</span> <span class="toc-text">具体计算步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%BA%E5%B7%A5%E8%AE%A1%E7%AE%97"><span class="toc-number">5.1.</span> <span class="toc-text">人工计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E7%AE%97"><span class="toc-number">5.2.</span> <span class="toc-text">程序计算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">6.</span> <span class="toc-text">应用场景</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
