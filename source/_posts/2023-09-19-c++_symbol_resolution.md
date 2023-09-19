@@ -5,8 +5,8 @@ tags:
   - ChatGPT
 category: 计算机基础
 toc: true
-description: 
-date: 
+description: 本文深入剖析了C++静态库链接时的符号决议机制，以符号重定义错误为切入点，通过简单示例逐步说明了静态库中目标文件全链接的关键。指出了链接器从左向右决议符号，一旦库中目标文件有一个符号被需要，就会引入整个目标文件，并与经典教材内容对比验证。
+date: 2023-09-19 22:17:02
 ---
 
 在 [C++ 中使用 Protobuf 诡异的字段丢失问题排查](https://selfboot.cn/2023/09/07/protobuf_redefine/)这篇文章中，分析过因为两个一样的 proto 文件，导致链接错了 pb，最终反序列化的时候丢失了部分字段。当时也提到过符号决议的过程，不管是动态链接还是静态链接，实际用的都是靠前面的库的符号定义。本来以为对这里的理解很深入了，直到最近又遇见一个奇怪的“**符号重定义**”问题。
@@ -147,7 +147,64 @@ int main() {
 
 ## 原因猜测
 
+有了 ChatGPT 之后，都不怎么用搜索了，直接把问题给 ChatGPT，看它怎么解释。其实前面的复现过程中，也都一直跟 ChatGPT 有交流，让它对上下文有了了解。
 
+### ChatGPT 的解释
+
+这里为了让它全面了解问题细节，又把上面重定义部分的复现代码、编译链接和报错一起喂给了它，于是它解释如下。
+
+链接器首先查找 libDemoA.a，找到 sum(int, int) 和 Demo::Demo(int)。然后链接器会去 libDemoB.a 查找符号。此时，由于 main.cpp 实际上使用了 demoB 版本的 Demo::Demo(int, int)（注意这里有两个参数），链接器会尝试从 libDemoB.a 中解析这个新符号。在 libDemoB.a 中，链接器找到了与 libDemoA.a 中相冲突的 sum(int, int)，因此报告“多重定义”。
+
+不过我还是有疑问，**链接器首先查找 libDemoA.a，找到 sum(int, int) ，这时候sum已经被找到，后面在 libDemoB.a 中，就会忽略这个符号的呀**。直接去问 ChatGPT，它就开始“悔过”了：
+
+![ChatGPT C++符号链接过程的错误回答](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230919_c++_symbol_resolution_chatgpt_error.png)
+
+然后进一步让它解释为啥最开始的复现中没有报错，如下：
+
+![ChatGPT C++符号链接过程的错误解释](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230919_c++_symbol_resolution_chatgpt.png)
+
+看来直接问这条路走不通了。接着想看看能不能打印一些链接的中间过程，于是添加了 `-Wl,--verbose` 选项进行链接，也没发现啥有用的信息。这里我想如果能打印 ld 链接过程的符号未决议集合和已经决议集合，以及决议符号的具体步骤，就能排查出来。结果没发现有啥办法可以打印这些。
+
+### 大胆猜测
+
+这里其实最好是直接去看链接器的实现，毕竟**源码之下了无秘密**。不过我这里重新回顾了下上面两个测试过程的差异，并做出了一个猜测，拿来问 ChatGPT：
+
+> 这里我这样测试，demoA/sum.h 和 demoB/sum.h 如果都是只有 sum 函数，那么无论哪个先链接，都不会有问题。
+> 但是一旦里面有 class ，定义不一样，那么就会出错。**这里“第一个赢” 是不是只有在后面出现的库里，没有一个符号被需要的话，才不会重复定义。**
+>   
+> **只要后面出现的库，有一个符号被需要，就会重复定义？**
+
+终于得到了一个靠谱的解释：
+
+![C++ 链接静态库符号重定义的详细解释](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230919_c++_symbol_resolution_chatgpt_right.png)
+
+也就是说**当链接器从静态库的 .o 文件中引用一个符号时，它实际上会把包含该符号的整个对象文件都链接到最终的可执行文件**。为了验证这一点，把 demoB/sum.cpp 里面 Demo 类的构造函数定义拆分出来为一个新的编译单元 demo.cpp，如下：
+
+```c++
+// cat demoB/demo.cpp
+#include "sum.h"
+#include <iostream>
+
+Demo::Demo(int a, int b){
+    num = a;
+    std::cout << "DemoB init" << std::endl;
+}
+```
+
+然后重新编译 DemoB 静态库，编译、链接 main，发现不会有符号重定义了，结果如下：
+
+```shell
+(base) ➜ g++ main.cpp -o main -LdemoA -LdemoB -lDemoB -lDemoA
+(base) ➜  link_check ./main
+DemoB
+DemoB init
+(base) ➜  link_check g++ main.cpp -o main -LdemoA -LdemoB -lDemoA -lDemoB
+(base) ➜  link_check ./main
+DemoA
+DemoB init
+```
+
+这里因为用到的 Demo 在静态库 B 中有一个单独的可重定向目标文件 demo.o，而 sum.o 里面没有任何需要引入的符号，所以没有被链接进去，因此不会有符号重定义了。
 ## 再读经典
 
 经过上面的验证猜测步骤后，再重新读《深入理解计算机系统》的 `7.6 符号解析`，才完全明白了这一节讲的内容，整个链接的核心步骤如下。
