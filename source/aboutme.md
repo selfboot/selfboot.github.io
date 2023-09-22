@@ -6,35 +6,14 @@ description: 后台开发工程师, 科幻小说爱好者，三体粉丝，ChatG
 
 <link rel="stylesheet" type="text/css" href="css/github_card.css">
 
-<style>
-.sf-usercard .sf-avatar img{
-    padding: 0;
-}
-.sf-usercard .sf-avatar span.caption{
-    display: none;
-}
-.card-wrapper{
-    margin: 0px auto;
-    max-width: 400px;
-    padding: 0;
-}
-@media print, screen and (max-width: 48em) {
-    .card-wrapper{
-        max-width: 90%;
-    }
-}
-</style>
-
 专业后端开发，喜欢读各种书，尤其是科幻，历史类书籍。
 
 ## Github 
 
 Github 名片: 
 
-<div class="card-wrapper">
-<div id="github-usercard" user="selfboot"></div>
+<div id="github-usercard" user="selfboot" style="max-width: 400px;"></div>
 <script src="js/github_card.js"></script>
-</div>
 
 </br>
 一些小项目：
@@ -46,4 +25,8 @@ Github 名片:
 
 会同步更新博客里面的文章，欢迎扫码关注：
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+<div class="pure-g">
+  <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
+    <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  </div>
+</div>
