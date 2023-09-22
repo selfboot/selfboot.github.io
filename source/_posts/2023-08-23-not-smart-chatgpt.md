@@ -7,6 +7,7 @@ category: 人工智能
 toc: true
 description: 文章归纳了 ChatGPT 在日常使用中的各类错误回答，如时区设置、法律案例、代码实现、图像识别等都曾出现过失误，虽然它看似智能，但仍存在局限。这些实例提示我们注意验证AI输出，而不是盲目依赖。合理使用ChatGPT，认识其优劣，才能发挥其价值。我们不应因其偶尔的失误否定AI，而应客观理性地对待当前AI水平。
 date: 2023-08-23 08:03:32
+updated: 2023-09-22 22:00:01
 ---
 
 GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通人类。我的日常也原来越离不开 ChatGPT 了，它大大提高了日常的工作效率。然而，在使用中发现 ChatGPT 还是有时会犯一些“幼稚”的错误，就像一个正在成长的孩子偶尔会出现的调皮行为。
@@ -217,6 +218,50 @@ top_50_jieba_words
 ![Code interpreter 加载 jieba 库失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230825_not_smart_chatgpt_jieba.png)
 
 这个例子其实 AI 的表现也是可以理解的，毕竟这种错误人也经常犯，经常是代码跑一般才发现没有安装某个库。不过 AI 还是可以表现的更好些，可以在跑失败的时候，告诉我怎么**手动在当前环境安装这个库**。毕竟，你都知道我想用这个库，而你也有方法安装这个库，那为啥不告诉我呢？看来还是不够聪明呀～
+
+## Clickhouse 函数
+
+背景是这样的，我想用 Clickhouse 写一个查询语句，将一个按照位存储的 field 字段，转换成数组出来。每一位(从低位到高位)分别对应:
+
+| 位 | 解释 |
+| -- |--  |
+| 0 | CN | 
+| 1| EN |
+| 2 | HK |
+|3 | JA |
+
+对于数字 13 (1101)，我想转换为 `[CN, HK, JA]`，提示词如下：
+
+> clickhsoue 里，我查找到了一个 field 字段，是个二进制按位记录的 flag 位，如果转换为一个数组？
+>  
+> & 1 = 1 , CN
+> & 2 = 1 , EN
+
+然后让我这样操作：
+
+```sql
+arrayJoin(arrayFilter(x -> x != '', [if(field & 1, 'CN', ''), if(field & 2, 'EN', '')])) AS CombinedFlags
+```
+
+我就开心的拿去测了下，发现不对，最简化一个测试 sql: `select 5&1`，发现也报错了，于是直接提示：
+
+> select 5&1
+> Error running query: Code: 62, e.displayText() = DB::Exception: Syntax error: failed at position 335 ('&') (line 5, col 9): &1 FORMAT JSON. Unrecognized token: '&' (version 21.8.12.1)
+
+然后 ChatGPT 就认错了，说疏忽了 ClickHouse 的 SQL 语法细节。在 ClickHouse 中，你需要使用 `bitAnd` 函数来进行按位与运算。例如，要检查数字 5 的第 1 位是否为 1，可以这样写：
+
+```sql
+SELECT bitAnd(5, 1) AS Result
+```
+
+我就又拿来试，发现还是不对。想了下，这里不是求与，应该是测试某一位是否是 1，然后把是 1 的全部拼接起来。**不再靠 ChatGPT 了，直接去查官方文档**，发现了函数 bitTest，这个可以测试某一位是否是 1。最后写了下面的 SQL(可以用 13 替换 field 来测试):
+
+```sql
+select arrayFilter(x -> x != '', [if(bitTest(field, 0)=1, 'CN', ''), 
+    if(bitTest(field, 1)=1, 'EN', ''),
+    if(bitTest(field, 2)=1, 'HK', ''),
+    if(bitTest(field, 3)=1, 'JA', '')]) AS combine
+```
 
 ---
 通过这些日常真实案例，我们可以看到当前 ChatGPT 在回答一些问题时，仍会胡编乱造一些**看起来很正确**的答案。但是我们不应因此否定 ChatGPT 的价值，更不应该弃之不用。**认识到其局限并合理使用**，才是我们应有的态度。
