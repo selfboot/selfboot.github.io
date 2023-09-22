@@ -181,13 +181,13 @@ Update 2015/10/24
 
 增加了MWeb，作者的主页在[这里](http://coderforart.com)，里面有一系列介绍。关于这款软件，我只能说66666，既能同步印象笔记，又便宜，又快速，又美观，目前没有发现缺点，如果有，请告诉我。
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_reeder2.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_LICEcap.gif
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_ImageAlpha.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_yinxiang.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_Alferd.png
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_1password.png
-[7]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_mweb.png
-[8]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_iTerm2.png
-[9]:https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141111_MacHider.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20141111_reeder2.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20141111_LICEcap.gif
+[3]: https://slefboot-1251736664.file.myqcloud.com/20141111_ImageAlpha.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20141111_yinxiang.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20141111_Alferd.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20141111_1password.png
+[7]: https://slefboot-1251736664.file.myqcloud.com/20141111_mweb.png
+[8]: https://slefboot-1251736664.file.myqcloud.com/20141111_iTerm2.png
+[9]:https://slefboot-1251736664.file.myqcloud.com/20141111_MacHider.png
 

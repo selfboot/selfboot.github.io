@@ -12,7 +12,7 @@ description: 本文是广州买房攻略的学校篇，包含买房时应该如�
 
 想买学区房的，一定要去各区教育局官网，了解目标学校对应的小区。比如，[2019年海珠区公办小学招生服务地段表](http://www.haizhu.gov.cn/gzhzjy/gkmlpt/content/5/5420/post_5420161.html#1883)。
 
-![广州公办小学招生服务地段表](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_school_1.png)
+![广州公办小学招生服务地段表](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_school_1.png)
 
 有的区比较坑，学校对应的是社区，不知道对应哪些小区。这个可能要去问社区的街道办之类的，目前网上没有办法查小区是哪个社区的。
 
@@ -22,7 +22,7 @@ description: 本文是广州买房攻略的学校篇，包含买房时应该如�
 
 比如比较不错的龙口西小学，对应小区写的明明白白的。
 
-![广州龙口西小学对应小区](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_school_2.png)
+![广州龙口西小学对应小区](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_school_2.png)
 
 ## 招生政策
 

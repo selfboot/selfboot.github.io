@@ -176,5 +176,5 @@ vim模块提供了缓冲区对象来让我们对缓冲区进行操作，该对�
 [Scripting Vim with Python](http://orestis.gr/blog/2008/08/10/scripting-vim-with-python/)
 [如何用python写vim插件](http://python.42qu.com/11165602)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141103_vim_python_script.gif
+[1]: https://slefboot-1251736664.file.myqcloud.com/20141103_vim_python_script.gif
 

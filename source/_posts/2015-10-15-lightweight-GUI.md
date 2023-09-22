@@ -103,11 +103,11 @@ Github上nw.js有两万多Star和接近3000的Fork，说明它已经相当成熟
 看来nw.js赢得了很多青睐，那么还有什么能阻止我们拥抱nw.js呢？
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_Win_OSX.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_what_is_nw.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_how_package.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_apps_mongo.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_apps_soundnode.png
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_input.png
-[7]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151015_nwjs_process.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20151015_Win_OSX.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20151015_what_is_nw.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20151015_how_package.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20151015_apps_mongo.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20151015_apps_soundnode.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20151015_input.png
+[7]: https://slefboot-1251736664.file.myqcloud.com/20151015_nwjs_process.png
 

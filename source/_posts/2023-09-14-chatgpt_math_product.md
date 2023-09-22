@@ -14,7 +14,7 @@ description: 本文通俗易懂地解释了向量点积和余弦相似度的计�
 
 那么怎么理解上面这句话呢？ChatGPT 的解释总结一下就是，`点积（Dot Product）`是一种数学运算，用于衡量两个向量的相似度。当两个向量完全相同时，点积会达到最大值。当两个向量垂直时，点积为0。点积的结果受向量长度的影响，所以在比较相似度时，常常会将向量单位化。通过点积，可以量化两个向量的相似度，这在各种应用场景中（如自然语言处理、图像识别等）都非常有用。
 
-![向量点积的理解](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_chatgpt_math_product_index.png)
+![向量点积的理解](https://slefboot-1251736664.file.myqcloud.com/20230914_chatgpt_math_product_index.png)
 
 <!-- more -->
 
@@ -99,7 +99,7 @@ $$ \cos(\theta) = \frac{A \cdot B}{\| A \| \times \| B \|} $$
 
 向量点积和余弦相似度具体是怎么计算呢？下图是一个简单示例，有两个3维向量，\\( \mathbf{A} = [2, 4, 3] \\) 和 \\( \mathbf{B} = [1, 3, 2] \\)
 
-![三维向量的可视化](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230912_chatgpt_math_product_3d_vector.png)
+![三维向量的可视化](https://slefboot-1251736664.file.myqcloud.com/20230912_chatgpt_math_product_3d_vector.png)
 
 ### 人工计算
 

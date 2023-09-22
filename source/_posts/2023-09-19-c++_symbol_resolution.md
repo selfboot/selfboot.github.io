@@ -12,7 +12,7 @@ updated: 2023-09-20 22:00:01
 
 在 [C++ 中使用 Protobuf 诡异的字段丢失问题排查](https://selfboot.cn/2023/09/07/protobuf_redefine/)这篇文章中，分析过因为两个一样的 proto 文件，导致链接错了 pb，最终反序列化的时候丢失了部分字段。当时也提到过符号决议的过程，不管是动态链接还是静态链接，实际用的都是靠前面的库的符号定义。本来以为对这里的理解很深入了，直到最近又遇见一个奇怪的“**符号重定义**”问题。
 
-![C++ 符号编译、链接概图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230918_c++_symbol_resolution_index.webp)
+![C++ 符号编译、链接概图](https://slefboot-1251736664.file.myqcloud.com/20230918_c++_symbol_resolution_index.webp)
 
 <!-- more -->
 
@@ -142,7 +142,7 @@ int main() {
 
 这里复现了符号重定义的问题了！如果 `-lDemoA -lDemoB` 的顺序，就会报 sum 的重定义。但是如果反过来 `-lDemoB -lDemoA`，就一切正常，输出也是符合前面的认知。
 
-![C++ 符号编译、链接概图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230918_c++_symbol_resolution_multiple_definition.png)
+![C++ 符号编译、链接概图](https://slefboot-1251736664.file.myqcloud.com/20230918_c++_symbol_resolution_multiple_definition.png)
 
 问题是复现了，不过自己确实有点迷惑了。这里 DemoA 库在前面的话，应该是先从这里拿到 sum，后面到 DemoB 的时候，**链接器应该丢掉 sum 就可以了**，为啥会报重复定义呢？毕竟**前面只有函数的示例中，就是这样链接的**啊。
 
@@ -158,11 +158,11 @@ int main() {
 
 不过我还是有疑问，**链接器首先查找 libDemoA.a，找到 sum(int, int) ，这时候sum已经被找到，后面在 libDemoB.a 中，就会忽略这个符号的呀**。直接去问 ChatGPT，它就开始“悔过”了：
 
-![ChatGPT C++符号链接过程的错误回答](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230919_c++_symbol_resolution_chatgpt_error.png)
+![ChatGPT C++符号链接过程的错误回答](https://slefboot-1251736664.file.myqcloud.com/20230919_c++_symbol_resolution_chatgpt_error.png)
 
 然后进一步让它解释为啥最开始的复现中没有报错，如下：
 
-![ChatGPT C++符号链接过程的错误解释](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230919_c++_symbol_resolution_chatgpt.png)
+![ChatGPT C++符号链接过程的错误解释](https://slefboot-1251736664.file.myqcloud.com/20230919_c++_symbol_resolution_chatgpt.png)
 
 看来直接问这条路走不通了。接着想看看能不能打印一些链接的中间过程，于是添加了 `-Wl,--verbose` 选项进行链接，也没发现啥有用的信息。这里我想如果能打印 ld 链接过程的符号未决议集合和已经决议集合，以及决议符号的具体步骤，就能排查出来。结果没发现有啥办法可以打印这些。
 
@@ -177,7 +177,7 @@ int main() {
 
 终于得到了一个靠谱的解释：
 
-![C++ 链接静态库符号重定义的详细解释](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230919_c++_symbol_resolution_chatgpt_right.png)
+![C++ 链接静态库符号重定义的详细解释](https://slefboot-1251736664.file.myqcloud.com/20230919_c++_symbol_resolution_chatgpt_right.png)
 
 也就是说**当链接器从静态库的 .o 文件中引用一个符号时，它实际上会把包含该符号的整个对象文件都链接到最终的可执行文件**。为了验证这一点，把 demoB/sum.cpp 里面 Demo 类的构造函数定义拆分出来为一个新的编译单元 demo.cpp，如下：
 

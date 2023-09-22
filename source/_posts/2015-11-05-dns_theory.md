@@ -163,16 +163,16 @@ DNS设计之初是用来建立域名到IP地址的映射，理论上对于每一
 其实不止是DNS，还有HTTPS、TCP、UDP这些很基础的协议，都值得我们静下心去好好认识它们。因为，写DNS之前，我以为我已经完全搞明白了它，但是写的过程发现好多地方自己根本就不知道，之前完全是停留在一个很浮夸的层面上。所以，是时候找时间好好把这些协议过一遍，用自己的语言，从`解决问题`的角度，记录下这些经典协议的故事了。
 
 [1]: https://en.wikipedia.org/wiki/Domain_Name_System
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_hosts_local.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20151105_hosts_local.png
 [3]: https://en.wikipedia.org/wiki/ARPANET
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_dns_concept.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20151105_dns_concept.png
 [5]: https://www.icann.org
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_domain_tree.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png
 [7]: https://en.wikipedia.org/wiki/DNS_zone
-[8]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_domain_zone.png
-[9]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_name_servers.png
-[10]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_root_servers.png
-[11]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_servers_tree.png
-[12]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151105_name_resolution.png
+[8]: https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png
+[9]: https://slefboot-1251736664.file.myqcloud.com/20151105_name_servers.png
+[10]: https://slefboot-1251736664.file.myqcloud.com/20151105_root_servers.png
+[11]: https://slefboot-1251736664.file.myqcloud.com/20151105_servers_tree.png
+[12]: https://slefboot-1251736664.file.myqcloud.com/20151105_name_resolution.png
 
 

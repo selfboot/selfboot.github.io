@@ -225,10 +225,10 @@ line_profiler 执行时间的估计不是特别精确，不过可以用来分析
 
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160613_simple_analyze.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160613_timeit_analyze.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160613_cprofile_analyze.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160613_vprof_analyze.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160613_line_analyze.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160613_simple_analyze.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160613_timeit_analyze.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20160613_cprofile_analyze.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20160613_vprof_analyze.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20160613_line_analyze.png
 
 

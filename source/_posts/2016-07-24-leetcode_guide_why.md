@@ -166,7 +166,7 @@ StefanPochmann 也不厌其烦地给出了自己的答案：
 [国内有哪些好的刷题网站?](https://www.zhihu.com/question/25574458)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160724_leetcode_guide_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160724_leetcode_guide_2.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160724_leetcode_guide_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160724_leetcode_guide_2.png
 
 

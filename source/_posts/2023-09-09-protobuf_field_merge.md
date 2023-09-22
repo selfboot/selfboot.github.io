@@ -14,7 +14,7 @@ date: 2023-09-09 22:19:40
 
 之前在实际业务中遇到过一个 Protobuf 序列化消息导致存储失败的问题，当时这个问题差点导致重大故障，但是也没写文章好好沉淀下来。刚好最近又遇到另一个 Protobuf 的问题，在写完 [C++ 中使用 Protobuf 诡异的字段丢失问题排查](https://selfboot.cn/2023/09/07/protobuf_redefine/) 后，又想起前面的这个问题，这里再补一篇文章，好好介绍上次的踩坑过程。
 
-![Protobuf 序列化消息引起的存储失败问题分析](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230910_protobuf_field_merge_summary.png)
+![Protobuf 序列化消息引起的存储失败问题分析](https://slefboot-1251736664.file.myqcloud.com/20230910_protobuf_field_merge_summary.png)
 
 <!-- more -->
 
@@ -116,7 +116,7 @@ func main() {
 
 先执行 serverA，把 pb 序列号保存好文件。然后执行 serverB，读取文件反序列化，并执行后面的循环操作。可以看到下面的输出：
 
-![不断膨胀的 pb 消息内容](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230909_protobuf_field_merge_reproduce.png)
+![不断膨胀的 pb 消息内容](https://slefboot-1251736664.file.myqcloud.com/20230909_protobuf_field_merge_reproduce.png)
 
 这里的 pb 内容不断膨胀，在实际业务中，如果不断触发这个 Merge 的过程，会**慢慢导致**很严重的后果。比如占满 KV 存储空间，或者因为内容过大导致网络传输超时。更糟糕的是，这个**过程可能比较缓慢**，可能是在服务 A 上线后的几个月后，才导致严重后果，排查起来就更加困难了。
 

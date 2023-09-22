@@ -89,8 +89,8 @@ def count_num(num):
 
 这篇文章没有什么技术干货，纯粹逼自己试着去把一些算法写的明白，大家觉得那块讲的不明白，我可以持续改进哈。
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151013_page_count_result.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151013_pages_table.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151013_pages_count.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151013_alghorithm.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20151013_page_count_result.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20151013_pages_table.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20151013_alghorithm.png
 

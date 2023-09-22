@@ -28,7 +28,7 @@ date: 2023-07-12 09:52:02
 
 很多图像处理教材中都用一个 [Lena 的图像](http://www.lenna.org/full/l_hires.jpg)来演示图片的灰度处理，这里我们让 GPT4 来把这张图转换为灰度看看。为了显示原图和灰度图区别，我们让 GPT 处理完之后，把原图和灰度图拼接起来，如下(这里只截了原图上半部分，去掉了漏点的内容)：
 
-![Lena 图像灰度处理](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230711_gpt4_code_interpreter_image_lena.png)
+![Lena 图像灰度处理](https://slefboot-1251736664.file.myqcloud.com/20230711_gpt4_code_interpreter_image_lena.png)
 
 在这里，我们使用了 PIL，numpy 和 matplotlib 库来解析图片，将其转化为灰度，然后进行拼接，并在上面添加文字说明。原始图像是一个四通道图像（红色，绿色，蓝色和透明度），而灰度图像是一个三通道图像（灰度，灰度和灰度）。因此，我们首先删除了原始图像的透明度通道，然后再将图像拼接在一起。我们最初在图片中间添加了文字注释，但后来将其调整到了左上角，于是得到了上面的结果。
 
@@ -84,7 +84,7 @@ plt.show()
 
 图片如下：
 
-![Lena 图像其他的一些基本处理](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230711_gpt4_code_interpreter_image_basicoper.png)
+![Lena 图像其他的一些基本处理](https://slefboot-1251736664.file.myqcloud.com/20230711_gpt4_code_interpreter_image_basicoper.png)
 
 ## 制作 GIF 动画
 
@@ -100,7 +100,7 @@ Python 的这些库还可以用来制作 GIF 动态图，下面就是具体的�
 
 为了得到一个好的效果，这里 GPT4 创建了 30 帧，每帧旋转 12 度，同时逐渐改变颜色。第一遍生成的图像大小比较大，有 23M，接着要求 GPT 压缩这个 GIF。具体压缩方法就是将图像的宽度和高度都减小到原来的一半，将帧数减半，于是得到了一个只有 3M 的动图，如下：
 
-![Lena 图像旋转更改颜色的动画](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230711_gpt4_code_interpreter_image_animation.gif)
+![Lena 图像旋转更改颜色的动画](https://slefboot-1251736664.file.myqcloud.com/20230711_gpt4_code_interpreter_image_animation.gif)
 
 生成的代码如下（这代码需要导入依赖后才能在本机运行）：
 
@@ -141,7 +141,7 @@ gif_path_reduced
 
 之前看到过一些比较酷炫的动态变化图，展示随时间变化的一些数据，matplotlib 和 imageio 模块就可以绘制这种图片。我们先从 [国家统计局](https://data.stats.gov.cn/easyquery.htm?cn=E0103) 拿到 2003 年到 2022 年各省份的 GDP 数据，完整数据在 [Google Drive](https://drive.google.com/file/d/1mfrxTQhY1iSyB7DW8S9pNiUcPMEUEjCv/view?usp=sharing) 可以下载，其中部分内容如下：
 
-![国内的 GDP 数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230711_gpt4_code_interpreter_image_gdp.png)
+![国内的 GDP 数据](https://slefboot-1251736664.file.myqcloud.com/20230711_gpt4_code_interpreter_image_gdp.png)
 
 为了绘制动态变化的柱形图，可以用下面的提示词：
 
@@ -150,7 +150,7 @@ gif_path_reduced
 
 这里最开始用 `imageio` 绘制的图，可能是预装的版本太低，都不支持 `fps` 参数，然后用 `duration` 参数也改变不了帧的切换速度，并且在浏览器也不会自动循环播放。后来提示用 `PIL` 库来绘制，然后 GIF 图片能够在浏览器中循环播放了。得到的结果如下：
 
-![国内的 GDP 数据动态变化图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230711_gpt4_code_interpreter_image_gdp_change.gif)
+![国内的 GDP 数据动态变化图](https://slefboot-1251736664.file.myqcloud.com/20230711_gpt4_code_interpreter_image_gdp_change.gif)
 
 部分代码如下：
 
@@ -213,6 +213,6 @@ frames[0].save('/mnt/data/gdp_pil.gif', save_all=True, append_images=frames[1:],
 
 另外如果一段时间不用 GPT，执行环境就会重置，各种文件和之前的代码就会丢失。这时候 GPT 很大概率会在那里各种尝试，不能正常执行，还会出各种奇葩的错误。最好的方法是，重新开一个会话上传文件，然后进行分析。
 
-![运行速度和执行环境的缺点](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230712_gpt4_code_interpreter_image_stupid.png)
+![运行速度和执行环境的缺点](https://slefboot-1251736664.file.myqcloud.com/20230712_gpt4_code_interpreter_image_stupid.png)
 
 尽管 GPT 的 Code Interpreter 存在各种缺陷，但它仍然具有许多实用场景。它可以作为代码编写和调试的强大工具，通过理解和生成代码，为解决特定问题提供提示，实现高效编程。对于编程初学者来说，它能解释复杂的代码段，并展示代码示例，从而辅助他们学习。

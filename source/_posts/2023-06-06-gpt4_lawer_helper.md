@@ -95,10 +95,10 @@ description: 如何在被裁员后争取合法赔偿？这篇文章提供了详�
 
 本文大部分内容由 AI 生成，**由专业律师 [小盛律师](/links) 审核**。AI 给的解答里，部分关键信息出现了很离谱的错误。
 
-![GPT 给出的错误法律建议: 年限计算错误](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230606_gpt_lawer_helper.png)
+![GPT 给出的错误法律建议: 年限计算错误](https://slefboot-1251736664.file.myqcloud.com/20230606_gpt_lawer_helper.png)
 
 还有这个基数计算错误：
 
-![GPT 给出的错误法律建议: 赔偿基数计算错误](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230606_gpt_lawer_helper2.png)
+![GPT 给出的错误法律建议: 赔偿基数计算错误](https://slefboot-1251736664.file.myqcloud.com/20230606_gpt_lawer_helper2.png)
 
 <p style="color:red;">如果你有任何疑问，建议你咨询本人强烈推荐的<b><a href="/links">小盛律师</a></b></p>

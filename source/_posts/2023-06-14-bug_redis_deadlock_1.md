@@ -119,9 +119,9 @@ print('all processes dead')
 
 但是在 7.2.0 版本(源码是 7.2.0-rc2，编译好的 server 版本是 v=7.1.241)上，这里就不太正常了。我们直接从 [Github Release 7.2-rc2](https://github.com/redis/redis/releases/tag/7.2-rc2) 下载 Reids 7.2 的源码，然后编译二进制。这里编译指令带上这两个 Flag `make REDIS_CFLAGS="-Og -fno-omit-frame-pointer""`，方便后续分析工具能够拿到堆栈信息。复现步骤很简单，启动 Redis server，接着运行 feeder.py 和 subscriber.py 这两个脚本。我们会看到订阅者在处理部分流之后会阻塞住，不再有输出。同时 Redis 进程的 CPU 直接飙到了100%，新的 redis client 也连不上去服务器了，如下图。
 
-![cpu 跑慢，同时新的 client 也连接失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230613_bug_redis_deadlock_cpu_busy.png)
+![cpu 跑慢，同时新的 client 也连接失败](https://slefboot-1251736664.file.myqcloud.com/20230613_bug_redis_deadlock_cpu_busy.png)
 
-![subscriber 一直被阻塞](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230613_bug_redis_deadlock_cpu_stuck.png)
+![subscriber 一直被阻塞](https://slefboot-1251736664.file.myqcloud.com/20230613_bug_redis_deadlock_cpu_stuck.png)
 
 杀了两个脚本后，问题依然存在，除非重启 server 才行。
 
@@ -144,6 +144,6 @@ profile 是 BCC（BPF Compiler Collection）工具集中的一个工具，用于
 
 接着使用了 [flamegraph.pl](https://github.com/brendangregg/FlameGraph/blob/master/flamegraph.pl) 脚本，它是 [FlameGraph](https://github.com/brendangregg/FlameGraph) 工具集中的一个脚本，用于将堆栈跟踪信息转换为 SVG 格式的 Flame Graphs。最终生成的 CPU 火焰图如下，这里手动过滤了极少部分 unknow 的调用堆栈（不然图片看起来太长了，有点影响阅读）。
 
-![CPU 火焰图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230613_bug_redis_deadlock_cpu.svg)
+![CPU 火焰图](https://slefboot-1251736664.file.myqcloud.com/20230613_bug_redis_deadlock_cpu.svg)
 
 通过火焰图，我们找到了 CPU 跑满的执行堆栈，下一篇文章，我们继续分析为啥一直在执行这里的代码了。

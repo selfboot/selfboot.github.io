@@ -11,7 +11,7 @@ description: 这篇文章介绍了如何使用 GPT 插件和 Heygen AI 视频生
 
 [Heygen](https://app.heygen.com/home) 是一个强大的 AI 视频生成器，它可以根据你的文字和图片生成视频。无论你是想制作一个产品演示，一个教育视频，还是一个个人故事，Heygen 都能帮你轻松完成。使用 Heygen，你不再需要学习复杂的视频编辑软件，也不需要花费大量的时间和金钱来制作视频。你只需要输入你的文字和图片，Heygen 就会为你做剩下的工作。
 
-![heygen 生成视频示例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230607_gpt4_heygen_video.png)
+![heygen 生成视频示例](https://slefboot-1251736664.file.myqcloud.com/20230607_gpt4_heygen_video.png)
 
 <!--more-->
 
@@ -27,7 +27,7 @@ heygen 官网的价格，每生成 2 分钟最便宜也是要 $2。不过好在�
 
 目前插件有不少限制，每段视频不能太长，所以这里 GPT 直接分段生成了几个视频，并给出了每个视频的链接。
 
-![heygen 生成视频示例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230607_gpt4_heygen_video_2.png)
+![heygen 生成视频示例](https://slefboot-1251736664.file.myqcloud.com/20230607_gpt4_heygen_video_2.png)
 
 此外，插件还只能生成固定背景的视频，不能指定特定的角色或背景。其中第一段的[视频链接](https://app.heygen.com/share/a74a4731cea14631bd05469d92c07649?sid=openai-plugin)在这，大家可以感受下这个效果。
 

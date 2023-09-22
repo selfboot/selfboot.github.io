@@ -131,7 +131,7 @@ Python通过 local 类来实现 ThreadLocal 变量，代码量不多（只有100
 [Are local variables in a python function thread safe?](https://www.quora.com/Are-local-variables-in-a-python-function-thread-safe)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160822_threadlocal_overview_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160822_threadlocal_overview_2.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160822_threadlocal_overview_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160822_threadlocal_overview_2.png
 
 

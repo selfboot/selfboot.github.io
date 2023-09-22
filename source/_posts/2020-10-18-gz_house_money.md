@@ -42,17 +42,17 @@ description: 广州买房贷款的相关知识，包括公积金贷款的申请�
 
 [广州住房公积金-个人网上业务](https://gr.gzgjj.gov.cn/security/oauth/confer?idsServiceType=kjzgjczmyw)  
 
-![住房公积金个人业务](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gz_house_money_1.png)
+![住房公积金个人业务](https://slefboot-1251736664.file.myqcloud.com/20230717_gz_house_money_1.png)
 
 ### 公积金审批放款流程
 
 [官方流程说明](http://gjj.gz.gov.cn/bsfw/qtfw/content/post_5748060.html)，仅供参考：
 
-![官方批款流程](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gz_house_money_2.png)
+![官方批款流程](https://slefboot-1251736664.file.myqcloud.com/20230717_gz_house_money_2.png)
 
 这里有一份其他人分享的网上的经历图，可供参考：
 
-![个人分享的流程图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gz_house_money_3.png)
+![个人分享的流程图](https://slefboot-1251736664.file.myqcloud.com/20230717_gz_house_money_3.png)
 
 这里的**流程时间会随着国家信贷政策，房地产行情波动**。比如 21 年年底到 22 年年中期间，商业贷款利率飞涨，很多楼盘虽然不敢公开说不支持公积金，但是整体公积金的贷款流程会被人为的制造很多麻烦。但是到 23 年房子卖不出去的时候，开发商很配合使用公积金，整体公积金批款放款速度也特别快。
 
@@ -69,7 +69,7 @@ description: 广州买房贷款的相关知识，包括公积金贷款的申请�
 
 2022.05.15
 
-![商业贷款利率波动](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gz_house_money_4.png)
+![商业贷款利率波动](https://slefboot-1251736664.file.myqcloud.com/20230717_gz_house_money_4.png)
 
 全国层面首套住房商业性个人住房贷款利率下限由不低于相应期限LPR调整为不低于相应期限LPR减20个基点（按4月20发布的5年期以上LPR计算为4.4%）。
 
@@ -134,12 +134,12 @@ _2023-08-30 更新_
 
 我们可以拿房贷利率（基本上市面最低的贷款利息了）做对比，我们就简单粗暴地用房贷来模拟一下，同样 30 万，按照房贷基准利率 4.9%，贷款 5 年：
 
-![贷款利息计算](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gz_house_money_5.png)
+![贷款利息计算](https://slefboot-1251736664.file.myqcloud.com/20230717_gz_house_money_5.png)
 
 按照每月还款金额相等的等额本息，月供只需 5647.64 元，低于装修贷的月供 5900 元。很明显，装修贷的 3.6% 的年利率是忽悠人的，在这个产品里，年利率≠月利率x12。
 
 这其中的问题就在于，这 30 万元的本金，我们并没有使用 5 年，而是每月都会还一部分本金。换句话说，只有当还款模式是“5年之后一次还清本息”时，这个利率才是真实的。那么，在按月还款的情况下，这款「装修贷」的真实利率是多少呢？一个专（麻）业（烦）的方法：使用Excel的irr公式
 
-![Excel计算真实贷款利率](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gz_house_money_6.png)
+![Excel计算真实贷款利率](https://slefboot-1251736664.file.myqcloud.com/20230717_gz_house_money_6.png)
 
 这里参考：[“装修贷”里的坑](https://zhuanlan.zhihu.com/p/48579391?from=groupmessage)

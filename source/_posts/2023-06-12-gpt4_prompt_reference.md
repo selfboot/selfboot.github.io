@@ -35,7 +35,7 @@ OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章�
 
 所以，即使 OpenAI 的上下文长度限制增加，提供引用文本仍然是一个有用的策略。其实目前像 [Claude](https://www.anthropic.com/index/introducing-claude) 的模型，已经最大支持 100K 长度，大概是 7.6 万个英语单词，可以一次输入整本书籍让它分析了。
 
-![Claude 的 100K 长度支持](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_100K.png)
+![Claude 的 100K 长度支持](https://slefboot-1251736664.file.myqcloud.com/20230612_gpt4_prompt_reference_100K.png)
 
 # 短文本直接引用
 
@@ -47,7 +47,7 @@ OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章�
 
 目前使用 GPT4 的插件，也可以直接将网页链接里面的内容提供给 GPT 来作为引用文本。比如我可以直接让它总结我们第一篇[GPT4 提问技巧一：写清晰的说明](https://selfboot.cn/2023/06/10/gpt4_prompt_clear/)的内容，如下
 
-![GPT4 总结网页内容](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_1.png)
+![GPT4 总结网页内容](https://slefboot-1251736664.file.myqcloud.com/20230612_gpt4_prompt_reference_1.png)
 
 # 长文本引用相关部分
 
@@ -64,7 +64,7 @@ OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章�
 
 这就是语义搜索的基本过程。虽然这个过程可能涉及到一些复杂的技术，但其核心思想其实很简单：我们只是在尝试找到与我们的查询在语义上最接近的文本。
 
-![GPT4 语义搜索的步骤](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_embeding.png)
+![GPT4 语义搜索的步骤](https://slefboot-1251736664.file.myqcloud.com/20230612_gpt4_prompt_reference_embeding.png)
 
 关于 Embedding-based search 的更多内容，可以参考下面的文章：
 - [Question answering using embeddings-based search](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb)
@@ -77,7 +77,7 @@ OpenAI 可以理解和生成人类语言，帮助我们解答问题，写文章�
 
 除了免费的 ChatGPT 插件，还有一些付费工具，用起来体验更好些。比如 [chatdoc](https://chatdoc.com/)，可以提供文件提问，同时在解答中会给出依据，还能方便跳转。随便找了一个法律裁判文书的 PDF ，然后问了几个问题，整体感觉比插件稍微好些。
 
-![Chatdoc 回答还可以，不过引用部分有时候不准](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230612_gpt4_prompt_reference_chatdoc.png)
+![Chatdoc 回答还可以，不过引用部分有时候不准](https://slefboot-1251736664.file.myqcloud.com/20230612_gpt4_prompt_reference_chatdoc.png)
 
 除了插件，专业工具，微软也提供了带有 browsing 功能的 GPT4，也就是 New bing。它不仅仅是搜索和返回结果，还能借助 GPT 理解你的问题，根据搜索到的网页，重新组织语言，提供完整的答案。
 

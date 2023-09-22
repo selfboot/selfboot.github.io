@@ -148,6 +148,6 @@ update: August 30, 2014
 [在Coursera，随时都是学习的好时候](http://www.guokr.com/article/436817/)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130616_guoke_mooc.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20130616_guoke_mooc.png
 
 

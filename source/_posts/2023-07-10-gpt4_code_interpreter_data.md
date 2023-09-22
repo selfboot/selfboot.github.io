@@ -23,7 +23,7 @@ OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/
 接下来本篇文章给大家展示如何用代码解释器来做一些**数据分析和可视化**的工作，以及代码解释器目前的一些**缺陷**。
 <!--more-->
 
-![AI 辅助数据分析](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_future.png)
+![AI 辅助数据分析](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_future.png)
 
 ## Airbnb 租金价格分析
 
@@ -33,7 +33,7 @@ OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/
 
 GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个目标没关系，就忽略这里的异常。接着检查了价格列的数据，计算价格的一些统计量（如最小值，最大值，平均值等），然后将价格为 0 的记录和价格异常高的记录（例如，高于一个合理的上限，比如 1000 美元）视为异常值并将它们移除，接着给出了价格分布图：
 
-![AI 给出的租金的价格分布图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_ny_price.png)
+![AI 给出的租金的价格分布图](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_ny_price.png)
 
 ### 影响价格因素
 
@@ -47,7 +47,7 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 为了验证这里的假设，进行了一些数据探索和可视化，结果如下：
 
-![AI 给出的租金价格影响因素分析](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_ny_price_relationships.png)
+![AI 给出的租金价格影响因素分析](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_ny_price_relationships.png)
 
 这里开始每种因素给了一张图片，不过可以让 AI 整合为一张图，并提供下载链接。结合这里的可视化来看，**价格主要受房源类型和地区的影响**，而与可用天数、评论数量和最少入住晚数的关系不大。这些分析结果符合我们的直觉和对租房市场的了解。
 
@@ -57,7 +57,7 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 数据集中有地理位置坐标，可以让 GPT4 画出价格的地理位置分布图，如下：
 
-![AI 价格的地理位置分布](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_ny_price_pos.png)
+![AI 价格的地理位置分布](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_ny_price_pos.png)
 
 ## 抖音用户分析
 
@@ -67,7 +67,7 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 这里我们先看看用户的观看习惯，比如用户一天中的哪些时间更活跃，观看视频的频次等。分析的结果如下图：
 
-![抖音用户观看视频习惯](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_dy_like.png)
+![抖音用户观看视频习惯](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_dy_like.png)
 
 从图中我们可以看出，用户在晚上和午夜的时候观看视频较多，这里 5 点左右还这么高，有点出乎意料。大部分用户观看视频的频次在30次以下，但也有一些用户观看视频的频次非常高，超过200次。大多数用户会看完视频，说明抖音的视频内容可能很吸引人。大多数用户不会对视频进行点赞，这可能是因为点赞是需要引起很高的共鸣才行。
 
@@ -75,11 +75,11 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 先来看看视频的受欢迎程度，我们可以从以下几个方面来探索，视频被观看的次数，被用户看完的次数以及被用户点赞的次数。这里的分析很好地展示了长尾效应，即大部分视频的受欢迎程度（观看次数、被看完的次数和被点赞的次数）都比较低，但也有一小部分视频的受欢迎程度非常高，这是社交媒体平台上常见的现象，赢家通吃。为了显示长尾的数据，我们忽略掉观看次数、被看完的次数和被点赞的次数都比较低的视频。绘制了一个堆叠柱状图如下：
 
-![视频受欢迎程度的分析](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_dy_media.png)
+![视频受欢迎程度的分析](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_dy_media.png)
 
 这个图表更好地突出了受欢迎程度高的视频在观看次数、被看完的次数和被点赞的次数上的分布。可以看出，尽管这些视频都非常受欢迎，但在观看次数、被看完的次数和被点赞的次数上仍然存在一定的差异。我们可以继续看下视频看完和点赞之间是否有相关性：
 
-![视频受欢迎程度的分析](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_dy_relations.png)
+![视频受欢迎程度的分析](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_dy_relations.png)
 
 大多数情况下，用户既没有看完视频，也没有点赞。只有少数情况下，用户既看完了视频，也点赞了。'finish'和'like'之间的相关系数为0.043，这是一个非常低的值，表示这两个变量之间几乎没有线性关系。这可能是因为用户是否看完视频和是否点赞是两个相互独立的决策，一个不直接影响另一个。
 
@@ -91,7 +91,7 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 为了了解数据分析岗位的技能需求，先让 GPT4 生成一个词云图。词云图的大小表示该技能在岗位描述中出现的频率：词越大，表示该技能被提到的次数越多。从图中我们可以看出，一些关键技能，如"数据分析"、"SQL"、"Excel"、"Python"等，在数据分析岗位中非常受欢迎。同时，我们也可以看出，"数据挖掘"、"BI"、"商业"、"SPSS"等也是数据分析岗位常见的需求。
 
-![数据分析师技能关键词词云](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_wordcloud.png)
+![数据分析师技能关键词词云](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_wordcloud.png)
 
 估计 2024 年的招聘需求里，就要写上会用 ChatGPT 等 AI 工具辅助分析了，可以期待下。
 
@@ -99,7 +99,7 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 接下来看看薪水具体受什么影响最大吧，这里我们最关心 **工作经验，公司规模，城市，职位名称** 对薪酬水平的影响。
 
-![数据分析师薪水影响因素](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_salary.png)
+![数据分析师薪水影响因素](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_salary.png)
 
 从四个箱形图可以看到：
 1. 工作经验越丰富，薪资的中位数和上下四分位数范围都在提高，也就是说工作经验越丰富，薪资普遍越高。
@@ -116,7 +116,7 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 这里 GPT4 给我推荐了一个开源的字体 `思源黑体（Source Han Sans）`，在 Adobe 的 [Github](https://github.com/adobe-fonts/source-han-sans/tree/release) 页面上可以找到。开始的时候在这里选择了 `TTF: Variable Simplified Chinese (简体中文)`，让 GPT4 加载字体时遇到了错误："**In FT2Font: Can not load face (error code 0x8)**"
 
-![字体加载错误](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_fonterror.png)
+![字体加载错误](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_fonterror.png)
 
 原因是我下载的是一种变体字体（**variable font**），变体字体是一种可以包含多种字体样式的新型字体格式，它们可以在一定范围内调整字体的各个属性，如字体宽度、粗细等。然而，matplotlib 并不支持变体字体，要换成一种非变体普通的 TrueType (.ttf) 字体。最后让 GPT4 重新推荐了下，我选的是简体中文的谷歌字体 [NotoSerifSC-Light.otf](https://fonts.google.com/noto/specimen/Noto+Serif+SC?subset=chinese-simplified)。
 
@@ -125,11 +125,11 @@ GPT4 首先给出数据集中存在缺失值的列，发现和价格分布这个
 
 如果关闭了页面隔一段时间 OpenAI 会关闭之前分配的解释器，下次再进入会话页面开始提问的话，**会丢失之前的上下文，比如上传的文件等内容**，并且进入的时候会有下面的提示：
 
-![会话持久问题](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_conversation.png)
+![会话持久问题](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_conversation.png)
 
 如果一直停留在页面没有操作，隔一段时间也会丢失前面会话内容，然后再执行的时候，GPT4 可能就会变的很傻。可能会不断尝试重新加载数据和脚本，如下图：
 
-![会话持久问题](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230710_gpt4_code_interpreter_data_error_cal.png)
+![会话持久问题](https://slefboot-1251736664.file.myqcloud.com/20230710_gpt4_code_interpreter_data_error_cal.png)
 
 这里的脚本其实已经返回了错误：
 

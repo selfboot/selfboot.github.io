@@ -18,11 +18,11 @@ description: 用亲身经历,详细记录了一个普通租户如何用法律手
 
 <!--more-->
 
-![二房东聊天记录](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_pre_1.png)
+![二房东聊天记录](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_pre_1.png)
 
 等等，不对，都快月底了，怎么还没给退押金？！继续催催吧，于是屁颠屁颠地找老板（一定要叫老板，欠钱的是老板）。
 
-![继续追债中](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_pre_2.png)
+![继续追债中](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_pre_2.png)
 
 嗯嗯，老板说了，会给退押金，不错出错，老板是好老板呀。不过老板没说什么时候给，这就尴尬了。于是准备旁敲侧击下，老板说没钱，我就来探探口风，问问他其他几处房子的收入。然后，老板就再也没回复我了。
 
@@ -36,7 +36,7 @@ description: 用亲身经历,详细记录了一个普通租户如何用法律手
 
 结果估计大家不用猜就知道了，一堆一堆的文章，来倾诉黑心房东如何违约，然后自己怎么斗智斗勇，用法律武器拿回本属于自己的钱。下面是google `二房东 违约 维权` 的第一条结果：
 
-![二房东违约维权搜索结果](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_pre_3.png)
+![二房东违约维权搜索结果](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_pre_3.png)
 
 看别人维权很简单啊，知乎上面一个哥们最后的总结：
 
@@ -55,7 +55,7 @@ description: 用亲身经历,详细记录了一个普通租户如何用法律手
 
 好在之前这些都没弄丢，准备的齐齐整整的：
 
-![准备的齐齐整整的证据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_pre_4.png)
+![准备的齐齐整整的证据](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_pre_4.png)
 
 还好自己平时没有把这些资料扔掉，关键时候还得靠这些铁证拿回自己的 2800 啊。
 
@@ -63,7 +63,7 @@ description: 用亲身经历,详细记录了一个普通租户如何用法律手
 
 嗯，接下来就是起诉书了，这玩意有点难度，好在网上有模板，拿来抄抄大概可以。反正先拿去法院，不行再改改。特别注意：这里的**起诉书非专业法律人士所写**，仅供参考（金额不多，请不起律师）。起诉书建议最好找专业律师书写，专业和业余的区别还是很大的！
 
-![非专业起诉书，仅供参考](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_pre_5.png)
+![非专业起诉书，仅供参考](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_pre_5.png)
 
 关键的材料就这么多了，接下来就要去立案了，后续再记录[立案的过程](https://selfboot.cn/2019/11/01/self_rent_do/)吧。
 

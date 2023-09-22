@@ -34,7 +34,7 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 
 直接问 GPT4 的话，通常没法给出答案，如下图所示：
 
-![GPT4 局限：不能直接接数学问题](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230707_gpt4_prompt_tool_cal_normal.png)
+![GPT4 局限：不能直接接数学问题](https://slefboot-1251736664.file.myqcloud.com/20230707_gpt4_prompt_tool_cal_normal.png)
 
 不过可以让 GPT4 生成具体的程序代码，然后执行代码来完成计算。这里提示词可以稍微改下，加上下面内容即可：
 
@@ -42,7 +42,7 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 
 把代码 copy 出来用 Python 执行的结果是 `2.3697093205509585`，和在 [wolframalpha](https://www.wolframalpha.com/input/?i=3x%5E5+-+5x%5E4+-+3x%5E3+-+7x+-+10) 上计算的结果一致。GPT4 给的回复如下：
 
-![GPT4 局限：不能直接接数学问题](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230707_gpt4_prompt_tool_cal_code.png)
+![GPT4 局限：不能直接接数学问题](https://slefboot-1251736664.file.myqcloud.com/20230707_gpt4_prompt_tool_cal_code.png)
 
 有时候一些看起来很简单的计算任务，GPT4 同样搞不定。比如在之前的这篇文章 [加班了多少天？GPT4 被绕晕了](https://selfboot.cn/2023/05/29/gpt4_cal_date/)，GPT 并不能直接给出加班天数。但是可以编写一个正确的程序，来计算出总的加班天数。
 
@@ -64,7 +64,7 @@ GPT4 作为一个大语言生成模型，虽然很强大，但是有一些局限
 
 可能得到下面的结果，然后解析这里的返回，再去调用我们自己的函数拿到结果。这中间模型可能会返回非json的内容，或者返回的日期也不对，需要去处理这些异常情况。
 
-![Function calling之前的做法](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230723_gpt4_prompt_tools_function_before.png)
+![Function calling之前的做法](https://slefboot-1251736664.file.myqcloud.com/20230723_gpt4_prompt_tools_function_before.png)
 
 有了 Function calling，我们可以直接问“明天广州的天气如何？”，同时把函数传递给模型。然后 GPT-4 会智能地输出一个包含调用该函数所需参数的 JSON 对象，后面可以直接根据这个 JSON 对象来调用函数了。注意这里的模型是 OpenAI 专门微调过的，**输出会更加稳定和准确**。还是以上面的请求天气为例，可以直接像下面这样发起请求。
 
@@ -145,12 +145,12 @@ LangChain 提供了一系列标准且可扩展的接口和外部集成模块，[
 
 官方文档对每个模块都有详细的说明，比如 [Data connection](https://python.langchain.com/docs/modules/data_connection/) 部分，抽象了 5 个步骤，包括加载不同来源的文档，进行分割以及删减，文档向量化 embeding，存储向量数据，以及查询。如下图(图片来自官方文档)所示：
 
-![LangChain data connection](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230724_gpt4_prompt_tools_data.png)
+![LangChain data connection](https://slefboot-1251736664.file.myqcloud.com/20230724_gpt4_prompt_tools_data.png)
 
 除了官方文档，还有不少视频来讲解如何使用 LangChain，比如吴恩达的免费课程 [LangChain for LLM Application Development](https://learn.deeplearning.ai/langchain/lesson/1/introduction)，里面讲的还是挺不错的，可以用来快速了解 LangChain 的玩法。
 
 我们知道 LangChain 是一个编程库，目前支持 Python 和 JavaScript，为了能进一步降低这里的开发门槛，有人提供了一个 UI [langflow](https://github.com/logspace-ai/langflow)，能够通过拖拽完成简单的任务，如下图示例：
 
-![LangChain langflow 示意图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230724_gpt4_prompt_tools_langflow.png)
+![LangChain langflow 示意图](https://slefboot-1251736664.file.myqcloud.com/20230724_gpt4_prompt_tools_langflow.png)
 
 在可预见的未来，我们可以期待 GPT-4 等大型语言模型将与现有工具进行更深度的融合，以充分释放其潜力并推动各类应用的创新与发展。

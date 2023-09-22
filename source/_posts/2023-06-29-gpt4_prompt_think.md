@@ -30,7 +30,7 @@ description: 深入探索 ChatGPT 提问技巧系列的第四篇文章，了解�
 
 下面我们在 [Playground](https://platform.openai.com/playground/p/default-rushing-to-a-conclusion?model=gpt-4) 上做一个简单的实验。对于很简单的一元方程和二元方程，如果直接让 GPT-3.5 判断回答是否正确，都会判断错误。
 
-![GPT-3.5 简单数学答案都判断错误](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230629_gpt4_prompt_think.png)
+![GPT-3.5 简单数学答案都判断错误](https://slefboot-1251736664.file.myqcloud.com/20230629_gpt4_prompt_think.png)
 
 为了让 GPT-3.5 能给出正确的判断，我们可以改下我们的提示词，引导 AI 先给出自己的解决方案，把自己的方案和学生的进行比较，从而判断学生的回答是否正确。可以加一个系统提示词如下：
 
@@ -40,7 +40,7 @@ description: 深入探索 ChatGPT 提问技巧系列的第四篇文章，了解�
 
 这样 GPT-3.5 也能给出一个正确的判断，如下图：
 
-![GPT-3.5 先自己给出解决方案，再比较](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230629_gpt4_prompt_think_1.png)
+![GPT-3.5 先自己给出解决方案，再比较](https://slefboot-1251736664.file.myqcloud.com/20230629_gpt4_prompt_think_1.png)
 
 随着模型变化升级，不一定能稳定复现这里的一些错误回答。不过这不影响我们这里想表达的意图，就是尽可能让模型先自己“思考”，不要急于做出判断。
 
@@ -61,7 +61,7 @@ description: 深入探索 ChatGPT 提问技巧系列的第四篇文章，了解�
 > 第 3 步 - 如果学生犯了错误，请确定您可以在不泄露答案的情况下给学生什么提示。如果学生回答正确，可以说一些鼓励的评论。将此步骤的所有输出保存在 json 的 hint 字段。
 
 具体可以看下面的效果：
-![GPT-4 内心独白格式化输出](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230629_gpt4_prompt_think_2.png)
+![GPT-4 内心独白格式化输出](https://slefboot-1251736664.file.myqcloud.com/20230629_gpt4_prompt_think_2.png)
 
 这里格式化输出，GPT-3.5 的效果不是很好，GPT-4 会好很多，不过还是有一定概率给出错误的格式化输出。一旦我们拿到了格式化输出，就可以在应用中解析需要的字段，隐藏推理过程了。
 
@@ -69,7 +69,7 @@ description: 深入探索 ChatGPT 提问技巧系列的第四篇文章，了解�
 
 在写这篇文章的时候，我其实也在思考，随着模型的迭代升级，AI 会不会不用经过专门 prompt 调优，也能很好的思考，给出一个超出预期的答案。于是用 GPT-4 尝试了几个例子，发现即使没有让他先给出自己的方案，也能给出正确结果，下面是两个例子：
 
-![GPT-4 自己思考能力的迭代](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230629_gpt4_prompt_think_3.png)
+![GPT-4 自己思考能力的迭代](https://slefboot-1251736664.file.myqcloud.com/20230629_gpt4_prompt_think_3.png)
 
 随着技术的进步，新的 GPT 模型在处理复杂问题时，也应该能够更好地模拟“思考”的过程。这些模型在没有明确的提示下，也能够采取更深入的分析，更全面的搜索，以及更精细的优化。这就好像<span style="color:red;">它们已经学会了如何给自己“思考”的时间，以产生更高质量的回答</span>。
 

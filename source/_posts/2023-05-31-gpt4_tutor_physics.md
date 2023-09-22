@@ -9,7 +9,7 @@ description: 我们展示了如何使用GPT-4作为你的物理教师。本页�
 
 在 [神奇 Prompt 让 GPT4 化身英语老师](https://selfboot.cn/2023/05/26/gpt4_tutor_english/)里，GPT 充当了我们的英语老师，这里我们再来看看万能 GPT 当物理老师的表现。
 
-![GPT4 物理老师](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_tutor_physics.png)
+![GPT4 物理老师](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt_tutor_physics.png)
 
 首先同样是先喂 [prompt](https://gist.githubusercontent.com/selfboot/1322b0f58882e7459b4842b997786e63/raw/7d33bc7e02bec43d77b1d06287b5963f3ce166cd/Mr_Ranedeer.md) 给 GPT 作为初始问题，指定 `/language 中文` 来设定语音，然后开启学习之旅。
 

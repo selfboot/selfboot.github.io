@@ -232,11 +232,11 @@ def add(request):
 
 如果你读到这里，那么应该会知道Django处理Http Request的过程，并且能动手写一个简单的Django小项目了。不过Django作为一个优秀的Web框架，还提供了诸如后台管理，单元测试等强大的功能，我们会在[下一篇][6]文章来共同学习。
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141226_Django_process.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141226_project_welcome.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141226_add.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141226_add_done.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141226_index.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20141226_Django_process.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20141226_project_welcome.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20141226_add.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20141226_add_done.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20141226_index.png
 [6]: http://selfboot.cn/2015/01/11/django_start(2)/
 
 

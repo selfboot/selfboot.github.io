@@ -11,7 +11,7 @@ date: 2023-08-23 20:03:45
 
 然而，在实际操作中，劳动合同到期不续签可能引发一系列法律问题。劳动者和用人单位在这个过程中的权益如何保障？当不续签发生时，是否有经济补偿或赔偿金的问题？特殊情况下的法律保护又是如何规定的？
 
-![劳动合同到期不续签，一张图告诉你这些情况有钱可以拿](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230823_employment_renewal_flow.png)
+![劳动合同到期不续签，一张图告诉你这些情况有钱可以拿](https://slefboot-1251736664.file.myqcloud.com/20230823_employment_renewal_flow.png)
 
 接下来，我将深入探讨劳动合同到期不续签的法律视角，逐一解析劳动者不续签、用人单位不续签的经济补偿、赔偿金，以及一些特殊情况下的法律保护等问题，并通过实际案例分析，让这些法律条文更贴近生活，帮助大家更好地维护自身的合法权益。
 
@@ -106,4 +106,4 @@ date: 2023-08-23 20:03:45
 ---
 欢迎扫码关注[小盛律师](https://selfboot.cn/links)的公众号，及时收到文章更新通知～
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+![关注公众号](https://slefboot-1251736664.file.myqcloud.com/20230721_wx_qrcode.png)

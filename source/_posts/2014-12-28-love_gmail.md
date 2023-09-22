@@ -81,11 +81,11 @@ Request timeout for icmp_seq 2
 
 看，Gmail还活着，它代表的“隐私，安全”仍旧活着，它们又怎么会死去？！Gmail万岁！
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141229_mail_diagnosis.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141229_mail_disconnect.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141229_gmail_traffic.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141229_email_protocol.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141229_email_protocol_china.png
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141229_email_protocol_vpn.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20141229_mail_diagnosis.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20141229_mail_disconnect.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20141229_gmail_traffic.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20141229_email_protocol.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20141229_email_protocol_china.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20141229_email_protocol_vpn.png
 
 

@@ -129,7 +129,7 @@ def say():
 
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160626_stackoverflow_book.jpg
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160626_shit_questions.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160626_regex101.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160626_stackoverflow_book.jpg
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160626_shit_questions.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20160626_regex101.png
 

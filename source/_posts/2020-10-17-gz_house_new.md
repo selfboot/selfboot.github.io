@@ -12,7 +12,7 @@ description: 本文是广州买房攻略的新房购买流程和注意事项篇�
 
 [个人贷款从开发商购买商品房办理登记-广州市](http://ghzyj.gz.gov.cn/ywpd/bdcdj/bdcdjlct/grdj/content/post_2757935.html)
 
-![买房流程登记](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230716_gz_house_new_1.png)
+![买房流程登记](https://slefboot-1251736664.file.myqcloud.com/20230716_gz_house_new_1.png)
 
 还有 [个人全款从开发商购买商品房办理登记-广州市](http://ghzyj.gz.gov.cn/ywpd/bdcdj/bdcdjlct/grdj/content/post_2757936.html)。
 
@@ -58,11 +58,11 @@ description: 本文是广州买房攻略的新房购买流程和注意事项篇�
 
 不动产首次登记，开发商会有下面的登记材料（会在销售中心公示，找不到的话问销售要，可能在某个不起眼的角落）：
 
-![首次登记材料](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230716_gz_house_new_2.png)。
+![首次登记材料](https://slefboot-1251736664.file.myqcloud.com/20230716_gz_house_new_2.png)。
 
 根据登记号，个人可以在[广州市规划和自然资源局](http://ghzyj.gz.gov.cn/BDCWX/#/key)确认资料的真实性：
 
-![首次登记查询资料](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230716_gz_house_new_3.png)。
+![首次登记查询资料](https://slefboot-1251736664.file.myqcloud.com/20230716_gz_house_new_3.png)。
 
 期房是指在建、尚未完成建设的、不能交付使用的房子，且开发商只有预售许可证，还没有拿到大产证。
 

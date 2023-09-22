@@ -132,6 +132,6 @@ def count_opration(current_word, current_node):
 
 [1]: ../08-04-2014/simple_trie_tree.html
 [2]: https://https://gist.github.com/xuelangZF/7addb2810e60a9031d76
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140812_trie_data_structure.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20140812_trie_data_structure.png
 [4]: https://gist.github.com/xuelangZF/f8d731a0dbf24d692860
 

@@ -13,7 +13,7 @@ date: 2023-07-29 09:26:44
 
 如果首付款项是由一方的父母提供的，那么在离婚时，这笔款项应当如何处理呢？是否应当视为夫妻共同财产进行分割？还是应当归还给提供款项的一方？这些问题的答案，可能会因为具体情况的不同而有所不同，本篇将详细聊一聊这里的问题。
 
-![父母首付款买房怎么分割](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230730_divorce_legal_money_parent.png)
+![父母首付款买房怎么分割](https://slefboot-1251736664.file.myqcloud.com/20230730_divorce_legal_money_parent.png)
 
 <!--more-->
 
@@ -100,4 +100,4 @@ date: 2023-07-29 09:26:44
 --- 
 可以扫码关注公众号，及时收到文章更新通知～
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+![关注公众号](https://slefboot-1251736664.file.myqcloud.com/20230721_wx_qrcode.png)

@@ -34,7 +34,7 @@ description: 详细解析了中国协议离婚和诉讼离婚的法律流程及�
 
 总的来说，在制定好离婚协议后，最快也要 31 天才能领到离婚证。考虑到很多地方婚姻预约登记的难度，这个时间只会更长。
 
-![越秀区离婚登记流程图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230803_divorce_legal_longtime_1.png)
+![越秀区离婚登记流程图](https://slefboot-1251736664.file.myqcloud.com/20230803_divorce_legal_longtime_1.png)
 
 可以参考广州市越秀区发布的 [国内居民离婚登记须知](http://www.yuexiu.gov.cn/ggfw/ztfw/hysy/hy/content/post_7970498.html) 。如果离婚有涉外因素，情况会复杂很多，建议咨询[专业律师](https://selfboot.cn/links)。
 
@@ -46,7 +46,7 @@ description: 详细解析了中国协议离婚和诉讼离婚的法律流程及�
 
 一审判决判离婚的概率有多大呢？根据最高人民法院 2018 年所作的[司法大数据专题报告之离婚纠纷](https://www.court.gov.cn/upload/file/2018/03/23/09/33/20180323093343_53196.pdf)，全国范围内离婚案件一审判决，**65.81% 的案件判定双方维持婚姻关系**。
 
-![全国范围内离婚案件一审判决维持婚姻关系](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230805_divorce_legal_longtime_denied.png)
+![全国范围内离婚案件一审判决维持婚姻关系](https://slefboot-1251736664.file.myqcloud.com/20230805_divorce_legal_longtime_denied.png)
 
 具体到某些省份，维持婚姻关系比例更高，比如 [2020 年河南基层法院离婚诉讼大数据分析报告](https://www.hnlawyer.org/uploads/file/876/437990/2103/1615278313070.pdf) 中提到的，1912 件样本中判决不准离婚的有 1422 件，占比 74.37。在法律实践中，如果夫妻双方中的一方坚持反对离婚，并且没有虐待、遗弃、严重的家庭暴力、与他人同居或重婚等情况，那么法院通常不会轻易判决离婚。即使存在一般性的打骂、通奸、甚至嫖娼等行为，也不一定能在第一次离婚诉讼中成功解除婚姻关系。
 

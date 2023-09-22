@@ -86,10 +86,10 @@ description: 这篇文章深入探讨了营销的各种形式和策略，包括�
 推荐一下《增长黑客》，名字有黑客，但不是讲计算机上的黑客的，不需要任何技术底子，完全可以拿来当小说看的一本书。内容很有趣，好多地方让人忍不住拍案叫绝的，谁不看谁吃亏。（看我像不像在给《增长黑客》做营销，诱惑式的营销哦）
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151023_market.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151023_baidu_bug.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151023_pk.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151023_anni.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151023_laoluo.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20151023_market.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20151023_baidu_bug.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20151023_pk.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20151023_anni.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20151023_laoluo.png
 
 

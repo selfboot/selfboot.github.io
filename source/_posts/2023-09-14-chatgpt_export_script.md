@@ -16,7 +16,7 @@ date: 2023-09-15 07:50:38
 
 再次感叹下，ChatGPT 真的是极大**拓宽个人的技术能力边界，极大提高个人解决问题的能力！**
 
-![ChatGPT export 插件](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230913_chatgpt_export_script_copy.png)
+![ChatGPT export 插件](https://slefboot-1251736664.file.myqcloud.com/20230913_chatgpt_export_script_copy.png)
 
 <!-- more -->
 
@@ -26,7 +26,7 @@ date: 2023-09-15 07:50:38
 
 打开浏览器的开发者工具，看到在 html 中其实有公式的 Latex 文本表示，复制后可以在 [mathjax](https://www.mathjax.org/#demo) 查看转换后的公式：
 
-![数学公式在线预览](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230913_chatgpt_export_script_mathjax.png)
+![数学公式在线预览](https://slefboot-1251736664.file.myqcloud.com/20230913_chatgpt_export_script_mathjax.png)
 
 不过总不能每次要复制一个公式，就去开发者工具里面复制吧。于是想着可以写一个油猴脚本，能够在公式旁边放一个复制按钮，点击后就能把 Latex 公式复制出来。
 
@@ -213,7 +213,7 @@ observer.observe(document.body, config);
 
 把这段代码复制并粘贴到浏览器的开发者工具的控制台中运行，然后点击复制，就可以看到输出的内容了，如下图：
 
-![控制台观察到了这里的 Button 变化](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230913_chatgpt_export_script_dom_change.png)
+![控制台观察到了这里的 Button 变化](https://slefboot-1251736664.file.myqcloud.com/20230913_chatgpt_export_script_dom_change.png)
 
 这里看到 ChatGPT 的对号 HTML 内容如下：
 

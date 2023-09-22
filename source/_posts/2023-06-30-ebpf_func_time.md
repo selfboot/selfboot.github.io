@@ -22,7 +22,7 @@ description: 探究如何利用 eBPF 和 BCC 无侵入地分析服务函数的�
 
 [eBPF](https://ebpf.io/what-is-ebpf/) 是一种非常强大的技术，它允许开发者在 Linux 内核中执行自定义代码，而无需修改内核或加载内核模块。这种灵活性使得 eBPF 可以应用于各种场景，包括网络监控、安全和性能分析。
 
-![ebpf 允许用户在内核中执行代码](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230630_ebpf_function_time_ebpf.png)
+![ebpf 允许用户在内核中执行代码](https://slefboot-1251736664.file.myqcloud.com/20230630_ebpf_function_time_ebpf.png)
 
 eBPF 支持用户空间追踪 (uprobes)，允许我们附加 eBPF 程序到用户空间应用程序，这意味着我们可以非常精细地监控和分析用户空间应用程序的行为，而无需修改应用程序代码。我们可以在函数入口和退出时定义要执行的代码，当函数被调用时，入口探针（kprobe/uprobe）被触发，当函数返回时，退出探针被触发。
 
@@ -131,7 +131,7 @@ $ python func_time_hist.py 832965  _Z12someFunctioni
 
 当按下 Ctrl-C 中止程序时，会打印出 dist 直方图，以对数尺度显示函数执行时间的分布情况。这使得我们可以快速了解函数执行性能的大致情况，如最常见的执行时间，以及时间的分布范围，具体如下图：
 
-![BCC 脚本分析函数调用耗时分布](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230630_ebpf_func_time_hist.png)
+![BCC 脚本分析函数调用耗时分布](https://slefboot-1251736664.file.myqcloud.com/20230630_ebpf_func_time_hist.png)
 
 可以看到大部分函数调用的耗时分布在 1024-2047us 之间，有 11 次函数调用的耗时分布在 131702-262143us 之间。这个函数占比大概是 1%，符合我们模拟的函数特征。
 
@@ -163,6 +163,6 @@ int trace_end(struct pt_regs *ctx) {
 
 接下来，在用户空间的 Python 脚本中，在每个指定的时间间隔内计算平均值和 P99。完整的代码 `func_time.py` 在 [gist](https://gist.github.com/selfboot/38526f556698d9263a2751feadf73efb) 上，执行结果如下：
 
-![BCC 脚本分析函数调用平均耗时和 P99 耗时](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230630_ebpf_func_time_avg_p99.png)
+![BCC 脚本分析函数调用平均耗时和 P99 耗时](https://slefboot-1251736664.file.myqcloud.com/20230630_ebpf_func_time_avg_p99.png)
 
 总的来说，使用 eBPF 和 BCC 来进行这种无侵入性的性能分析，对于生产环境中的故障排除和性能优化具有巨大的价值。它**允许我们在不中断服务或重新部署代码的情况下，实时收集和分析关键性能指标**。这种能力对于维护高性能和高可用性的系统至关重要。

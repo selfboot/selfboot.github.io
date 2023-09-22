@@ -27,7 +27,7 @@ while((ln = listNext(&li))) {
 <!--more-->
 
 我们看到**每次都是在循环里面的 569 行暂停住**，基本认定确实是这里发生了死循环。查看当前栈帧上的局部变量，可以看到 receiver指针。具体如下：
-![GDB continue 确认死循环](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230616_bug_redis_deadlock_2_0.png)
+![GDB continue 确认死循环](https://slefboot-1251736664.file.myqcloud.com/20230616_bug_redis_deadlock_2_0.png)
 
 这里 receiver 是 `server.h` 里面声明的 struct client，是 redis 里面为每一个 client 连接维护的数据结构。现在的问题很清晰，server 进程在 while 循环中不断拿出来 client 连接，一直停不下来。为了弄清楚这些 client 从哪里来的，我们可以打印 client 里面的 name 字段。
 
@@ -76,7 +76,7 @@ struct redisObject {
 
 然后就可以用 `p (char *)receiver->name->ptr` 来打印 client 的具体名字了。这里还要连续打印多次 client name，看看每次取出来的 client 是什么。为了自动打印多次，可以用 GDB 里面的 commands指令，如下图：
 
-![GDB continue 观察这里的client](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230616_bug_redis_deadlock_2_1.png)
+![GDB continue 观察这里的client](https://slefboot-1251736664.file.myqcloud.com/20230616_bug_redis_deadlock_2_1.png)
 
 其实从队列里取出来的一直是 `subscriber_1` 和 `subscriber_2`，他们两个交替被取出来，无穷尽了，所以这里没法跳出循环。
 
@@ -101,7 +101,7 @@ struct redisObject {
 
 提交修改部分比较少，如下：
 
-![修复代码对比](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230616_bug_redis_deadlock_2_2.png)
+![修复代码对比](https://slefboot-1251736664.file.myqcloud.com/20230616_bug_redis_deadlock_2_2.png)
 
 ### list 何时添加元素？
 
@@ -125,7 +125,7 @@ list *listAddNodeTail(list *list, void *value)
 
 我们只用在这个函数打断点就行了，执行到这里的时候，就能拿到函数的堆栈，就可以知道调用关系链了，如下图：
 
-![重新添加 list 的调用链路](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230616_bug_redis_deadlock_2_3.png)
+![重新添加 list 的调用链路](https://slefboot-1251736664.file.myqcloud.com/20230616_bug_redis_deadlock_2_3.png)
 
 ### 跳出循环就可以了？
 
@@ -166,7 +166,7 @@ TODO...(待续)
 
 可以在 [redis-7.2-rc2](https://github.com/redis/redis/releases/tag/7.2-rc2) 的目录中运行 `./runtest --single unit/type/stream-cgroups` 来测试这个新增加 case 的用例组，执行结果如下：
 
-![添加的测试用例的有效性](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230616_bug_redis_deadlock_2_4.png)
+![添加的测试用例的有效性](https://slefboot-1251736664.file.myqcloud.com/20230616_bug_redis_deadlock_2_4.png)
 
 在执行完新加用例的前一组用例后，测试用例就卡住了，然后看到 redis 进程的 cpu 占用也是 100%，说明这个测试用例完全能复现这个问题。这里再补充说一点，在 TCL 测试中，使用的 Redis 二进制文件位于 Redis 源代码目录的 src 子目录下。具体来说，它是通过以下 TCL 脚本中的命令找到的：
 

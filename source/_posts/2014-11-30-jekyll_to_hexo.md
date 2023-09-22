@@ -196,6 +196,6 @@ selfboot.cn.		14439	IN	A	192.30.252.154
 [Tips for configuring an A record with your DNS provider](https://help.github.com/articles/tips-for-configuring-an-a-record-with-your-dns-provider/)
 [HEXO 指定404页面](http://www.foreverpx.cn/2014/09/23/hexo404/)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141130_jekyll_to_hexo_domain.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141130_jekyll_to_hexo_theme.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20141130_jekyll_to_hexo_domain.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20141130_jekyll_to_hexo_theme.png
 

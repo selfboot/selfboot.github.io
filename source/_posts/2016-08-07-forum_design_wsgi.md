@@ -280,9 +280,9 @@ class DispatcherMiddleware(object):
 [PEP 3333 -- Python Web Server Gateway Interface v1.0.1](https://www.python.org/dev/peps/pep-3333/)
 [What is a “callable” in Python?](http://stackoverflow.com/questions/111234/what-is-a-callable-in-python)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160807_forum_design_WSGI_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160807_forum_design_WSGI_2.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160807_forum_design_WSGI_3.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160807_forum_design_WSGI_4.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160807_forum_design_WSGI_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160807_forum_design_WSGI_2.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20160807_forum_design_WSGI_3.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20160807_forum_design_WSGI_4.png
 
 

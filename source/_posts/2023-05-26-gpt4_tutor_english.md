@@ -9,7 +9,7 @@ description: 本页面详细介绍了如何使用GPT-4作为您的个人英语�
 
 大语言模型的 Prompt 真的是一门学问了，有点咒语的感觉。Github 上有一个比较火的 GPT4 的 [prompt 提示词](https://github.com/JushBJJ/Mr.-Ranedeer-AI-Tutor)，可以用来让 AI 当你的个人老师，体验下来还是很有感触。
 
-![GPT 英语老师](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_tutor_english.png)
+![GPT 英语老师](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt_tutor_english.png)
 
 # Prompt 加载
 
@@ -79,7 +79,7 @@ Also, if you wish to change the language, you can do so by typing /language foll
 <b>ChatGPT:</b>
 这是我们的学习计划：
 
-![学习计划](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_tutor_english_roadmap.png)
+![学习计划](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt_tutor_english_roadmap.png)
 
 1. 开始：我们首先确定你的学习目标和偏好。
 2. 了解基础概念：我们将介绍一些英语学习的基础概念。

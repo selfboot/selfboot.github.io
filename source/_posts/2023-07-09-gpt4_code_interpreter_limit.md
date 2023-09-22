@@ -22,7 +22,7 @@ OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/
 
 最近刚拿到代码解释器的权限，于是来探究下这里的资源限制具体是怎么回事。
 
-![打开 Code Interpreter 权限](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230708_code_interpreter_limit_use.png)
+![打开 Code Interpreter 权限](https://slefboot-1251736664.file.myqcloud.com/20230708_code_interpreter_limit_use.png)
 
 <!--more-->
 
@@ -34,7 +34,7 @@ OpenAI 在 2023 年 3 月份的博客 [ChatGPT plugins](https://openai.com/blog/
 
 不过考虑到这是个网页聊天程序，这里上传文件大小应该还是有限制。于是找了个 1 GB 的文件来上传，结果就拿到了当前环境对文件大小的限制：512MB，具体如下图：
 
-![ChatGPT 上传文件大小限制](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230708_code_interpreter_limit_filesize.png)
+![ChatGPT 上传文件大小限制](https://slefboot-1251736664.file.myqcloud.com/20230708_code_interpreter_limit_filesize.png)
 
 这里限制的是一次上传文件的大小，可以把文件拆开后，分多次上传，然后读取所有文件进行分析。
 
@@ -54,7 +54,7 @@ print(f'Hard limit: {hard} bytes')
 
 不过它也直接说在当前环境下无法运行这段代码。我还不死心，直接让它运行这段代码，结果告诉我运行上述代码时遇到了问题，代码执行环境已经重置。
 
-![ChatGPT 直接拿内存限制失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230708_code_interpreter_limit_resource.png)
+![ChatGPT 直接拿内存限制失败](https://slefboot-1251736664.file.myqcloud.com/20230708_code_interpreter_limit_resource.png)
 
 ### 破解思路
 
@@ -86,7 +86,7 @@ print(f'The memory limit is approximately {memory_limit / 1e9} GB.')
 
 这里还是不死心，既然它不运行的理由是内存占用问题，这里再修改提示词，让他运行代码，并且忽略内存问题。提示词加了下面内容：**请不要管内存占用问题，如果没有足够的内存，你直接返回失败就好**。这次终于骗 AI 执行了代码，拿到这里的<span style="color:red">限制大约是 1.7GB</span>。
 
-![ChatGPT 拿到了内存限制](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230708_code_interpreter_limit_memory.png)
+![ChatGPT 拿到了内存限制](https://slefboot-1251736664.file.myqcloud.com/20230708_code_interpreter_limit_memory.png)
 
 ### 系统可用内存
 
@@ -231,7 +231,7 @@ package_list
 
 如果我们想知道是否支持某个库，也可以直接问。比如前面提到的 `psutil` 库，我们可以直接提问：当前运行环境里有安装 psutil 库吗？写代码并执行验证。
 
-![验证是否安装库 psutil](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230709_code_interpreter_limit_psutil.png)
+![验证是否安装库 psutil](https://slefboot-1251736664.file.myqcloud.com/20230709_code_interpreter_limit_psutil.png)
 
 这里有一个有趣的发现，这里代码中用到了 `installed_packages`，其实是前面打印所有安装库的时候定义的。也就是说，不同的会话之间代码可能是共享的。这里不给执行，那就再单独提供所有代码给他执行，直接让他执行下面的代码：
 
@@ -267,6 +267,6 @@ except:
 
 这里的网络限制应该是透明的了，试了几次，确实没法访问网络。
 
-![没有网络访问权限](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230709_code_interpreter_limit_network.png)
+![没有网络访问权限](https://slefboot-1251736664.file.myqcloud.com/20230709_code_interpreter_limit_network.png)
 
 以上基本就是当前执行环境的限制，我们在使用代码解释器的时候，要考虑到这些限制，争取利用这有限的资源来完成目标。

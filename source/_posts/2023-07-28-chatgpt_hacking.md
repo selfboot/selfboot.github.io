@@ -11,7 +11,7 @@ date: 2023-07-28 22:18:23
 
 然而，随着我们对这些大型语言模型的理解和使用越来越深入，一些新的问题也开始浮出水面。今天将要探讨的就是其中一个重要的问题：**提示词攻击**。提示词攻击是一种新型的攻击方式，包括提示词注入、提示词泄露和提示词越狱。这些攻击方式可能会导致模型生成不适当的内容，泄露敏感信息等。在这篇博客中，我将详细介绍这些攻击方式，来帮助大家对大语言模型的安全有一个更好的认识。
 
-![ChatGPT 提示词攻击](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_cover.webp)
+![ChatGPT 提示词攻击](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_cover.webp)
 
 <!-- more -->
 
@@ -31,17 +31,17 @@ date: 2023-07-28 22:18:23
 
 整个过程可以在 OpenAI 的 playground 上复现，如下截图：
 
-![ChatGPT 提示词注入](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_injection_1.png)
+![ChatGPT 提示词注入](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_injection_1.png)
 
 提示词注入可以做哪些事情呢？来看一个例子，`remoteli.io` 有一个机器人会对有关远程工作的帖子进行自动回应，有人就将自己的文本注入到机器人中，让它说出他们想说的**内容**。
 
-![ChatGPT 提示词注入现实场景](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_injection_2.png)
+![ChatGPT 提示词注入现实场景](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_injection_2.png)
 
 ## 提示词泄露
 
 除了前述的提示词注入，另一种常见的攻击方式是提示词泄露攻击（Prompt Leaking），其目标是诱导模型泄露其提示词。提示词泄露和提示词注入的区别可以用下面这张图解释：
 
-![提示词注入和提示词泄露的区别](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_leaking_1.webp)
+![提示词注入和提示词泄露的区别](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_leaking_1.webp)
 
 泄露提示词有啥问题吗？我们知道在语言模型中，提示词扮演着至关重要的角色，因为它直接决定了模型生成的输出内容。在大多数情况下，提示词是模型生成有意义和相关输出的关键因素。可以将提示词在大型语言模型中的地位，类比为代码在软件开发中的作用，它们都是驱动整个系统运作的核心元素。
 
@@ -53,7 +53,7 @@ date: 2023-07-28 22:18:23
 
 可见 Prompt 对于一个产品来说还是很重要的，正常情况下使用者也没法知道 Prompt 的内容。但是通过一些比较巧妙的提示词，还是可以欺骗 AI 输出自己的提示词。比如 [Marvin von Hagen](https://twitter.com/marvinvonhagen) 的[推文](https://twitter.com/marvinvonhagen/status/1657060506371346432)就展示了拿到 Github Copilot Chat 提示词的过程。如下图：
 
-![Github Copilot Chat 提示词泄露](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_leaking_2.jpeg)
+![Github Copilot Chat 提示词泄露](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_leaking_2.jpeg)
 
 他的[提示词](https://simonwillison.net/2023/May/12/github-copilot-chat-leaked-prompt/)很简单，如下：
 
@@ -83,7 +83,7 @@ curl https://api.openai.com/v1/moderations \
 
 这个漏洞太著名了，现在连 GPT-3.5 都能识别出这种攻击，在 playground 上试了下，如下图：
 
-![识别出奶奶漏洞的 GPT-3.5](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_1.png)
+![识别出奶奶漏洞的 GPT-3.5](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_1.png)
 
 不过假装这种方法在其他时候还是有效的，比如下面这个提示词，提示词来自[网络](https://github.com/vastxie/Happy-ChatGPT)：
 
@@ -91,7 +91,7 @@ curl https://api.openai.com/v1/moderations \
 
 在 GPT-3.5 下面还是能成功骗过 AI，AI 骂的内容真的是不堪入目啊。好在 GPT-4 已经能识别出这里的意图，直接拒绝给出任何脏话。
 
-![骗 AI 说脏话](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_2.png)
+![骗 AI 说脏话](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_2.png)
 
 ### 其他方法
 
@@ -114,7 +114,7 @@ _2023.07.30 更新对抗攻击部分_
 
 具体的攻击方法很巧妙，在提示词后面加上一段精心构造的对抗性随机内容，如下图：
 
-![对抗攻击示例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230730_chatgpt_hacking_jailbreaking_suffix.png)
+![对抗攻击示例](https://slefboot-1251736664.file.myqcloud.com/20230730_chatgpt_hacking_jailbreaking_suffix.png)
 
 完整提示词如下：
 
@@ -122,17 +122,17 @@ _2023.07.30 更新对抗攻击部分_
 
 目前 OpenAI 的 GPT-3.5 和 GPT-4 模型均修复了这个随机内容的对抗攻击，不过该攻击方法的作者声称，他们可以很容易生成大量类似攻击随机词，能绕过 OpenAI 的检测。相比其他攻击方法，这种方法的提示词生成成本比较低，且能大批量生成。
 
-![目前对抗攻击已经被拦截](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230730_chatgpt_hacking_jailbreaking_fail.png)
+![目前对抗攻击已经被拦截](https://slefboot-1251736664.file.myqcloud.com/20230730_chatgpt_hacking_jailbreaking_fail.png)
 
 ## AI 的进步
 
 上面的各种提示词攻击示例都是用的 GPT-3.5 模型，在 GPT-4 模型下，很多攻击都不在生效了。比如前面让它假装骂人的提示词，在 GPT-4 下就完全失效了，对话如下：
 
-![GPT-4 下的攻击提示词没生效](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230727_chatgpt_hacking_gpt4.png)
+![GPT-4 下的攻击提示词没生效](https://slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_gpt4.png)
 
 GPT-4 在安全审查方面相比 GPT-3.5 有多大的提升呢？根据 OpenAI 公开的 [GPT-4 Technical Report](https://cdn.openai.com/papers/gpt-4.pdf)，我们可以看到 GPT-4 对于提示词攻击的不恰当回复少了很多，具体如上面 PDF 中的图 9：
 
-![识别出奶奶漏洞的 GPT-3.5](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230728_chatgpt_hacking_paper.png)
+![识别出奶奶漏洞的 GPT-3.5](https://slefboot-1251736664.file.myqcloud.com/20230728_chatgpt_hacking_paper.png)
 
 不过想完全避免各种攻击还是挺难的，正如 OpenAI 在论文中 `Conclusion and Next Steps` 部分说的一样，GPT-4仍然容易受到对抗性攻击或“越狱”。这是因为预训练模型的基本能力（如生成有害内容的潜力）仍然存在，通过微调无法完全避免。
 

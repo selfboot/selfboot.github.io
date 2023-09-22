@@ -36,12 +36,12 @@ description: 本文是广州买房攻略的选房考虑因素篇，包含买房�
 6. 尺寸合理：究竟多大的空间尺寸能够满足人们生活的最低限度？考虑限度主要从家具的尺寸出发，从电视机、床、柜子等的长宽高推导最低尺寸要求。
 
 比如下面的这些户型：
-![户型参考](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_think_good.gif)
+![户型参考](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_think_good.gif)
 
-![户型参考](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_think_good.gif)
+![户型参考](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_think_good.gif)
 
 （户型动图来自  [84㎡三房还能这么做？这次服了中海！](https://mp.weixin.qq.com/s/aM0AGaRhvQLh66BRC8OGag)）
 
 网上有人提供的一个户型打分表，可以作为参考。
 
-![户型打分表](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_think_1.png)
+![户型打分表](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_think_1.png)

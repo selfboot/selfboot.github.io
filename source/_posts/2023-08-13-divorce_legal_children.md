@@ -14,7 +14,7 @@ date: 2023-08-13 20:05:49
 [必读的离婚法律指南：财产分割](https://selfboot.cn/2023/07/23/divorce_legal_money/)
 [离婚财产分割：父母给的首付钱如何分？](https://selfboot.cn/2023/07/29/divorce_legal_money_parent/)
 
-![离婚子女抚养权，抚养费，探视权等说明的思维导图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230813_divorce_legal_children_1.png)
+![离婚子女抚养权，抚养费，探视权等说明的思维导图](https://slefboot-1251736664.file.myqcloud.com/20230813_divorce_legal_children_1.png)
 
 <!-- more -->
 
@@ -115,4 +115,4 @@ date: 2023-08-13 20:05:49
 ---
 欢迎扫码关注[小盛律师](https://selfboot.cn/links)的公众号，及时收到更新通知～
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+![关注公众号](https://slefboot-1251736664.file.myqcloud.com/20230721_wx_qrcode.png)

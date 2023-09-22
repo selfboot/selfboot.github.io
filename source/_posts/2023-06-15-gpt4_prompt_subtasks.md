@@ -35,7 +35,7 @@ description: 文章详细介绍了如何使用 GPT4 来拆分复杂任务，包�
 
 因为微信的帮助文档内容太长，没办法作为**引用文本**一次性提供给 GPT4 作为提示词。所以可以考虑拆分下这里的问题，一个不错的拆分方法就是先让 GPT 分类问题，然后根据分类来提供这个分类下的帮助文档作为提示词。 
 
-![构造微信客服机器人](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230615_gpt4_prompt_subtasks.png)
+![构造微信客服机器人](https://slefboot-1251736664.file.myqcloud.com/20230615_gpt4_prompt_subtasks.png)
 
 上面在 [OpenAI playground](https://platform.openai.com/playground) 上创建了一个简单示例，通过让 GPT4 先对问题分类，然后再根据不同类型的子问题和引用文本，来生成答案。注意这里示例把整个内容放到 system msg，实际构建客服的时候，第一步只用让 GPT4 分类，然后根据分类信息，来选择文档作为引用文本，重新提问。
 
@@ -87,7 +87,7 @@ description: 文章详细介绍了如何使用 GPT4 来拆分复杂任务，包�
 
 可以看到已经能成功反转单词了，如下结果：
 
-![反转字符串拆分子任务](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230629_gpt4_prompt_subtasks_reverse.png)
+![反转字符串拆分子任务](https://slefboot-1251736664.file.myqcloud.com/20230629_gpt4_prompt_subtasks_reverse.png)
 
 上面的提示词有时候也不稳定（**如果不让模型输出中间过程，效果会更差**），其实为了准确地执行这个任务，通常需要一个简单的算法，而不是一个复杂的语言模型。在编程中，反转一个字符串是一个基本操作，可以通过简单的代码来实现。我们可以让 GPT 来写一段反转单词的代码，这样不受任何语言模式的影响，可以准确地反转任何给定的单词。
 

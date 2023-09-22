@@ -27,6 +27,6 @@ Github 名片:
 
 <div class="pure-g">
   <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
-    <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <img src="https://slefboot-1251736664.file.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
   </div>
 </div>

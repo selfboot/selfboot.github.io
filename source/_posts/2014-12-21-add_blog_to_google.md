@@ -84,9 +84,9 @@ $ npm install hexo-generator-sitemap --save
 [如何向google提交sitemap（详细）](http://fionat.github.io/blog/2013/10/23/sitemap/)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141221_google_no_result.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141221_google_result.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141221_sitemap.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20141221_webmaster.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20141221_google_no_result.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20141221_google_result.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20141221_sitemap.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20141221_webmaster.png
 
 

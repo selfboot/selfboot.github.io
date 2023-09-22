@@ -9,7 +9,7 @@ date:
 
 ChatGPT 刚出来没多久，微软就预告了一个激动人心的产品 [Microsoft 365 Copilot](https://blogs.microsoft.com/blog/2023/03/16/introducing-microsoft-365-copilot-your-copilot-for-work/)，准备将 ChatGPT 的能力融入到 Office 三件套中去，来为 Office 套件提供新的活力。
 
-![ChatGPT Office copilot](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230911_chatgpt_office_worker_index.png)
+![ChatGPT Office copilot](https://slefboot-1251736664.file.myqcloud.com/20230911_chatgpt_office_worker_index.png)
 
 <!-- more -->
 

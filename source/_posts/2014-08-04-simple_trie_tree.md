@@ -143,6 +143,6 @@ def delete_operation(current_word, current_node):
 
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140804_simple_trie.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20140804_simple_trie.png
 [2]: https://gist.github.com/xuelangZF/1848c9f1c70ab0a74627
 

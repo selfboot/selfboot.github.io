@@ -14,7 +14,7 @@ date: 2023-08-08 22:09:00
 
 一开始通过排除法来分析，逐步替换怀疑有问题的模块，结果并没有定位到问题。后来通过抓包，分析正常包与超时包的区别，合理猜测有问题的部分并进行验证，最终定位到原来是 `Expect: 100-continue` 这个请求 HTTP header 导致了这里的超时。整个排查和修复过程，踩了不少坑，记录下来可以给大家参考。
 
-![WireShark 抓包 HTTP expect: 100-continue 的包](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230807_http_100_continue_summary.png)
+![WireShark 抓包 HTTP expect: 100-continue 的包](https://slefboot-1251736664.file.myqcloud.com/20230807_http_100_continue_summary.png)
 
 <!-- more -->
 
@@ -98,11 +98,11 @@ sudo tcpdump -i any -s 0 -w output.pcap 'host 11.**.**.** and port 1***'
 
 首先抓 go client(IP 最后是143) 和 Go Server B(IP最后是239) 的包，整个请求响应是完全符合预期的，可以看到 0.35 s 左右请求 TCP 发送完毕，然后在 1.8s 左右开始接收回包。HTTP 请求耗时 1.5s 左右，回包内容也是完全正确的。
 
-![WireShark 抓正常回复的包](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230808_http_100_continue_go_client_succ.png)
+![WireShark 抓正常回复的包](https://slefboot-1251736664.file.myqcloud.com/20230808_http_100_continue_go_client_succ.png)
 
 接着是 C++ client 和 Go Server B 的包，这里 C++ 的 client 超时时间设置的 10 秒。可以看到这里中间收到了一个 100 continue 的 HTTP response，然后等到 10 s，客户端关闭了 TCP 连接。
 
-![WireShark 抓超时的包](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230807_http_100_continue_fail.png)
+![WireShark 抓超时的包](https://slefboot-1251736664.file.myqcloud.com/20230807_http_100_continue_fail.png)
 
 `100 continue` 是从哪里冒出来的？为啥 Go client 请求服务没有，而 C++ client请求会有呢？
 
@@ -149,7 +149,7 @@ Expect: 100-continue
 
 可以看到，很多服务并没有很好支持 `Expect: 100-continue` 头部，不过 libcurl 也考虑了这种情况，在等待 1s 超时时间后，会继续发 body。从前面的抓包中也能验证这一点：
 
-![WireShark Expect: 100-continue 等待 1s](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230808_http_100_continue_wait1000.png)
+![WireShark Expect: 100-continue 等待 1s](https://slefboot-1251736664.file.myqcloud.com/20230808_http_100_continue_wait1000.png)
 
 这里 libcurl client(IP最后是 253) 发送 header 后，没有收到服务端回复，所以等待了 1s 左右，开始继续发请求 body。正常情况下，服务器等收到完整响应后，再进行处理然后回包，最多也就浪费了 1s 的等待时间。不过这里我们的 server 表现比较奇特，在收到完整包后，先是回复了 100-continue，然后就没有任何反应了。导致 client 一直在等，直到 10s 超时。这又是什么原因导致的呢？
 
@@ -157,7 +157,7 @@ Expect: 100-continue
 
 先来回顾下前面做的实验中，已经知道 C++ Client A 请求 Go Mock Server 的时候，带了 Expect:100-continue 头部，gin 框架的 HTTP server 也是可以正常回复的。整个请求和响应如下图：
 
-![WireShark Expect: 100-continue 正常的处理流程](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230808_http_100_continue_continue_succ.png)
+![WireShark Expect: 100-continue 正常的处理流程](https://slefboot-1251736664.file.myqcloud.com/20230808_http_100_continue_continue_succ.png)
 
 可以看到 gin 服务在接收到 header 后，直接回复了 100-continue，然后 client 继续传 body，gin 服务收完后，也是正常给了200 的回包。同样是 gin 的服务，**为啥请求我们业务的 Go 服务 B 就会超时呢**？
 
@@ -167,7 +167,7 @@ Expect: 100-continue
 
 Mesh 层的代码由专人维护，在提交 Issue 后难以确定何时能修复，而业务上又迫切需要解决该问题。于是就只好改 libcurl 的调用方法，在请求的时候去掉这个请求头。问了下 ChatGPT，用 libcurl 发送网络请求时，如何去掉这个 header，得到下面的方法。
 
-![C++ libcurl 请求去掉 Expect: 100-continue header](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230808_http_100_continue_del.png)
+![C++ libcurl 请求去掉 Expect: 100-continue header](https://slefboot-1251736664.file.myqcloud.com/20230808_http_100_continue_del.png)
 
 于是就开心的去改了业务发请求部分的代码，在发起网络请求前设置 header，改动如下：
 

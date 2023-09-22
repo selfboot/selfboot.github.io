@@ -16,19 +16,19 @@ date: 2023-09-21 12:04:30
 
 Midjourney 通过简单的文本描述就能生成具有独特艺术风格的图像，可用于创作海报、插画等。而 Stable Diffusion 则以其精细纹理和细节而闻名，更贴近照片般的效果。尽管这两者已可根据文字创作出惊艳的视觉效果，但仍存在**可控性有限、难以处理抽象概念**等问题。此外，这两款都需要使用者了解很多精巧的 Prompt 技巧，比如指定风格，特效等。
 
-![Midjourney, Stable Diffusion, ChatGPT&DALL·E 3](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230921_chatgpt_dalle3_coming_vs.png)
+![Midjourney, Stable Diffusion, ChatGPT&DALL·E 3](https://slefboot-1251736664.file.myqcloud.com/20230921_chatgpt_dalle3_coming_vs.png)
 
 <!-- more -->
 
 最近，OpenAI 宣布将在 ChatGPT 中融合最新的文生图模型 [DALL·E 3](https://openai.com/dall-e-3)，预计 10 月份上线。不过放出了一个效果视频，从视频看，真的很值得期待。先来看一下官网放出的片段吧：
 
-![超级厉害的向日葵刺猬 super-duper sunflower hedgehog](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230921_chatgpt_dalle3_coming_preview.gif)
+![超级厉害的向日葵刺猬 super-duper sunflower hedgehog](https://slefboot-1251736664.file.myqcloud.com/20230921_chatgpt_dalle3_coming_preview.gif)
 
 ## DALL·E 3 的文本理解
 
 玩过 Midjourney 和 Stable Diffusion 的都知道，这两个需要很专业的 Prompt 技巧才能生成想要的图片。通过直白的文字描述，可能也会生成精美的图片，但不一定是你想要的“场景”。Midjourney 有专门的[提示教程](https://docs.midjourney.com/docs/explore-prompting)来教你生成想要的图片，
 
-![Midjourney 的专业提示词](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230921_chatgpt_dalle3_coming_midjourney.png)
+![Midjourney 的专业提示词](https://slefboot-1251736664.file.myqcloud.com/20230921_chatgpt_dalle3_coming_midjourney.png)
 
 而 DALL·E 则直接打破这点，不需要专业的提示词，只用文字描述想要的场景即可。
 
@@ -38,7 +38,7 @@ Midjourney 通过简单的文本描述就能生成具有独特艺术风格的图
 
 官方也专门提供了一个例子：
 
-![DALL·E 3真正理解了文本](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230921_chatgpt_dalle3_coming_case.png)
+![DALL·E 3真正理解了文本](https://slefboot-1251736664.file.myqcloud.com/20230921_chatgpt_dalle3_coming_case.png)
 
 可以看到描述中的很多关键细节，在图片中都有不错的体现。考虑到 OpenAI 在文本理解上的绝对实力，DALL·E 3 有这个绘图能力也是可以解释的通的。
 
@@ -52,7 +52,7 @@ Midjourney 通过简单的文本描述就能生成具有独特艺术风格的图
 
 于是加了一个房子，并且邮箱上有一个名字了！
 
-![DALL·E 3: Larry! 's house](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230921_chatgpt_dalle3_coming_house.png)
+![DALL·E 3: Larry! 's house](https://slefboot-1251736664.file.myqcloud.com/20230921_chatgpt_dalle3_coming_house.png)
 
 这种能力在其他的文生图 AI 里是没有的，之前就一直想对生成的图片接着做一些修改，但是效果都很差。不止可以修改图片，ChatGPT 还可以接着聊天，让 AI 给你提供一些图片相关的灵感。比如可以接着让 ChatGPT 解释为啥 Larry 如此可爱，会知道原来 Larry 有一颗善良的心，很喜欢助人为乐。接着让它继续画图，来表现 Larry 的助人为乐，提示词：
 
@@ -60,7 +60,7 @@ Midjourney 通过简单的文本描述就能生成具有独特艺术风格的图
 
 于是来了一个能表现 Larry 友好的图片了：
 
-![DALL·E 3: Larry! 's kind hearted](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230921_chatgpt_dalle3_coming_kind.png)
+![DALL·E 3: Larry! 's kind hearted](https://slefboot-1251736664.file.myqcloud.com/20230921_chatgpt_dalle3_coming_kind.png)
 
 根据放出来的视频，这里的生成速度也是很快的，几乎是秒生成。另外，Plus 用户可以直接使用，不用额外花钱。相比 Midjourney 的订阅费，OpenAI 的 20$ 一个月可真是太划算了。
 

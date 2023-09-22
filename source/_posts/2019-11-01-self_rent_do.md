@@ -23,7 +23,7 @@ description: 作者利用广州法院网上立案系统维权的详细步骤,包
 
 第一步就是选在哪个法院和以什么案由立案了。案由是提供有超级多选择项，慢慢找到最贴合自己的就行了，我选的是**租赁合同纠纷**。
 
-![租赁合同纠纷](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_do_1.png)
+![租赁合同纠纷](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_do_1.png)
 
 法院的话，没那么简单，原则上是需要到被告所在地的法院，二房东老家在一个很远的地方，我要过去得超级折腾了。不过我咨询了律师朋友，在起诉书里说明了下要在原告所在地法院的一些理由，然后选了离自己最近的海珠区人民法院。这里贴一下专业人士给的专业理由：
 
@@ -31,27 +31,27 @@ description: 作者利用广州法院网上立案系统维权的详细步骤,包
 
 接下来就是填写申请人和当事人信息，小本买卖，我也没有找代理人了，全部自己干，所以代理人那项就跳过了。接下来就是在网上提供各种材料了，看下面图：
 
-![网上提供各种材料](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_do_2.png)
+![网上提供各种材料](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_do_2.png)
 
 起诉状不用说了，就是咱们前面写好的了。证据材料就是租房合同，聊天记录，转账记录等各种电子版材料了。原告和被告身份证明材料就是身份证照片，证据材料清单就是把各个证据列好，起个名字。
 
 当事人电子邮件送达确认书和当事人送达地址确认书，这两个主要是给法院用来联系你的，官网有模板，自己下载后把主要信息填写下就可以。当事人电子邮件送达确认书长下面这样：
 
-![当事人电子邮件送达确认书](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_do_3.png)
+![当事人电子邮件送达确认书](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_do_3.png)
 
 最后一步就是信息确认了，确认没问题就收到了提交成功的通知啦。
 
-![提交成功了](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_do_4.png)
+![提交成功了](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_do_4.png)
 
 ## 进度追踪
 
 大功告成！你看就这么简单，材料准备好的话，全程不用一个小时。接下来就是等着法院联系了，中间还可以在诉讼中心官网查看进度：
 
-![在诉讼中心官网查看进度](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_do_5.png)
+![在诉讼中心官网查看进度](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_do_5.png)
 
 大概过了三四天，就收到了法院的短信：
 
-![法院的短信](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230722_self_rent_do_6.png)
+![法院的短信](https://slefboot-1251736664.file.myqcloud.com/20230722_self_rent_do_6.png)
 
 然后赶紧登录诉讼中心的网站，查看了进步，哈哈，进展很顺利，开始让我提交纸质材料了。
 

@@ -16,7 +16,7 @@ date: 2023-09-08 11:17:38
 [必读的离婚法律指南：子女的抚养权、抚养费与探视权](https://selfboot.cn/2023/08/13/divorce_legal_children/)
 
 
-![不得不防的离婚财产转移](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230908_divorce_money_hide.png)
+![不得不防的离婚财产转移](https://slefboot-1251736664.file.myqcloud.com/20230908_divorce_money_hide.png)
 
 <!-- more -->
 随着婚姻观念的变迁和社会经济的快速发展，离婚率逐年上升，离婚所涉及的法律问题也日益复杂化。其中，恶意转移财产作为离婚纠纷中的一大难题，越来越受到法律界和社会的关注。

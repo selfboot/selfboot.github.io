@@ -79,9 +79,9 @@ def get_topic(topic_id):
 [Flask 的 Context 机制](https://blog.tonyseek.com/post/the-context-mechanism-of-flask/)
 [Flask、Django、Pyramid三个框架的对比](http://python.jobbole.com/81396/)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161030_forum_design_flask_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161030_forum_design_flask_2.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161030_forum_design_flask_3.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161030_forum_design_flask_4.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20161030_forum_design_flask_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20161030_forum_design_flask_2.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20161030_forum_design_flask_3.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20161030_forum_design_flask_4.png
 
 

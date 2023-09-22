@@ -35,7 +35,7 @@ description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积
 
 函数的一个重要应用是在图形中。我们可以将函数的输入和输出值作为坐标点（x，y）在二维平面上绘制出来。这样，我们就可以看到函数的图形，它可以帮助我们更好地理解函数的性质。
 
-![函数的概念](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230614_gpt4_tutor_math.png)
+![函数的概念](https://slefboot-1251736664.file.myqcloud.com/20230614_gpt4_tutor_math.png)
 
 ## 极限和连续
 
@@ -64,7 +64,7 @@ description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积
 
 这是两个图形，分别用来解释极限和连续性的概念：
 
-![极限和连续性的概念](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230614_gpt4_tutor_math_2.png)
+![极限和连续性的概念](https://slefboot-1251736664.file.myqcloud.com/20230614_gpt4_tutor_math_2.png)
 
 左边的图形表示的是函数f(x) = sin(x)/x。当x接近0时，这个函数的值接近1，这就是极限的概念。我们说，当x趋向0时，函数f(x)的极限是1。
 
@@ -72,7 +72,7 @@ description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积
 
 > 我有一个函数 f(x) = sin(x)/x^2 ，这个函数是连续的吗？在  x=1 的时候，它的极限值是多少？
 
-![计算过程](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230614_gpt4_tutor_math_3.png)
+![计算过程](https://slefboot-1251736664.file.myqcloud.com/20230614_gpt4_tutor_math_3.png)
 
 [这里](https://www.wolframalpha.com/input?i=limit+sin%28x%29%2Fx%5E2+as+x-%3E1)是 wolframalpha 的计算过程，可以在这里看到函数的图像。
 
@@ -91,7 +91,7 @@ description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积
 
 在微积分中，定积分的计算可以通过求解以下积分公式来完成：
 
-![积分公式](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230614_gpt4_tutor_math_4.png)
+![积分公式](https://slefboot-1251736664.file.myqcloud.com/20230614_gpt4_tutor_math_4.png)
 
 这个公式表示的是求函数 `f(x)=x^2` 在区间 [0, 2] 上的积分，也就是求这个区间上函数图像与x轴之间的面积。
 
@@ -99,7 +99,7 @@ description: 本文章展示如何用一个 prompt 让 GPT 化身为大学微积
 
 > 这里是怎么算出来定积分的值的，一步步给出具体的计算步骤。另外定积分和前面说的积分是一回事吗？
 
-![定积分不定积分解释](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230614_gpt4_tutor_math_5.png)
+![定积分不定积分解释](https://slefboot-1251736664.file.myqcloud.com/20230614_gpt4_tutor_math_5.png)
 
 ## 深入学习的推荐
 

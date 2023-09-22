@@ -97,8 +97,8 @@ description: 这篇文章探讨了逃课的意义和价值，特别是在大学�
 
 [1]: http://selfboot.cn/2015/11/03/howto_find_algorithm/
 [2]: https://book.douban.com/subject/20432061/
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151125_one_problem.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151125_free_learning.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20151125_one_problem.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20151125_free_learning.png
 [5]: http://mooc.guokr.com/course/
 [6]: http://mooc.guokr.com/post/610535/
 [7]: http://mooc.guokr.com/post/610592/

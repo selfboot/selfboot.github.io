@@ -193,6 +193,6 @@ print d.name
 [如何看懂源代码--(分析源代码方法)](http://www.cnblogs.com/ToDoToTry/archive/2009/06/21/1507760.html)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160826_threadlocal_implement_1.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160826_threadlocal_implement_1.png
 
 

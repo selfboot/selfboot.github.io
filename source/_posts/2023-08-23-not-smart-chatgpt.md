@@ -14,7 +14,7 @@ GPT-4，这一人工智能的杰出代表，已经在许多方面超越了普通
 
 本文记录**日常使用** ChatGPT 过程中发现的一些错误回答，就像记录孩子成长过程中的出丑时刻一样。等到有一天 AI “长大成人”，也能一起回顾这些“小时候”的出丑时刻。
 
-![ChatGPT 的错误回答集锦](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230817_not_smart_chatgpt_robot.png)
+![ChatGPT 的错误回答集锦](https://slefboot-1251736664.file.myqcloud.com/20230817_not_smart_chatgpt_robot.png)
 
 <!-- more -->
 
@@ -79,7 +79,7 @@ ChatGPT 表现的很不错，直接告诉可以使用 Python 的 `pytz` 库来�
 
 其中 `seperator` 是分隔符，`question` 则是从其他地方读到的咨询内容。如果咨询内容不为空，则一切符合预期，但是一旦咨询内容为空，ChatGPT 就会返回一个很奇怪的结果，如下图：
 
-![ChatGPT 幻觉：房东不退押金](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230821_not_smart_chatgpt.png)
+![ChatGPT 幻觉：房东不退押金](https://slefboot-1251736664.file.myqcloud.com/20230821_not_smart_chatgpt.png)
 
 难道广州的房东经常不退租客押金，被 ChatGPT 都从网上学到了？有点让人啼笑皆非了。不止在 ChatGPT3.5 下会有这个问题，最新的 GPT4 模型，也是会有同样的问题。
 
@@ -121,7 +121,7 @@ def 提取位置信息(text: str) -> str:
 
 这个大聪明怎么忽然这么笨啦？`提取位置信息(text)` 这都能拿出来作为 python 代码，也太敷衍了。就这还大言不惭，让我通过安装 Langchain 库并运行上述代码来测试这个脚本。没办法，只好提醒他用插件重新读文档来实现，终于变聪明了。
 
-![用插件学习后的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230821_not_smart_chatgpt_webpolit.png)
+![用插件学习后的 ChatGPT](https://slefboot-1251736664.file.myqcloud.com/20230821_not_smart_chatgpt_webpolit.png)
 
 ## 图像识别错误
 
@@ -138,7 +138,7 @@ ChatGPT 给出了自己的步骤，看起来是很合理：
 
 然后就是第一步，识别红色方框的坐标位置。信誓旦旦说成功识别了红色方框的坐标位置，它位于图像的 (562，474) 位置，并具有 142 的宽度和 172 的高度。还好心好意地用**蓝色方框**在图片上标记了出来，如下图：
 
-![图像识别错误的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230822_not_smart_chatgpt_cv.png)
+![图像识别错误的 ChatGPT](https://slefboot-1251736664.file.myqcloud.com/20230822_not_smart_chatgpt_cv.png)
 
 把图像中的脸部识别成了红色方框部分，看了下代码，应该是颜色的阈值没设置对导致的。后面把任务拆分了下，让它只识别红色方框位置，同时把方框的红色搞得稍微粗了些，ChatGPT 就能正常识别了。
 
@@ -185,7 +185,7 @@ digraph LinkedList {
 
 于是我就拿源码贴过去，发现语法都有错误，生成的图片也不对。head 和 tail 画不对，还多了个 svg 出来，如下图了：
 
-![画不出一个简单链表 digraph 的 ChatGPT](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230822_not_smart_chatgpt_graphviz.png)
+![画不出一个简单链表 digraph 的 ChatGPT](https://slefboot-1251736664.file.myqcloud.com/20230822_not_smart_chatgpt_graphviz.png)
 
 然后试着换了各种更加清晰的提示词，ChatGPT 总是给不出正确的源码，给的许多源码也都有语法错误。难道数据集中没有很多Graphviz 绘图的语料，导致 ChatGPT 没有学会？
 
@@ -215,7 +215,7 @@ top_50_jieba_words
 
 然后 ChatGPT 就开始运行代码，果不其然，发现没有安装 jieba 这个库 `No module named 'jieba'`。然后终于意识到当前环境中没有安装 jieba 分词库，所以无法直接使用。
 
-![Code interpreter 加载 jieba 库失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230825_not_smart_chatgpt_jieba.png)
+![Code interpreter 加载 jieba 库失败](https://slefboot-1251736664.file.myqcloud.com/20230825_not_smart_chatgpt_jieba.png)
 
 这个例子其实 AI 的表现也是可以理解的，毕竟这种错误人也经常犯，经常是代码跑一般才发现没有安装某个库。不过 AI 还是可以表现的更好些，可以在跑失败的时候，告诉我怎么**手动在当前环境安装这个库**。毕竟，你都知道我想用这个库，而你也有方法安装这个库，那为啥不告诉我呢？看来还是不够聪明呀～
 

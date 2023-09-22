@@ -16,7 +16,7 @@ GPT4 作为一种先进的语言生成模型，目前在聊天场景中大放异
 
 (**写这篇文章的时候，GPT4 即将对所有 Plus 用户开放 Code Interpreter，到时候可以直接上传文件，让 AI 写代码并且执行，来分析数据，创建表格等。到时候 GPT4 能完成的工作会更多了，可以期待。**)
 
-![即将到来的 Code Interpreter](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230707_gpt4_worker_copilot_code_interpreter.png)
+![即将到来的 Code Interpreter](https://slefboot-1251736664.file.myqcloud.com/20230707_gpt4_worker_copilot_code_interpreter.png)
 
 <!--more-->
 
@@ -58,7 +58,7 @@ done < <(tail -n +2 "$FILE_PATH") # 跳过 CSV 文件的标题行
 
 除了上面的脚本工作，开发中也会用 Excel 处理一些简单数据。Excel 的功能太过强大，没有深入学习的话，还是很难用的好。比如有一个简单的对比去重任务，**在一个 Excel 中，有两列数据，P 和 U，找到所有在 P 和 U 都有的列，然后删除对应的行**。交给 GPT4 来完成的话，就很简单，一步步傻瓜式跟着操作就行。
 
-![GPT4 的详细 Excel 操作教程](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230707_gpt4_worker_copilot_excel_oper.png)
+![GPT4 的详细 Excel 操作教程](https://slefboot-1251736664.file.myqcloud.com/20230707_gpt4_worker_copilot_excel_oper.png)
 
 ## 解释、优化代码
 
@@ -254,4 +254,4 @@ def test_is_valid_url(url, expected):
 
 这还是只刚出道没多久的 GPT4，等后面 GPT5，GPTX 出来，会是一番怎么样的场景，真让人期待。最后放一张微软的 AI 发展历程的一个手绘图片，等待更强大的 AI 的到来。
 
-![AI 简单介绍的一个手绘](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230707_gpt4_worker_copilot_ai_beginners.png)
+![AI 简单介绍的一个手绘](https://slefboot-1251736664.file.myqcloud.com/20230707_gpt4_worker_copilot_ai_beginners.png)

@@ -8,7 +8,7 @@ description:
 
 ChatGPT 问世后，OpenAI 就开源了模型调用的 Python 库 [openai-python](https://github.com/openai/openai-python)。这个库功能十分齐全，封装了 OpenAI 对外公布的 API，使用起来也十分简单。
 
-![OpenAI-python 库的封装](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230831_openai_python_source_summary.webp)
+![OpenAI-python 库的封装](https://slefboot-1251736664.file.myqcloud.com/20230831_openai_python_source_summary.webp)
 
 本文就来剖析一下 OpenAI Python 库的源码，希望能够帮助大家理解它的实现原理。
 <!-- more -->
@@ -18,7 +18,7 @@ ChatGPT 问世后，OpenAI 就开源了模型调用的 Python 库 [openai-python
 
 ## 核心类实现
 
-![openai python 库的核心类图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230829_openai_python_source_classes_core.png)
+![openai python 库的核心类图](https://slefboot-1251736664.file.myqcloud.com/20230829_openai_python_source_classes_core.png)
 
 
 ## Python 高级用法

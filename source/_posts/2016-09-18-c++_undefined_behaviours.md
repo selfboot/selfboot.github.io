@@ -150,5 +150,5 @@ int main() {
 [Where do I find the current C or C++ standard documents?](http://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160918_ub.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160918_ub.png
 

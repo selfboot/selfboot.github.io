@@ -44,7 +44,7 @@ GPT4 的部分插件还是能提高工作效率的，其中 noteable 可以写�
 我已经创建了一个名为 "China_Birth_Rate_Analysis.ipynb" 的 Python notebook。你可以点击[这里](https://app.noteable.io/f/f033b7db-8516-4543-b085-447dc449b97f/China_Birth_Rate_Analysis.ipynb)查看。
 
 接下来，我将在 notebook 中添加一些 Python 代码来创建出生人口的曲线走势图。这是从2013年到2022年中国出生人口的曲线走势图：
-![出生人口走势图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt4_plugin_noteable_analysis.png)
+![出生人口走势图](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt4_plugin_noteable_analysis.png)
 
 从图中可以看出，中国的出生人口在2016年达到了峰值，之后开始逐年下降。
 
@@ -120,7 +120,7 @@ print(f'20230503的留存率: {retention_rate_next_two_days * 100}%')
 接下来，我将在 notebook 中添加一些 Python 代码来创建留存率的图表。
 
 这是20230501号活跃的用户在20230502和20230503的留存率图表：
-![留存率曲线](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt4_plugin_noteable_analysis_2.png)
+![留存率曲线](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt4_plugin_noteable_analysis_2.png)
 
 从图中可以看出，20230502的留存率为33.33%，20230503的留存率为66.67%。
 
@@ -130,7 +130,7 @@ print(f'20230503的留存率: {retention_rate_next_two_days * 100}%')
 
 **ChatGPT:** 
 这是20230501号活跃的用户在20230502和20230503的留存率表格：
-![留存率表格](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt4_plugin_noteable_analysis_3.png)
+![留存率表格](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt4_plugin_noteable_analysis_3.png)
 
 ---  
 **Human:**  

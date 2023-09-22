@@ -11,7 +11,7 @@ GPT4 是 OpenAI 开发的大语言模型，可以生成文章、代码并执行�
 
 Claude2 的使用比较简单，直接访问 https://claude.ai 即可，不过要保证访问 `anthropic.com` 和 `claude.ai` 的 IP 地址是美国，相信这一点难不倒大家吧。如果觉得有点难，可以参考左耳朵耗子写的[上网指南](https://github.com/haoel/haoel.github.io)。
 
-![模型对比，图片来自 https://www.demandsage.com/chatgpt-vs-claude/](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_vs.png)
+![模型对比，图片来自 https://www.demandsage.com/chatgpt-vs-claude/](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_vs.png)
 
 <!--more-->
 
@@ -49,7 +49,7 @@ Claude2 的使用比较简单，直接访问 https://claude.ai 即可，不过�
 
 TK 当时用的 Claude+ 能给出不错的解释，知道这个对话用汤不热来传达性的双关和隐喻。Claude2 优化了道德审查能力，直接识别出涉及一些敏感话题，然后不给回答了。相比之下，GPT4 就比较傻了，只理解字面意思。回答对比如下图：
 
-![语义理解，Claude 理解双关和隐喻](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_mean_1.png)
+![语义理解，Claude 理解双关和隐喻](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_mean_1.png)
 
 再来看另一个例子，还是一个隐喻，具体文本如下：
 
@@ -57,7 +57,7 @@ TK 当时用的 Claude+ 能给出不错的解释，知道这个对话用汤不�
 
 可以看到 GPT4 和 Claude2 的理解也都基本是可以的，如下图：
 
-![语义理解，GPT4 稍微好一点](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_mean_2.png)
+![语义理解，GPT4 稍微好一点](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_mean_2.png)
 
 ### 文本生成
 
@@ -68,13 +68,13 @@ TK 当时用的 Claude+ 能给出不错的解释，知道这个对话用汤不�
 > 
 > 帮我续写，字数大概在 300 字左右，文笔要诙谐一点，风格要是中国现代小说的风格。
 
-![GPT4 和 Claude2 的小说创作](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_generate_3.png)
+![GPT4 和 Claude2 的小说创作](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_generate_3.png)
 
 GPT4 老老实实地生成了小说，总体文笔和情节还说的过去，不过里面有些情节不太符合常识，比如**熬夜打王者荣耀的太监**。可能中文语料里，熬夜打王者荣耀出现的次数太多了吧。Claude2 则承认自己在写小说方面不太擅长，然后给出了一些写作建议。
 
 写小说有点难度，来试试一个比较常见的**生成文本摘要**。我们选择科幻小说《三体3：死神永生》的章节：“广播纪元 7 年，程心”的开头部分，效果如下：
 
-![GPT4 和 Claude2 的文本摘要总结](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_generate_4.png)
+![GPT4 和 Claude2 的文本摘要总结](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_generate_4.png)
 
 GPT4也可以再简短一点，生成如下：程心经过五年基因克隆和视网膜移植治疗，恢复了视力，同时她的公司在近地轨道太空建筑业中崭露头角，而艾AA虽经历移民艰难，但未显岁月痕迹。总体看两个模型能力基本一样，没有明显优劣。
 
@@ -86,11 +86,11 @@ GPT4也可以再简短一点，生成如下：程心经过五年基因克隆和�
 
 GPT4 回答鲁迅和周树人是同一人，都是现代中国著名的文学家周樟寿的笔名。而 Claude2 的回答就不着调了，还说根据公开报道，鲁迅和周树人是良好的朋友与合作伙伴关系。
 
-![鲁迅打了周树人](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230719_claude_gpt4_compare_mean_5.png)
+![鲁迅打了周树人](https://slefboot-1251736664.file.myqcloud.com/20230719_claude_gpt4_compare_mean_5.png)
 
 再来看另一个比较经典的问题：“我爸我妈结婚为什么没有邀请我”，GPT4 的回答考虑的逻辑就很完备，知道分结婚前出生和结婚后出生这两种情况了。Claude2 知识考虑了结婚前出生，另外多了一些道德引导，完整如下图：
 
-![经典父母结婚请客问题](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230719_claude_gpt4_compare_mean_6.png)
+![经典父母结婚请客问题](https://slefboot-1251736664.file.myqcloud.com/20230719_claude_gpt4_compare_mean_6.png)
 
 ## 数学问题
 
@@ -100,7 +100,7 @@ GPT4 回答鲁迅和周树人是同一人，都是现代中国著名的文学家
 
 先来看看简单的鸡兔同笼问题，我们让 GPT4 和 Claude2 自己生成题目并解决，发现两者的能力基本一致，如下图所示：
 
-![简单鸡兔同笼问题](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_claude_gpt4_compare_math.png)
+![简单鸡兔同笼问题](https://slefboot-1251736664.file.myqcloud.com/20230715_claude_gpt4_compare_math.png)
 
 ### 微积分
 
@@ -110,7 +110,7 @@ GPT4 回答鲁迅和周树人是同一人，都是现代中国著名的文学家
 
 两个模型回答都还可以，GPT4 的解释稍微清晰一点，如下图：
 
-![微积分知识的回答](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230719_claude_gpt4_compare_math_2.png)
+![微积分知识的回答](https://slefboot-1251736664.file.myqcloud.com/20230719_claude_gpt4_compare_math_2.png)
 
 ## 代码能力
 
@@ -124,7 +124,7 @@ GPT4 回答鲁迅和周树人是同一人，都是现代中国著名的文学家
 
 GPT4 的代码用循环实现了欧几里得辗转相除法，给了完整的解释和代码，以及简单测试。而 Claude2 则给出了辗转相除法的递归实现和简单测试，对代码进行了简单解释。如下：
 
-![最大公约数生成的代码](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_code_1.png)
+![最大公约数生成的代码](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_code_1.png)
 
 我们知道 Python 中没有尾递归优化，所以递归深度太深的话，可能会栈溢出，抛出一个 RecursionError 错误。拿这一点来继续追问 GPT4 和 Claude2，提示词分别如下：
 
@@ -137,7 +137,7 @@ Claude2 也知道 Python 递归深度限制，给出了循环版本的实现。�
 
 完整的回答如下图：
 
-![对于 Python 递归深度问题的追问结果](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_code_2.png)
+![对于 Python 递归深度问题的追问结果](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_code_2.png)
 
 ### 解释代码
 
@@ -148,11 +148,11 @@ Claude2 也知道 Python 递归深度限制，给出了循环版本的实现。�
 
 从回复上看，GPT4 的更加详细点，对每个字段都有简单说明，Claude2 则对整理的设计思路讲的比较详细些。如下图：
 
-![openai_response.py 实现的解释](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_code_3.png)
+![openai_response.py 实现的解释](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_code_3.png)
 
 接着再详细问一些 Python 语法相关的知识点，`@property` 和 `-> Optional[str]` 分别是什么意思。两个模型都回答对了，不过 GPT4 的回答明显会更加详细，并且有一定的扩展。会回答在实际运行中，Python 不会强制检查类型注解的正确性，**类型注解主要用于提示和文档**，以及一些集成开发环境（IDE）和工具会**使用类型注解来提供更好的代码完成和错误检查**。
 
-![Python 实现技术细节的回答](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_code_4.png)
+![Python 实现技术细节的回答](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_code_4.png)
 
 ## 人文历史
 
@@ -167,7 +167,7 @@ Claude2 也知道 Python 递归深度限制，给出了循环版本的实现。�
 
 GPT4 的总结评价也比较到位：诸葛亮是中国历史上著名的政治家、军事家、文学家、书法家，被尊称为"睿智的孔明"或"诸葛孔明"，在中国历史上享有极高的威望。如下图：
 
-![历史问题的回答](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_history.png)
+![历史问题的回答](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_history.png)
 
 在评价汉武帝的时候，两个模型基本也都给了正面和负面的评价，不过 Claude2 的回答有点搞笑，在提到成就的时候有下面一条：
 
@@ -185,7 +185,7 @@ GPT4 的总结评价也比较到位：诸葛亮是中国历史上著名的政治
 
 两个模型都给出了还算合理的解决代码，区别在于 GPT4 直接回答自己是语言模型**没法运行代码**(这里没用Code Interpreter)，但是 Claude2 则出现幻觉，说已经在本地机器上运行，当 n=1000 时，计算时间大约为0.4秒。如下图：
 
-![GPT4 和 Claude2 的幻觉](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230718_claude_gpt4_compare_hallucination.png)
+![GPT4 和 Claude2 的幻觉](https://slefboot-1251736664.file.myqcloud.com/20230718_claude_gpt4_compare_hallucination.png)
 
 除了幻觉这一点，对比回答质量，GPT4 还是会好很多，给出的解释也会详细很多：`numpy.linalg.eig` 函数在底层实现上依赖于 `BLAS(LAPACK)` 库，这些库可能会根据安装和编译时的配置自动实现并行化。不过 Python 自身是无法控制这个过程的。此外，验证并行化的效果通常需要在多核 CPU 上运行，如果只有单核 CPU，那么并行化不会带来任何性能提升。
 

@@ -7,14 +7,14 @@ description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法�
 广东瑞轩律师事务所-执业律师。如有法律事务需求，可以加微信详聊：
 
 <div style="display: flex; justify-content: space-start;">
- <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_lawer_sheng_wx_small.png" style="height: 200px;">
+ <img src="https://slefboot-1251736664.file.myqcloud.com/20230721_lawer_sheng_wx_small.png" style="height: 200px;">
 </div>
 
 ## 小盛律师
 
 可以在 [全国律师执业诚信信息公式平台](https://credit.acla.org.cn/) 查询验证。
 
-![全国律师执业诚信信息公式平台](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230909_lawer_sheng_rui.png)
+![全国律师执业诚信信息公式平台](https://slefboot-1251736664.file.myqcloud.com/20230909_lawer_sheng_rui.png)
 
 **业务范围**
 
@@ -53,12 +53,12 @@ description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法�
 
 <div class="pure-g">
   <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
-    <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <img src="https://slefboot-1251736664.file.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
   </div>
   <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
-    <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_xhs_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <img src="https://slefboot-1251736664.file.myqcloud.com/20230914_xhs_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
   </div>
   <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
-    <img src="https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230914_dy_qrcode.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <img src="https://slefboot-1251736664.file.myqcloud.com/20230914_dy_qrcode.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
   </div>
 </div>

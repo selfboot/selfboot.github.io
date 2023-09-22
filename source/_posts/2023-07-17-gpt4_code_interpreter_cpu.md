@@ -16,7 +16,7 @@ date: 2023-07-17 22:47:24
 
 > 定义一个比较耗 CPU 时间的计算函数, 串行执行 N 次记录总时间 m1, 然后每个核起一个进程并行运行 N 次，计算总时间 m2，那么总的核数大约是 core = m1/m2。
 
-![CPU 核数判定](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230712_gpt4_code_interpreter_cpu_multicore.png)
+![CPU 核数判定](https://slefboot-1251736664.file.myqcloud.com/20230712_gpt4_code_interpreter_cpu_multicore.png)
 
 <!--more-->
 
@@ -112,6 +112,6 @@ main(50000, 50)
 
 可以看到 `task_size=1000，num_tasks=20` 的时候，串行执行的时间比并行执行的时间还要短，这可能是因为任务切换和进程间通信的开销大于并行处理带来的性能提升。通过增大task_size，从而增加计算任务的耗时，会降低进程开销带来的影响。在同样的计算任务下，总的任务数越多，越能利用好多核的能力。但是任务数太多的话，耗时可能超过 ChatGPt 的 120s 限制，无法得出结果。
 
-![CPU 核数判定](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230717_gpt4_code_interpreter_cpu_timelimit.png)
+![CPU 核数判定](https://slefboot-1251736664.file.myqcloud.com/20230717_gpt4_code_interpreter_cpu_timelimit.png)
 
 通过多次实验发现 cpu 最大是 14，也就是说，这里可用的 cpu 核数应该是大于等于 14 核的。

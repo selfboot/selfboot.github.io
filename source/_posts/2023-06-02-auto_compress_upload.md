@@ -12,7 +12,7 @@ description: 本篇文章详细讲解如何在 macOS 中通过 AppleScript 实�
 
 打开 Web Browsing 功能的  GPT4，让他帮忙实现吧。
 
-![GPT 自动化工具](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_auto_compress_upload_gpt.png)
+![GPT 自动化工具](https://slefboot-1251736664.file.myqcloud.com/20230602_auto_compress_upload_gpt.png)
 
 # 监听文件并压缩
 
@@ -352,7 +352,7 @@ end run
 
 实现的结果，指定一个目录，后面往这个目录新增加的 png，都自动压缩，在前缀加上当前日期，然后传输到腾讯云 COS 上。完整的对话在[这里](https://chat.openai.com/share/724a1870-7524-4ed7-be08-c22c2b4acfb3)。
 
-![最终自动化工具](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_auto_compress_upload_final.png)
+![最终自动化工具](https://slefboot-1251736664.file.myqcloud.com/20230602_auto_compress_upload_final.png)
 
 # 后续优化
 

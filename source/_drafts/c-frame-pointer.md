@@ -11,7 +11,7 @@ description: c++
 
 在构建和维护复杂的 C++ 项目时，性能优化和内存管理是至关重要的。当我们面对性能瓶颈或内存泄露时，可以使用eBPF（Extended Berkeley Packet Filter）和 BCC（BPF Compiler Collection）工具来分析。如我们在[Redis Issue 分析：流数据读写导致的“死锁”问题(1)](https://selfboot.cn/2023/06/14/bug_redis_deadlock_1/)文中看到的一样，我们用 BCC 的 profile 工具分析 Redis 的 CPU 占用，画了 CPU 火焰图，然后就能比较容易找到耗时占比大的函数以及其调用链。
 
-![CPU 火焰图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230613_bug_redis_deadlock_cpu.svg)
+![CPU 火焰图](https://slefboot-1251736664.file.myqcloud.com/20230613_bug_redis_deadlock_cpu.svg)
 
 这里使用 profile 分析的一个大前提就是，服务的二进制文件要保留函数的堆栈信息。堆栈信息是程序执行过程中函数调用和局部变量的记录，当程序执行到某一点时，通过查看堆栈信息，我们可以知道哪些函数被调用，以及它们是如何相互关联的。这对于调试和优化代码至关重要，特别是在处理性能问题和内存泄露时。
 
@@ -32,7 +32,7 @@ description: c++
 
 当函数执行完成时，其堆栈帧被弹出，控制返回到保存的返回地址。堆栈在内存中的分布如下图：
 
-![函数调用堆栈内存分布图](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230702_c++_frame_pointer_stack_mem.png)
+![函数调用堆栈内存分布图](https://slefboot-1251736664.file.myqcloud.com/20230702_c++_frame_pointer_stack_mem.png)
 
 ### DWARF 格式的堆栈信息
 
@@ -60,7 +60,7 @@ int main() {
 
 在生成的 ELF 二进制文件中，我们用 objdump 的 `[-h|--section-headers|--headers]` 选项，可以打印出所有的 section headers。如果用 `-g` 编译，生成文件包含 DWARF 调试信息，主要有 `debug_aranges`，`.debug_info` 等section。没有 `-g` 选项的时候，生成的二进制文件则没有这些section。
 
-![编译带 DWARF 调试信息的 ELF section](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230703_c++_frame_pointer_stack_dwarf.png)
+![编译带 DWARF 调试信息的 ELF section](https://slefboot-1251736664.file.myqcloud.com/20230703_c++_frame_pointer_stack_dwarf.png)
 
 如果二进制 ELF 文件带了 DWARF 信息，用 GDB 调试的时候，就可以设置函数行断点、单步执行代码、检查变量值，并查看函数调用堆栈等。此外，传统的性能分析工具 perf，也可以读取 DWARF 信息来解析函数调用堆栈，如下命令即可：
 
@@ -119,25 +119,25 @@ $ ../FlameGraph/flamegraph.pl fp_demo_write.stack > fp_demo_write.svg
 
 这里 CPU 火焰图如下，可以看到整体函数调用链路，以及各种操作的耗时：
 
-![fno-omit-frame-pointer拿到完整的函数堆栈](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_write.svg)
+![fno-omit-frame-pointer拿到完整的函数堆栈](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_write.svg)
 
 上面示例函数中，我们用 `write(STDOUT_FILENO, message, 16);` 来打印字符串，这里一开始用了c++的 `std::cout` 来打印，结果 cpu 火焰图有点和预期不一样，可以看到和 `__libc_start_call_main` 同级别的，有一个 unknown 函数帧，然后在这里面有 `write` 和 `std::basic_ostream<char, std::char_traits<char> >::~basic_ostream()` 函数。
 
-![cout 拿到的函数堆栈里面有 unknown 部分](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_cout.svg)
+![cout 拿到的函数堆栈里面有 unknown 部分](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_cout.svg)
 
 理论上这里所有的函数都应该在 main 的函数栈里面的，但是现在并列有了一个 `unknown` 的调用堆栈。可能是和 C++ 标准库 glibc 的内部工作方式和缓冲机制有关，在使用 `std::cout` 写入数据时，数据不会立即写入标准输出，而是存储在内部缓冲区中，直到缓冲区满或显式刷新。这里的输出由 glibc 控制，所以调用堆栈不在 main 中。 
 
 如果想验证我们的二进制文件是否有帧指针的信息，可以用 `objdump` 拿到反汇编内容，然后看函数的开始指令是不是 `push %rbp; mov %rsp,%rbp` 即可。对于前面的例子，我们可以看到反汇编结果如下：
 
-![验证二进制汇编中有帧指针 rbp](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_rbp.png)
+![验证二进制汇编中有帧指针 rbp](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_rbp.png)
 
 GCC/G++ 编译器中，是否默认使用`-fno-omit-frame-pointer`选项依赖于编译器的版本和目标架构。在某些版本和/或架构上，可能默认保留帧指针。如果没有保留帧指针，生成的二进制汇编代码中就没有相关 rbp 的部分。在我的机器上，默认编译也是有帧指针的，用 `-O2` 开启编译优化后生成的二进制中就没有帧指针了，如下所示：
 
-![二进制汇编中没有帧指针 rbp](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_no_rbp.png)
+![二进制汇编中没有帧指针 rbp](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_no_rbp.png)
 
 再用 `profile` 来分析的话，就拿不到完整的函数调用栈信息了，如下图：
 
-![没有帧指针，拿函数堆栈失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_write_no.svg)
+![没有帧指针，拿函数堆栈失败](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_fp_demo_write_no.svg)
 
 在实际的项目开发中，建议在默认编译选项中加上 `-fno-omit-frame-pointer`，方便后面进行分析。在Linux 发行版 fedora 的 wiki 上可以看到有人就提议，默认开启 [Changes/fno-omit-frame-pointer](https://fedoraproject.org/wiki/Changes/fno-omit-frame-pointer)，并列举了这样做的好处以及可能的性能损失。
 
@@ -162,7 +162,7 @@ C++ 项目依赖第三方库有两种链接方式，静态链接和动态链接�
 
 对于一个大型 C++项目来说，具体选择哪种链接方式可能看团队的权衡。总的来说，项目模块之间所有可能的依赖关系可以归类为下图的几种情形：
 
-![C++ 项目的依赖关系](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230703_c++_frame_pointer_stack_depend.svg)
+![C++ 项目的依赖关系](https://slefboot-1251736664.file.myqcloud.com/20230703_c++_frame_pointer_stack_depend.svg)
 
 图片由 [Graphviz](https://graphviz.org/) 渲染，图片源码如下：
 
@@ -204,17 +204,17 @@ digraph G {
 
 我们在本地创建一个完整的示例项目，包含上面的各种依赖关系。然后在编译生成的二进制文件中，发现 static_A 里面的函数没有帧指针，但是 static_B 和其他函数都有帧指针。在生成的 cpu 火焰图中，拿到的函数调用堆栈是错乱的，如下图：
 
-![中间静态库丢失了帧指针](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main.svg)
+![中间静态库丢失了帧指针](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main.svg)
 
 正常如果没丢失帧指针的话，火焰图应该如下图所示：
 
-![整体没有丢失帧指针](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_fp.svg)
+![整体没有丢失帧指针](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_fp.svg)
 
 通过上面的实验看到，profile 工具分析性能时，依赖帧指针来重建调用堆栈。即使**只丢失中间某个依赖库的帧指针**，整体函数的调用堆栈就会错乱，并不是只丢失这中间的部分函数调用堆栈。
 
 还是上面的场景，如果我们在依赖的最底层 static_B 编译的时候不保存堆栈信息，但是其他部分都保存，那么生成的二进制文件中，只有 static_B 中的函数没有帧指针。再次用 profile 分析 cpu 堆栈，发现虽然只是最后一层函数调用没有帧指针，但是 BCC tools 分析拿到的堆栈信息还是有问题，如下图，`printStaticA` 和 `function_entry` 被混到了同一层。
 
-![整体没有丢失帧指针](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_error.svg)
+![整体没有丢失帧指针](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_error.svg)
 
 ### 动态依赖下的编译
 

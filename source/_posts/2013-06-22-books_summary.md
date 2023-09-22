@@ -95,7 +95,7 @@ pocket: 是一款可以把感兴趣但是想以后再阅读的文章、视频和
 4. 可以缓存文章，没有网络时仍然可以读。
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130622_kindle.jpeg
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130622_GoogleReader.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130622_pocket.jpeg
+[1]: https://slefboot-1251736664.file.myqcloud.com/20130622_kindle.jpeg
+[2]: https://slefboot-1251736664.file.myqcloud.com/20130622_GoogleReader.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20130622_pocket.jpeg
 

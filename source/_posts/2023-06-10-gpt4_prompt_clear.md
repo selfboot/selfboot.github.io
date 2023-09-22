@@ -23,7 +23,7 @@ description: 这篇文章详细解释了如何有效地与 ChatGPT 进行交流�
 
 本篇文章主要讲解第一种策略: `Write clear instructions`。我将会分享一些实用的技巧，帮助你更好地与GPT4进行交流，让AI更好地理解你的需求，从而提供更准确的答案。
 
-![OpenAI 官方文档对提示词的建议](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_1.png)
+![OpenAI 官方文档对提示词的建议](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_1.png)
 
 # 提问要尽量详细
 
@@ -39,7 +39,7 @@ description: 这篇文章详细解释了如何有效地与 ChatGPT 进行交流�
 
 这些例子中，你可以看到，更详细的问题不仅包含了你想要知道的内容，还包含了你的背景信息，这样GPT4就能更好地理解你的需求，从而提供更相关的答案。可以在 [Openai Playground](https://platform.openai.com/playground) 里面反复试验，找到适合自己领域的提示词。
 
-![提示词包含详细的信息](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_2.png)
+![提示词包含详细的信息](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_2.png)
 
 # 给 AI 设定背景
 
@@ -68,7 +68,7 @@ OpenAI 支持给 GPT4 设定一个系统消息 `system message`。你可以在�
 
 你可以在 [Openai Playground](https://platform.openai.com/playground) 尽情尝试。ChatGPT Plus 官方聊天目前还不支持设置系统消息，不过大部分第三方客户端都支持，比如 Opencat，Chatbox 等。
 
-![系统消息的设定](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_3.png)
+![系统消息的设定](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_3.png)
 
 # 使用分隔符
 
@@ -85,7 +85,7 @@ OpenAI 支持给 GPT4 设定一个系统消息 `system message`。你可以在�
 
 具体见下图：
 
-![分隔符的作用不是百分百可靠](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_4.png)
+![分隔符的作用不是百分百可靠](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_4.png)
 
 它这里还是解释了下面的一句代码，除非再强制让它不解释。特别注意，OpenAI 的 GPT4 是一种概率模型，**没有百分百可靠**。我们能做的是尽最大可能，用 GPT4 听得懂的提示词，让它完成任务。就日常使用来说，我一般会让它输出的时候，把代码放在三引号里面，每次还是挺准确的。
 
@@ -101,7 +101,7 @@ OpenAI 支持给 GPT4 设定一个系统消息 `system message`。你可以在�
 
 具体看下面的示例：
 
-![指定具体的任务步骤](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_5.png)
+![指定具体的任务步骤](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_5.png)
 
 # 提供示例
 
@@ -109,7 +109,7 @@ OpenAI 支持给 GPT4 设定一个系统消息 `system message`。你可以在�
 
 以下是一个具体的例子，假设你想让GPT模型帮你将英文的日期格式转换为特定的中国日期格式，你可以这样构造你的prompt。
 
-![few-shot 的威力](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_6.png)
+![few-shot 的威力](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_6.png)
 
 可以看到没有示例情况下给的输出，不是很符合要求。有了示例之后，就靠谱了很多。从实际体验来说，few-shot 有时候也不保证一定会产生高质量的回答，有时候 GPT4 模型依旧会产生预期外的数据。
 
@@ -117,6 +117,6 @@ OpenAI 支持给 GPT4 设定一个系统消息 `system message`。你可以在�
 
 GPT-4生成文本的方式是一次生成一个词或一个字符，直到达到某个停止条件。这个停止条件可能是生成了特定数量的词/字符，或者模型预测到了文本的结束。因此，虽你可以要求GPT-4生成特定长度的文本，比如 50 个字。但注意它可能无法精确地达到这个长度，例如，如果你要求一个100字的故事，你可能会得到一个98字或102字的故事。一般来说，可以指定生成几句或者几个段落，这样稍微准一些。
 
-![指定模型输出长度](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230610_gpt4_prompt_clear_7.png)
+![指定模型输出长度](https://slefboot-1251736664.file.myqcloud.com/20230610_gpt4_prompt_clear_7.png)
 
 GPT-4 的输出长度还受到模型的最大生成长度的限制。这个限制可能有所不同，因为Open AI支持不同长度限制的模型。如果你要求的文本长度超过了这个限制，那么你得到的文本将会被截断。这里的限制 token 数，是一次输入、输出加起来的长度，所以如果你的输入很长，可能会影响输出的长度。

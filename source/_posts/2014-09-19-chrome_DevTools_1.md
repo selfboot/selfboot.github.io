@@ -186,12 +186,12 @@ XMLHttpRequest是一个浏览器接口，使得Javascript可以进行HTTP(S)通�
 [Chrome Dev Tools: Networking and the Console](http://code.tutsplus.com/articles/chrome-dev-tools-networking-and-the-console--net-28167)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Summary.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_html.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_dynamic_style.gif
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_styles.png
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Element_box.gif
-[7]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Network.png
-[8]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140919_CDT_Network_content.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_html.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_dynamic_style.gif
+[5]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_styles.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_box.gif
+[7]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png
+[8]: https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png
 

@@ -162,5 +162,5 @@ application = local_manager.make_middleware(application)
 [How to remove a key from a python dictionary?](http://stackoverflow.com/questions/11277432/how-to-remove-a-key-from-a-python-dictionary)
 [werkzeug源码分析(local.py)](https://www.ficapy.com/2016/08/03/werkzeug_local_note/)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161103_threadlocal_enhance_1.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20161103_threadlocal_enhance_1.png
 

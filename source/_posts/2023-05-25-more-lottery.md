@@ -8,7 +8,7 @@ description: 本页面深入探讨了彩票销售额的增长原因和购买彩�
 
 > 财政部消息，4月份全国共销售彩票 503.26亿元，同比增长62%，这背后可能是什么原因导致的呢？买彩票的人有着怎样的心理动机，来看看 AI 的说法。
 
-![彩票销售](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_more_lottery_2.png)
+![彩票销售](https://slefboot-1251736664.file.myqcloud.com/20230602_more_lottery_2.png)
 
 # 原因分析
 

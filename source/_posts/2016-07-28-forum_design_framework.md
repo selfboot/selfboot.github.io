@@ -156,10 +156,10 @@ Python WSGI的出现，让开发者可以将 Web 框架与 Web 服务器的选�
 [WSGI简介](https://segmentfault.com/a/1190000003069785)
 [Model-View-Controller (MVC) Explained -- With Legos](https://realpython.com/blog/python/the-model-view-controller-mvc-paradigm-summarized-with-legos/)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160728_forum_design_framework_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160728_forum_design_framework_2.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160728_forum_design_framework_3.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160728_forum_design_framework_4.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160728_forum_design_framework_5.png
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160728_forum_design_framework_6.jpeg
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160728_forum_design_framework_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160728_forum_design_framework_2.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20160728_forum_design_framework_3.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20160728_forum_design_framework_4.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20160728_forum_design_framework_5.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20160728_forum_design_framework_6.jpeg
 

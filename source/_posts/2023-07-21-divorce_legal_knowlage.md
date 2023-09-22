@@ -12,7 +12,7 @@ description: 当婚姻走到尽头,离婚势在必行,了解相关法律知识�
 
 根据[《中国婚姻家庭报告2022版》](https://mp.weixin.qq.com/s/XoMb6pMtJ76zXcnroWDcAw) 一文上提到的民政部公开数据，中国的离婚率在逐年上涨。如下图：
 
-![中国 2020 年到 2022 年结婚离婚率](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230720_divorce_legal_knowlage_1.png)
+![中国 2020 年到 2022 年结婚离婚率](https://slefboot-1251736664.file.myqcloud.com/20230720_divorce_legal_knowlage_1.png)
 
 > 注：离婚率计算：一年内离婚对数与当年平均人口数的比率。计算公式是：离婚率=（某年离婚对数/当年平均人口数）×1000‰；
 
@@ -184,4 +184,4 @@ description: 当婚姻走到尽头,离婚势在必行,了解相关法律知识�
 --- 
 可以扫码关注公众号，及时收到文章更新通知～
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+![关注公众号](https://slefboot-1251736664.file.myqcloud.com/20230721_wx_qrcode.png)

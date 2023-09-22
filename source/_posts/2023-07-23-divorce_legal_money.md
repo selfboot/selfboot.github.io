@@ -13,7 +13,7 @@ date: 2023-07-23 16:44:13
 
 根据民法典的规定，夫妻在婚姻关系存续期间形成的共同财产，应当平等分割。但是，也可以根据双方的实际贡献、家庭需要和孩子的抚养情况、或一方过错等因素，进行不等的分割。这些规定为我们处理离婚财产分割问题提供了基本的法律依据。在接下来的部分，我将深入探讨这些规定的具体应用，以及如何在实际情况中进行财产分割。我还将分享一些实用的技巧和建议，帮助更好地理解和处理这个复杂但重要的问题。
 
-![离婚财产分割](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_divorce_legal_money_1.png)
+![离婚财产分割](https://slefboot-1251736664.file.myqcloud.com/20230721_divorce_legal_money_1.png)
 
 <!--more-->
 
@@ -149,4 +149,4 @@ date: 2023-07-23 16:44:13
 --- 
 可以扫码关注公众号，及时收到文章更新通知～
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+![关注公众号](https://slefboot-1251736664.file.myqcloud.com/20230721_wx_qrcode.png)

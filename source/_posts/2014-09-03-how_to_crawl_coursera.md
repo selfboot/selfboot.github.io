@@ -201,9 +201,9 @@ update:September 3, 2014
 [Wiki: Web crawler](https://en.wikipedia.org/wiki/Web_crawler)
 [Python 爬虫如何入门学习？](http://www.zhihu.com/question/20899988)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140903_guest_lecture.png "未登录用户访问课程资源"
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140903_login_url.png "提交账户信息的页面"
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140903_coursera_post.png "提交表单内容"
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140903_architecture.png "web 爬虫架构图"
+[1]: https://slefboot-1251736664.file.myqcloud.com/20140903_guest_lecture.png "未登录用户访问课程资源"
+[2]: https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png "提交账户信息的页面"
+[3]: https://slefboot-1251736664.file.myqcloud.com/20140903_coursera_post.png "提交表单内容"
+[4]: https://slefboot-1251736664.file.myqcloud.com/20140903_architecture.png "web 爬虫架构图"
 
 

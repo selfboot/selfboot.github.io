@@ -165,6 +165,6 @@ Destroying test database for alias 'default'...
 
 如果你决定好好玩Django了，那么先看一下[Django FAQ](https://docs.djangoproject.com/en/1.7/faq/)，可能会解决关于Django的一些疑问。
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20150111_admin_question.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20150111_question_object.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20150111_admin_question.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20150111_question_object.png
 

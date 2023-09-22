@@ -147,7 +147,7 @@ GB2312并未包含繁体字和生僻字，因此在1995年出现了《汉字编�
 [关于字符集的最基本知识](http://www.joelonsoftware.com/articles/Unicode.html)
 [中文编码杂谈](http://www.searchtb.com/2012/04/chinese_encode.html)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140828_encode_decode.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140828_glyphs_a.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20140828_encode_decode.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20140828_glyphs_a.png
 [3]: https://en.wikipedia.org/wiki/Character_(computing)
 

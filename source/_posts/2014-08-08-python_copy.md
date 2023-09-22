@@ -96,7 +96,7 @@ False
 [copy module 学习笔记](http://hi.baidu.com/hifinan/item/61ce39ccefeab752ad00ef5a)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140808_shallow_copy.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140808_deep_copy.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20140808_shallow_copy.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20140808_deep_copy.png
 
 

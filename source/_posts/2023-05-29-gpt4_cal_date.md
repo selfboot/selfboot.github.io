@@ -9,7 +9,7 @@ description: 探索人工智能的无限可能性，本页面详细介绍了如�
 
 在一个劳动纠纷中，需要计算下员工总的加班天数，把任务给 GPT 后，见证了 GPT 傻傻的样子。历经各种 Prompt 调教，最后还是告诉我一个满意的结果了。
 
-![计算加班总天数](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230602_gpt_cal_date.png)
+![计算加班总天数](https://slefboot-1251736664.file.myqcloud.com/20230602_gpt_cal_date.png)
 
 # 自然推理 Prompt
 

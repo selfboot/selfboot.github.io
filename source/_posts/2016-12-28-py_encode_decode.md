@@ -312,8 +312,8 @@ UnicodeEncodeError: 'ascii' codec can't encode characters in position 5-6: ordin
 [五分钟战胜 Python 字符编码](http://python.jobbole.com/85482/)
 [python 字符编码与解码](http://blog.csdn.net/trochiluses/article/details/16825269)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161228_encode_decode_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161228_encode_decode_2.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20161228_encode_decode_3.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20161228_encode_decode_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20161228_encode_decode_2.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20161228_encode_decode_3.png
 
 

@@ -9,7 +9,7 @@ description: 在这篇博客中，我们将探索如何利用 AWK 和 SED 进行
 
 AWK 和 SED 在处理文本数据时，无论是过滤、转换，还是操作，都展现出了无与伦比的效率和灵活性。但是工具的语法不是那么好记忆，有时候用起来还得去查看帮助文档。但是有了 GPT，直接描述具体想处理的任务内容，然后由 GPT 生成所需要的命令，十分方便。
 
-![GPT 直接纠正有问题的 awk 命令](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230605_gpt4_write_cmd.png)
+![GPT 直接纠正有问题的 awk 命令](https://slefboot-1251736664.file.myqcloud.com/20230605_gpt4_write_cmd.png)
 
 <!--more-->
 

@@ -62,7 +62,7 @@ OpenAI 的 GPT 模型一直在不断进化，从 GPT-3 到 GPT-3.5，再到现�
 
 首先用 GPT3.5 来试试楚辞，结果如下：
 
-![GPT 3.5 楚辞评测](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230719_gpt4_prompt_evals_chuci3.png)
+![GPT 3.5 楚辞评测](https://slefboot-1251736664.file.myqcloud.com/20230719_gpt4_prompt_evals_chuci3.png)
 
 这里评测的结果里，除了总的评测汇总，还会给出一个详细日志，里面有每个问题样本的具体回答结果。随便找了一个问题的结果，可以看到这里的答案预期是《卜居》，但是模型回答成了《九歌》，完整结果如下：
 
@@ -93,7 +93,7 @@ $ cat /tmp/evallogs/230719082945UIWESVM5_gpt-3.5-turbo_chinese_chu_ci.jsonl
 
 再来看看 GPT-4 的运行结果，如下图：
 
-![GPT4 楚辞评测](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230719_gpt4_prompt_evals_chuci4.png)
+![GPT4 楚辞评测](https://slefboot-1251736664.file.myqcloud.com/20230719_gpt4_prompt_evals_chuci4.png)
 
 可以看到在这类问题上，即使是 GPT-4，回答的准确率也很低。唯一一个正确的样本结果如下：
 
@@ -125,7 +125,7 @@ $ cat /tmp/evallogs/230719083815WL3TWHO2_gpt-4_chinese_chu_ci.jsonl
 
 中文翻译的评测数据集在[chinese_hard_translations](https://github.com/openai/evals/tree/main/evals/registry/data/chinese_hard_translations)，一共样本数量不多，如下图：
 
-![中文翻译质量评测语料数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230720_gpt4_prompt_evals_transdata.png)
+![中文翻译质量评测语料数据](https://slefboot-1251736664.file.myqcloud.com/20230720_gpt4_prompt_evals_transdata.png)
 
 每条评测记录包括 Prompt，中文文本以及人工翻译的参考文本。如这个测试集名字 `chinese_hard_translations` 所言，这里的中文确实都是一些比较难翻译的中文语料，比如下面这种，一遍可能都读不通顺：
 
@@ -138,7 +138,7 @@ $ cat /tmp/evallogs/230719083815WL3TWHO2_gpt-4_chinese_chu_ci.jsonl
 
 这里我用不同 prompt 得到的翻译结果如下：
 
-![中文翻译示例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230720_gpt4_prompt_evals_transtest.png)
+![中文翻译示例](https://slefboot-1251736664.file.myqcloud.com/20230720_gpt4_prompt_evals_transtest.png)
 
 
 > "I have a bit of a hunchback. My mom says, 'You have to work on improving your posture.'"

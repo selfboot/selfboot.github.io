@@ -16,21 +16,21 @@ description: 本文是广州买房攻略的数据篇，利用公开的政府和�
 
 住建局会公开各个楼盘的已售情况，网签后的数据，有一定的滞后。一般需要拿预售证查，因为项目名称和地址可能和楼盘名有出入。网址在[这里](http://zfcj.gz.gov.cn/zfcj/fyxx/fdcxmxx)。
 
-![住建局公开数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_1.png)
+![住建局公开数据](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_1.png)
 
 可以不定时的采集感兴趣楼盘的数据。
 
-![住建局楼盘数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_2.png)
+![住建局楼盘数据](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_2.png)
 
 ### 每日签约数据
 
 住建局每天在早上会公布全市前一天 [商品房销售统计信息](http://zfcj.gz.gov.cn/zfcj/tjxx/spfxstjxx)，包括住宅、商业、办公、车位等。
 
-![住建局每日签约数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_3.png)
+![住建局每日签约数据](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_3.png)
 
 可以每天定时去收集公开的数据，整理 Excel
 
-![住建局每日签约整理](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_4.png)
+![住建局每日签约整理](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_4.png)
 
 ### 存量房历史成交数据
 
@@ -38,7 +38,7 @@ description: 本文是广州买房攻略的数据篇，利用公开的政府和�
 
 自己整理了一个全市成交量Excel，搞了个曲线，16、17年市场是真的火爆。18、19年慢慢不行，20年，前半年不行，后半年感觉还可以。21年上半年市场火爆，下半年受政府限价，以及信贷收紧，二手销量下滑严重。
 
-![存量房历史成交](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_5.png)
+![存量房历史成交](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_5.png)
 
 ## 链家公开数据
 
@@ -46,11 +46,11 @@ description: 本文是广州买房攻略的数据篇，利用公开的政府和�
 
 全市二手房存量数据，以及各个区的数据链家都有，可以定时去查看数据，记录下来。下面是2020年7月的数据：
 
-![2020年7月链家数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_6.png)
+![2020年7月链家数据](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_6.png)
 
 到 2020 年 10 月的数据：
 
-![2020年10月链家数据](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230715_gz_house_data_7.png)
+![2020年10月链家数据](https://slefboot-1251736664.file.myqcloud.com/20230715_gz_house_data_7.png)
 
 全市二手房在售套数在2020到2023基本不断上升。中间有段时间天河和黄埔二手房在售不断下降，和当时市场上天河和黄埔的火爆还是能互相印证的。
 

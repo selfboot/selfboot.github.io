@@ -11,7 +11,7 @@ description: 忠诚协议非强制法律文件，但可作为证据和财产参�
 
 这样的协议是否真能促进夫妻之间的信任和忠诚？又是否在法律上得到了明确的支持和约束？这些问题的答案涉及的并非只是感情的层面，更是一道复杂的法律难题。本文将深入探讨夫妻忠诚协议的基本原则、效力问题以及与离婚协议的区别，帮助理解这一特殊协议在现实生活中的运用与限制。
 
-![夫妻忠诚协议真的有用吗？](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230821_loyalty_agreement.png)
+![夫妻忠诚协议真的有用吗？](https://slefboot-1251736664.file.myqcloud.com/20230821_loyalty_agreement.png)
 
 <!-- more -->
 ## 忠诚协议的基本原则
@@ -65,9 +65,9 @@ description: 忠诚协议非强制法律文件，但可作为证据和财产参�
 
 这一主题的探讨不仅有助于我们深入理解忠诚协议的法律性质和实际作用，还能引导我们正确看待婚姻生活中的法律约束和伦理责任。同时，也提醒了我们，在签订此类协议时，应遵循诚信原则，同时考虑其可能产生的社会效应和个人责任。
 
-这里提供一个忠诚协议的[简单模板](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/%E5%A4%AB%E5%A6%BB%E5%BF%A0%E8%AF%9A%E5%8D%8F%E8%AE%AE.docx)。
+这里提供一个忠诚协议的[简单模板](https://slefboot-1251736664.file.myqcloud.com/%E5%A4%AB%E5%A6%BB%E5%BF%A0%E8%AF%9A%E5%8D%8F%E8%AE%AE.docx)。
 
 ---
 欢迎扫码关注[小盛律师](https://selfboot.cn/links)的公众号，及时收到文章更新通知～
 
-![关注公众号](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230721_wx_qrcode.png)
+![关注公众号](https://slefboot-1251736664.file.myqcloud.com/20230721_wx_qrcode.png)

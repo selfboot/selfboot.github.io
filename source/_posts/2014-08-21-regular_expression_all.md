@@ -270,6 +270,6 @@ def runaway():
 [编译原理: 有穷自动机](http://metc.gdut.edu.cn/compile/cmpl3/3-3.htm)
 
 [1]: http://www.zhihu.com/question/20100408
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140821_regular_express_DFA.png "图1. 确定有限自动机"
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140821_regular_express_NFA.png "图2. 非确定有限自动机"
+[2]: https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_DFA.png "图1. 确定有限自动机"
+[3]: https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_NFA.png "图2. 非确定有限自动机"
 

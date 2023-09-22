@@ -12,7 +12,7 @@ date: 2023-09-07 22:24:48
 
 在使用 Protobuf 的时候遇到了一个**特别诡异**的问题，排查了一天，最后才发现问题所在。本篇文章记录下问题的排查、定位过程。
 
-![Protobuf 字段 set 后丢失](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230906_protobuf_redefine_cover.png)
+![Protobuf 字段 set 后丢失](https://slefboot-1251736664.file.myqcloud.com/20230906_protobuf_redefine_cover.png)
 
 <!-- more -->
 ## 问题背景
@@ -142,7 +142,7 @@ g++ main.cpp -I./ -o main ./modelB/data.pb.cc ./modelA/data.pb.cc -lprotobuf
 
 结果如下图，报了符号重复定义的错误：
 
-![同时依赖两个模块导致链接失败](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230905_protobuf_redefine.png)
+![同时依赖两个模块导致链接失败](https://slefboot-1251736664.file.myqcloud.com/20230905_protobuf_redefine.png)
 
 这是因为**链接器在目标文件中找到了两个相同的强符号定义，没法选择具体用哪个，于是直接报链接错误**。但是实际项目中，这两个 proto 在不同模块，先编译成库之后再链接的。链接分动态库和静态库，这里先看 C++ 动态库的情况，把这两个 proto 编译成动态库，然后用动态链接。具体命令如下：
 
@@ -157,7 +157,7 @@ g++ main.cpp -I./ -o main -L./ -lmodelB -lmodelA -lprotobuf -Wl,-rpath,./
 
 链接的时候，modelA 和 modelB 有两种链接顺序，二进制运行的结果也有两种：
 
-![动态链接顺序不同，结果也不同](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230906_protobuf_redefine_linkorder.png)
+![动态链接顺序不同，结果也不同](https://slefboot-1251736664.file.myqcloud.com/20230906_protobuf_redefine_linkorder.png)
 
 静态链接又是什么表现呢？静态链接的命令如下：
 
@@ -200,7 +200,7 @@ $ nm -D /lib/x86_64-linux-gnu/libprotobuf.so.32 | grep DebugString
 
 `DebugString` 的实现在 [protobuf/src/google/protobuf/text_format.cc](https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/text_format.cc#L131) 中，用到了**反射机制**，比较复杂，暂时没搞明白，等有时间可以继续研究下，整理一个专门的文章。这里我们只是想知道为啥没输出 `target_user_type`，所以先试着过滤这个符号，看看不同顺序下的二进制有没有区别，如下图：
 
-![动态链接顺序不同，结果也不同](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230906_protobuf_redefine_sysbol.png)
+![动态链接顺序不同，结果也不同](https://slefboot-1251736664.file.myqcloud.com/20230906_protobuf_redefine_sysbol.png)
 
 可以看到两种链接顺序下，都有 modelB 里面的符号 `set_target_user_type`，对应了两个函数：
 

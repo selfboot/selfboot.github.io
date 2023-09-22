@@ -14,7 +14,7 @@ date: 2023-08-02 22:42:36
 
 本次事故处理的具体时间节点在 [ChatGPT Web Interface Incident](https://status.openai.com/incidents/jq9232rcmktd) 也有公开，如下图：
 
-![ChatGPT 故障整体修复时间节点](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230726_redis_python_bug_incident.png)
+![ChatGPT 故障整体修复时间节点](https://slefboot-1251736664.file.myqcloud.com/20230726_redis_python_bug_incident.png)
 
 这个故障是由 Redis 的 Python 客户端 Bug 引发的，在 Github 上有关于这个 bug 的讨论。这个 bug 的修复过程并不顺利，有不少讨论和修复尝试，比如 [Issue 2624](https://github.com/redis/redis-py/issues/2624)，[PR 2641](https://github.com/redis/redis-py/pull/2641)，[Issue 2665](https://github.com/redis/redis-py/issues/2665)，[PR 2695](https://github.com/redis/redis-py/pull/2695)。看过这些后，似乎还是不能理解这里的修复，只好深入读读代码，看看这里的 bug 原因以及修复过程到底是怎么回事，顺便整理成这篇文章。
 
@@ -24,7 +24,7 @@ date: 2023-08-02 22:42:36
 
 在开始分析 Python 的 bug 之前，想先聊一下 OpenAI 的故障看板。OpenAI 提供有一个[故障状态查询页面](https://status.openai.com/)，可以在上面看到目前各个服务的健康状态。这点在国外做的比较好，很多服务都有 status 看板，比如 [Github](https://www.githubstatus.com/)，[Google Cloud](https://status.cloud.google.com/)。
 
-![OpenAI status 看板，故障公示](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230726_redis_python_bug_status.png)
+![OpenAI status 看板，故障公示](https://slefboot-1251736664.file.myqcloud.com/20230726_redis_python_bug_status.png)
 
 当遇到 ChatGPT 不能用的时候，可以第一时间来这里看看当前服务状态。如果服务没问题，那一般就是自己的网络或者账户出了问题。一旦服务出问题，这里就能看到故障的进度。反观国内的很多服务，遇到问题是能遮掩就遮掩，就怕使用的人知道出故障。
 
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
 如果在Redis server 在云环境，延迟 > 5ms，那么这里 `sleep(0.001)` 就能复现问题。我的 Redis client 和 server 都在一台机，网络耗时可以忽略。通过不断实验，发现这里 `asyncio.sleep(0.000001)` 能稳定复现，下面是在我本地，sleep 不同时间的执行结果：
 
-![Bug 的复现过程](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230726_redis_python_bug_reproduce.png)
+![Bug 的复现过程](https://slefboot-1251736664.file.myqcloud.com/20230726_redis_python_bug_reproduce.png)
 
 可以看到在 `sleep(0.000001)` 情况下，这里后续的 Redis 命令结果全部不对，每个命令都是上一个命令的结果。回到 OpenAI 的故障描述，就能解释为啥一个人看到了其他人的数据。因为这中间有取消的 redis 异步请求任务，导致结果错乱，读串了。
 
@@ -189,7 +189,7 @@ async def _readline(self) -> bytes:
 
 一个请求的执行流程已经很清晰了，但是还没有解决我们的疑问，**为什么取消一个任务后，后续请求会读串**。这里继续添加日志，在每个请求的开始部分打印请求命令( execute_command 里面添加日志)，然后打印解析出来的回包(_read_response 里面添加日志)，执行后结果如下：
 
-![请求和回复的对应错乱了](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_log.png)
+![请求和回复的对应错乱了](https://slefboot-1251736664.file.myqcloud.com/20230731_redis_python_bug_log.png)
 
 这里涉及到 Redis 回复的协议解析，Redis 使用的`RESP（Redis Serialization Protocol）`协议是一种简单、高效并且便于人直接阅读的基于文本的协议。它支持多种数据类型，包括字符串、数组和整数。客户端发送的命令请求和服务器的响应都遵循这个协议。具体格式的技术细节可以参考官方文档 [RESP protocol spec](https://redis.io/docs/reference/protocol-spec/)。
 
@@ -203,7 +203,7 @@ async def _readline(self) -> bytes:
 
 第一次修复尝试是在 [PR 2641](https://github.com/redis/redis-py/pull/2641) 中，有人提交了修复方案，关键部分在于：
 
-![修复的代码比对](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_repair_error.png)
+![修复的代码比对](https://slefboot-1251736664.file.myqcloud.com/20230731_redis_python_bug_repair_error.png)
 
 这里的核心思路在于，既然取消异步操作会导致漏读 server 的回复，那就保证一旦进入到读操作，就不允许取消异步任务(这里其实是一个协程)，直到读出这部分回复。这里用到了 `asyncio.shield` 函数，它用来**保护一个异步操作不被取消**。如果在 asyncio.shield 函数中的操作正在进行时，其他地方尝试取消这个操作，那么这个取消操作会被忽略，直到 asyncio.shield 函数中的操作完成再抛出异常。关于 asyncio.shield 的详细解释，可以参考官方文档 [Shielding From Cancellation](https://docs.python.org/3/library/asyncio-task.html#shielding-from-cancellation)。
 
@@ -211,7 +211,7 @@ async def _readline(self) -> bytes:
 
 这个方案的提交者其实也提供了测试用例，不过用例写到有问题，导致没有测出这里的 bug。
 
-![错误的测试用例](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_repair_error_test.png)
+![错误的测试用例](https://slefboot-1251736664.file.myqcloud.com/20230731_redis_python_bug_repair_error_test.png)
 
 这里 `sleep` 的时间是 1s，这时候这个读请求早执行完了的，所以取消操作其实没生效。这里复现的一个关键点就在于，**要卡一个很精确的时间点**，保证请求被处理，但是回复内容还没被解析。这里引出一个重要问题，就是测试要如何卡这个时间点，让 bug 能在有问题的版本稳定复现。
 
@@ -245,7 +245,7 @@ class DelayProxy:
 
 针对这里的复现，chayim 接着提交了 [PR 2666](https://github.com/redis/redis-py/pull/2666) 中，对应 commit [5acbde3](https://github.com/redis/redis-py/commit/5acbde355058ab7d9c2f95bcef3993ab4134e342) 被放在 v4.5.4，在所有的命令操作场景中都用 `asyncio.shield` 禁止取消操作，关键部分的改动如下：
 
-![asyncio.shield 加保护](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230802_redis_python_bug_shield_everywhere.png)
+![asyncio.shield 加保护](https://slefboot-1251736664.file.myqcloud.com/20230802_redis_python_bug_shield_everywhere.png)
 
 相当于对前面修复的一个补丁，这样确实修复了读串数据的 bug，新的测试脚本也无法复现。我们对下面的修复代码稍作改动，就能更好理解这里的修复原理了。把代码中的 `asyncio.shield` 部分抽离出来，打印结果，并尝试捕获异常。改动部分如下：
 
@@ -280,17 +280,17 @@ async def execute_command(self, *args, **options):
 
 具体修复方案的核心代码如下，在 [read_response](https://github.com/redis/redis-py/blob/f056118224e851915922de02ec40f2d16c9e4dd7/redis/asyncio/connection.py#L831C15-L831C28) 中增加了对 BaseException 的异常处理，默认是直接断开连接。
 
-![异常直接断开连接](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230802_redis_python_bug_disconnect.png)
+![异常直接断开连接](https://slefboot-1251736664.file.myqcloud.com/20230802_redis_python_bug_disconnect.png)
 
 ### 最终的验证过程
 
 根据 [Release](https://github.com/redis/redis-py/releases) 页面的版本日志，可以看到 4.5.5 版本合并了 PR 2695，如下图：
 
-![Redis python 的修复记录](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230728_redis_python_bug_release.png)
+![Redis python 的修复记录](https://slefboot-1251736664.file.myqcloud.com/20230728_redis_python_bug_release.png)
 
 切换到 `v4.5.5` 分支，然后再次用上面的复现脚本尝试验证，得到结果如下：
 
-![已经修复好的输出](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230731_redis_python_bug_log_succ.png)
+![已经修复好的输出](https://slefboot-1251736664.file.myqcloud.com/20230731_redis_python_bug_log_succ.png)
 
 至此，这个 bug 彻底修复了。再来加日志对上面的理解过程做一些验证，比如：
 

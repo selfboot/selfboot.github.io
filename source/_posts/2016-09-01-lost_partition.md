@@ -160,9 +160,9 @@ void three_way_partition(vector<int> &arr, int target){
 [数学之美番外篇：快排为什么那样快](http://blog.csdn.net/pongba/article/details/2544933)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160901_lost_partition_1.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160901_lost_partition_2.png
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160901_lost_partition_3.png
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20160901_lost_partition_4.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20160901_lost_partition_1.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20160901_lost_partition_2.png
+[3]: https://slefboot-1251736664.file.myqcloud.com/20160901_lost_partition_3.png
+[4]: https://slefboot-1251736664.file.myqcloud.com/20160901_lost_partition_4.png
 
 

@@ -15,7 +15,7 @@ OpenAI 在代码解释器执行环境中预装了很多 Python 包，可以参�
 
 当然不是了！在 [真实例子告诉你 ChatGPT 是多会胡编乱造！](https://selfboot.cn/2023/08/23/not-smart-chatgpt/) 一文的`代码解释器库缺失` 部分我提到过可以手动安装代码解释器中不支持的 Python 包，比如 jieba 分词，这篇文章就详细聊下这里的安装方法。
 
-![ChatGPT Code Interpreter 安装 Python 库](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230825_gpt4_code_interpreter_module_cover.png)
+![ChatGPT Code Interpreter 安装 Python 库](https://slefboot-1251736664.file.myqcloud.com/20230825_gpt4_code_interpreter_module_cover.png)
 
 <!-- more -->
 ## 代码执行环境
@@ -37,7 +37,7 @@ OpenAI 在代码解释器执行环境中预装了很多 Python 包，可以参�
 
 然后在代码解释器中，上传下载的包文件，再告诉 ChatGPT 安装就行，如下图对话内容：
 
-![ChatGPT Code Interpreter 安装 Python 库 jieba](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230825_gpt4_code_interpreter_jieba.png)
+![ChatGPT Code Interpreter 安装 Python 库 jieba](https://slefboot-1251736664.file.myqcloud.com/20230825_gpt4_code_interpreter_jieba.png)
 
 其实这里的安装主要是下面两行代码，可以看到我们上传的压缩包在 `/mnt/data/jieba-0.42.1.tar.gz` 路径，之后通过 `pip install` 安装。
 
@@ -111,7 +111,7 @@ latest_install_result， latest_installed_html2notion
 
 至此成功安装了 html2notion 库，可以让 ChatGPT 验证下是否安装成功，整个过程如下图：
 
-![ChatGPT Code Interpreter 安装 Python 复杂库](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230825_gpt4_code_interpreter_html2notion.png)
+![ChatGPT Code Interpreter 安装 Python 复杂库](https://slefboot-1251736664.file.myqcloud.com/20230825_gpt4_code_interpreter_html2notion.png)
 
 不过遗憾的是，这个库需要联网导入笔记，这里就算导入成功，也没法用。这个过程一定要注意，在和解释器相同的系统和 Python 版本上下载库文件，不然可能需要手动解决版本冲突或兼容性问题。我开始在 mac 上下载 whl 文件，导入的时候，发现缺少满足 html2notion 所需的 aiohttp 版本，原来这个库在 mac 和 linux 上还是不同的实现，如下：
 

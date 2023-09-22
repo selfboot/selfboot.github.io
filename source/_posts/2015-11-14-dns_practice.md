@@ -188,9 +188,9 @@ DNS 欺骗简单来说就是用一个假的 DNS 应答来欺骗用户计算机�
 [3]: https://www.godaddy.com
 [4]: http://www.dot.tk/zh/index.html?lang=zh
 [5]: https://help.github.com/articles/adding-a-cname-file-to-your-repository/
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151114_github_record.png
-[7]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151114_dns_hijacking.png
-[8]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151114_dns_spoofing.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20151114_github_record.png
+[7]: https://slefboot-1251736664.file.myqcloud.com/20151114_dns_hijacking.png
+[8]: https://slefboot-1251736664.file.myqcloud.com/20151114_dns_spoofing.png
 [9]: http://ichuan.net/post/7/dns-cache-poisoning-in-china/
 [10]: http://viewdns.info/dnsrecord/
 [11]: http://ip.seveas.net/dnsgraph/

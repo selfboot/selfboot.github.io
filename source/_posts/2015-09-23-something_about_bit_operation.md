@@ -146,7 +146,7 @@ print subsets
 [位操作基础篇之位操作全面总结](http://blog.csdn.net/morewindows/article/details/7354571)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20150923_bit_operator.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20150923_two's_complement.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20150923_bit_operator.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20150923_two's_complement.png
 
 

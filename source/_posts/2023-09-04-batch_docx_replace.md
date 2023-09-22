@@ -12,7 +12,7 @@ date: 2023-09-04 11:59:36
 
 在工作中，重复性的劳动往往枯燥乏味。利用 Python 的力量来优化工作流程，可以极大地提高效率，事半功倍。本文将详细介绍如何使用 Python 模板库 docxtpl，**在极短的时间内，自动批量生成多份 Word 文档**，节省大量手工操作时间，从而解放双手，轻松完成任务。
 
-![Python docxtpl 批量制作 word 文件](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230904_batch_docx_replace_summary.png)
+![Python docxtpl 批量制作 word 文件](https://slefboot-1251736664.file.myqcloud.com/20230904_batch_docx_replace_summary.png)
 
 <!-- more -->
 
@@ -28,7 +28,7 @@ date: 2023-09-04 11:59:36
 
 因为我在对文本进行替换的同时，需要**保存原来文件中的样式**。在 Word 的 `.docx` 文件中，样式和文本是分开存储的。一个段落中的文本可能由多个 Run 对象组成，每个 Run 对象可能有不同的样式，在多个 Run 对象中进行文本替换，并保留格式，会非常复杂。此外，这个库的 API 也比较复杂，还要了解 Run 对象，对使用者不友好。好在我足够机智，提醒 ChatGPT 可以考虑其他库来进行文本替换，于是 ChatGPT 老师就推荐了 `docxtpl` 这个库。
 
-![Python docxtpl 批量制作 word 文件](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230904_batch_docx_replace_package.png)
+![Python docxtpl 批量制作 word 文件](https://slefboot-1251736664.file.myqcloud.com/20230904_batch_docx_replace_package.png)
 
 `docxtpl` 是一个基于 `python-docx` 的模板库，它的作者觉得使用 python-docx 这个库来修改 word 太麻烦了，于是借鉴 Jinja2 模板库的思路，开发了 `docxtpl` 这个库。它的使用方法很简单，主要分三步：
 

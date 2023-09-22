@@ -10,13 +10,13 @@ description: 本文是广州买房攻略的二手房购买流程和注意事项�
 
 二手房，一般都是个人贷款，通过中介机构买卖，这里的流程大致如下：
 
-![二手房流程登记](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230716_gz_house_second_1.png)
+![二手房流程登记](https://slefboot-1251736664.file.myqcloud.com/20230716_gz_house_second_1.png)
 
 或者参考这里 [三、个人全款自行成交买卖二手房办理登记-广州市](http://ghzyj.gz.gov.cn/ywpd/bdcdj/bdcdjlct/grdj/content/post_2757934.html) 的流程。
 
 可以在 [个人登记](http://ghzyj.gz.gov.cn/ywpd/bdcdj/bdcdjlct/grdj/index.html) 栏目，找到所有的流程详细说明：
 
-![二手房流程登记](https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20230716_gz_house_second_2.png)
+![二手房流程登记](https://slefboot-1251736664.file.myqcloud.com/20230716_gz_house_second_2.png)
 
 ## 二手房合同注意事项
 

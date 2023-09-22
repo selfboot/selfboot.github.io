@@ -129,10 +129,10 @@ def largestRectangleArea(self, height):
 [2]: https://book.douban.com/subject/19952400/
 [3]: http://mindhacks.cn/2011/07/10/the-importance-of-knowing-why-part3/
 [4]: https://leetcode.com/problems/largest-rectangle-in-histogram/
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151103_histogram_area.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20151103_histogram_area.png
 [6]: https://leetcode.com/problems/maximal-rectangle/
-[7]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151103_histogram.png
-[8]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20151103_histogram_more.png
+[7]: https://slefboot-1251736664.file.myqcloud.com/20151103_histogram.png
+[8]: https://slefboot-1251736664.file.myqcloud.com/20151103_histogram_more.png
 [9]: https://en.wikisource.org/wiki/Rules_for_the_Direction_of_the_Mind
 
 

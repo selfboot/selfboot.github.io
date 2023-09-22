@@ -453,6 +453,6 @@ python本身提供了一些装饰器：property,staticmethod，等等。另外�
 [Fibonacci, recursion and decorators](http://martin-thoma.com/fibonacci-recursion-decorators/)
 
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20140810_recursion_without_cache.png  "递归调用"
+[1]: https://slefboot-1251736664.file.myqcloud.com/20140810_recursion_without_cache.png  "递归调用"
 [3]: https://gist.github.com/xuelangZF/99f59f1b4cf8fb8c08eb
 

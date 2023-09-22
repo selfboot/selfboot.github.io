@@ -435,11 +435,11 @@ execute pathogen#infect()
 [Mac终端Vim如何安装使用ctags](http://www.douban.com/group/topic/31808699/)
 [TagHighlight](http://www.cgtk.co.uk/vim-scripts/taghighlight)
 
-[1]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_NERDTree.png
-[2]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_xpt.gif
-[3]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_YCM.gif
-[4]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_syntastic.png
-[5]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_tags.png
-[6]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_pydoc.png
-[7]: https://slefboot-1251736664.cos.ap-beijing.myqcloud.com/20130611_powerline.png
+[1]: https://slefboot-1251736664.file.myqcloud.com/20130611_NERDTree.png
+[2]: https://slefboot-1251736664.file.myqcloud.com/20130611_xpt.gif
+[3]: https://slefboot-1251736664.file.myqcloud.com/20130611_YCM.gif
+[4]: https://slefboot-1251736664.file.myqcloud.com/20130611_syntastic.png
+[5]: https://slefboot-1251736664.file.myqcloud.com/20130611_tags.png
+[6]: https://slefboot-1251736664.file.myqcloud.com/20130611_pydoc.png
+[7]: https://slefboot-1251736664.file.myqcloud.com/20130611_powerline.png
 
