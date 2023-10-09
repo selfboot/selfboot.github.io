@@ -91,6 +91,14 @@ def upload_image_to_wechat(access_token, cos_url):
         print(f"Failed to open image file {e}")
         return None
     image_type = image.format.lower()
+    
+    # 如果图片是 WebP 格式，转换为 PNG
+    if image_type == 'webp':
+        image = image.convert("RGBA")
+        image_file = io.BytesIO()
+        image.save(image_file, format='PNG')
+        image_type = 'png'
+    
     image_file.seek(0)
     mime_type = 'image/' + image_type if image_type else 'application/octet-stream'
     files = {'media': ('image.' + image_type if image_type else 'file', image_file, mime_type)}
