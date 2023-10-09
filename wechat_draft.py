@@ -35,11 +35,14 @@ def get_access_token(appid, appsecret):
 
 def replace_image_urls(html_content, access_token):
     # Define a regular expression to match image URLs
-    pattern = r'src="[^"]*.png"'
+    ## pattern = r'src="[^"]*.png"'
+    pattern = r'src="([^"]*.(png|webp|gif)(/webp)?)"'
 
     def process_url(match):
         # Extract the original URL from the match object
-        original_url = match.group(0)[5:-1]
+        original_url = match.group(1)
+        if original_url.endswith('/webp'):
+            original_url = original_url[:-5]
         # Process the URL and return the new URL
         new_url = upload_image_to_wechat(access_token, original_url)
         if new_url:
@@ -91,7 +94,7 @@ def upload_image_to_wechat(access_token, cos_url):
     image_file.seek(0)
     mime_type = 'image/' + image_type if image_type else 'application/octet-stream'
     files = {'media': ('image.' + image_type if image_type else 'file', image_file, mime_type)}
-
+    print(f"media type: {mime_type}")
     global thumb_media_id
     # Add this image to media library
     if not thumb_media_id:
