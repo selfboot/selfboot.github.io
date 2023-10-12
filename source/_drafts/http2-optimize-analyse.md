@@ -1,9 +1,7 @@
 ---
-title: 深入理解 HTTP2 性能优化：抓包分析
+title: 抓包深入理解 HTTP2 性能优化
 tags:
 ---
-
-
 
 ![http1.1 和 http2 性能优化对比](https://slefboot-1251736664.file.myqcloud.com/20230922_http2_optimize_analyse_vs.png)
 
