@@ -336,7 +336,8 @@ div {
   max-width: 100%;
   padding: 0.5em 0;
   margin: auto;
-  display: block;
+  height: auto;
+  width: auto;
 }
 .post .post-content ul,
 .post .post-content ol {
