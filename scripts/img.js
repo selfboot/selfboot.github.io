@@ -16,7 +16,8 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
       (src.endsWith(".png") ||
         src.endsWith(".jpeg") ||
         src.endsWith(".jpg") ||
-        src.endsWith(".gif"))
+        src.endsWith(".gif") || 
+        src.endsWith(".webp"))
     ) {
       const parsedUrl = url.parse(src);
       const imgPathPart = parsedUrl.path;
@@ -40,7 +41,7 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
         if (width <= 400) {
           sizes = `${width}px`;
         } else {
-          sizes = `(max-width: 400px) 400px, (max-width: 800px) 800px, (max-width: 1600px) 1600px, ${width}px`;
+          sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)"
         }
         img.attr("sizes", sizes);
         img.attr("src", origin);
