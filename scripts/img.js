@@ -45,6 +45,9 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
         }
         img.attr("sizes", sizes);
         img.attr("src", origin);
+        const height = dimensions.height;
+        img.attr("width", width);
+        img.attr("height", height);
       }
     }
   });
