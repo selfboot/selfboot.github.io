@@ -4,7 +4,7 @@ gtag('js', new Date());
 gtag('config', 'G-QNFB9JLSPV');
 </script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">神器——Chrome开发者工具(一)</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-user-graduate"> 小盛律师</i></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"> 法律普及</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">神器——Chrome开发者工具(一)</h1><div class="post-meta">2014/09/19<span> | </span><span class="category"><a href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2014/09/19/chrome_DevTools_1/" href="/2014/09/19/chrome_DevTools_1/#disqus_thread"></a><div class="post-content"><p>这里我假设你用的是Chrome浏览器，如果恰好你做web开发，或者是比较好奇网页中的一些渲染效果并且喜欢折腾，那么你一定知道Chrome的开发者工具了。其实其他浏览器也有类似工具，比如Firefox下的firebug。本文将会详细讲述如何使用Chrome开发者工具，希望里面有些让你感到惊艳的东西！即使你不用Chrome，那么文中的某些内容也会相当有用。</p>
 <p>首先啰嗦一下如何打开开发者工具吧。可以直接在页面上点击右键，然后选择审查元素；或者是打开Tools–Developer Tools；或者是用快捷键Command + I 打开。打开后我们看到的界面大概如下：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png" alt="图1. 开发者工具概况"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png/webp" alt="图1. 开发者工具概况" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png/webp 2560w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Summary.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2560" height="1600"></p>
 <span id="more"></span>
 
 <p>Google Chrome一共提供了8大组工具：</p>
@@ -20,14 +20,14 @@ gtag('config', 'G-QNFB9JLSPV');
 </ol>
 <p>强大的Chrome开发者工具提供了很棒的提示功能，当我们把鼠标悬停在某些项时，会显示一些很有用的提示信息，有时候我们可以得到意想不到的收获。此外，开发者工具还提供了Emulation功能，做移动开发时特别有用。下面先详细研究一下8大工具的使用方法。</p>
 <h1 id="Elements"><a href="#Elements" class="headerlink" title="Elements"></a><a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools/docs/dom-and-styles">Elements</a></h1><p>Elements工具像一把手术刀一样“解剖”了当前页面，我们看到的Elements页面一般像这样子：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png" alt="图2. Element 总体效果"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png/webp" alt="图2. Element 总体效果" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png/webp 2206w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2206" height="1202"></p>
 <p>图中标记为1的红色区块为页面HTML文件，HTML中的每个元素比如、</p><p>都是一个DOM节点，所有的DOM节点组成了DOM树。我们完全可以把红色区块1当做是DOM树，把HTML元素标签看做DOM节点。</p>
 <p>当我们在这里选中某一DOM对象时，网页中相应元素也会被阴影覆盖。我们可以对DOM对象进行修改，修改后结果会在页面实时显示出来。此外，还可以用<code>Command+f</code>搜索DOM树中指定的内容，或者是以HTML形式更改页面元素，如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_html.png" alt="图3. 更改内容"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_html.png/webp" alt="图3. 更改内容" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_html.png/webp 1238w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_html.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_html.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1238" height="1074"></p>
 <p>选中DOM对象之后右键即可以看到一些辅助的功能，如图中标记为2的区块所示：</p>
 <ol>
 <li>Add Attribute: 在标签中增加新的属性；</li>
-<li>Force Element State: 有时候我们为页面元素添加一些动态的样式，比如当鼠标悬停在元素上时的样式，这种动态样式很难调试。我们可以使用<code>Force Element State</code>强制元素状态，便于调试，如下图：<br> <img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_dynamic_style.gif" alt="图4. 强制元素状态"></li>
+<li>Force Element State: 有时候我们为页面元素添加一些动态的样式，比如当鼠标悬停在元素上时的样式，这种动态样式很难调试。我们可以使用<code>Force Element State</code>强制元素状态，便于调试，如下图：<br> <img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_dynamic_style.gif/webp" alt="图4. 强制元素状态" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_dynamic_style.gif/webp 1098w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_dynamic_style.gif/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_dynamic_style.gif/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1098" height="640"></li>
 <li>Edit as HTML: 以HTML形式更改页面元素；</li>
 <li>Copy XPath: 复制<a href="#XPath">XPath</a>；</li>
 <li>Delete Node: 删除DOM节点；</li>
@@ -43,13 +43,13 @@ gtag('config', 'G-QNFB9JLSPV');
 <li>Properties: 超级全面地列出当前选中内容的属性，不过基本很少用到。</li>
 </ul>
 <p>实际应用中我们经常会用到Styles，如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_styles.png" alt="图5. Element 样式"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_styles.png/webp" alt="图5. Element 样式" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_styles.png/webp 978w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_styles.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_styles.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="978" height="1076"></p>
 <p>图中标记为1的+号为<code>New style rule</code>，可以为当前标签添加新的选择器，新建立的样式为inspector-stylesheet。此外，也可以直接在原有的样式上增加、修改、禁用样式属性，如图中标记2显示。</p>
 <p>在New style rule右边为<code>Toggle Element State</code>，选择后会出现标记3显示的选择框，如果选中<code>:hover</code>后，即可以看到鼠标悬停在页面元素上时的CSS样式了，作用类似于前面的Force Element State，更多内容可以看<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/4515124/see-hover-state-in-chrome-developer-tools">:hover state in Chrome Developer Tools</a> 。</p>
 <p>更强大的是，开发者工具以直观的图形展示了盒子模型的margin、border、padding部分，如标记5所示。下面动态图给出了盒子模型的一个示例：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_box.gif" alt="图6. 盒子模型示例"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_box.gif/webp" alt="图6. 盒子模型示例" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_box.gif/webp 784w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Element_box.gif/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="784" height="612"></p>
 <h1 id="Network"><a href="#Network" class="headerlink" title="Network"></a><a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools/docs/network">Network</a></h1><p>有时候我们的网页加载的很慢，而相同网速下，其他网页加载速度并不慢。这时候就得考虑优化网页，优化前我们必须知道加载速度的瓶颈在哪里，这个时候可以考虑使用Network工具。下图为我的博客首页加载时的Network情况：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png" alt="图7. Network 总体效果"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png/webp" alt="图7. Network 总体效果" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png/webp 2434w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2434" height="1434"></p>
 <p>请求的每个资源在Network表格中显示为一行，每个资源都有许多列的内容(如红色区块1)，不过默认情况下不是所有列都显示出来。</p>
 <ul>
 <li><p>Name/Path: 资源名称以及URL路径；</p>
@@ -90,7 +90,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <p>有时候我们需要把Network里面内容传给别人，这时候可以在资源请求行的空白处右键然后选择<code>Save as HAR with Content</code>保存为一个HAR文件。然后可以在一些第三方工具网站，比如<a target="_blank" rel="noopener" href="http://ericduran.github.io/chromeHAR/">这里</a>重现网络请求信息。</p>
 <p>选定某一资源后，我们还可以<code>Copy as cURL</code>，也就是复制网络请求作为curl命令的参数，详细内容看<a target="_blank" rel="noopener" href="https://developer.chrome.com/devtools/docs/network#copying-requests-as-curl-commands"> Copying requests as cURL commands</a></p>
 <p>此外，我们还可以查看网络请求的请求头，响应头，已经返回的内容等信息，如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png" alt="图8. 网页请求内容"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png/webp" alt="图8. 网页请求内容" srcset="https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png/webp 2434w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20140919_CDT_Network_content.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2434" height="1434"></p>
 <p>资源的详细内容有以下几个：</p>
 <ul>
 <li>HTTP request and response headers</li>

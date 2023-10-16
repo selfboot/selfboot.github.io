@@ -9,7 +9,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <h1 id="DNS-源起"><a href="#DNS-源起" class="headerlink" title="DNS 源起"></a>DNS 源起</h1><p>要想访问网络上的一台计算机，我们必须要知道它的IP地址，但是这些地址（比如243.185.187.39）只是一串数字，没有规律，因此我们很难记住。并且如果一台计算机变更IP后，它必须通知所有的人。</p>
 <p>显然，直接使用IP地址是一个愚蠢的方案。于是人们想出了一个替代的方法，即为每一台计算机起一个名字，然后建立计算机名字到地址的一个映射关系。我们访问计算机的名字，剩下的名字到地址的转换过程则由计算机自动完成。</p>
 <h2 id="hosts映射"><a href="#hosts映射" class="headerlink" title="hosts映射"></a>hosts映射</h2><p>早期，名字到地址的转换过程十分简单。每台计算机保存一个<code>hosts</code>文件，里面列出所有计算机名字和对应的IP地址，然后定期从一个维护此文件的站点更新里面的记录。当我们访问某个计算机名字时，先在hosts文件找到对应的IP，然后就可以建立连接。</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_hosts_local.png" alt="hosts 管理主机"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_hosts_local.png/webp" alt="hosts 管理主机" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_hosts_local.png/webp 1262w, https://slefboot-1251736664.file.myqcloud.com/20151105_hosts_local.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_hosts_local.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1262" height="890"></p>
 <p>早期的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ARPANET">ARPANET</a>就是这样做的，但是随着网络规模的扩大，这种方法渐渐吃不消了。主要有以下三个原因：</p>
 <ol>
 <li>hosts文件变得非常大；</li>
@@ -23,11 +23,11 @@ gtag('config', 'G-QNFB9JLSPV');
 <li>DNS服务器不再是单一的一台机器，而是一个层次的、合理组织的服务器集群。</li>
 </ol>
 <p>这样访问一个域名的过程可以简化为下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_dns_concept.png" alt="域名hosts解析过程"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_dns_concept.png/webp" alt="域名hosts解析过程" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_dns_concept.png/webp 1458w, https://slefboot-1251736664.file.myqcloud.com/20151105_dns_concept.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_dns_concept.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1458" height="910"></p>
 <h1 id="DNS-协议"><a href="#DNS-协议" class="headerlink" title="DNS 协议"></a>DNS 协议</h1><p>那么如何具体实现这个所谓的域名系统呢，要知道管理一个超大型并且不断变化的域名到IP的映射集合可不是一个简单的事，况且还要去应付成千上万的DNS查询请求。人们最终想出了一套不错的协议，规定如何来实现这个系统，下面我们一起来看看吧。</p>
 <h2 id="域名空间"><a href="#域名空间" class="headerlink" title="域名空间"></a>域名空间</h2><p>首先我们需要制定一套命名规则，防止域名出现重复。DNS关于域名的规则和我们生活中的快递系统类似，使用层次的地址结构。快递系统中要给某人邮寄物品，地址可能是这样：中国、广东省、广州市、番禺区、中山西路12号 XXX。而一个域名看起来则是这样的groups.google.com（为什么不是com.google.groups？我猜可能和老外写地址的习惯有关）。</p>
 <p>对于Internet来说，域名层次结构的顶级（相当于国际快递地址中的国家部分）由<a target="_blank" rel="noopener" href="https://www.icann.org/">ICANN</a>（互联网名称与数字地址分配机构）负责管理。目前，已经有超过250个顶级域名，每个顶级域名可以进一步划为一些子域（二级域名），这些子域可被再次划分（三级域名），依此类推。所有这些域名可以组织成一棵树，如下图所示（图片来自Computer Networks: 7-1 ）：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png" alt="域名空间树"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png/webp" alt="域名空间树" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png/webp 1800w, https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20151105_domain_tree.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1800" height="764"></p>
 <h2 id="域名资源记录"><a href="#域名资源记录" class="headerlink" title="域名资源记录"></a>域名资源记录</h2><p>DNS设计之初是用来建立域名到IP地址的映射，理论上对于每一个域名我们只需要在域名服务器上保存一条记录即可。这里的记录一般叫作域名资源记录，它是一个五元组，可以用以下格式表示：</p>
 <p><code>Domain_name Time_to_live Class Type Value</code></p>
 <p>其中：</p>
@@ -43,25 +43,25 @@ gtag('config', 'G-QNFB9JLSPV');
 <p>关于这些域名资源记录的实例我们将在下一篇文章（实践篇）看到。</p>
 <h2 id="域名服务器"><a href="#域名服务器" class="headerlink" title="域名服务器"></a>域名服务器</h2><p>我们知道不能只用一台域名服务器来响应所有的DNS查询，因为没有一台机器能够给全球的用户提供查询服务，计算能力、存储、带宽都不允许。只能合理组织一个域名服务器集群，使他们协同工作，共同提供域名解析服务。接下来首先要面对的一个问题是<strong>如何合理地将所有的域名资源记录存储到不同的域名服务器上。</strong></p>
 <p>前面说过域名的名字空间可以组织为一棵树，这里我们可以进一步将其划分为不重叠的区域（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/DNS_zone">DNS zone</a>），针对上图的域名空间，一种可能的域名划分如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png" alt="域名划分"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png/webp" alt="域名划分" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png/webp 1758w, https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20151105_domain_zone.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1758" height="772"></p>
 <p>然后将每个区域与多个域名服务器（其中一个是master，其他slave服务器则用来提供数据备份、加快解析速度、保证服务可用性）关联起来，称这些域名服务器为该区域的<code>权威域名服务器(Authoritative Name Servers )</code>，它保存两类域名资源记录：</p>
 <ol>
 <li>该区域内所有域名的域名资源记录。</li>
 <li>父区域和子区域的域名服务器对应的域名资源记录（主要是NS记录）。</li>
 </ol>
 <p>这样，所有的域名资源记录都保存在多个域名服务器中，并且所有的域名服务器也组成了一个层次的索引结构，便于我们后面进行域名解析。下面以一个简化的域名空间为例子，说明域名资源记录是如何保存在域名服务器中的，如下图a：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_name_servers.png" alt="域名服务器"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_name_servers.png/webp" alt="域名服务器" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_name_servers.png/webp 980w, https://slefboot-1251736664.file.myqcloud.com/20151105_name_servers.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_name_servers.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="980" height="674"></p>
 <p>图中域名空间划分为A, B, C, D, E, F, G七个DNS区域，每个DNS区域都有多个权威域名服务器，这些域名服务器里面保存了许多域名解析记录。对于上图的NDS区域E来说，它的权威域名服务器里面保存的记录如图中表格所示。</p>
 <p>仔细观察上图你可能会发现区域A、B并没有父区域，他们之间并没有一条路径连在一起。这将导致一个很麻烦的问题，那就是区域A的权威域名服务器可能根本不知道区域B的存在。认识到这一点后，你可能会想出一个很自然的解决方案，就是在A中记录B域名服务器的地址，同时在B中记录A的，这样它们两个就联系起来了。但是考虑到我们有超过250个顶级域名，这样做并不是很恰当。</p>
 <p>而我们使用的域名系统则采用了一种更加聪明的方法，那就是引入<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Root_name_server">根域名服务器</a>，它保存了所有顶级区域的权威域名服务器记录。现在通过根域名服务器，我们可以找到所有的顶级区域的权威域名服务器，然后就可以往下一级一级找下去了。下图为全球根域名服务器的分布图，可以在<a target="_blank" rel="noopener" href="http://www.root-servers.org/">这里</a>找到。</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_root_servers.png" alt="顶级域名服务器"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_root_servers.png/webp" alt="顶级域名服务器" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_root_servers.png/webp 1132w, https://slefboot-1251736664.file.myqcloud.com/20151105_root_servers.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_root_servers.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1132" height="506"></p>
 <p>现在为止，我们的权威域名服务器和根域名服务器其实组成了一个树，树根为根域名服务器，下面每个节点都是一个区域的权威域名服务器，对于图a中各个DNS区域的权威域名服务器，它们组成了下面这棵树（<em>实际中，一个权威域名服务器可能保存有多个DNS区域的记录，因此权威域名服务器之间的联系并不构成一棵树。这部分的详细内容可以参考RFC 1034: 4. NAME SERVERS。下面为了容易理解，将其简化为一棵树</em>）：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_servers_tree.png" alt="域名服务器树"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_servers_tree.png/webp" alt="域名服务器树" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_servers_tree.png/webp 474w, https://slefboot-1251736664.file.myqcloud.com/20151105_servers_tree.png/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="474" height="579"></p>
 <h2 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h2><p>我们已经有了一个域名服务器集群，该集群合理地保存了域名空间和域名资源记录的对应关系。现在我们要做的就是发送一个DNS请求给域名服务器，然后坐等它返回正确的域名资源记录，这个过程叫作域名解析。</p>
 <p>严格来说，域名解析的过程最早要追溯到建立网络连接。因为每当连接上网络之后，计算机会自动获得一个默认的DNS服务器，当然你也可以用自己信任的DNS服务器，比如8.8.8.8（DNS服务器也有信任不信任之分，是的，实践篇会讲到），我们把这个域名服务器也叫作<code>本地域名服务器</code>。接下来当我们需要知道一个域名对应的资源记录时，会向本地域名服务器发起请求，如果该域名恰好在本地域名服务器所辖属的域名区域（DNS zone）内，那么可以直接返回记录。</p>
 <p>如果在本地域名服务器没有发现该域名的资源记录，就需要在整个域名空间搜索该域名。而整个域名空间的资源记录存储在一个分层的、树状联系的一系列域名服务器上，所以本地域名服务器首先要从根域名服务器开始往下搜索。这里有一个问题就是<strong>本地域名服务器如何找到根域名服务器在哪里呢？</strong>其实域名服务器启动的时候，就会加载一个配置文件，里面保存了根域名服务器的NS记录（要知道根域名服务器地址一般非常稳定，不会轻易改变，并且数量很少，所以这个配置文件会很小）。找到根域名服务器之后，就可以一级一级地往下查找啦。</p>
 <p>仍然以我们的图a为例，现在假设区域E内的某个用户想访问math.sysu.edu.cn，那么请求的过程如下：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_name_resolution.png" alt="域名解析过程"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151105_name_resolution.png/webp" alt="域名解析过程" srcset="https://slefboot-1251736664.file.myqcloud.com/20151105_name_resolution.png/webp 879w, https://slefboot-1251736664.file.myqcloud.com/20151105_name_resolution.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151105_name_resolution.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="879" height="675"></p>
 <p>用语言简单描述如下：</p>
 <ol>
 <li>用户：喂，本地域名服务器，告诉我math.sysu.edu.cn的地址；</li>

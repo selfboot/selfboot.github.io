@@ -20,7 +20,7 @@ gtag('config', 'G-QNFB9JLSPV');
 
 <p>具体程序以及测试例子放在gist上，可以在<a target="_blank" rel="noopener" href="https://https//gist.github.com/xuelangZF/7addb2810e60a9031d76">这里</a>找到。测试了一下，两千多个单词，寻找共同前缀的单词，速度还是蛮快的。</p>
 <h1 id="字频统计"><a href="#字频统计" class="headerlink" title="字频统计"></a>字频统计</h1><p>有时候我们需要统计一篇文章中一些单词出现的次数，这个时候用字典树可以很方便的解决这个问题。在<a href="../08-04-2014/simple_trie_tree.html">字典树的简单实现</a>中，我们设计的节点数据结构如下：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140812_trie_data_structure.png" alt="字典树节点数据结构"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140812_trie_data_structure.png/webp" alt="字典树节点数据结构" srcset="https://slefboot-1251736664.file.myqcloud.com/20140812_trie_data_structure.png/webp 1100w, https://slefboot-1251736664.file.myqcloud.com/20140812_trie_data_structure.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140812_trie_data_structure.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1100" height="650"></p>
 <p>只要对这里节点的数据结构稍作修改，就可以用于统计字频了。把原来数据结构中的标记位改为<code>频数位</code>，即保存该单词出现的次数。然后，再把原有字典树实现中的插入操作和查找操作稍微改动，就可以实现字频统计功能了。</p>
 <ul>
 <li><p>插入操作：将单词标记为<code>当前单词</code>，将根节点标记为<code>当前节点</code>，执行操作1：</p>

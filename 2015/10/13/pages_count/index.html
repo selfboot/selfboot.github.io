@@ -7,21 +7,21 @@ gtag('config', 'G-QNFB9JLSPV');
 <p>一本书的页码从自然数1开始编码直到自然数n，按照通常的习惯，每个页码都不包含多余的前导数字0，例如第6页用数字6而不是06或者006表示。现在给定表示书的总页码的十进制整数n(1 =&lt; n &lt;= 10^9)，编程计算书的全部页码中分别用到多少次数字0, 1, 2, 3, 4, 5, 6, 7, 8, 9。</p>
 </blockquote>
 <p>比如一本数有123页，那么各数字出现次数如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_page_count_result.png"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_page_count_result.png/webp" srcset="https://slefboot-1251736664.file.myqcloud.com/20151013_page_count_result.png/webp 1206w, https://slefboot-1251736664.file.myqcloud.com/20151013_page_count_result.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151013_page_count_result.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1206" height="880"></p>
 <span id="more"></span>
 
 <p>解题思路不是很难想到，但是在写作业报告，发现很难清楚地把这个算法过程给写出来。于是就认真组织了语言，配上几幅图片，希望能把算法讲明白。（<code>好多内容自己会但不一定讲的明白，讲的明白也不一定写的明白</code>）</p>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>对于任意的一个页码数，将其分为两部分：个位数部分数字和其他部分数字。那么对于总页码为N的书本，其所有的页码可以放在如下的一个表格中，绿色表格代表页码，里面的任意数字X[i][j] = i * 10 + j(方便我们理解，这里假设N-3==0)：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_pages_table.png"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_pages_table.png/webp" srcset="https://slefboot-1251736664.file.myqcloud.com/20151013_pages_table.png/webp 1416w, https://slefboot-1251736664.file.myqcloud.com/20151013_pages_table.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151013_pages_table.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1416" height="754"></p>
 <p>现在要做的就是统计所有绿色表格中数字0到9出现的次数，绿色表格（也即任意一个页码）中数字组成其实可以拆分为对应的行和列的数字组成。例如对于页码123，其中1、2、3各出现1次，它对应的行的是123/10=12，列为123%10=3，12和3中1、2、3也是各出现一次。</p>
 <p>要计算所有的页码中0到9出现的总次数，可以转换为所有行中0到9出现的次数和所有列中0到9出现的次数。对于每一个绿色表格，其对应的行和列中数字各出现一次。因此我们可以先统计每一行和每一列绿色方格的数目，然后就可以得出每一行和每一列中0数字出现的次数。如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png/webp" srcset="https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png/webp 1626w, https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20151013_pages_count.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1626" height="932"></p>
 <ul>
 <li>行的计数：注意由于页码没有01页、02页这一说法，所以行[0]中0出现0次，行[1]中1出现10次，行[2]中2出现10次…行[11]中11出现10次…；</li>
 <li>列的计数：列[0]中0出现N/10次，列[1]中1出现N/10+1次…列[9]中9出现N/10次。</li>
 </ul>
 <p>看上去每行每列数字出现的次数有点凌乱，其实稍微划分一下组成部分就可以了，如下分为五部分来计算（这里假设N-3==0，方便我们讲解）：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_alghorithm.png"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20151013_alghorithm.png/webp" srcset="https://slefboot-1251736664.file.myqcloud.com/20151013_alghorithm.png/webp 1494w, https://slefboot-1251736664.file.myqcloud.com/20151013_alghorithm.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20151013_alghorithm.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1494" height="1056"></p>
 <ul>
 <li>第一部分：第一行[0]中各列数字均出现1次；</li>
 <li>第二部分：最后一行[N/10]中列[0]、列[1]、列[2]、列[3]中数字0、1、2、3各出现1次；</li>

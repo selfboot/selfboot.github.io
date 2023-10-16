@@ -14,13 +14,13 @@ gtag('config', 'G-QNFB9JLSPV');
 </ol>
 <p>下面就来具体的实现下吧！</p>
 <h1 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h1><p>刚开始时自己并没有添加登录模块，以为访客就可以下载相应的课程资源，后来在测试<code>comnetworks-002</code>这门课程时发现访客访问资源页面时会自动跳转到登录界面，下图是chrome在隐身模式访问<a target="_blank" rel="noopener" href="https://class.coursera.org/comnetworks-002/lecture">该课程资源页面</a>时的情况。</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_guest_lecture.png" alt="未登录用户访问课程页面资源" title="未登录用户访问课程资源"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_guest_lecture.png/webp" alt="未登录用户访问课程页面资源" title="未登录用户访问课程资源" srcset="https://slefboot-1251736664.file.myqcloud.com/20140903_guest_lecture.png/webp 1452w, https://slefboot-1251736664.file.myqcloud.com/20140903_guest_lecture.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140903_guest_lecture.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1452" height="1128"></p>
 <p>要想模拟登录，我们先找到登录的<a target="_blank" rel="noopener" href="https://accounts.coursera.org/signin">页面</a>，然后利用google的<code>Developer Tools</code>分析账号密码是如何上传到服务器的。</p>
 <p>我们在登录页面的表单中填入账号密码，然后点击登录。与此同时，我们需要双眼紧盯<code>Developer Tools——Network</code>，找到提交账号信息的url。一般情况下，如果要向服务器提交信息，一般都用post方法，这里我们只需要先找到Method为post的url。悲剧的是，每次登录账号时，Network里面都找不到提交账户信息的地址。猜测登录成功后，直接跳转到登录成功后的页面，想要找的内容一闪而过了。</p>
 <p>于是就随便输入了一组账号密码，故意登录失败，果真找到了post的页面地址，如下图:</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png" alt="提交账户信息的页面" title="提交账户信息的页面"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png/webp" alt="提交账户信息的页面" title="提交账户信息的页面" srcset="https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png/webp 1684w, https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20140903_login_url.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1684" height="1480"></p>
 <p>地址为：<code>https://accounts.coursera.org/api/v1/login</code>。为了知道向服务器提交了哪些内容，进一步观察post页面中表单中内容，如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_coursera_post.png" alt="提交表单内容" title="提交表单内容"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_coursera_post.png/webp" alt="提交表单内容" title="提交表单内容" srcset="https://slefboot-1251736664.file.myqcloud.com/20140903_coursera_post.png/webp 1032w, https://slefboot-1251736664.file.myqcloud.com/20140903_coursera_post.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140903_coursera_post.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1032" height="794"></p>
 <p>我们看到一共有三个字段：</p>
 <ul>
 <li>email：账号的注册邮箱</li>
@@ -69,7 +69,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <p>A Web crawler is an Internet bot that systematically browses the World Wide Web, typically for the purpose of Web indexing.</p>
 </blockquote>
 <p>爬虫的总体架构图如下(图片来自wiki)：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_architecture.png" alt="爬虫的总体架构图" title="web 爬虫架构图"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140903_architecture.png/webp" alt="爬虫的总体架构图" title="web 爬虫架构图" srcset="https://slefboot-1251736664.file.myqcloud.com/20140903_architecture.png/webp 600w, https://slefboot-1251736664.file.myqcloud.com/20140903_architecture.png/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="600" height="458"></p>
 <p>简单来说，爬虫从Scheduler中获取初始的urls，下载相应的页面，存储有用的数据，同时分析该页面中的链接，如果已经访问就pass，没访问的话加入到Scheduler中等待抓取页面。</p>
 <p>当然有一些协议来约束爬虫的行为规范，比如许多网站都有一个<code>robots.txt</code>文件来规定网站哪些内容可以被爬取，哪些不可以。</p>
 <p>每个搜索引擎背后都有一个强大的爬虫程序，把触角伸到网络中的所有角落，不断去收集有用信息，并建立索引。这种搜索引擎级别的爬虫实现起来非常复杂，因为网络上的页面数量太过庞大，只是遍历他们就已经很困难了，更不要说去分析页面信息，并建立索引了。</p>

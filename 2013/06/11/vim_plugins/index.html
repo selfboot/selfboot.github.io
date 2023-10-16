@@ -26,12 +26,12 @@ gtag('config', 'G-QNFB9JLSPV');
 <li>可以将文件和目录添加到收藏夹，可以用书签标记某些文件或者目录</li>
 </ol>
 <p>具体见下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_NERDTree.png" alt="NERDTree"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_NERDTree.png/webp" alt="NERDTree" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_NERDTree.png/webp 947w, https://slefboot-1251736664.file.myqcloud.com/20130611_NERDTree.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20130611_NERDTree.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="947" height="664"></p>
 <p>可以在NERDTree栏用?呼出快速帮助文档，或者用<code>:h NERDTree</code>查看详细文档。</p>
 <h1 id="xptemplate"><a href="#xptemplate" class="headerlink" title="xptemplate"></a><a target="_blank" rel="noopener" href="https://github.com/vim-scripts/xptemplate">xptemplate</a></h1><p>编码中难免会有许多重复的代码片段，每次键入这些片段明显是不明智的做法，于是就有大牛写了<a target="_blank" rel="noopener" href="https://github.com/msanders/snipmate.vim">snipMate</a>插件，不过还有一个更加强大的插件：xptemplate。</p>
 <p>安装完成后<code>:Helptags</code>生成帮助文档，然后<code>:h xpt</code>查看帮助文档。要想看当前文件类型支持的代码片段，可以在insert模式下键入<code>&lt;C-r&gt;&lt;C-r&gt;&lt;C-\&gt;</code>。insert模式下输入片段的名字，然后<code>&lt;C-\&gt;</code>即可插入代码，然后可以用TAB、Shift Tab前后更改高亮显示的内容。</p>
 <p>如下图所示：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_xpt.gif" alt="xpt demo"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_xpt.gif/webp" alt="xpt demo" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_xpt.gif/webp 763w, https://slefboot-1251736664.file.myqcloud.com/20130611_xpt.gif/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="763" height="545"></p>
 <p>如果输入不完整的代码片段名字，键入<code>&lt;C-\&gt;</code>之后就会给出所有可能的片段名称。另外可以嵌套使用代码片段名字，例如在C文件中输入<code>switch&lt;C-\&gt;</code>，会产生一个switch片段，然后在</p>
 <figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> ( var ) {</span><br><span class="line">       <span class="keyword">case</span> constant :</span><br><span class="line">               <span class="comment">/* cursor */</span></span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 
@@ -44,7 +44,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <p>另外YCM也可以基于<a target="_blank" rel="noopener" href="http://clang.llvm.org/">clang</a>为C/C+＋代码提供语义补全。 对C/C++来说youcompleteme现在应该是最好的选择，借助clang的强大功能，补全效率和准确性极高。</p>
 <p>YCM使用<a target="_blank" rel="noopener" href="https://github.com/davidhalter/jedi">Jedi</a>来加强python的语义补全，只需要<code>git submodule update --init --recursive</code>。另外YCM也支持其他许多语言，比如ruby、java等。</p>
 <p>具体使用可以看下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_YCM.gif" alt="YCM Demo"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_YCM.gif/webp" alt="YCM Demo" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_YCM.gif/webp 719w, https://slefboot-1251736664.file.myqcloud.com/20130611_YCM.gif/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="719" height="546"></p>
 <p>YCM需要vim版本至少是7.3.584，可以用<code>:version</code>查看vim版本号，如下：</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">:version</span><br><span class="line">VIM - Vi IMproved 7.3 (2010 Aug 15, compiled Apr 19 2013 01:00:32)</span><br><span class="line">MacOS X (unix) version</span><br><span class="line">Included patches: 1-806</span><br></pre></td></tr></tbody></table></figure>
 
@@ -92,7 +92,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <li>用语法高亮显示具体出错部分。</li>
 </ol>
 <p>如图所示：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_syntastic.png" alt="syntastic"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_syntastic.png/webp" alt="syntastic" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_syntastic.png/webp 857w, https://slefboot-1251736664.file.myqcloud.com/20130611_syntastic.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20130611_syntastic.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="857" height="437"></p>
 <h1 id="vimwiki"><a href="#vimwiki" class="headerlink" title="vimwiki"></a><a target="_blank" rel="noopener" href="https://github.com/vim-scripts/vimwiki">vimwiki</a></h1><p>维基语法的作用有三点:</p>
 <ol>
 <li>使条目更规范，通过一定转换，wiki 能输出为拥有约定俗成格式的HTML；</li>
@@ -171,13 +171,13 @@ gtag('config', 'G-QNFB9JLSPV');
 <p>使用tags文件也很简单，把光标移动到某个元素上，<code>CTRL+]</code>就会跳转到对应的定义，<code>CTRL+o</code>可以回退到原来的地方。如果当前光标下是个局部变量，<code>gd</code>跳到这个局部变量的定义处。</p>
 <p>tags必须在vim运行的当前目录，才能在vim里面正确跳转，不过也可以使用<code>set tags="/path/tags"</code>即可。</p>
 <p>而vim下的TagBar插件(Taglist的升级版)则是为了方便浏览源文件的标签，TagBar提供了一个侧边栏列出了当前文件所有的标签。如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_tags.png" alt="TagBar"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_tags.png/webp" alt="TagBar" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_tags.png/webp 873w, https://slefboot-1251736664.file.myqcloud.com/20130611_tags.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20130611_tags.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="873" height="550"></p>
 <p>注意：mac自带的ctags程序不是exuberant ctags， 所以使用时会出现问题，可以用<code>homebrew</code>重新安装ctags，然后做一个软链接即可，具体如下：</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ brew install ctags</span><br><span class="line">$ <span class="built_in">cd</span> /usr/local/Cellar/ctags/5.8/bin</span><br><span class="line">$ ./ctags --version</span><br><span class="line">Exuberant Ctags 5.8, Copyright (C) 1996-2009 Darren Hiebert</span><br><span class="line"> Compiled: Jun 14 2013, 11:41:43</span><br><span class="line"> Addresses: &lt;dhiebert@users.sourceforge.net&gt;, http://ctags.sourceforge.net</span><br><span class="line"> Optional compiled features: +wildcards, +regex</span><br><span class="line">$ <span class="built_in">cd</span> /usr/bin</span><br><span class="line">$ sudo <span class="built_in">ln</span> -s /usr/local/Cellar/ctags/5.8/bin/ctags ./ctags</span><br></pre></td></tr></tbody></table></figure>
 
 <h1 id="其他插件"><a href="#其他插件" class="headerlink" title="其他插件"></a>其他插件</h1><p><a target="_blank" rel="noopener" href="https://github.com/pangloss/vim-javascript">vim-javascript</a><br>vim 自带的 javascript 缩进简直没法使用，同时还有 html 里的 javascript 缩进也是一塌糊涂。而强大的插件vim-javascript则解决了上面的问题。</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/fs111/pydoc.vim">pydoc</a><br>pydoc将python帮助文档集成到vim中，可以方便地一边写程序一边浏览帮助文档，如下图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_pydoc.png" alt="pydoc"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_pydoc.png/webp" alt="pydoc" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_pydoc.png/webp 962w, https://slefboot-1251736664.file.myqcloud.com/20130611_pydoc.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20130611_pydoc.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="962" height="727"></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/vim-scripts/vim-flake8">vim-flake8</a><br>vim的默认配置对python的支持有限，要在编写代码时及时得到变量拼写错误等提示，可安装<a target="_blank" rel="noopener" href="https://pypi.python.org/pypi/pyflakes">Pyflakes</a>。 Python 社区著名的<a target="_blank" rel="noopener" href="http://www.python.org/dev/peps/pep-0008/">PEP 8</a>，是官方的python代码规范,如果想编写严格遵循<code>PEP 8</code>的代码，可使用pep8。为了方便，有人将两个插件整合到一起，打造出<code>flake8</code>，该工具可通过插件<code>vim-flake8</code>与vim整合。</p>
 <p>pep8、flake8的安装很简单：</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ pip install pep8</span><br><span class="line">$ pip install pyflakes</span><br><span class="line">$ pip install flake8</span><br></pre></td></tr></tbody></table></figure>
@@ -200,7 +200,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <figure class="highlight vim"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> laststatus=<span class="number">2</span>     <span class="comment">" Always show the statusline</span></span><br><span class="line"><span class="keyword">set</span> t_Co=<span class="number">256</span>         <span class="comment">" Explicitly tell Vim that the terminal support 256 colors</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:Powerline_symbols</span> = <span class="string">'unicode'</span></span><br></pre></td></tr></tbody></table></figure>
 
 <p>效果图如下：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_powerline.png" alt="Powerline"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20130611_powerline.png/webp" alt="Powerline" srcset="https://slefboot-1251736664.file.myqcloud.com/20130611_powerline.png/webp 772w, https://slefboot-1251736664.file.myqcloud.com/20130611_powerline.png/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="772" height="433"></p>
 <h1 id="禁用插件"><a href="#禁用插件" class="headerlink" title="禁用插件"></a>禁用插件</h1><p>可以列出当前加载的所有插件：</p>
 <blockquote>
 <p>:scriptnames             //list all plugins</p>

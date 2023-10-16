@@ -13,7 +13,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <li>冯·诺依曼提出计算机基本结构和工作方式的设想，理论要点就是：数字计算机的数制采用二进制；计算机应该按照程序顺序执行。人们把冯诺依曼的这个理论称为冯诺依曼体系结构，所有的的计算机都采用的是冯诺依曼体系结构。</li>
 </ol>
 <p>由此，我们知道计算机内部只有0和1两个数，无论是什么样的信息，在计算机内部都是用0和1来表示。尽管计算机内部用0和1来表达万物，但是计算机与外部的交互仍然采用人们熟悉和便于阅读的方式，期间的转换过程可以简单的称为编码、解码。</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140828_encode_decode.png" alt="编码解码"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140828_encode_decode.png/webp" alt="编码解码" srcset="https://slefboot-1251736664.file.myqcloud.com/20140828_encode_decode.png/webp 1102w, https://slefboot-1251736664.file.myqcloud.com/20140828_encode_decode.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140828_encode_decode.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1102" height="672"></p>
 <p>计算机中用的最多的就是字符，所以这里会详细讲述<code>字符编码</code>。在讲述前，先来看几个概念：</p>
 <ol>
 <li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Character_(computing)">Character(字符)</a>: 计算机中，字符包括字素，类似字素的单元，可书写语言中的字母表、音节表等。例如：字母，从0到9的数字，常用标点符号，空白符，控制符等。中文的你、我、他，日文的<code>に、ほ、ん、ご</code>也都是字符。</p>
@@ -21,7 +21,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Grapheme">Grapheme(字素)</a>：书写文字的最小单元，类似于我们语言中的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Phoneme">phonemes(音素)</a>。</p>
 </li>
 <li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Glyph">Glyph(字形)</a>:字素的表现形式，下图为a的不同字形表示(图片来自wiki)。</p>
-<p> <img src="https://slefboot-1251736664.file.myqcloud.com/20140828_glyphs_a.png" alt="a的不同字形"></p>
+<p> <img src="https://slefboot-1251736664.file.myqcloud.com/20140828_glyphs_a.png/webp" alt="a的不同字形" srcset="https://slefboot-1251736664.file.myqcloud.com/20140828_glyphs_a.png/webp 440w, https://slefboot-1251736664.file.myqcloud.com/20140828_glyphs_a.png/webp400 400w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="440" height="417"></p>
 </li>
 </ol>
 <p>最开始的计算机不像现在的这般强大，老式计算机不能制作、浏览图片，不能观看视频，只能用来简单地操作字符。这时就需要一套方案规定字符在计算机内部如何表示。</p>

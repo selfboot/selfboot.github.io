@@ -46,7 +46,7 @@ gtag('config', 'G-QNFB9JLSPV');
 <li>信息提取</li>
 </ol>
 <h1 id="正则表达式实现原理"><a href="#正则表达式实现原理" class="headerlink" title="正则表达式实现原理"></a>正则表达式实现原理</h1><p>正则表达式便于我们理解使用，但是如何让计算机识别用正则表达式描述的语言呢？仍然以前面的<code>[ab]*abb</code>为例，计算机如何识别[ab]*abb的意义呢？首先我们来看判断输入内容是否匹配正则表达式的流程图：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_DFA.png" alt="确定有限自动机" title="图1. 确定有限自动机"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_DFA.png/webp" alt="确定有限自动机" title="图1. 确定有限自动机" srcset="https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_DFA.png/webp 1126w, https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_DFA.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_DFA.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1126" height="480"></p>
 <p>图中一共有4个状态S0, S1, S2, S3，在每个状态基础上输入字符a或者b就会进入下一个状态。如果经过一系列输入，最终如果能达到状态S3，则输入内容一定满足正则表达式[ab]*abb。</p>
 <p>为了更清晰表述问题，将上图转换为状态转换表，第一列为当前状态，第二列为输入a后当前状态的跳转，第三列为输入b后当前状态的跳转。其中S0为<code>起始状态</code>，S3为<code>接受状态</code>，从起始状态起经过一系列输入到达接受状态，那么输入内容即满足[ab]*abb。</p>
 <table>
@@ -92,7 +92,7 @@ gtag('config', 'G-QNFB9JLSPV');
 
 <p>上面的例子可以看出DFA识别语言简单直接，便于用程序实现，但是DFA较难从正则表达式直接转换。如果我们能找到一种表达方式，用以连接正则表达式和DFA，那么就可以让计算机识别正则表达式了。事实上，确实有这么一种表达方式，可以作为正则表达式和DFA的桥梁，而且很类似DFA，那就是非确定有限自动机(NFA)。</p>
 <p>还是上面的例子，如果用NFA表示流程图，就如下图所示：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_NFA.png" alt="确定有限自动机" title="图2. 非确定有限自动机"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_NFA.png/webp" alt="确定有限自动机" title="图2. 非确定有限自动机" srcset="https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_NFA.png/webp 1142w, https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_NFA.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20140821_regular_express_NFA.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1142" height="468"></p>
 <p>看上去很直观，很有<code>[ab]*abb</code>的神韵。转换为状态转换表如下：</p>
 <table>
 <thead>

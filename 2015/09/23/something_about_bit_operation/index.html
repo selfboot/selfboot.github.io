@@ -11,7 +11,7 @@ gtag('config', 'G-QNFB9JLSPV');
 
 <p>如果很难想得到，那就先来回忆下二进制数按位运算的一些知识。</p>
 <h1 id="二进制数按位运算"><a href="#二进制数按位运算" class="headerlink" title="二进制数按位运算"></a>二进制数按位运算</h1><p>计算机里面所有数据都存储为0，1串，所有的运算归根到底都转为二进制数的运算。相信大家都知道二进制数按位运算的规则：</p>
-<p><img src="https://slefboot-1251736664.file.myqcloud.com/20150923_bit_operator.png" alt="二进制位运算规则"></p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20150923_bit_operator.png/webp" alt="二进制位运算规则" srcset="https://slefboot-1251736664.file.myqcloud.com/20150923_bit_operator.png/webp 1538w, https://slefboot-1251736664.file.myqcloud.com/20150923_bit_operator.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20150923_bit_operator.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1538" height="1076"></p>
 <p>来看一些简单的例子：</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1010 &amp; 1100 = 1000</span><br><span class="line">1010 | 1100 = 1110</span><br><span class="line">1010 ^ 1100 = 0110</span><br><span class="line">1010 &lt;&lt; <span class="string">2   = 101000</span></span><br><span class="line"><span class="string">1010 &gt;&gt; 2</span>   = 10</span><br><span class="line">~1010       = 0101</span><br></pre></td></tr></tbody></table></figure>
 
