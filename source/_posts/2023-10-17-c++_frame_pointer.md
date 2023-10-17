@@ -1,23 +1,24 @@
 ---
-title: 复杂 C++ 项目堆栈保留以及分析
+title: 复杂 C++ 项目堆栈保留以及 ebpf 性能分析
 tags:
   - ChatGPT
   - C++
   - ebpf
 category: 计算机基础
 toc: true
-description: c++
+description: 本文探讨不同编译方式下的堆栈可用性。静态链接情况下，哪怕中间层库失去堆栈信息，整体调用堆栈也会错乱，动态链接同理。保留帧指针是获取堆栈的关键，需要编译加入选项。
+date: 2023-10-17 11:41:55
 ---
 
 在构建和维护复杂的 C++ 项目时，性能优化和内存管理是至关重要的。当我们面对性能瓶颈或内存泄露时，可以使用eBPF（Extended Berkeley Packet Filter）和 BCC（BPF Compiler Collection）工具来分析。如我们在[Redis Issue 分析：流数据读写导致的“死锁”问题(1)](https://selfboot.cn/2023/06/14/bug_redis_deadlock_1/)文中看到的一样，我们用 BCC 的 profile 工具分析 Redis 的 CPU 占用，画了 CPU 火焰图，然后就能比较容易找到耗时占比大的函数以及其调用链。
 
 ![CPU 火焰图](https://slefboot-1251736664.file.myqcloud.com/20230613_bug_redis_deadlock_cpu.svg)
 
+<!--more-->
+
 这里使用 profile 分析的一个大前提就是，服务的二进制文件要保留函数的堆栈信息。堆栈信息是程序执行过程中函数调用和局部变量的记录，当程序执行到某一点时，通过查看堆栈信息，我们可以知道哪些函数被调用，以及它们是如何相互关联的。这对于调试和优化代码至关重要，特别是在处理性能问题和内存泄露时。
 
 但是在实际的项目中，我们用 eBPF 来分析服务的性能瓶颈或者内存泄露的时候，往往会拿不到函数调用堆栈，遇到各种 `unknown` 的函数调用链。这是因为生产环境为了减少二进制文件的大小，通常不包含调试信息。此外，就算生产环境编译 C++ 代码的时候用了 `-g` 生成了调试信息，也可能拿不到完整的函数调用堆栈。这里面的原因比较复杂，本文将展开聊一下这个问题。 
-
-<!--more-->
 
 ## 程序的堆栈信息
 
@@ -156,7 +157,6 @@ C++ 项目依赖第三方库有两种链接方式，静态链接和动态链接�
 | 部署难度  | 简单，只需分发一个文件              | 较复杂，需要确保可执行文件能找到依赖的库 |
 | 启动时间     | 通常更快，因为没有额外的加载开销       | 可能较慢，因为需要在运行时加载库        |
 | 文件大小     | 通常较大，因为包含所有依赖的代码       | 通常较小，因为只包含对库的引用          |
-| 更新难度     | 较困难，需要重新编译整个应用程序       | 更容易，可以单独更新库文件              |
 | 内存占用       | 通常较高，每个实例都有其自己的库副本                  | 通常较低，多个实例可以共享同一份库的内存          |
 | 兼容性        | 可以更好地控制版本，因为库是嵌入的，不受外部库更新的影响 | 可能面临兼容性问题，如果外部库更新并且不向后兼容   |
 
@@ -196,29 +196,84 @@ digraph G {
 
 这其中最常见的依赖方式是**静态链接库依赖其他静态链接库，动态链接库依赖其他动态链接库**，后面的分析会基于这两种依赖关系。动态库 A 依赖静态库 B 是可行的，并且在某些情况下是有意义的。例如，如果静态库 B 包含一些不经常变化的代码，而动态库 A 包含一些经常更新的代码。不推荐在静态库 B 中依赖动态库 A，因为静态库通常被视为独立的代码块，不依赖于外部的动态链接。
 
-### 静态依赖下的编译
+### 静态链接的堆栈
 
 接下来我们分析在静态链接情况下，如果中间有第三方依赖没有带编译选项 `-fno-omit-frame-pointer`，会带来怎么样的影响。
 
 假设有一个 main.cpp 依赖了 utils.cpp 和静态库 static_A，静态库 static_A 依赖了静态库 static_B，这里static_A 编译的时候没带上 -fno-omit-frame-pointer，但是其他都带了-fno-omit-frame-pointer，最终生成的二进制文件中，各静态库和 cpp 文件中的函数会有帧指针吗？这种情况下 eBPF 和 BCC 的工具能最大程度地解析出堆栈信息吗？
 
-我们在本地创建一个完整的示例项目，包含上面的各种依赖关系。然后在编译生成的二进制文件中，发现 static_A 里面的函数没有帧指针，但是 static_B 和其他函数都有帧指针。在生成的 cpu 火焰图中，拿到的函数调用堆栈是错乱的，如下图：
+我们在本地创建一个完整的示例项目，包含上面的各种依赖关系，代码结构如下，完整代码在 [Gist](https://gist.github.com/selfboot/f4943c0a09fe8b333df64f2098eeed16) 上：
+
+```shell
+$ FP_static_demo tree
+.
+├── main.cpp
+├── Makefile
+├── static_A
+│   ├── static_A.cpp
+│   └── static_A.h
+├── static_B
+│   ├── static_B.cpp
+│   └── static_B.h
+├── utils.cpp
+└── utils.h
+```
+
+然后在编译生成的二进制文件中，发现 static_A 里面的函数没有帧指针，但是 static_B 和其他函数都有帧指针。运行二进制后，用 ebpf 的 profile 命令来分析 cpu 耗时堆栈，命令如下：
+
+```shell
+$ profile -F 999 -U -f --pid $(pgrep main)  60 > depend_main.stack
+$ ./FlameGraph/flamegraph.pl depend_main.stack > depend_main.svg
+```
+
+在生成的 cpu 火焰图中，拿到的函数调用堆栈是错乱的，如下图：
 
 ![中间静态库丢失了帧指针](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main.svg)
 
-正常如果没丢失帧指针的话，火焰图应该如下图所示：
+正常如果没丢失帧指针的话，火焰图应该如下图所示，
 
 ![整体没有丢失帧指针](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_fp.svg)
 
 通过上面的实验看到，profile 工具分析性能时，依赖帧指针来重建调用堆栈。即使**只丢失中间某个依赖库的帧指针**，整体函数的调用堆栈就会错乱，并不是只丢失这中间的部分函数调用堆栈。
 
-还是上面的场景，如果我们在依赖的最底层 static_B 编译的时候不保存堆栈信息，但是其他部分都保存，那么生成的二进制文件中，只有 static_B 中的函数没有帧指针。再次用 profile 分析 cpu 堆栈，发现虽然只是最后一层函数调用没有帧指针，但是 BCC tools 分析拿到的堆栈信息还是有问题，如下图，`printStaticA` 和 `function_entry` 被混到了同一层。
+还是上面的场景，如果我们在依赖的**最底层 static_B 编译的时候不保存堆栈信息**，但是其他部分都保存，那么生成的二进制文件中，只有 static_B 中的函数没有帧指针。再次用 profile 分析 cpu 堆栈，发现虽然只是最后一层函数调用没有帧指针，但是 BCC tools 分析拿到的堆栈信息还是有问题，如下图，`printStaticA` 和 `function_entry` 被混到了同一层。这里多次运行，得到的堆栈信息图还可能不一样，不过都是错误的。
 
 ![整体没有丢失帧指针](https://slefboot-1251736664.file.myqcloud.com/20230704_c++_frame_pointer_stack_depend_main_error.svg)
 
-### 动态依赖下的编译
+### 动态链接的堆栈
 
-## 更多文章
+动态链接情况下，如果中间有第三方依赖没有带编译选项 `-fno-omit-frame-pointer`，理论上应该和静态链接一样，堆栈信息会错乱，不过还是写一个例子来验证下。还是上面的 main.cpp 和函数调用关系，把所有静态依赖改成动态依赖，重新改了下目录结构如下：
+
+```shell
+$ tree
+.
+├── dynamic_A
+│   ├── dynamic_A.cpp
+│   └── dynamic_A.h
+├── dynamic_B
+│   ├── dynamic_B.cpp
+│   └── dynamic_B.h
+├── main.cpp
+├── Makefile
+├── utils.cpp
+└── utils.h
+```
+
+完整代码还是在 [Gist](https://gist.github.com/selfboot/e790432ec050646ec3c307b03c6a6784) 上。正常堆栈如下图：
+
+![动态链接下正常堆栈的火焰图](https://slefboot-1251736664.file.myqcloud.com/20231017_c++_frame_pointer_dynamic_normal.svg)
+
+修改 Makefile，只在编译 dynamic_A 的的时候忽略堆栈，生成的 CPU 火焰图如下：
+
+![缺失动态库 A 的火焰图](https://slefboot-1251736664.file.myqcloud.com/20231017_c++_frame_pointer_dynamic_lack_A.svg)
+
+修改 Makefile，只在编译 dynamic_B 的的时候忽略堆栈，生成的 CPU 火焰图如下：
+
+![缺失动态库 B 的火焰图](https://slefboot-1251736664.file.myqcloud.com/20231017_c++_frame_pointer_dynamic_lack_B.svg)
+
+和我们前面猜想一致，一旦丢失了部分堆栈信息，分析出来的堆栈图就会有错乱。
+
+## 参考文章
 
 [Practical Linux tracing ( Part 1/5) : symbols, debug symbols and stack unwinding](https://medium.com/coccoc-engineering-blog/things-you-should-know-to-begin-playing-with-linux-tracing-tools-part-i-x-225aae1aaf13)  
 [How debuggers work: Part 3 - Debugging information](https://eli.thegreenplace.net/2011/02/07/how-debuggers-work-part-3-debugging-information/)  
