@@ -524,8 +524,9 @@ blockquote {
   border-left: 2px solid #009a61;
   background: #f6f6f6;
   color: #555;
-  font-size: 1em;
+  font-size: 13px;
   line-height: 1.2em;
+  font-family: Menlo, Consolas, monospace;
 }
 
 .stressed {
