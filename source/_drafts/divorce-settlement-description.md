@@ -7,13 +7,14 @@ description:
 date: 
 ---
 
-前面写了不少[婚姻家庭](https://selfboot.cn/tags/%E5%A9%9A%E5%A7%BB%E5%AE%B6%E5%BA%AD/)相关的法律科普文章，
+前面写了不少[婚姻家庭](https://selfboot.cn/tags/%E5%A9%9A%E5%A7%BB%E5%AE%B6%E5%BA%AD/)相关的法律科普文章，但是有当事人可能觉得有点太“理论”了，看了后还是不知道**怎么起草离婚协议书**。虽然也能在网上能搜到一堆离婚协议书范文，但是没法甄别质量，不知道有没有一些不完善的地方。
 
-- [夫妻忠诚协议真的有用吗？](https://selfboot.cn/2023/08/21/loyalty-agreement/)
-- [当婚姻走到了尽头：必读的离婚法律指南](https://selfboot.cn/2023/07/21/divorce_legal_knowlage/)
-- [离婚法律指南：离婚流程要多久？](https://selfboot.cn/2023/08/05/divorce_legal_longtime/)
-- [必读的离婚法律指南：不得不防的恶意转移财产！](https://selfboot.cn/2023/09/08/divorce_money_hide/)
-- [必读的离婚法律指南：子女的抚养权、抚养费与探视权](https://selfboot.cn/2023/08/13/divorce_legal_children/)
-- [必读的离婚法律指南：财产分割](https://selfboot.cn/2023/07/23/divorce_legal_money/)
-- [离婚财产分割：父母给的首付钱如何分？](https://selfboot.cn/2023/07/29/divorce_legal_money_parent/)
+![离婚协议的关注点](https://slefboot-1251736664.file.myqcloud.com/20231031_divorce_settlement_description.png)
+
+<!-- more -->
+
+其实写离婚协议书还真是一个专业活，需要专业律师结合当事人的情况，给出专业的建议。这篇文章，小盛律师会结合一个比较好用的离婚协议书范文，给大家解析下离婚协议书的一些注意点。
+
+## 网上的离婚协议书
+
 
