@@ -1,13 +1,73 @@
 ---
-title: memory_leak_ebpf
+title: 基于eBPF的C/C++内存泄漏深度分析：从原理到实践
 tags:
+  - ChatGPT
+  - C++
+  - ebpf
+category: 计算机基础
+toc: true
+description: 
 ---
 
+对于 C/C++ 程序员来说，内存泄露问题是一个老生常谈的问题。排查内存泄露的方法有很多，比如使用 valgrind、gdb、asan、tsan 等工具，但是这些工具都有各自的局限性，比如 valgrind 会使程序运行速度变慢，gdb 需要了解代码并且手动打断点，asan 和 tsan 需要重新编译程序。对于比较复杂，并且在运行中的服务来说，这些方法都不是很方便。
+
+![ebpf 分析拿到的内存泄露火焰图](https://slefboot-1251736664.file.myqcloud.com/20231030_memory_leak_ebpf_index.png)
+
+好在有了 eBPF，我们可以使用它来分析内存泄露问题，不需要重新编译程序，对程序运行速度的影响也很小。eBPF 的强大有目共睹，不过 eBPF 也不是银弹，用来分析内存泄露也还是有很多问题需要解决，本文接下来就来探讨一下基于 eBPF 的内存泄漏分析方法。
+
+<!-- more -->
+
+## 内存泄露模拟
+
+在 C/C++ 中，内存泄露是指程序在运行过程中，由于某些原因导致程序未能释放已经不再使用的内存，从而造成系统内存的浪费。内存泄露问题一旦发生，会导致程序运行速度减慢，甚至系统崩溃。内存泄露问题的发生，往往是由于程序员在编写程序时，没有注意到内存的分配和释放，或者是由于程序设计的缺陷，导致程序在运行过程中，无法释放已经不再使用的内存。
+
+下面是一个简单的内存泄露模拟程序，程序会在循环中分配内存，但是没有释放，从而导致内存泄露。main 程序如下：
+
+```c++
+#include <iostream>
+
+namespace LeakLib {
+    void slowMemoryLeak();
+}
+
+int caller() {
+    std::cout << "In caller" << std::endl;
+    LeakLib::slowMemoryLeak();
+    return 0;
+}
+int main() {
+    std::cout << "Starting slow memory leak program..." << std::endl;
+    caller();
+    return 0;
+}
+```
+
+其中内存泄露的代码在 `slowMemoryLeak` 函数中，具体如下：
+
+```c++
+namespace LeakLib {
+    void slowMemoryLeak() {
+        int oneMbSize = 262144;
+        while (true) {
+            int* p = new int[oneMbSize];
+            for (int i = 0; i < oneMbSize; ++i) {
+                p[i] = i; // Assign values to occupy physical memory
+            }
+            sleep(1); // wait for 1 second
+        }
+    }
+}
+```
+
+注意这里编译的时候，带了帧指针选项（由 `-fno-omit-frame-pointer` 选项控制），这是因为 eBPF 工具需要用到帧指针来进行调用栈回溯。如果这里忽略掉帧指针的话(`-fomit-frame-pointer`)，eBPF 的工具拿不到内存泄露的堆栈信息。完整编译命令如下(-g 可以不用加，不过这里也先加上，方便用 gdb 查看一些信息)：
+
+```shell
+$ g++ main.cpp leak_lib.cpp -o main -fno-omit-frame-pointer -g
+```
+
+### memleak 分析
 
 
-eBPF（Extended Berkeley Packet Filter）主要用于内核跟踪和其他底层任务，可能不总是能准确捕获到用户态应用程序的完整调用堆栈，尤其是当涉及到内存分配（如 malloc）这种由标准库提供的函数时。
-
-如果你的程序或库没有编译帧指针（由 -fno-omit-frame-pointer 选项控制），则 eBPF 工具（如 memleak）可能无法准确地获取调用堆栈。这主要是因为在没有帧指针的情况下，进行堆栈回溯要困难得多。
 
 
 ```shell

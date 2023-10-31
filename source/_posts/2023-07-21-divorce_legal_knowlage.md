@@ -1,7 +1,6 @@
 ---
 title: 当婚姻走到了尽头：必读的离婚法律指南
-tags:
-  - 法律
+tags: 婚姻家庭
 category: 法律普及
 toc: true
 date: 2023-07-21 13:01:25
