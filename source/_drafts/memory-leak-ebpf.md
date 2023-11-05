@@ -106,29 +106,43 @@ operator new[](unsigned long)
     103b:       e9 e0 ff ff ff          jmp    1020 <_init+0x20>
 ```
 
-这里并没有像 slowMemoryLeak 调用一样去做 `push %rbp` 的操作，所以会丢失堆栈了。这里为什么会没有保留帧指针呢？前面编译的时候带了 `-fno-omit-frame-pointer` 能保证我们自己的代码带上帧指针，但是对于 libstdc++ 这些依赖到的标准库，我们是无法控制的。当前系统的 C++ 标准库在编译的时候，并没有带上帧指针，可能是因为这样可以减少函数调用的开销(减少执行的指令)。是否在编译的时候默认带上 -fno-omit-frame-pointer 还是比较有争议，文章最后专门放[一节：默认开启帧指针](#默认开启帧指针)来讨论。
+这里并没有像 slowMemoryLeak 调用一样去做 `push %rbp` 的操作，所以会丢失堆栈信息。这里为什么会没有保留帧指针呢？前面编译的时候带了 `-fno-omit-frame-pointer` 能保证我们自己的代码带上帧指针，但是对于 libstdc++ 这些依赖到的标准库，我们是无法控制的。当前系统的 C++ 标准库在编译的时候，并没有带上帧指针，可能是因为这样可以减少函数调用的开销(减少执行的指令)。是否在编译的时候默认带上 -fno-omit-frame-pointer 还是比较有争议，文章最后专门放[一节：默认开启帧指针](#默认开启帧指针)来讨论。
 
-## tcmalloc 
+## tcmalloc 泄露分析
+
+如果想拿到完整的内存泄露函数调用链路，可以带上帧指针重新编译 libstdc++，不过标准库重新编译比较麻烦。其实日常用的比较多的是 tcmalloc，内存分配管理更加高效些。这里为了验证上面的代码在 tcmalloc 下的表现，我用 -fno-omit-frame-pointer 帧指针编译了 `tcmalloc` 库。如下：
+
+```shell
+git clone https://github.com/gperftools/gperftools.git
+cd gperftools
+./autogen.sh
+./configure CXXFLAGS="-fno-omit-frame-pointer" --prefix=/path/to/install/dir
+make
+make install
+```
+
+接着运行上面的二进制，重新用 memleak 来检查内存泄露，注意这里把 libtcmalloc.so 动态库的路径也传递给了 memleak。工具的输出如下，**找不到内存泄露**了：
+
+```shell
+$ memleak -p $(pgrep main) --combined-only -O /usr/local/lib/libtcmalloc.so
+Attaching to pid 1409827, Ctrl+C to quit.
+[19:55:45] Top 10 stacks with outstanding allocations:
+
+[19:55:50] Top 10 stacks with outstanding allocations:
+```
+
+明明 new 分配的内存没有释放，**为什么 eBPF 的工具检测不到呢**？
+
+### 深入工具实现
+
+在猜测原因之前，仔细看下 [memleak 工具的代码](https://github.com/iovisor/bcc/blob/master/tools/memleak.py)，完整梳理下工具的实现原理。
+
+这里工具主要
+
+发现在各种分配内存的地方，比如 malloc, cmalloc, realloc 等函数打桩，获取当前调用堆栈 id 和分配的内存量；
 
 
-## 默认开启帧指针
-
-前面知道 eBPF 工具依赖帧指针才能进行调用栈回溯，其实栈回溯的方法有不少，比如：
-
-- [DWARF](https://dwarfstd.org/): 调试信息中增加堆栈信息，不需要帧指针也能进行回溯，但缺点是性能比较差，因为需要将堆栈信息复制到用户空间来进行回溯；
-- [ORC](https://www.kernel.org/doc/html/v5.3/x86/orc-unwinder.html): 内核中为了展开堆栈创建的一种格式，其目的与 DWARF 相同，只是简单得多，不能在用户空间使用；
-- [CTF Frame](https://sourceware.org/pipermail/binutils/2022-June/121478.html)：一种新的格式，比 eh_frame 更紧凑，展开堆栈速度更快，并且更容易实现。仍在开发中，不知道什么时候能用上。
-
-所以如果想用**比较低的开销，拿到完整的堆栈信息，帧指针是目前最好的方法**。既然帧指针这么好，为什么有些地方不默认开启呢？在 Linux 的 Fedora 发行版社区中，是否默认打开该选项引起了激烈的讨论，最终达成一致，在 Fedora Linux 38 中，所有的库都会默认开启 -fno-omit-frame-pointer 编译，详细过程可以看 [Fedora wiki: Changes/fno-omit-frame-pointer](https://fedoraproject.org/wiki/Changes/fno-omit-frame-pointer)。
-
-
-
-著名性能优化专家 [Brendan Gregg](https://www.brendangregg.com/) 在一次[分享](https://www.brendangregg.com/Slides/SCALE2015_Linux_perf_profiling.pdf)中，建议在 gcc 中直接将 -fno-omit-frame-pointer 设为默认编译选项：
-
-> • Once upon a tme, x86 had fewer registers, and the frame pointer register was reused for general purpose to improve performance. This breaks system stack walking.
-> • gcc provides -fno-omit-frame-pointer to fix this – **Please make this the default in gcc!** 
-
-
+### 所有堆栈提取
 
 ```shell
 $ slow BPFTRACE_MAX_BPF_PROGS=2500 BPFTRACE_MAX_PROBES=2500 bpftrace -e 'u:/usr/local/lib/libtcmalloc.so.4:* { printf("%s called: %s", probe, ustack()); }'
@@ -162,6 +176,30 @@ with open('generated_bpftrace.bt', 'w') as f:
         f.write('    printf("%s called: %s", probe, ustack());\n')
         f.write('}\n')
 ```
+
+## 默认开启帧指针
+
+前面知道 eBPF 工具依赖帧指针才能进行调用栈回溯，其实栈回溯的方法有不少，比如：
+
+- [DWARF](https://dwarfstd.org/): 调试信息中增加堆栈信息，不需要帧指针也能进行回溯，但缺点是性能比较差，因为需要将堆栈信息复制到用户空间来进行回溯；
+- [ORC](https://www.kernel.org/doc/html/v5.3/x86/orc-unwinder.html): 内核中为了展开堆栈创建的一种格式，其目的与 DWARF 相同，只是简单得多，**不能在用户空间使用**；
+- [CTF Frame](https://sourceware.org/pipermail/binutils/2022-June/121478.html)：一种新的格式，比 eh_frame 更紧凑，展开堆栈速度更快，并且更容易实现。仍在开发中，不知道什么时候能用上。
+
+所以如果想用**比较低的开销，拿到完整的堆栈信息，帧指针是目前最好的方法**。既然帧指针这么好，为什么有些地方不默认开启呢？在 Linux 的 Fedora 发行版社区中，是否默认打开该选项引起了激烈的讨论，最终达成一致，在 Fedora Linux 38 中，所有的库都会默认开启 -fno-omit-frame-pointer 编译，详细过程可以看 [Fedora wiki: Changes/fno-omit-frame-pointer](https://fedoraproject.org/wiki/Changes/fno-omit-frame-pointer)。
+
+上面 Wiki 中对打开帧指针带来的影响有一个**性能基准测试**，从结果来看：
+
+- 带帧指针使用 GCC 编译的内核，速度会慢 2.4%；
+- 使用帧指针构建 openssl/botan/zstd 等库，没有受到显着影响；
+- 对于 CPython 的基准测试性能影响在 1-10%；
+- Redis 的基准测试基本没性能影响；
+
+当然，不止是 Fedora 社区倾向默认开启，著名性能优化专家 [Brendan Gregg](https://www.brendangregg.com/) 在一次[分享](https://www.brendangregg.com/Slides/SCALE2015_Linux_perf_profiling.pdf)中，建议在 gcc 中直接将 -fno-omit-frame-pointer 设为**默认编译选项**：
+
+> • Once upon a tme, x86 had fewer registers, and the frame pointer register was reused for general purpose to improve performance. This breaks system stack walking.
+> • gcc provides -fno-omit-frame-pointer to fix this – **Please make this the default in gcc!** 
+
+此外，在[一篇关于 DWARF 展开的论文](https://inria.hal.science/hal-02297690/document) 提到有 Google 的开发者在分享中提到过，google 的核心代码编译的时候都带上了帧指针。
 
 ## 参考文章
 
