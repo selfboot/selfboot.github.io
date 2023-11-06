@@ -135,51 +135,59 @@ Attaching to pid 1409827, Ctrl+C to quit.
 
 ### 深入工具实现
 
-在猜测原因之前，仔细看下 [memleak 工具的代码](https://github.com/iovisor/bcc/blob/master/tools/memleak.py)，完整梳理下工具的实现原理。
+在猜测原因之前，先仔细看下 [memleak 工具的代码](https://github.com/iovisor/bcc/blob/master/tools/memleak.py)，完整梳理下工具的实现原理。首先能明确的一点是，工具最后的输出部分，是**每个调用栈以及其泄露的内存量**。为了拿到这个结果，用 eBPF **分别在内存分配和释放的时候打桩，记录下当前调用栈的内存分配/释放量**，然后进行统计。核心的逻辑如下：
 
-这里工具主要
+1. `gen_alloc_enter`: 在各种分配内存的地方，比如 malloc, cmalloc, realloc 等函数入口(malloc_enter)打桩(`attach_uprobe`)，获取当前调用堆栈 id 和分配的内存大小，记录在名为 sizes 的字典中；
+2. `gen_alloc_exit2`: 在分配内存的函数退出位置(malloc\_exit)打桩(`attach_uretprobe`)，拿到此次分配的内存起始地址，同时从 sizes 字段拿到分配内存大小，记录 (address, stack_info) 在 allocs 字典中；同时用 `update_statistics_add` 更新最后的结果字典 combined_allocs，存储栈信息和分配的内存大小，次数信息；
+3. `gen_free_enter`: 在释放内存的函数入口处打桩(gen_free_enter)，从前面 allocs 字典中根据要释放的内存起始地址，拿到对应的栈信息，然后用 `update_statistics_del` 更新结果字典 combined_allocs，也就是在统计中，减去当前堆栈的内存分配总量和次数。
 
-发现在各种分配内存的地方，比如 malloc, cmalloc, realloc 等函数打桩，获取当前调用堆栈 id 和分配的内存量；
+### GDB 堆栈跟踪
 
-
-### 所有堆栈提取
+接着回到前面的问题，tcmalloc 通过 new 分配的内存，为啥统计不到呢？很大可能是因为 tcmalloc 底层分配和释放内存的函数并不是 malloc/free，也不在 memleak 工具的 probe 打桩的函数内。那么怎么知道前面示例代码中，分配内存的调用链路呢？比较简单的方法就是用 GDB 调试来跟踪，注意编译 tcmalloc 库的时候，带上 debug 信息，如下：
 
 ```shell
-$ slow BPFTRACE_MAX_BPF_PROGS=2500 BPFTRACE_MAX_PROBES=2500 bpftrace -e 'u:/usr/local/lib/libtcmalloc.so.4:* { printf("%s called: %s", probe, ustack()); }'
-Attaching 2500 probes...
-ERROR: Offset outside the function bounds ('register_tm_clones' size is 0)
-$ slow
-$ slow objdump --syms main | grep register_tm_clones
-00000000000010d0 l     F .text	0000000000000000              deregister_tm_clones
-0000000000001100 l     F .text	0000000000000000              register_tm_clones
+$ ./configure CXXFLAGS="-g -fno-omit-frame-pointer" CFLAGS="-g -fno-omit-frame-pointer"
 ```
 
-简单解释下 `objdump --syms` 的输出，其中：
+编译好后，可以用 objdump 查看 ELF 文件的头信息和各个段的列表，验证动态库中是否有 debug 信息，如下：
 
-1. 第一列函数地址，比如 00000000000010d0 和 0000000000001100 
-2. 第二列 l 表示这是一个局部（local）符号。
-3. 第三列 F 表示这是一个函数。
-4. 第四列 .text 表示这个符号位于文本（代码）段。
-5. 第五列 0000000000000000 表示函数的大小，这里是0。
-6. 第六列 deregister_tm_clones 和 register_tm_clones 是函数名。
-
-对于 bpftrace，没有内建的方法来过滤函数，所以可能需要手动创建一个脚本来生成所有非空的函数列表，并生成一个bpftrace 脚本，然后运行它。假设有一个文件 `functions.txt`，其中列出了所有想要跟踪的函数名。对于上面的例子，可以过滤掉所有 size=0 的函数，然后用下面脚本生成 bpftrace 脚本：
-
-```python
-with open('functions.txt', 'r') as f:
-    functions = f.readlines()
-
-with open('generated_bpftrace.bt', 'w') as f:
-    f.write('#!/usr/bin/env bpftrace\n\n')
-    for function in functions:
-        f.write(f'uprobe:/usr/local/lib/libtcmalloc.so.4:{function.strip()} {{\n')
-        f.write('    printf("%s called: %s", probe, ustack());\n')
-        f.write('}\n')
+```shell
+$ objdump -h /usr/local/lib/libtcmalloc_debug.so.4 | grep debug
+/usr/local/lib/libtcmalloc_debug.so.4:     file format elf64-x86-64
+ 29 .debug_aranges 000082c0  0000000000000000  0000000000000000  000b8c67  2**0
+ 30 .debug_info   00157418  0000000000000000  0000000000000000  000c0f27  2**0
+ 31 .debug_abbrev 00018a9b  0000000000000000  0000000000000000  0021833f  2**0
+ 32 .debug_line   00028924  0000000000000000  0000000000000000  00230dda  2**0
+ 33 .debug_str    0009695d  0000000000000000  0000000000000000  002596fe  2**0
+ 34 .debug_ranges 00008b30  0000000000000000  0000000000000000  002f005b  2**0
 ```
+
+接着重新用 debug 版本的动态库编译二进制，用 gdb 跟踪进 new 操作符的内部，得到结果如下图。可以看到确实没有调用 malloc 函数。
+
+![tcmalloc new 操作符对应的函数调用](https://slefboot-1251736664.file.myqcloud.com/20231106_memory_leak_ebpf_tcmalloc_gdb.png)
+
+其实 tcmalloc 的内存分配策略还是很复杂的，里面有各种预先分配好的内存链表，申请不同大小的内存空间时，有不少的策略来选择合适的内存地址。
+
+## 正常内存泄露分析
+
+前面不管是 glibc 还是 tcmalloc，用 new 来分配内存的时候，memleak 拿到的分析结果都不是很完美。这是因为用 eBPF 分析内存泄露，必须满足两个前提：
+
+1. 编译二进制的时候带上帧指针(frame pointer)，如果有依赖到标准库或者第三方库，也都必须带上帧指针；
+2. 实际分配内存的函数，必须在工具的 probe 打桩的函数内，比如 malloc, cmalloc, realloc 等函数； 
+
+那么下面就来看下满足这两个条件后，内存泄露的分析结果。修改下上面的 leak_lib.cpp 中内存分配的代码，改为：
+
+```c++
+// int* p = new int[arrSize];
+int* p = (int*)malloc(arrSize * sizeof(int));
+```
+
+重新编译运行程序，这时候 memleak 就能拿到完整的调用栈信息了，如下：
+
 
 ## 默认开启帧指针
 
-前面知道 eBPF 工具依赖帧指针才能进行调用栈回溯，其实栈回溯的方法有不少，比如：
+文章最后再来解决下前面留下的一个比较有争议的话题，是否在编译的时候默认开启帧指针。我们知道 eBPF 工具依赖帧指针才能进行调用栈回溯，其实栈回溯的方法有不少，比如：
 
 - [DWARF](https://dwarfstd.org/): 调试信息中增加堆栈信息，不需要帧指针也能进行回溯，但缺点是性能比较差，因为需要将堆栈信息复制到用户空间来进行回溯；
 - [ORC](https://www.kernel.org/doc/html/v5.3/x86/orc-unwinder.html): 内核中为了展开堆栈创建的一种格式，其目的与 DWARF 相同，只是简单得多，**不能在用户空间使用**；
