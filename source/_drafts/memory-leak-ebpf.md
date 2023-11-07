@@ -71,7 +71,7 @@ $ g++ main.cpp leak_lib.cpp -o main -fno-omit-frame-pointer -g
 
 ![ebpf bcc memleak 内存泄露分析](https://slefboot-1251736664.file.myqcloud.com/20231101_memory_leak_ebpf_bcc_new.png)
 
-目前[版本的 memleak 工具](https://github.com/iovisor/bcc/blob/24822c2e9459f4508fb7071071c26a80d4c9dc5b/tools/memleak.py)有 bug，在带 `--combined-only` 打印的时候，会报错。修改比较简单，我已经提了 [PR #4769](https://github.com/iovisor/bcc/pull/4769/files)，等合并后就可以用了。仔细看脚本的输出，发现这里调用堆栈其实不太完整，丢失了 `slowMemoryLeak` 这个函数调用。
+目前[版本的 memleak 工具](https://github.com/iovisor/bcc/blob/24822c2e9459f4508fb7071071c26a80d4c9dc5b/tools/memleak.py)有 bug，在带 `--combined-only` 打印的时候，会报错。修改比较简单，我已经提了 [PR #4769](https://github.com/iovisor/bcc/pull/4769/files)，已经被合并进 master。仔细看脚本的输出，发现这里调用堆栈其实不太完整，丢失了 `slowMemoryLeak` 这个函数调用。
 
 ```shell
 [11:19:44] Top 10 stacks with outstanding allocations:
@@ -110,7 +110,7 @@ operator new[](unsigned long)
 
 ## tcmalloc 泄露分析
 
-如果想拿到完整的内存泄露函数调用链路，可以带上帧指针重新编译 libstdc++，不过标准库重新编译比较麻烦。其实日常用的比较多的是 tcmalloc，内存分配管理更加高效些。这里为了验证上面的代码在 tcmalloc 下的表现，我用 -fno-omit-frame-pointer 帧指针编译了 `tcmalloc` 库。如下：
+如果想拿到完整的内存泄露函数调用链路，可以带上帧指针重新编译 `libstdc++`，不过标准库重新编译比较麻烦。其实日常用的比较多的是 tcmalloc，内存分配管理更加高效些。这里为了验证上面的代码在 tcmalloc 下的表现，我用 -fno-omit-frame-pointer 帧指针编译了 `tcmalloc` 库。如下：
 
 ```shell
 git clone https://github.com/gperftools/gperftools.git
@@ -121,7 +121,21 @@ make
 make install
 ```
 
-接着运行上面的二进制，重新用 memleak 来检查内存泄露，注意这里把 libtcmalloc.so 动态库的路径也传递给了 memleak。工具的输出如下，**找不到内存泄露**了：
+接着运行上面的二进制，重新用 memleak 来检查内存泄露，**注意这里用 `-O` 把 libtcmalloc.so 动态库的路径也传递给了 memleak。**参数值存在 obj 中，在 attach_uprobe 中用到，指定了要附加 uprobes 或 uretprobes 的二进制对象，可以是要跟踪的函数的库路径或可执行文件。详细文档可以参考 [bcc: 4. attach_uprobe](https://github.com/iovisor/bcc/blob/master/docs/reference_guide.md#4-attach_uprobe)。比如下面的调用方法：
+
+```python
+# 在 libc 的 getaddrinfo 函数入口打桩，当进入函数时，会调用自定义的 do_entry 函数
+b.attach_uprobe(name="c", sym="getaddrinfo", fn_name="do_entry")
+```
+
+注意在前面的示例中，没有指定 `-O`，默认就是 "c"，也就是用 libc 分配内存。在用 tcmalloc 动态库的时候，这里 `attach_uprobe` 和 `attach_uretprobe` 必须要指定库路径：
+
+```python
+bpf.attach_uprobe(name=obj, sym=sym, fn_name=fn_prefix + "_enter", pid=pid)
+bpf.attach_uretprobe(name=obj, sym=sym, fn_name=fn_prefix + "_exit", pid=pid)
+```
+
+不过工具的输出有点出乎语料，这里竟然**没有输出任何泄露的堆栈**了：
 
 ```shell
 $ memleak -p $(pgrep main) --combined-only -O /usr/local/lib/libtcmalloc.so
@@ -175,16 +189,41 @@ $ objdump -h /usr/local/lib/libtcmalloc_debug.so.4 | grep debug
 1. 编译二进制的时候带上帧指针(frame pointer)，如果有依赖到标准库或者第三方库，也都必须带上帧指针；
 2. 实际分配内存的函数，必须在工具的 probe 打桩的函数内，比如 malloc, cmalloc, realloc 等函数； 
 
-那么下面就来看下满足这两个条件后，内存泄露的分析结果。修改下上面的 leak_lib.cpp 中内存分配的代码，改为：
+那么下面就来看下满足这两个条件后，内存泄露的分析结果。修改上面的 leak_lib.cpp 中内存分配的代码：
 
 ```c++
 // int* p = new int[arrSize];
 int* p = (int*)malloc(arrSize * sizeof(int));
 ```
 
-重新编译运行程序，这时候 memleak 就能拿到完整的调用栈信息了，如下：
+然后重新编译运行程序，这时候 memleak 就能拿到**完整的调用栈信息**了，如下：
 
+```shell
+$ g++ main.cpp leak_lib.cpp -o main -fno-omit-frame-pointer -g
+# run main binary here
 
+$ memleak -p $(pgrep main) --combined-only
+Attaching to pid 2025595, Ctrl+C to quit.
+[10:21:09] Top 10 stacks with outstanding allocations:
+	200 bytes in 5 allocations from stack
+		LeakLib::slowMemoryLeak()+0x20 [main]
+		caller()+0x31 [main]
+		main+0x31 [main]
+		__libc_start_call_main+0x7a [libc.so.6]
+[10:21:14] Top 10 stacks with outstanding allocations:
+	400 bytes in 10 allocations from stack
+		LeakLib::slowMemoryLeak()+0x20 [main]
+		caller()+0x31 [main]
+		main+0x31 [main]
+		__libc_start_call_main+0x7a [libc.so.6]
+```
+
+如果分配内存的时候用 tcmalloc，也是可以拿到完整的泄露堆栈。
+
+## 内存火焰图可视化
+
+在我之前的 [复杂 C++ 项目堆栈保留以及 ebpf 性能分析](https://selfboot.cn/2023/10/17/c++_frame_pointer/) 这篇文章中，用 BCC 工具做 cpu profile 的时候，会把输出结果转成火焰图，很清楚就能找到 cpu 的热点代码。对于内存泄露，我们同样也可以生成**内存火焰图**。
+ 
 ## 默认开启帧指针
 
 文章最后再来解决下前面留下的一个比较有争议的话题，是否在编译的时候默认开启帧指针。我们知道 eBPF 工具依赖帧指针才能进行调用栈回溯，其实栈回溯的方法有不少，比如：
