@@ -1,9 +1,9 @@
 ---
-title: 利用 ebpf bcc 无侵入分析服务函数耗时
+title: 利用 eBPF BCC 无侵入分析服务函数耗时
 tags:
   - ChatGPT
   - C++
-  - ebpf
+  - eBPF
 date: 2023-06-30 19:33:20
 category: 计算机基础
 toc: true

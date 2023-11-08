@@ -3,10 +3,11 @@ title: 深入理解基于 eBPF 的 C/C++ 内存泄漏分析
 tags:
   - ChatGPT
   - C++
-  - ebpf
+  - eBPF
 category: 计算机基础
 toc: true
-description: 
+description: 本文通过模拟内存泄漏程序，解释了 eBPF 的工作原理和面临的挑战，特别是在处理不完整调用栈时的局限性。文章还讨论了如何用gdb跟踪tcmalloc，并利用FlameGraph生成内存泄露火焰图，最后讨论了编译时默认开启帧指针的争议。
+date: 2023-11-08 13:21:26
 ---
 
 对于 C/C++ 程序员来说，内存泄露问题是一个老生常谈的问题。排查内存泄露的方法有很多，比如使用 valgrind、gdb、asan、tsan 等工具，但是这些工具都有各自的局限性，比如 valgrind 会使程序运行速度变慢，gdb 需要了解代码并且手动打断点，asan 和 tsan 需要重新编译程序。对于比较复杂，并且在运行中的服务来说，这些方法都不是很方便。
@@ -222,8 +223,31 @@ Attaching to pid 2025595, Ctrl+C to quit.
 
 ## 内存火焰图可视化
 
-在我之前的 [复杂 C++ 项目堆栈保留以及 ebpf 性能分析](https://selfboot.cn/2023/10/17/c++_frame_pointer/) 这篇文章中，用 BCC 工具做 cpu profile 的时候，会把输出结果转成火焰图，很清楚就能找到 cpu 的热点代码。对于内存泄露，我们同样也可以生成**内存火焰图**。
- 
+在我之前的 [复杂 C++ 项目堆栈保留以及 ebpf 性能分析](https://selfboot.cn/2023/10/17/c++_frame_pointer/) 这篇文章中，用 BCC 工具做 cpu profile 的时候，可以用 [FlameGraph](https://github.com/brendangregg/FlameGraph/tree/master) 把输出结果转成 CPU 火焰图，很清楚就能找到 cpu 的热点代码。对于内存泄露，我们同样也可以生成**内存火焰图**。
+
+内存火焰图的生成步骤也类似 cpu 的，先用采集工具比如 BCC 脚本采集数据，然后将采集到的数据转换为 FlameGraph 可以理解的格式，之后就可以使用 FlameGraph 脚本将转换后的数据生成一个 SVG 图像。**每个函数调用都对应图像中的一块，块的宽度表示该函数在采样中出现的频率，从而可以识别资源使用的热点**。FlameGraph 识别的每行数据的格式通常如下：
+
+```shell
+[堆栈跟踪] [采样值]
+main;foo;bar 58
+```
+
+这里的“**堆栈跟踪**”是指函数调用栈的一个快照，通常是一个由分号分隔的函数名列表，表示从调用栈底部（通常是 main 函数或者线程的起点）到顶部（当前执行的函数）的路径。而“采样值”可能是在该调用栈上花费的 CPU 时间、内存使用量或者是其他的资源指标。对于内存泄露分析，**采样值可以是内存泄露量，或者内存泄露次数**。
+
+可惜的是，现在的 memleak 还不支持生成可以转换火焰图的数据格式。不过这里改起来并不难，[PR 4766](https://github.com/iovisor/bcc/pull/4766) 有实现一个简单的版本，下面就用这个 PR 里的代码为例，来生成内存泄露火焰图。
+
+![改动后的 memleak 生成支持火焰图格式的采集文件](https://slefboot-1251736664.file.myqcloud.com/20231108_memory_leak_ebpf_memleak_svg.png)
+
+可以看到这里生成的采集文件很简单，如上面所说的格式：
+
+```shell
+__libc_start_call_main+0x7a [libc.so.6];main+0x31 [main];caller()+0x31 [main];LeakLib::slowMemoryLeak()+0x20 [main] 480
+```
+
+最后用 FlameGraph 脚本来生成火焰图，如下：
+
+![根据采集文件生成的内存泄露的火焰图](https://slefboot-1251736664.file.myqcloud.com/20231108_memory_leak_ebpf_memleak_demo.svg)
+
 ## 默认开启帧指针
 
 文章最后再来解决下前面留下的一个比较有争议的话题，是否在编译的时候默认开启帧指针。我们知道 eBPF 工具依赖帧指针才能进行调用栈回溯，其实栈回溯的方法有不少，比如：

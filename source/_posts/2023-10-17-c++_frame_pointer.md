@@ -1,9 +1,9 @@
 ---
-title: 复杂 C++ 项目堆栈保留以及 ebpf 性能分析
+title: 复杂 C++ 项目堆栈保留以及 eBPF 性能分析
 tags:
   - ChatGPT
   - C++
-  - ebpf
+  - eBPF
 category: 计算机基础
 toc: true
 description: 本文探讨不同编译方式下的堆栈可用性。静态链接情况下，哪怕中间层库失去堆栈信息，整体调用堆栈也会错乱，动态链接同理。保留帧指针是获取堆栈的关键，需要编译加入选项。
