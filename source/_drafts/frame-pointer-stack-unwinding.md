@@ -65,9 +65,13 @@ date:
 
 本文的汇编指令也都以 AT&T 格式展示。在 Intel x86 处理器上，GDB 默认显示汇编指令格式是 AT&T，可以使用 `disassemble /m func` 命令来查看某个函数的汇编指令。
 
-![一个简单 main 函数的汇编代码](https://slefboot-1251736664.file.myqcloud.com/20231109_frame_pointer_stack_unwinding_disassemble.png)
+![简单 main 函数用 gdb disassemble 拿到的汇编代码](https://slefboot-1251736664.file.myqcloud.com/20231109_frame_pointer_stack_unwinding_disassemble.png)
 
-一个只有 3 行代码的 main 函数，汇编指令展开后有那么多，不过不用怕，这里的指令起始可以细分为 5 类。
+注意上面是 gdb 中 `disassemble /m main` 拿到的汇编指令，用 `gcc -S` 也可以生成汇编代码，两者可能会有不同，不过不影响具体执行。也可以在 [godbolt](https://godbolt.org/) 在线为 C++ 代码生成汇编代码，这里可以选择不同的 gcc 版本，也可以选择不同指令风格。在线版有个好处就是，鼠标点击相应的汇编，会对应到相应的代码，还会提示这个汇编代码具体做什么的。
+
+![在线工具 godbolt 拿到的汇编指令](https://slefboot-1251736664.file.myqcloud.com/20231110_frame_pointer_stack_unwinding_online.png)
+
+对于 main 函数，虽然代码只有 3 行，但是 gdb 通过 disassemble /m main 拿到的汇编指令还不少，不过不用怕，这里的指令作用可以细分为 5 类。
 
 **栈帧操作指令**
 
@@ -94,6 +98,8 @@ date:
 **函数返回**
 
 `ret`: 从函数返回，这会弹出并跳转到堆栈上的返回地址，继续执行调用这个函数的代码流程。
+
+关于汇编指令，知道这些内容基本就够了。
 
 ## 帧指针回溯
 
