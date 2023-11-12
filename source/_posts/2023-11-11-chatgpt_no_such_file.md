@@ -28,7 +28,7 @@ $ ls -alh protoc
 
 在有 ChatGPT 之前，遇见解决不了的问题，就先去搜索引擎看看，搜索 `no such file or directory but file exist`，有不少结果：
 
-![奇怪的报错 No such file](https://slefboot-1251736664.file.myqcloud.com/20231111_chatgpt_no_such_file_google_search.png)
+![Google 的搜索结果: no such file or directory](https://slefboot-1251736664.file.myqcloud.com/20231111_chatgpt_no_such_file_google_search.png)
 
 这里第一个结果 [No such file or directory? But the file exists!](https://askubuntu.com/questions/133389/no-such-file-or-directory-but-the-file-exists) 比较匹配我的问题，在问题的高赞回答中，上来就给出了结论：可能是因为**在不支持 32 位环境的 64 位机器中运行一个 32 位的二进制**。具体到我的这个二进制文件，确实是从一个老的机器上拷到 64 位机器执行的。可以用 `file` 命令来看看文件的格式，结果如下：
 
@@ -61,7 +61,7 @@ strace: exec: No such file or directory
 
 接着可以让 ChatGPT 给出具体方法来验证这里的猜测原因，结果如下：
 
-![奇怪的报错 No such file](https://slefboot-1251736664.file.myqcloud.com/20231111_chatgpt_no_such_file_explain.png)
+![ChatGPT 对报错 No such file 原因的回答](https://slefboot-1251736664.file.myqcloud.com/20231111_chatgpt_no_such_file_explain.png)
 
 那么还有最后一个问题，**在64位系统上运行32位程序而没有必要的库支持，为什么会报这个错误呢？有没有相应的文档对这种情况做过说明呢？**问了下 ChatGPT，**并没有给出详细的文档来源**，只是提了一些自己的解释：默认情况下，许多64位系统可能没有预装32位兼容性库，因为现代软件主要是64位的。如果尝试运行一个32位的程序，系统就需要这些32位版本的库。如果这些库不存在，操作系统的加载器无法加载程序所需的 32 位动态链接库，导致执行失败并返回 "No such file or directory" 错误。
 
