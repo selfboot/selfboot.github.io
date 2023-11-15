@@ -61,6 +61,8 @@ date: 2023-07-28 22:18:23
 
 [Hacker News](https://news.ycombinator.com/item?id=35921375) 上面也有关于这个泄露的一些更多的讨论。不止 Github Copilot Chat 的提示词被泄露，Bing Chat 也被泄露，可以见[这里](https://twitter.com/marvinvonhagen/status/1623658144349011971)。
 
+**[2023.11.15 更新]**: GPTs 出来后，提示词泄露攻击需要得到更多重视了，因为 GPTs 的提示词可以用来创建新的 GPTs，这样就可以轻松地复制其他人的 GPTs。这里我专门写了一篇文章 [OpenAI 的 GPTs 提示词泄露攻击与防护实战](https://selfboot.cn/2023/11/15/how_to_crack_GPTs/) 来聊聊 GPTs 的提示词泄露攻击。
+
 ## 提示词越狱
 
 不同于前面的提示词注入和提示词泄露，**提示词越狱(Jailbreaking)** 是通过特定的提示词，绕过 LLM 上设置的**安全和审核功能**，从而得到一些原本不会作为输出的内容。OpenAI 和其他 LLM 公司提供的模型，都带有内容审查功能，确保不会输出包含有争议的内容，比如暴力，性和非法行为，可以参考 OpenAI 的 [Usage policies](https://openai.com/policies/usage-policies)。OpenAI 还开放了这种内容审查能力，具体可以参考 [Moderation](https://platform.openai.com/docs/guides/moderation/overview)，简单说就是对于一段内容，可以调 API 来判断是否有争议。
