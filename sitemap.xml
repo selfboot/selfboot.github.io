@@ -2,24 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://selfboot.cn/2023/07/25/gpt4_prompt_evals/</loc>
-    
-    <lastmod>2023-11-21</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/07/28/chatgpt_hacking/</loc>
-    
-    <lastmod>2023-11-21</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/2023/07/29/divorce_legal_money_parent/</loc>
     
     <lastmod>2023-11-21</lastmod>
@@ -263,6 +245,15 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/2023/11/21/divorce_settlement_description/</loc>
+    
+    <lastmod>2023-11-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/aboutme.html</loc>
     
     <lastmod>2023-11-21</lastmod>
@@ -282,24 +273,6 @@
   
   <url>
     <loc>https://selfboot.cn/links.html</loc>
-    
-    <lastmod>2023-11-21</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/09/01/lost_partition/</loc>
-    
-    <lastmod>2023-11-21</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/09/18/c++_undefined_behaviours/</loc>
     
     <lastmod>2023-11-21</lastmod>
     
@@ -624,6 +597,24 @@
   
   <url>
     <loc>https://selfboot.cn/2023/07/24/gpt4_prompt_tools/</loc>
+    
+    <lastmod>2023-11-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/07/25/gpt4_prompt_evals/</loc>
+    
+    <lastmod>2023-11-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/07/28/chatgpt_hacking/</loc>
     
     <lastmod>2023-11-21</lastmod>
     
@@ -975,6 +966,24 @@
   
   <url>
     <loc>https://selfboot.cn/2016/08/26/threadlocal_implement/</loc>
+    
+    <lastmod>2023-11-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/09/01/lost_partition/</loc>
+    
+    <lastmod>2023-11-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2016/09/18/c++_undefined_behaviours/</loc>
     
     <lastmod>2023-11-21</lastmod>
     
