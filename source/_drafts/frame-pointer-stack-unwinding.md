@@ -133,7 +133,41 @@ void function() {
 
 ## 帧指针回溯
 
-接下来终于到了本文的重心部分，如何根据帧指针，来进行函数的调用栈回溯。
+接下来终于到了本文的重心部分，如何根据帧指针，来进行函数的调用栈回溯。首先我们写一个简单的示例程序，进入 main 函数，调用 foo，foo 又接着调用 bar，bar 最终调用 hello。这里有一个完整的函数调用栈：main->foor->bar->hello，后续分析都会基于这个程序进行。
+
+```c++
+#include <iostream>
+#include <string>
+
+void hello(const std::string &c) {
+    std::cout << c << std::endl;
+}
+
+int bar(int num, int age) {
+    std::string demo = "num: " + std::to_string(num) + ", age: " + std::to_string(age);
+    hello(demo);
+    return 0;
+}
+
+int foo(int a) {
+    int result = bar(a, 3);
+    return result;
+}
+
+int main() {
+    int result = foo(5);
+    std::cout << result << std::endl;
+    return 0;
+}
+```
+
+这里编译的时候，记得带上栈信息，编译命令如下：
+
+```shell
+$ g++ -g -fno-omit-frame-pointer -o main test.cpp
+```
+
+接下来我们用 GDB 跟踪执行过程中，函数栈的内存空间分布。
 
 ## 参考
 
