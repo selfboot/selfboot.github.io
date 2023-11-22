@@ -154,6 +154,28 @@ def _add_table_overflow(soup):
         table_tag.attrs['style'] = "width: 100%; overflow-x: auto; display: block;"
     return soup
 
+def _add_tail_links(soup):
+    links = soup.find_all('a')
+    # 为所有找到的链接创建一个新的 div 标签
+    links_div = soup.new_tag('div')
+    p_tag = soup.new_tag('p')
+    p_tag.string = "可以点击阅读原文查看正文相关链接"
+    links_div.append(p_tag)
+    counter = 1
+    for link in links:
+        href = link.get("href")
+        # 排除非 URL 和锚点链接，以及链接文本就是 URL 的情况
+        if href and not href.startswith("#") and not re.match(r'https?://', link.text):
+            link_str = f'{counter}. {link.text} {href}'
+            p_tag = soup.new_tag('p')
+            p_tag.string = link_str
+            links_div.append(p_tag)
+            counter += 1
+
+    # 将新的 div 标签添加到文档末尾
+    soup.append(links_div)
+    return soup
+
 def _add_font_size_to_headers(soup):
     # Define the font sizes
     font_sizes = {
@@ -187,6 +209,7 @@ def adapt_wechat(html_content):
     new_html = ''.join(str(content) for content in content_soup.contents)
     page_soup = BeautifulSoup(new_html, 'html.parser')
 
+    page_soup = _add_tail_links(page_soup)
     page_soup = _del_unsupported_tag(page_soup)
     page_soup = _add_font_size_to_headers(page_soup)
     page_soup = _fix_list_item(page_soup)
