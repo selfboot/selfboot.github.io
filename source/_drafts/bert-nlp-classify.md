@@ -1,5 +1,5 @@
 ---
-title: 零基础用 Bert 开发文本分类模型
+title: 零基础用 Bert 训练并部署文本分类模型
 tags: [ChatGPT, 教程]
 category: 项目实践
 toc: true
@@ -18,21 +18,23 @@ description:
 
 ## 在线体验
 
-模型部署在一台个人的服务器上，可以用下面输入框来体验。输入一段文本，点击提交，就可以看到预测结果。
+模型部署在一台个人的服务器上，可以用下面输入框来体验。输入一段文本，点击提交，就可以看到预测结果。可以在下面输入框输入一段文本，点击提交，就可以看到模型预测结果。
 
 <div>
-    <h2>法律咨询分类器</h2>
     <form id="predictionForm">
         <label for="content">输入文本:</label><br>
         <textarea id="content" name="content" rows="4" cols="50"></textarea><br>
-        <input type="submit" value="提交">
+        <input type="submit" value="模型实时预测">
     </form>
     <p id="result"></p>
     <script>
         document.getElementById('predictionForm').addEventListener('submit', function(e) {
             e.preventDefault();
             var content = document.getElementById('content').value;
-            fetch('http://localhost:5000/predict', {
+            var resultElement = document.getElementById('result');
+            resultElement.style.color = 'black'; 
+            resultElement.textContent = '预测中...';
+            fetch('https://api.selfboot.cn/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -41,14 +43,22 @@ description:
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('result').textContent = '法律咨询: ' + (data.lawer ? '是' : '否') + ', 概率: ' + data.probability;
+                resultElement.textContent = '这' + (data.is_lawer ? '是' : '不是') + "法律咨询问题";
+                resultElement.style.color = data.is_lawer ? 'green' : 'red';
             })
             .catch((error) => {
                 console.error('Error:', error);
-                document.getElementById('result').textContent = '发生错误';
+                resultElement.textContent = '模型预测出错，麻烦重试';
             });
         });
     </script>
+    <style>
+    #predictionForm textarea {
+        width: 100%; /* 确保文本区域宽度是100% */
+        box-sizing: border-box; /* 内边距和边框包含在宽度内 */
+        resize: vertical; /* 只允许垂直拉伸 */
+    }
+    </style>
 </div>
 
 比如下面这些就是咨询类任务：
