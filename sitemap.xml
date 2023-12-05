@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://selfboot.cn/2023/09/15/chatgpt_export_script/</loc>
+    
+    <lastmod>2023-12-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/09/14/chatgpt_math_product/</loc>
+    
+    <lastmod>2023-12-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2023/09/21/chatgpt_dalle3_coming/</loc>
     
     <lastmod>2023-12-05</lastmod>
@@ -47,7 +65,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/10/26/chatgpt_impact/</loc>
+    <loc>https://selfboot.cn/2023/10/19/C++_zip_memory_problem/</loc>
     
     <lastmod>2023-12-05</lastmod>
     
@@ -56,7 +74,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/10/19/C++_zip_memory_problem/</loc>
+    <loc>https://selfboot.cn/2023/10/26/chatgpt_impact/</loc>
     
     <lastmod>2023-12-05</lastmod>
     
@@ -138,6 +156,24 @@
   
   <url>
     <loc>https://selfboot.cn/links.html</loc>
+    
+    <lastmod>2023-12-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/</loc>
+    
+    <lastmod>2023-12-05</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/06/05/gpt4_write_cmd/</loc>
     
     <lastmod>2023-12-05</lastmod>
     
@@ -470,7 +506,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/09/15/chatgpt_export_script/</loc>
+    <loc>https://selfboot.cn/2014/09/03/how_to_crawl_coursera/</loc>
     
     <lastmod>2023-12-05</lastmod>
     
@@ -479,7 +515,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/09/14/chatgpt_math_product/</loc>
+    <loc>https://selfboot.cn/2014/09/19/chrome_DevTools_1/</loc>
     
     <lastmod>2023-12-05</lastmod>
     
@@ -857,24 +893,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/06/05/gpt4_leetcode_1232/</loc>
-    
-    <lastmod>2023-12-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/06/05/gpt4_write_cmd/</loc>
-    
-    <lastmod>2023-12-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/2013/06/07/hack_the_browser/</loc>
     
     <lastmod>2023-12-05</lastmod>
@@ -966,24 +984,6 @@
   
   <url>
     <loc>https://selfboot.cn/2014/08/28/character_encoding/</loc>
-    
-    <lastmod>2023-12-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/09/03/how_to_crawl_coursera/</loc>
-    
-    <lastmod>2023-12-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2014/09/19/chrome_DevTools_1/</loc>
     
     <lastmod>2023-12-05</lastmod>
     
