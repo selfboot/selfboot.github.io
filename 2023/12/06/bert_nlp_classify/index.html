@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="详细介绍了如何从零开始使用BERT模型训练文本分类器，对法律咨询问题进行识别。内容涵盖数据采集、模型构建、训练、部署，配套代码示例，以flask和docker容器化。最大限度降低准入门槛，让任何人都能快速上手，完成一个线上服务。"><title>零基础用 Bert 训练并部署文本分类模型</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">零基础用 Bert 训练并部署文本分类模型</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-user-graduate"> 小盛律师</i></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"> 法律普及</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">零基础用 Bert 训练并部署文本分类模型</h1><div class="post-meta">2023/12/06<span> | </span><span class="category"><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/12/06/bert_nlp_classify/" href="/2023/12/06/bert_nlp_classify/#disqus_thread"></a><div class="post-content"><p>之前帮<a href="https://selfboot.cn/links.html">小盛律师</a> 做过一个工具，<strong>定期从网上筛选一些帖子，看看是不是法律咨询类的</strong>。这里就需要对文本进行分类，判断指定帖子正文是不是涉及到法律问题。作为一个后台开发，没接触过自然语言处理，也就之前读书的时候，了解过一些机器学习的基本原理，但是也没有实际做过分类任务。好在现在有 ChatGPT，于是就用它的 API 来做分类。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp" alt="文本分类任务：判定帖子是否是法律咨询" srcset="https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp 1970w, https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1970" height="1212"></p>
+<span id="more"></span>
+
+<p>用 ChatGPT 跑了一段时间，发现用 ChatGPT 用来做分类有两个问题：</p>
+<ol>
+<li><strong>成本贵</strong>。目前用的是 GPT3.5 模型，如果帖子数量多的话，每天也需要几美元。所以现在做法是先用关键词过滤，然后再拿来用 GPT3.5 模型进行分类，这样会漏掉一些没有带关键词的相关帖子。</li>
+<li><strong>误识别</strong>。有些帖子不是法律咨询问题，但是也会被 GPT3.5 误判。这种幻觉问题，试过改进 Prompt，还是不能完全解决。可以看我在 <a href="https://selfboot.cn/2023/08/23/not-smart-chatgpt/#%E6%88%BF%E4%B8%9C%E4%B8%8D%E9%80%80%E6%8A%BC%E9%87%91%EF%BC%9F">真实例子告诉你 ChatGPT 是多会胡编乱造！</a> 里面的例子。</li>
+</ol>
+<p>于是想着自己训练一个模型，用来做文本分类。自然语言处理中最著名的就是 bert 了，这里我基于 <code>bert-base-chinese</code> 训练了一个分类模型，效果还不错。本文主要记录数据集准备、模型训练、模型部署的整个过程，在 ChatGPT 的帮助下，整个过程比想象中简单很多。</p>
+<h2 id="在线体验"><a href="#在线体验" class="headerlink" title="在线体验"></a>在线体验</h2><p>开始之前，先给大家体验下这里的模型(只有博客原文地址才可以体验到)。在下面输入框写一段文本，点击模型实时预测按钮，就可以看到预测结果。由于<strong>个人服务器配置太差</strong>，这里单个预测大概耗时在 2s 左右，同一时间只能处理 1 个请求。如果耗时太久，可以等会再试。</p>
+<div>
+    <form id="predictionForm">
+        <label for="content">输入文本:</label><br>
+        <textarea id="content" name="content" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="模型实时预测">
+    </form>
+    <p id="result"></p>
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var content = document.getElementById('content').value;
+            var resultElement = document.getElementById('result');
+            resultElement.style.color = 'black'; 
+            resultElement.textContent = '预测中...';
+            fetch('https://api.selfboot.cn/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultElement.textContent = '这' + (data.is_lawer ? '是' : '不是') + "法律咨询问题";
+                resultElement.style.color = data.is_lawer ? 'green' : 'red';
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                resultElement.textContent = '模型预测出错，麻烦重试';
+            });
+        });
+    </script>
+    <style>
+    #predictionForm textarea {
+        width: 100%; /* 确保文本区域宽度是100% */
+        box-sizing: border-box; /* 内边距和边框包含在宽度内 */
+        resize: vertical; /* 只允许垂直拉伸 */
+    }
+    </style>
+</div>
+
+<p>比如下面这些就是咨询类文本：</p>
+<blockquote>
+<p>我的车在小区停车位上被撞肇事车跑了，在监控里找到了，他在此事故上应该负什么责任<br>2021年11月份在武安市智慧城跟个人包工头做工，最后拖欠工资不给，请问怎么可以要回?</p>
+</blockquote>
+<p>下面这些为非法律咨询类文本，摘自我博客里的文章标题：</p>
+<blockquote>
+<p>Bazel 缺失依赖导致的 C++ 进程 coredump 问题分析<br>ChatGPT 渗透力分析：搜索热度、需求图谱与人群特征</p>
+</blockquote>
+<h2 id="数据集准备"><a href="#数据集准备" class="headerlink" title="数据集准备"></a>数据集准备</h2><p>训练模型的前提是得有数据集，具体到我这个分类任务，就需要找到很多法律咨询类文本和非法律咨询类文本。</p>
+<p>非法律咨询类的文本很好找，我这里用的是程序员社区 V2EX 上面的帖子内容。V2EX 也提供了方便的 API，可以直接获取到帖子的标题和正文。用了一天时间，大概爬到了 20 万条帖子正文，保存在 postgres 数据库中。其实这的帖子中，也有少量的法律咨询内容，不过整体比例很小，对模型整体训练效果影响应该不大。法律咨询类的文本比较难找，经过一番尝试，最后在一个公开站点上找到了一些，一共是大概 20 万条。</p>
+<p>这里对上面两类文本，分开保存了两个文件，里面每行都是一个 json 文件，包含文本内容。下面是一些样例：</p>
+<table>
+<thead>
+<tr>
+<th>文本内容</th>
+<th>是否咨询</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>起诉离婚会不会查对方或者双方银行卡流水账或者存款。</td>
+<td>是</td>
+</tr>
+<tr>
+<td>被执行人有能力还款，比如说工作收入，月收入4千，每月还一千，但被执行人躲避分文不还，能否对其追责，法律有什么规定吗？</td>
+<td>是</td>
+</tr>
+<tr>
+<td>本人借钱给别人，别人总说还可就是不还，当时没写借条，我想问问怎么办！</td>
+<td>是</td>
+</tr>
+<tr>
+<td>我想找这个安卓游戏 apk 文件里面的图标</td>
+<td>否</td>
+</tr>
+<tr>
+<td>没有开发过服务号，我想问下，服务号收到推送消息，然后点击消息跳转到第三方应用，这个能实现吗？第三方应用没有在应用市场上架</td>
+<td>否</td>
+</tr>
+<tr>
+<td>除了跟竞争对手拼屏占比，看起来酷弦点，实在想不出来有啥实际意义，还是有边框的比较踏实</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<h2 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h2><p>数据集准备好了，就可以开始训练模型了。之前没有怎么接触过 bert，也没做过神经网络模型训练，好在有了 ChatGPT，很快就能写一个完整的训练代码。我这里使用 pytorch 进行训练，ChatGPT 给出了完整的训练代码，以及详细的代码解释。中间有任何不懂的地方，都是先问 AI，然后再结合一些资料，来慢慢理解。</p>
+<p>完整的训练脚本在 <a target="_blank" rel="noopener" href="https://gist.github.com/selfboot/8a0cb6129d000a01e0e3605f829b62ea">Gist</a> 上，整体流程总结起来如下：</p>
+<ol>
+<li>数据加载与预处理：从 Json 文件中加载数据集，将数据转换为 (文本, 标签) 格式并随机打乱。使用 <code>train_test_split</code> 将数据划分为训练集和验证集。</li>
+<li>使用 <code>BERT Tokenizer</code> 进行编码：使用 BertTokenizer 对文本进行分词和编码，包括添加特殊标记、截断和填充。</li>
+<li>构建数据集和数据加载器：将编码后的数据转换为 TensorDataset。使用 DataLoader 创建训练集和验证集的数据加载器。</li>
+<li>定义<strong>模型、损失函数和优化器</strong>：定义一个包含 BERT 模型和额外分类层的自定义 PyTorch 模型。使用 Focal Loss 作为损失函数，适合处理类别不平衡的问题。使用 AdamW 优化器。</li>
+<li><strong>模型训练和验证</strong>：在训练循环中，按批处理数据、计算损失、反向传播并更新模型参数。在每个训练周期结束时，使用验证集评估模型性能。应用<strong>学习率调度器和早停机制以优化训练过程</strong>。</li>
+<li>性能评估：计算并打印准确度、精确度、召回率和 F1 分数等指标。</li>
+<li>模型保存：在性能提升时保存模型的状态。</li>
+</ol>
+<p>这里甚至都不需要什么神经网络和机器学习的基础，只需要有数据集和 ChatGPT，就能不断调整代码，训练一个效果可以的模型。不过作为有追求的开发，还是想尽力搞明白每行代码背后到底有着什么样的原理，这样才能更好地理解模型训练的过程。除了不断追问 ChatGPT，并对它的回答进行各种验证，这里也发现了一个不错的深度学习入门教程，<a target="_blank" rel="noopener" href="https://zh.d2l.ai/index.html">《动手学深度学习》</a>，里面有很多深度学习的知识，还有代码实践，非常适合入门。</p>
+<p>模型的训练离不开 GPU 机器，个人没有好的 GPU 的话，可以用 <a target="_blank" rel="noopener" href="https://colab.research.google.com/">Google Colab</a> 上面的 T4 GPU 免费额度来训练。不过内存有限制，训练的时候，注意适当调小 batch_size，我一般在 colab 上用 batch_size=16。如果数据集太大，这里训练一轮耗时可能比较就，可能免费额度只够训练几个轮次。</p>
+<h2 id="模型部署"><a href="#模型部署" class="headerlink" title="模型部署"></a>模型部署</h2><p>模型训练完之后，会保存一个 torch 的模型文件 model.pt，怎么用这个模型文件部署一个 http 服务呢？简单来说，可以用 ONNX Runtime + Flask + Gunicorn + Docker + Nginx 来部署。</p>
+<ul>
+<li>ONNX Runtime 是一个高性能的推理引擎，可以用来加载和运行模型。</li>
+<li>Flask 是一个 Python 的 Web 框架，用来写 Web 服务。Gunicorn 是一个 Python WSGI HTTP 服务器，用来启动 Flask 服务。</li>
+<li>Docker 是一个容器化工具，用来打包和运行服务。</li>
+</ul>
+<p>整体部署结构可以参考下图：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp" alt="模型部署结构" srcset="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp 1650w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1650" height="964"></p>
+<p>Nginx 接收到 HTTP 请求后，会转发给 Gunicorn，Gunicorn 会启动 Flask 服务，Flask 服务里用加载好的 ONNX 模型文件和推理环境，对请求的文本进行预测，最后返回预测结果。Flask 服务的核心代码很简单，如下：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">session = ort.InferenceSession(<span class="string">'model.onnx'</span>)</span><br><span class="line">input_name = session.get_inputs()[<span class="number">0</span>].name</span><br><span class="line">output_name = session.get_outputs()[<span class="number">0</span>].name</span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(<span class="string">'./model'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tokenize</span>(<span class="params">content, max_length=<span class="number">512</span></span>):</span><br><span class="line">    encoded = tokenizer.encode_plus(</span><br><span class="line">        content,</span><br><span class="line">        max_length=max_length,</span><br><span class="line">        padding=<span class="string">'max_length'</span>,</span><br><span class="line">        truncation=<span class="literal">True</span>,</span><br><span class="line">        return_tensors=<span class="string">"np"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> encoded[<span class="string">'input_ids'</span>], encoded[<span class="string">'attention_mask'</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">content</span>):</span><br><span class="line">    input_ids, attention_mask = tokenize(content)</span><br><span class="line">    result = session.run(</span><br><span class="line">        [output_name], {input_name: input_ids, <span class="string">'attention_mask'</span>: attention_mask})</span><br><span class="line">    pred_label = np.argmax(result[<span class="number">0</span>], axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> pred_label[<span class="number">0</span>] == <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">'/predict'</span>, methods=[<span class="string">'POST'</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict_route</span>():</span><br><span class="line">    content = request.json.get(<span class="string">'content'</span>)</span><br><span class="line">    is_lawer = predict(content)</span><br><span class="line">    <span class="keyword">return</span> jsonify({<span class="string">'is_lawer'</span>: <span class="number">1</span> <span class="keyword">if</span> is_lawer <span class="keyword">else</span> <span class="number">0</span>})</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app.run(host=<span class="string">'0.0.0.0'</span>, port=<span class="number">5000</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>为了方便部署 Gunicorn，Flask以及各种依赖，这里用 Docker 来对其进行打包。Dockerfile 如下：</p>
+<figure class="highlight dockerfile"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> python:<span class="number">3.8</span>-slim</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> requirements.txt .</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install --no-cache-dir -r requirements.txt</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install gunicorn</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载 BertTokenizer 文件</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> -p /app/model</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> python -c <span class="string">"from transformers import BertTokenizer; tokenizer = BertTokenizer.from_pretrained('bert-base-chinese'); tokenizer.save_pretrained('/app/model')"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将当前目录内容复制到容器中的 /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">5000</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">"gunicorn"</span>, <span class="string">"-b"</span>, <span class="string">"0.0.0.0:5000"</span>, <span class="string">"run:app"</span>]</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后就可以用下面命令启动服务：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker build -t lawer_model .</span><br><span class="line">docker stop lawer_model_container &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">docker rm lawer_model_container &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">docker run -d --name lawer_model_container --restart on-failure:5 -p 5000:5000 -v ~/logs:/app/logs lawer_model</span><br></pre></td></tr></tbody></table></figure>
+
+<p>Nginx 反向代理的配置这里就不提了，至此，整个服务已经部署好了。不过为了更好地监控服务，可以用 <strong>Sentry 进行性能监控和错误跟踪</strong>。服务还可以适当增加一些日志，方便排查问题。</p>
+<p>另外，这里我服务域名是 <code>api.selfboot.cn</code>，为了能够在博客页面中访问，还需要放开 CORS 限制，以便允许跨域访问。这里用的是 <code>flask-cors</code>，只需要在 Flask 服务中加上下面这行代码即可：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS(app, resources={<span class="string">r"/*"</span>: {<span class="string">"origins"</span>: [<span class="string">"https://selfboot.cn"</span>]}})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>到这里为止，作为演示服务，上面基本够用了。不过要作为一个正式的线上服务，还需要考虑容灾等问题，可能需要引入 k8s 等集群部署方案，这里就不展开了。</p>
+<h2 id="一些不足"><a href="#一些不足" class="headerlink" title="一些不足"></a>一些不足</h2><p>我用这个模型跑了一段时间，发现有些文本分类还不是很准确。比如下面这些也会<strong>被模型误判</strong>为法律咨询问题：</p>
+<blockquote>
+<p>朋友问我借钱，我到底要不要借给他呢？<br>借钱<br>我想咨询下，怎么才能赚更多钱呢？<br>考不上大学，我该怎么办？</p>
+</blockquote>
+<p>这个和数据集还是有很大关系的，在法律咨询的数据集中有很多类似内容，导致模型学习到了错误的特征。有些关键词在咨询中出现频次比较高，导致只要有这些关键词的内容，模型就会偏向于认为是法律咨询。比如只输入 “<strong>借钱</strong>“，”<strong>我想咨询下</strong>“，模型都会判定为法律咨询。为了看到训练集中法律咨询文本的一些关键词分布，用这部分数据生成了词云，如下图：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp" alt="法律咨询文本关键词词云" srcset="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp 2195w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2195" height="1196"></p>
+<p>如果想优化这里的话，需要在数据集上下功夫，比如<strong>针对性地增加一些非法律咨询类的文本</strong>，或者对数据集进行一些清洗，去掉一些噪声数据。这里我就没有继续优化了，目前的分类效果已经满足使用了。</p>
+<h2 id="AI-带来的改变"><a href="#AI-带来的改变" class="headerlink" title="AI 带来的改变"></a>AI 带来的改变</h2><p>模型的训练和部署过程，放在以前可能会耗费我大量时间。因为需要查各种资料和文档，然后才能写训练代码，写部署服务，写 docker 配置。但是现在有了 ChatGPT，整个过程没费太多时间。本文的大部分代码都是在 ChatGPT 帮助下完成的，一些配置和细节，也是 ChatGPT 帮我完成的。比如下图中的 onnx 模型推理部分：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp" alt="ChatGPT 生成的 onnx 推理代码" srcset="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp 1364w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1364" height="1028"></p>
+<p>甚至连数据集的爬取代码，本文体验的输入框前端代码，也都上是 ChatGPT 帮忙完成的。自己要做的就是<strong>拆分任务，描述清楚任务，对 ChatGPT 的回答进行验证</strong>。</p>
+<p><strong>在极大提高效率的同时，ChatGPT 也可以帮忙学习新的领域。</strong>。比如之前对深度学习的理解，就是一知半解，现在实际用到了 bert，过程中也不断加深了深度学习的理解。在学习一个领域过程中，ChatGPT 完全可以充当一个老师的角色，还是那种<strong>能因人施教，可以随时提供帮助</strong>的老师。</p>
+<p>每个人都值得拥有一个 ChatGPT，并尽早和它磨合好，最大限度发挥 AI 的作用。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target="_blank">个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：零基础用 Bert 训练并部署文本分类模型</p><p>本文链接为：https://selfboot.cn/2023/12/06/bert_nlp_classify/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> ↑<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/%E6%95%99%E7%A8%8B/"><i class="fa fa-tag"></i>教程</a><a href="/tags/ChatGPT/"><i class="fa fa-tag"></i>ChatGPT</a></div><div class="post-nav"><a class="next" href="/2023/12/01/long_term_illness_lawer/">生病需要长期治疗不能工作？先看看医疗期的法律解读</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/12/06/bert_nlp_classify/';
+    this.page.identifier = '2023/12/06/bert_nlp_classify/';
+    this.page.title = '零基础用 Bert 训练并部署文本分类模型';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">26</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/">法律普及</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 15px;">前端</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/%E6%B3%95%E5%BE%8B/" style="font-size: 15px;">法律</a> <a href="/tags/ChatGPT/" style="font-size: 15px;">ChatGPT</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15px;">Issue</a> <a href="/tags/eBPF/" style="font-size: 15px;">eBPF</a> <a href="/tags/%E5%A9%9A%E5%A7%BB%E5%AE%B6%E5%BA%AD/" style="font-size: 15px;">婚姻家庭</a> <a href="/tags/Go/" style="font-size: 15px;">Go</a> <a href="/tags/%E5%88%91%E4%BA%8B/" style="font-size: 15px;">刑事</a> <a href="/tags/%E5%8A%B3%E5%8A%A8%E7%BA%A0%E7%BA%B7/" style="font-size: 15px;">劳动纠纷</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 15px;">数学</a></div></div><!-- Debug: page.path = 2023/12/06/bert_nlp_classify/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul><li><a href="/2023/12/06/bert_nlp_classify/" title="零基础用 Bert 训练并部署文本分类模型">零基础用 Bert 训练并部署文本分类模型</a></li><li><a href="/2023/11/15/how_to_crack_GPTs/" title="OpenAI 的 GPTs 提示词泄露攻击与防护实战">OpenAI 的 GPTs 提示词泄露攻击与防护实战</a></li><li><a href="/2023/11/11/chatgpt_no_such_file/" title="ChatGPT 协助分析诡异的 no such file 问题">ChatGPT 协助分析诡异的 no such file 问题</a></li><li><a href="/2023/11/08/memory_leak_ebpf/" title="深入理解基于 eBPF 的 C/C++ 内存泄漏分析">深入理解基于 eBPF 的 C/C++ 内存泄漏分析</a></li><li><a href="/2023/10/26/chatgpt_impact/" title="ChatGPT 渗透力分析：搜索热度、需求图谱与人群特征">ChatGPT 渗透力分析：搜索热度、需求图谱与人群特征</a></li><li><a href="/2023/10/19/C++_zip_memory_problem/" title="C++ 内存问题排查：创建 Zip 压缩包，解压后内容错乱">C++ 内存问题排查：创建 Zip 压缩包，解压后内容错乱</a></li><li><a href="/2023/10/17/c++_frame_pointer/" title="复杂 C++ 项目堆栈保留以及 eBPF 性能分析">复杂 C++ 项目堆栈保留以及 eBPF 性能分析</a></li><li><a href="/2023/10/11/chatgpt_recaptcha/" title="ChatGPT 多模态图像识别可以破解验证码？">ChatGPT 多模态图像识别可以破解验证码？</a></li><li><a href="/2023/10/08/chatgpt_see/" title="ChatGPT 图像理解能力深度体验">ChatGPT 图像理解能力深度体验</a></li><li><a href="/2023/09/21/chatgpt_dalle3_coming/" title="ChatGPT 文字生成图片，DALL·E 3 带来全新能力！">ChatGPT 文字生成图片，DALL·E 3 带来全新能力！</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E4%BD%93%E9%AA%8C"><span class="toc-number">1.</span> <span class="toc-text">在线体验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%87%86%E5%A4%87"><span class="toc-number">2.</span> <span class="toc-text">数据集准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83"><span class="toc-number">3.</span> <span class="toc-text">模型训练</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2"><span class="toc-number">4.</span> <span class="toc-text">模型部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E4%B8%8D%E8%B6%B3"><span class="toc-number">5.</span> <span class="toc-text">一些不足</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AI-%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%94%B9%E5%8F%98"><span class="toc-number">6.</span> <span class="toc-text">AI 带来的改变</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
