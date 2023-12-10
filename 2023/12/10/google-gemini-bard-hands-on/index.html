@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="本文通过与ChatGPT对比，深度体验Google最新推出的语言模型Gemini Pro，从语言理解、文本生成、编程能力等多个维度全面评测 Gemini Pro 与 GPT-4 的差距。发现Gemini Pro整体表现不及ChatGPT，语言理解、数学、编程能力都有差距，联网查询也不完善，距离取代GPT-4还有一定距离。"><title>Google Gemini Pro 深度体验，离 GPT4 还有多大差距？</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><meta name="generator" content="Hexo 7.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Google Gemini Pro 深度体验，离 GPT4 还有多大差距？</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-user-graduate"> 小盛律师</i></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"> 法律普及</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Google Gemini Pro 深度体验，离 GPT4 还有多大差距？</h1><div class="post-meta">2023/12/10<span> | </span><span class="category"><a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/12/10/google-gemini-bard-hands-on/" href="/2023/12/10/google-gemini-bard-hands-on/#disqus_thread"></a><div class="post-content"><p>不得不说，2023 年真是科技突破的一年，年初 ChatGPT 带来太多惊艳，年末 <a target="_blank" rel="noopener" href="https://deepmind.google/technologies/gemini/#introduction">Google Gemini</a> 又让人充满了无限遐想。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp" alt="Google Gemini 多模态带来无限可能？" srcset="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp 2288w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2288" height="1354"></p>
+<p>按照 Google 官方的介绍，Gemini 是<strong>第一个在 MMLU（大规模多任务语言理解）方面超越人类专家</strong>的模型，在推理，数学和代码上的能力也都超过了 GPT4。而且还是一个多模态的模型，可以同时<strong>处理文本，图像，声音和视频</strong>，评测分数也比 GPT-4V 更高。</p>
+<span id="more"></span>
+
+<p>从 Google 发布的宣传片(下面视频需要能访问 Youtube)来看，Gemini 的表现确实让人惊艳。发布几天后，很多人已经对 Gemini 有不少质疑的声音，因为发布的视频是编辑过的。Gemini 的真实效果如何，还是要自己亲自试一试才知道。目前 Google 对外只放开了 Gemini Pro 的使用，接下来本文来用 bard 感知下 Gemini Pro 到底怎么样吧。</p>
+<div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+    <iframe src="https://www.youtube.com/embed/UIZAiXYceBI?si=KjDCRPIKnAYsby5J" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
+
+<h2 id="体验结论"><a href="#体验结论" class="headerlink" title="体验结论"></a>体验结论</h2><p>Gemini 目前分三个版本：</p>
+<ul>
+<li>Ultra: 功能最强大、规模最大的模型，适用于高度复杂的任务，各项指标几乎全面超过 GPT-4，上面视频中的宣传就是 Ultra 模型。</li>
+<li>Pro: 用于跨各种任务进行扩展的最佳模型，目前可以体验到，评测结果来看，比 GPT-4 稍微差一点。</li>
+<li>Nano: 移动端任务模型，适用于移动设备，评测结果来看，比前面两个版本效果会差。</li>
+</ul>
+<p>目前 <a target="_blank" rel="noopener" href="https://bard.google.com/updates">Bard 上集成的是 Gemini Pro</a>，截止 2023.12.07，只开放了文本提示词，其他多模态能力暂未放开。从 <a target="_blank" rel="noopener" href="https://storage.googleapis.com/deepmind-media/gemini/gemini_1_report.pdf">Google 发布的报告</a>来看，Gemini Pro 的能力会比 GPT-4 稍微差一点，接下来就在 bard 上真实体验一把 Gemini Pro，看看能力到底如何。截止 12.10，Bard 上只有用英文才能体验 Gemini Pro，具体可以参考 Google 的帮助文档 <a target="_blank" rel="noopener" href="https://support.google.com/bard/answer/14294096">Where Bard with Gemini Pro is available</a>。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp" alt="Bard 上可以体验 Gemini Pro" srcset="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp 2552w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2552" height="1096"></p>
+<p>之前我写过一篇 <a href="https://selfboot.cn/2023/07/20/claude_gpt4_compare/">大语言模型 Claude2 和 ChatGPT 实测对比</a>，本文继续使用类似的测试方法，对比一下 Gemini Pro 和 ChatGPT 4 的表现。先来说结论吧，如下表：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>ChatGPT 4</th>
+<th>Bard(Gemini Pro)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>使用限制</td>
+<td>地区限制，IP 风控，支付风控</td>
+<td>地区限制</td>
+</tr>
+<tr>
+<td>费用</td>
+<td>付费</td>
+<td>免费</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>很慢，不过最新的 GPT4-tubro 快了不少</td>
+<td>速度很快</td>
+</tr>
+<tr>
+<td>联网能力</td>
+<td>All-Tools 可以联网</td>
+<td>比较迷，不完善的联网能力 ｜</td>
+</tr>
+<tr>
+<td>语言能力</td>
+<td>很强</td>
+<td>比 GPT4 差，中文能力没 GPT4 强</td>
+</tr>
+<tr>
+<td>数学问题</td>
+<td>一般</td>
+<td>比 GPT-4 差</td>
+</tr>
+<tr>
+<td>编程能力</td>
+<td>很强</td>
+<td>比 GPT-4 差</td>
+</tr>
+<tr>
+<td>Bug</td>
+<td>很少遇见，对话太长有时候会</td>
+<td>比较容易触发，问答明显异常</td>
+</tr>
+</tbody></table>
+<p>个人感觉，Gemini Pro 的能力和 ChatGPT 比还有比较大的差距，甚至还不如 Claude2，短时间我还不会用 Gemini Pro 替代 ChatGPT。Gemini Ultra 应该会好一些，不过暂时还没地方体验到，说不定到时候 GPT-5 先出来，Gemini Ultra 可能又落后了。</p>
+<h2 id="语言能力"><a href="#语言能力" class="headerlink" title="语言能力"></a>语言能力</h2><p>接下来用英语提示词，来看看 Gemini Pro 的语言能力到底如何。</p>
+<h3 id="阅读理解"><a href="#阅读理解" class="headerlink" title="阅读理解"></a>阅读理解</h3><p>首先是阅读理解能力，我找了几个比较著名的英语谚语，来看看 Gemini Pro 的理解是否正确。提示词如下：</p>
+<blockquote>
+<p>I have a few phrases, can you explain them to me one by one?</p>
+<ol>
+<li>A stitch in time saves nine.</li>
+<li>The early bird catches the worm.</li>
+<li>You can’t judge a book by its cover.</li>
+<li>When in Rome, do as the Romans do.</li>
+<li>All that glitters is not gold.</li>
+</ol>
+</blockquote>
+<p>Gemini Pro 和 ChatGPT 的回答如下：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp" alt="Gemini Pro 和 ChatGPT 对普通句子的理解" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp 3218w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3218" height="1598"></p>
+<p>Gemini Pro 的解释更全面些，对谚语本身的含义以及表达的意思都有解释。Gemini Pro 的速度也很快，这点是 ChatGPT 无法比的。这些谚语都是比较常见的，表达的含义也很确定。接下来我找了有歧义的句子，看两个模型分别是怎么理解的。句子 “I saw the man with the telescope.” 有两种理解方式，如下：</p>
+<ol>
+<li>可以理解为“我用望远镜看到了那个人”，即“望远镜”是我用来看人的工具。</li>
+<li>也可以理解为“我看到了一个带望远镜的男人”，即那个男人拥有或持有望远镜。</li>
+</ol>
+<p>下面是 Gemini Pro 和 ChatGPT 的解释：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp" alt="Gemini Pro 和 ChatGPT 对有歧义内容的理解" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp 3306w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3306" height="1712"></p>
+<p>基本上都是先说句子有歧义，然后分别给出两种解读，并说明没有上下文是没法确定具体哪种含义。Gemini Pro 后面还给了一些继续提问的方式，可以用这些问题来澄清这句话的含义。还试了一些其他有歧义的内容，整体来看 ChatGPT 解释会一针见血，Gemini Pro 废话稍微多，有时候容易发散，理解稍微差一些。</p>
+<table>
+<thead>
+<tr>
+<th>句子</th>
+<th>理解 一</th>
+<th>理解 二</th>
+<th>模型比较</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>The chicken is ready to eat.</td>
+<td>鸡已经烹饪好了，可以吃了</td>
+<td>鸡已经准备好吃东西了</td>
+<td>两个模型差不多</td>
+</tr>
+<tr>
+<td>Visiting relatives can be annoying.</td>
+<td>去拜访亲戚可能很烦人</td>
+<td>一些来访的亲戚可能很烦人</td>
+<td>ChatGPT 完胜，Gemini Pro废话多，解释不是很清晰</td>
+</tr>
+<tr>
+<td>He saw that gas can explode.</td>
+<td>他知道气体可以爆炸</td>
+<td>他看到了那个可以爆炸的气罐</td>
+<td>ChatGPT 完胜，Gemini Pro 理解错误</td>
+</tr>
+<tr>
+<td>They’re hunting dogs.</td>
+<td>他们正在狩猎狗</td>
+<td>那些是狩猎用的狗</td>
+<td>ChatGPT 完胜，Gemini Pro 理解错误</td>
+</tr>
+</tbody></table>
+<p>总得来看，对于简单内容，Gemini Pro 和 ChatGPT 表现差不多，遇到有歧义的内容，ChatGPT 稳定发挥，理解的很好，Gemini Pro 有时候就理解不了，回答也很啰嗦了。</p>
+<h3 id="文本生成"><a href="#文本生成" class="headerlink" title="文本生成"></a>文本生成</h3><p>接下来看看文本生成能力，我们知道目前最强大的 GPT4 来说，也不能写出风格统一，情节符合常识并且连贯的小说。这里我们找一些简单的文本生成任务，看看 Gemini Pro 的表现如何。这里一开始提示词如下：</p>
+<blockquote>
+<p>You’re a biographer, help me write a piece of Musk’s life.</p>
+</blockquote>
+<p>想让 AI 扮演一个传记作家，然后写一下马斯克的生平。Gemini Pro 会追问，让我提供更多细节，比如着重写哪部分，而 ChatGPT 则从出生，教育，创业投资经历，Space X 和火星梦，特斯拉等重点内容，写了一个很不错的介绍。接着我改了下提示词：</p>
+<blockquote>
+<p>Do you know Elon Musk , the CEO of Tesla? Help me write a description of Musk’s life.</p>
+</blockquote>
+<p>下面是两个模型的输出:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp" alt="Gemini Pro 和 ChatGPT 生成马斯克的简介" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp 3016w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3016" height="1536"></p>
+<p>个人感觉 ChatGPT 给出的文本条例比较清晰，重点突出。不过 Gemini Pro 有个功能比较强大，在回答下面，有个 “Double-check response”，会对回答分为三个情形：</p>
+<ol>
+<li>没有突出显示：没有足够的信息来评估这些回答，或者它们无意传达事实信息。目前，Bard 不会检查表格和代码中的内容。</li>
+<li>突出显示为绿色：Goole 搜索引擎发现了类似的内容，同时提供了网页链接，要注意的是，Google 并不一定是用这里的内容生成回复；</li>
+<li>突出显示为黄色：Google 搜索引擎发现的内容可能与回答不同，这时候会提供链接。还有一种情况就是，并没有找到相关内容。</li>
+</ol>
+<p>对于目前的生成式 AI 来说，Double Check 还是很有必要的。之前用 ChatGPT，都是人工再去搜索确认，目前 Google 提供的这个 <code>Double-check response</code>，对于很多场景，会有非常大帮助。</p>
+<h2 id="数学问题"><a href="#数学问题" class="headerlink" title="数学问题"></a>数学问题</h2><p>对目前的生成式 AI 来说，数学问题是个难点，和人类比，AI 在数学领域还是一个小学生。我们拿经典的鸡兔同笼问题来考考 Gemini Pro。提示词如下:</p>
+<blockquote>
+<p>Suppose you have a cage that contains chickens and rabbits. You can hear the animals but cannot see them. You know the following:</p>
+<p>There are a total of 35 heads (since both chickens and rabbits each have one head).<br>There are a total of 94 legs (chickens have 2 legs each, and rabbits have 4 legs each).<br>The question is: How many chickens and how many rabbits are in the cage?</p>
+</blockquote>
+<p>Gemini Pro 和 ChatGPT 都回答了出来，如下图：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp" alt="Gemini Pro 和 ChatGPT 回答鸡兔同笼问题" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp 3138w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3138" height="1604"></p>
+<p>ChatGPT 自从有了 All-Tools，这种涉及到计算的部分，一般都会用 Python 代码在虚拟环境运行。Gemini Pro 目前还没有计算环境，不过它这里也给出了正确的答案。</p>
+<h2 id="编程能力"><a href="#编程能力" class="headerlink" title="编程能力"></a>编程能力</h2><p>其实作为程序员，平常用 AI 最多的就是让 AI 帮忙写代码，这里我们来看看 Gemini Pro 的编程能力如何。这里我之前尝试过用 ChatGPT 来解决 Leetcode 题目，其中有一篇：<a href="https://selfboot.cn/2023/06/08/gpt4_leetcode_1318/">ChatGPT 解 Leetcode 题目：位操作</a>，接下来拿这个题目，来试试 Gemini Pro吧。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp" alt="Gemini Pro 解决编程题目" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp 1870w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1870" height="1588"></p>
+<p>Bard 每个题目会同时给出 3 个回答，这里 Draft A 的回答，代码写的不对。我看了下 Draft B，代码是没有问题的，也有注释。不过和 ChatGPT 的比，还是复杂难懂了些，并且解释也没有 ChatGPT 的清晰。</p>
+<figure class="highlight c++"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">minFlips</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c)</span> </span>{</span><br><span class="line">    <span class="comment">// Initialize the number of flips to 0.</span></span><br><span class="line">    <span class="type">int</span> flips = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// Loop until all bits are processed.</span></span><br><span class="line">    <span class="keyword">while</span> (a || b || c) {</span><br><span class="line">      <span class="comment">// Calculate the desired bit for the current position.</span></span><br><span class="line">      <span class="type">int</span> desiredBit = c &amp; <span class="number">1</span>;</span><br><span class="line">      <span class="comment">// Check if both a and b have the desired bit.</span></span><br><span class="line">      <span class="keyword">if</span> (desiredBit &amp;&amp; !((a &amp; <span class="number">1</span>) || (b &amp; <span class="number">1</span>))) {</span><br><span class="line">        <span class="comment">// Flip both a and b.</span></span><br><span class="line">        a ^= <span class="number">1</span>;</span><br><span class="line">        b ^= <span class="number">1</span>;</span><br><span class="line">        flips++;</span><br><span class="line">      } <span class="keyword">else</span> <span class="keyword">if</span> (!desiredBit) {</span><br><span class="line">        <span class="comment">// Flip a if it has the undesired bit.</span></span><br><span class="line">        <span class="keyword">if</span> (a &amp; <span class="number">1</span>) {</span><br><span class="line">          a ^= <span class="number">1</span>;</span><br><span class="line">          flips++;</span><br><span class="line">        }</span><br><span class="line">        <span class="comment">// Flip b if it has the undesired bit.</span></span><br><span class="line">        <span class="keyword">if</span> (b &amp; <span class="number">1</span>) {</span><br><span class="line">          b ^= <span class="number">1</span>;</span><br><span class="line">          flips++;</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line">      <span class="comment">// Shift all three numbers one bit to the right.</span></span><br><span class="line">      a &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">      b &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">      c &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> flips;</span><br><span class="line">  }</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
+
+<p>还试了一些其他的代码问题，比如：</p>
+<ul>
+<li>How do I convert UTC time to Beijing time zone in Python, show me the code.</li>
+</ul>
+<p>代码质量上来说，ChatGPT 的会好很多，并且带有一些解释，给人感觉很智能。Gemini Pro 的代码也还可以，大部分都是 ok 的，只是质量稍微差些。</p>
+<h3 id="工具使用"><a href="#工具使用" class="headerlink" title="工具使用"></a>工具使用</h3><p>除了直接写代码，平常也会经常让 AI 帮忙写一些命令来解决问题，比如我想查找当前目录最大的文件，我不确定 sort 怎么用。然后用下面提示词：</p>
+<blockquote>
+<p>du -ah –max-depth=1 /</p>
+<p>Here’s how to sort the display in reverse order of size</p>
+</blockquote>
+<p>ChatGPT 的回答很智能，根据 du 中输出 -h，然后告诉正确的 sort 参数用法。Gemini Pro 的回答就差劲了一些，没有考虑到这里的 -h 参数。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp" alt="Gemini Pro 和 ChatGPT 工具命令编写" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp 3020w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3020" height="1394"></p>
+<p>还有下面的问题：</p>
+<blockquote>
+<p>$ du -ah –max-depth=1 /var/lib/docker | sort -hr<br>16G	/var/lib/docker/overlay2<br>16G	/var/lib/docker<br>69M	/var/lib/docker/containers<br>27M	/var/lib/docker/image</p>
+<p>How do you clear up disk space?</p>
+</blockquote>
+<p>ChatGPT 的回答很有条理，从下面几个方面，每个都配有详细解释：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Remove Unused Containers: ...</span><br><span class="line">Remove Unused Images: ...</span><br><span class="line">Remove Unused Networks: ...</span><br><span class="line">Remove Unused Volumes: ...</span><br><span class="line">System Clean-up: ...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>而 Gemini Pro 的回答有点凌乱且啰嗦。</p>
+<h2 id="奇怪的-Bug"><a href="#奇怪的-Bug" class="headerlink" title="奇怪的 Bug"></a>奇怪的 Bug</h2><p>用的过程中，Bard 有时候会出现奇怪的回答，像是命中了一些前置或者后置检查。比如在一个对话中，我先问可以联网吗？回答可以，还说可以访问公开可用的网站和数据库，然后使用这些信息来生成文本、翻译语言等。但是接下来让他：</p>
+<blockquote>
+<p>Visit this web page, <a href="https://selfboot.cn/2023/07/20/claude_gpt4_compare/">https://selfboot.cn/2023/07/20/claude_gpt4_compare/</a>, and summarize the article.</p>
+</blockquote>
+<p>就回答：**I’m a text-based AI, and that is outside of my capabilities.<strong>。然后再次问他可以联网吗，就回答：</strong><br>I’m a language model and don’t have the capacity to help with that.**。用 ChatGPT 的 All-Tools 就不存在这奇怪的表现，直接就能用 Bing 访问网页拿到内容，然后进行总结。下面左图是 ChatGPT，右图是 Gemini Pro Bard 的回答。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp" alt="Bard 对话中奇怪的回答" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp 3292w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3292" height="1592"></p>
+<h2 id="Gemini-仍需努力"><a href="#Gemini-仍需努力" class="headerlink" title="Gemini 仍需努力"></a>Gemini 仍需努力</h2><p>从体验来看，Gemini Pro 还有很大的提升空间，目前的能力还不足以取代 ChatGPT。不过也是有自己的优点的：</p>
+<ol>
+<li>速度快。后期如果质量上来，速度还能有这么快，那就很不错了。</li>
+<li>Double Check。这个能力在一定程序上让我对回答更有信心，也知道一些结论的出处，方便进一步深入扩展。</li>
+</ol>
+<p>当然 Gemini Pro 还有很多功能没有放开，比如多模态能力，这个功能放开后，到时候再来体验一下。希望 Google 能继续努力，把 Gemini 完善好，给 OpenAI 一点压力。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target="_blank">个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：Google Gemini Pro 深度体验，离 GPT4 还有多大差距？</p><p>本文链接为：https://selfboot.cn/2023/12/10/google-gemini-bard-hands-on/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> ↑<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/Gemini/"><i class="fa fa-tag"></i>Gemini</a></div><div class="post-nav"><a class="next" href="/2023/12/09/why_not_overtime_pay/">为什么长时间工作也没有加班费？</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2023/12/10/google-gemini-bard-hands-on/';
+    this.page.identifier = '2023/12/10/google-gemini-bard-hands-on/';
+    this.page.title = 'Google Gemini Pro 深度体验，离 GPT4 还有多大差距？';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/">法律普及</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">7</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 15px;">前端</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/ChatGPT/" style="font-size: 15px;">ChatGPT</a> <a href="/tags/eBPF/" style="font-size: 15px;">eBPF</a> <a href="/tags/%E6%B3%95%E5%BE%8B/" style="font-size: 15px;">法律</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15px;">Issue</a> <a href="/tags/%E5%A9%9A%E5%A7%BB%E5%AE%B6%E5%BA%AD/" style="font-size: 15px;">婚姻家庭</a> <a href="/tags/Go/" style="font-size: 15px;">Go</a> <a href="/tags/%E5%88%91%E4%BA%8B/" style="font-size: 15px;">刑事</a> <a href="/tags/%E5%8A%B3%E5%8A%A8%E7%BA%A0%E7%BA%B7/" style="font-size: 15px;">劳动纠纷</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 15px;">数学</a> <a href="/tags/Gemini/" style="font-size: 15px;">Gemini</a></div></div><!-- Debug: page.path = 2023/12/10/google-gemini-bard-hands-on/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul><li><a href="/2023/12/10/google-gemini-bard-hands-on/" title="Google Gemini Pro 深度体验，离 GPT4 还有多大差距？">Google Gemini Pro 深度体验，离 GPT4 还有多大差距？</a></li><li><a href="/2023/12/06/bert_nlp_classify/" title="零基础用 Bert 训练并部署文本分类模型">零基础用 Bert 训练并部署文本分类模型</a></li><li><a href="/2023/11/15/how_to_crack_GPTs/" title="OpenAI 的 GPTs 提示词泄露攻击与防护实战">OpenAI 的 GPTs 提示词泄露攻击与防护实战</a></li><li><a href="/2023/11/11/chatgpt_no_such_file/" title="ChatGPT 协助分析诡异的 no such file 问题">ChatGPT 协助分析诡异的 no such file 问题</a></li><li><a href="/2023/11/08/memory_leak_ebpf/" title="深入理解基于 eBPF 的 C/C++ 内存泄漏分析">深入理解基于 eBPF 的 C/C++ 内存泄漏分析</a></li><li><a href="/2023/10/26/chatgpt_impact/" title="ChatGPT 渗透力分析：搜索热度、需求图谱与人群特征">ChatGPT 渗透力分析：搜索热度、需求图谱与人群特征</a></li><li><a href="/2023/10/19/C++_zip_memory_problem/" title="C++ 内存问题排查：创建 Zip 压缩包，解压后内容错乱">C++ 内存问题排查：创建 Zip 压缩包，解压后内容错乱</a></li><li><a href="/2023/10/17/c++_frame_pointer/" title="复杂 C++ 项目堆栈保留以及 eBPF 性能分析">复杂 C++ 项目堆栈保留以及 eBPF 性能分析</a></li><li><a href="/2023/10/11/chatgpt_recaptcha/" title="ChatGPT 多模态图像识别可以破解验证码？">ChatGPT 多模态图像识别可以破解验证码？</a></li><li><a href="/2023/10/08/chatgpt_see/" title="ChatGPT 图像理解能力深度体验">ChatGPT 图像理解能力深度体验</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%93%E9%AA%8C%E7%BB%93%E8%AE%BA"><span class="toc-number">1.</span> <span class="toc-text">体验结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E8%A8%80%E8%83%BD%E5%8A%9B"><span class="toc-number">2.</span> <span class="toc-text">语言能力</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%85%E8%AF%BB%E7%90%86%E8%A7%A3"><span class="toc-number">2.1.</span> <span class="toc-text">阅读理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E7%94%9F%E6%88%90"><span class="toc-number">2.2.</span> <span class="toc-text">文本生成</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">数学问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E7%A8%8B%E8%83%BD%E5%8A%9B"><span class="toc-number">4.</span> <span class="toc-text">编程能力</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8"><span class="toc-number">4.1.</span> <span class="toc-text">工具使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%87%E6%80%AA%E7%9A%84-Bug"><span class="toc-number">5.</span> <span class="toc-text">奇怪的 Bug</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gemini-%E4%BB%8D%E9%9C%80%E5%8A%AA%E5%8A%9B"><span class="toc-number">6.</span> <span class="toc-text">Gemini 仍需努力</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
