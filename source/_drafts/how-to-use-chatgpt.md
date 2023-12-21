@@ -108,9 +108,28 @@ bash <(curl -fsSL git.io/warp.sh) menu
 
 ![Cloudflare Warp Socks5 代理启动](https://slefboot-1251736664.file.myqcloud.com/20231220_how_to_use_chatgpt_warp_set.png)
 
+启动成功后，还是要验证下的，可以用 curl 命令向 `ipinfo.io` 发起一个 http GET 请求，然后查看在直接访问和使用 Warp 代理情况下，对方看到的 IP 地址是否符合预期。从下图可以看到，在使用了 Warp 的代理后，对方看到的 IP 地址是 Cloudflare 的，而不是我们自己服务器 IP。
+
+![Cloudflare Warp Socks5 代理验证](https://slefboot-1251736664.file.myqcloud.com/20231221_how_to_use_chatgpt_warp_proxy.png)
+
+注意这里 Warp 对操作系统和版本有要求，尽量按照我前面说的选 Debian 11，这个实验过没问题，其他系统版本下可能会有异常。
 
 ### 证书配置
 
+离成功不远了！因为我们要配置 HTTPs 代理，所以需要一个证书。这里可以用免费的证书颁发机构 [Let's Encrypt](https://letsencrypt.org/)，这里有详细的 [Get Started](https://letsencrypt.org/getting-started/) 文档，如果下面命令不成功，可以来这里参考官方文档。
+
+注意用 root 权限运行下面两个命令：
+
+```bash
+sudo apt-get install certbot
+sudo certbot certonly --standalone --domains tk.mylitdemo.fun
+```
+
+第一个命令用来安装 certbot，第二个命令用来生成证书，注意把域名 `tk.mylitdemo.fun` 改成自己前面绑定到 IP 的。这里必须先把域名绑定到服务器公网 IP 后，才能在服务器上生成证书。执行完后，如果看到下面提示，说明安装成功了：
+
+> Congratulations! Your certificate and chain have been saved at: /etc/letsencrypt/live/tk.mylitdemo.fun/fullchain.pem Your key file has been saved at: /etc/letsencrypt/live/tk.mylitdemo.fun/privkey.pem Your certificate will expire on 2024-02-03. To obtain a new or tweaked version of this certificate in the future, simply run certbot again. To non-interactively renew all of your certificates, run "certbot renew"
+
+可以在提示中说的目录中看到这些证书文件，后面也会用到这个证书文件。
 
 ### HTTPS 代理
 
