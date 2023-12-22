@@ -218,30 +218,15 @@ div {
 .post .post-meta {
   padding: 0;
   margin: 15px 0 0;
-  color: #6E7173;
+  color: #000000;
   float: left;
   display: inline;
   text-indent: 0.15em;
 }
-.post .post-meta:before {
-  font-family: "FontAwesome";
-  content: "\f073";
-  padding-right: 0.3em;
-}
-.post .post-meta .category:before {
-  font-family: "FontAwesome";
-  content: "\f07c";
-  padding-right: 0.3em;
-}
-.post .post-meta #busuanzi_value_page_pv:before {
-  font-family: "FontAwesome";
-  content: "\f024";
-  padding-right: 0.3em;
-}
 .post .ds-thread-count {
   padding: 0;
   margin: 15px 0 0;
-  color: #6E7173;
+  color: #000000;
   float: right;
   display: inline;
   text-indent: 0.15em;
