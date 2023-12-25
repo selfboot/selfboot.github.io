@@ -5,9 +5,10 @@ tags:
   - ChatGPT
 category: 计算机网络
 toc: true
-description: 
-date: 
+description: 本文详细介绍如果通过网络代理，访问 OpenAI 的 ChatGPT，每一步都有详细的图文教程，并带有原理介绍，结果验证方法，让你零基础也能跟着学会。
+date: 2023-12-25 20:59:06
 ---
+
 
 OpenAI 的 ChatGPT 对于个人工作和生活来说，是一个非常有用的工具。但是，由于众所周知的原因，OpenAI 的服务器在中国大陆地区是无法访问的。本文将介绍如何安全、快速、便宜地访问 ChatGPT，每一步都有详细的图文教程，并带有原理介绍，结果验证方法，让你零基础也能跟着学会。
 
@@ -129,20 +130,114 @@ sudo certbot certonly --standalone --domains tk.mylitdemo.fun
 
 > Congratulations! Your certificate and chain have been saved at: /etc/letsencrypt/live/tk.mylitdemo.fun/fullchain.pem Your key file has been saved at: /etc/letsencrypt/live/tk.mylitdemo.fun/privkey.pem Your certificate will expire on 2024-02-03. To obtain a new or tweaked version of this certificate in the future, simply run certbot again. To non-interactively renew all of your certificates, run "certbot renew"
 
-可以在提示中说的目录中看到这些证书文件，后面也会用到这个证书文件。
+可以在提示中说的目录中看到这些证书文件，后面也会用到这个证书文件。这里自动生成的证书是 3 个月有效期的，如果想要长期使用，可以使用 crontab 添加一个定时任务。`crontab -e` 命令，添加下面内容即可：
+
+```bash
+0 0 1 * * /usr/bin/certbot renew --force-renewal --quiet --renew-hook "sh /home/.gost.sh" >> /var/log/certbot-renew.log 2>&1
+```
+
+这样每个月 1 号，就会重新申请证书，然后重启代理服务。注意这里的 `sh /home/.gost.sh` 可能要根据自己的启动命令路径来改。
 
 ### HTTPS 代理
 
+前面做了那么多准备工作，就是为了这一步开启 HTTPS 代理了。前面安装 docker，域名解析配置， warp 配置，证书申请都成功后，就可以开始这里的代理设置了。找个常用目录，编辑 `.gost.sh` 文件(名字不重要)，添加下面内容：
+
+```bash
+#!/bin/bash
+
+docker stop gost-warp && docker rm gost-warp
+# 下面的 4 个参数需要改成你的
+DOMAIN="tk.mylitdemo.fun" # 前面配置的域名
+USER="demo"               # 代理用户名
+PASS="youguess"           # 密码
+PORT=443                  # 代理端口，一般选 443 就行
+
+BIND_IP=0.0.0.0
+CERT_DIR=/etc/letsencrypt
+CERT=${CERT_DIR}/live/${DOMAIN}/fullchain.pem
+KEY=${CERT_DIR}/live/${DOMAIN}/privkey.pem
+sudo docker run -d --name gost-warp \
+    -v ${CERT_DIR}:${CERT_DIR}:ro \
+    --net=host ginuerzh/gost \
+    -L "http2://${USER}:${PASS}@${BIND_IP}:443?cert=${CERT}&key=${KEY}&probe_resist=code:404&knock=www.google.com" \
+    -F "socks://localhost:40000"
+docker update --restart=unless-stopped gost-warp
+```
+
+接着用 shell 运行这个脚本，如果整成输出一串 hash 和 gost-warp，基本上就是启动成功了。可以用 `docker ps` 命令查看下，看到 gost-warp 的状态是 up，说明启动成功了。
+
+```shell
+docker ps -a
+CONTAINER ID   IMAGE           COMMAND                   CREATED          STATUS                    PORTS     NAMES
+e91d22d3dc9b   ginuerzh/gost   "/bin/gost -L http2:…"   18 seconds ago   Up 17 seconds                       gost-warp
+```
+
+接着可以在自己本地电脑验证下。打开命令终端，用 curl 命令使用你的代理，来访问 ipinfo.io，看返回地址是否是 Warp 的 IP。如果是，说明代理成功了。
+
+```bash
+curl  "ipinfo.io" --proxy "https://tk.mylitdemo.fu" --proxy-user 'demo:youguess'
+```
+
+这里这里的代理域名地址，用户名和密码都是前面 `.gost.sh` 里面你设置的。结果如下图，不用代理的话就是你本地 IP，
+
+![验证代理是否成功](https://slefboot-1251736664.file.myqcloud.com/20231225_how_to_use_chatgpt_https_proxy.png)
 
 ## 本地配置
 
+上面步骤成功后，相当于你有了一个中转点，接下来还需要在本地电脑上进行配置，让访问网络的流量经过这个中转点才行。这里目前有很多客户端，比如电脑端的 clash，iPhone 上的 shadowrocket 等软件，工具的原理基本如下图：
+
+![本地电脑流量分发](https://slefboot-1251736664.file.myqcloud.com/20231225_how_to_use_chatgpt_local.png)
+
+安装这些工具，并进行配置后，当本地发生网络访问的时候，工具可以根据不同的站点地址，选择不同的访问路径。如上图 1，2，3 这几种情况：
+
+1. 一些内部 oa 站点，不经过代理软件，按照原来的方式访问公司的代理。
+2. 访问 youku.con，经过代理后，不访问代理服务器，直接访问这些可以直达的站点。
+3. 访问 chat.openai.com，经过代理后，再把请求转发云服务器，最后通过 warp 出口 IP 访问。
+
 ### 流量分发
 
-### 故障排查
+目前的代理客户端，基本都支持不同的站点，选择直接访问，还是通过某个代理访问。以 Clash 为例，在配置文件中，可以指定通过某个代理访问某个域名。比如对于 OpenAI 的相关域名，指定用 GPT4 这个**代理组**来访问。
+
+```yaml
+    - 'DOMAIN-SUFFIX,openai.com,GPT4'
+    - 'DOMAIN-SUFFIX,sentry.io,GPT4'
+    - 'DOMAIN-SUFFIX,stripe.com,GPT4'
+    - 'DOMAIN-SUFFIX,bing.com,GPT4'
+    - 'DOMAIN-SUFFIX,oaistatic.com,GPT4'
+    - 'DOMAIN-SUFFIX,oaiusercontent.com,GPT4'
+    - 'DOMAIN,api.openai.com,GPT4'
+    - 'DOMAIN-SUFFIX,events.statsigapi.net,GPT4'
+    - 'DOMAIN,llama2.ai,GPT4'
+    - 'DOMAIN,www.tiktok.com,GPT4'
+    - 'DOMAIN,www.tiktokv.com,GPT4'
+    - 'DOMAIN,www.byteoversea.com,GPT4'
+    - 'DOMAIN,www.tik-tokapi.com,GPT4'
+```
+
+这里代理组是在配置文件中定义的，比如你有多个代理服务器，就可以放到一个组里面。每次手动指定某一个代理，或者自动选择速度快的代理，如果某个代理失败，也可以自动切换到另一个。总的来说，代理组允许自动切换，自动选择，还是挺方便的。如下图，有三个代理组，每个代理组有多台代理服务期，不同代理组可以选择不同的代理服务器。
+
+![Clash 代理组配置](https://slefboot-1251736664.file.myqcloud.com/20231225_how_to_use_chatgpt_clash.png)
+
+从头写配置文件有点繁琐，可以在[这份配置文件](https://gist.github.com/selfboot/4ec21100f5286b4f25dab74733c4ed5f)的基础上，添加自己的代理服务器信息，即可保存为自己的配置文件。然后把配置文件放到 Clash 的配置文件夹中，可以在 Clash 状态栏，通过`配置`-`打开配置文件夹` 找到配置文件夹目录。之后，在`配置`中选择自己的配置名，重载配置文件，就能生效了。接着通过 Clash 的状态栏，勾选**设置为系统代理**，就能正常访问 ChatGPT 了。
 
 ### 解决冲突
 
-## 支付方案
+有时候在某些内网中，有些 oa 站点需要用电脑中其他代理软件来访问才行。这时候，可以在 Clash 中配置好这些特殊站点，让它不经过 Clash 代理，还是按照原来的访问方式。可以在`更多设置`中的最下面添加要跳过的域名，如下图：
+
+![Clash 更多配置](https://slefboot-1251736664.file.myqcloud.com/20231225_how_to_use_chatgpt_clash_more.png)
+
+### 故障排查
+
+经过上面配置后，如果还是不能正常访问 ChatGPT，可以通过下面几个步骤来排查。首先查看代理服务器能否正常连接，可以先用 前面的 curl 来确保代理连接的上，然后在 Clash 中用延迟测速，看速度是否正常。一般 500ms 以内的延迟，都是可以接受的。如果速度正常，并且勾选了设置为系统代理，正常就不会有问题的。
+
+这时候如果浏览器访问 chat.openai.com 还是不行，可以检查浏览器的网络请求有没有经过代理服务的端口。这里 Clash 默认会启动 7890 的本地端口来转发流量，用 chrome 的开发者工具，可以看到是否经过本地的 7890 端口转发。
+
+![Chrome 开发者工具查看网络请求](https://slefboot-1251736664.file.myqcloud.com/20231225_how_to_use_chatgpt_clash_7890.png)
+
+如果没有的话，可能是浏览器插件配置了某些代理导致失败，可以卸载掉浏览器的插件，比如 `Proxy SwitchyOmega`。
+
+如果能看到 7890 代理，但是还是不能访问服务，就要用开发者工具，查看请求返回了什么报错。比如某天 OpenAI 可能启动了一个新的域名，然后也对 IP 来源做了限制。这时候本地配置文件中，没有对这个域名设置规则，那么就会被 OpenAI 拦截，导致无法访问。这种解决也比较简单，定位到域名后，直接添加新的代理规则，然后重载配置文件即可。
 
 ## 免责声明
 
+**本博客内容仅供教育和研究目的，旨在讨论一种绕过 OpenAI 网络限制的方法。在此所述的任何技术和信息都不应用于非法活动或恶意目的。作者和发布者对任何人因使用或误用本博客文章中的信息而造成的任何直接或间接损失，概不负责。读者应该在合法和道德的范围内使用这些信息，并始终遵守所有适用的法律和道德规定。**
