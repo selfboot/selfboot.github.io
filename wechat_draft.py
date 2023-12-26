@@ -262,6 +262,8 @@ def process_add_mdfiles(md_files):
         media_id = add_draft(access_token, md_file)
         if media_id:
             print(media_id)
+        else:
+            raise Exception("Failed to create draft.")
 
 if __name__ == "__main__":
     process_add_mdfiles(md_files)
