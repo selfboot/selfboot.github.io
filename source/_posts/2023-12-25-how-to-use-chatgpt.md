@@ -238,6 +238,20 @@ curl  "ipinfo.io" --proxy "https://tk.mylitdemo.fu" --proxy-user 'demo:youguess'
 
 如果能看到 7890 代理，但是还是不能访问服务，就要用开发者工具，查看请求返回了什么报错。比如某天 OpenAI 可能启动了一个新的域名，然后也对 IP 来源做了限制。这时候本地配置文件中，没有对这个域名设置规则，那么就会被 OpenAI 拦截，导致无法访问。这种解决也比较简单，定位到域名后，直接添加新的代理规则，然后重载配置文件即可。
 
+### Claude 分流
+
+[Claude](https://claude.ai/chats) 还比较特殊，最近发现不能访问，提示区域不对：
+
+![Claude 区域限制](https://slefboot-1251736664.file.myqcloud.com/20231228_how_to_use_chatgpt_claude_bypass.png)
+
+但我明明已经切换了美国 ip，也加了 warp。于是在服务器尝试直接连接 Claude，发现是正常的，但是用 Cloudflare 中转链路后，这里就返回 307 重定向到一个错误地址了。看来 Claude 和 OpenAI 风控 IP 的策略不同，Claude 不支持 Cloudflare 的 IP。要解决的话也比较简单，直接在上面的 gost.sh 配置文件中，中转配置那一行，加上过滤掉 Claude 的规则即可。
+
+```bash
+-F "socks://localhost:40000?bypass=172.10.0.0/16,127.0.0.1,localhost,claude.ai,anthropic.com"
+```
+
+不得不说，gost 功能完善，文档也是相当可以，这里的 bypass 参数，具体可以参考[分流](https://gost.run/concepts/bypass/)。
+
 ## 免责声明
 
 **本博客内容仅供教育和研究目的，旨在讨论一种绕过 OpenAI 网络限制的方法。在此所述的任何技术和信息都不应用于非法活动或恶意目的。作者和发布者对任何人因使用或误用本博客文章中的信息而造成的任何直接或间接损失，概不负责。读者应该在合法和道德的范围内使用这些信息，并始终遵守所有适用的法律和道德规定。**
