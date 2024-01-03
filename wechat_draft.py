@@ -80,7 +80,7 @@ def md_to_valid_html(accesstoken, md_file):
     return title, link, html_content
 
 def upload_image_to_wechat(access_token, cos_url):
-    headers = {'Referer': 'localhost'}
+    headers = {'Referer': 'https://selfboot.cn/'}
     response = requests.get(cos_url, headers=headers)
     image_file = io.BytesIO(response.content)
     url = f"https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token={access_token}"
