@@ -1,9 +1,12 @@
 ---
 title: 个人博客访问速度优化：CDN, 图片压缩, HTTP2
-tags: [前端, 方法]
+tags:
+  - 前端
+  - 方法
 category: 项目实践
 toc: true
-description: 
+description: 本文详细介绍了个人博客访问速度优化的技术手段，包括CDN加速、WebP格式转换、响应式图片、HTTP/2协议等，并给出具体的代码实现和避坑指南。这些方法能明显提升页面加载速度，改善用户体验。文章还分析了效果评估指标，为搭建高性能博客提供了参考。
+date: 2024-01-03 22:30:52
 ---
 
 个人博客也写了有一段时间了，之前是能访问到就好，对速度没啥追求。前段时间，自己访问的时候，都感觉到页面加载速度比较慢，比较影响体验。此外加载慢的话，还会**影响搜索引擎排名**。于是动手对博客进行了系列的优化，提升了页面的加载速度。中间遇到了不少坑，本文记录下来，希望对大家有所帮助。
@@ -41,7 +44,7 @@ link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome
 
 ### 图片 CDN
 
-其实最影响页面加载速度的就是图片，优化的关键点就是图片。这里图片本来是存储在腾讯云 COS 上的，访问也是直接用 COS 链接。图片的优化有几个方面，这里先来看看 CDN 加速，至于图片压缩和响应式，下面展开。
+其实最影响页面加载速度的就是图片，优化的关键点就是图片。这里图片本来是存储在腾讯云 COS 上的，访问也是直接用 COS 链接。图片的优化有几个方面，这里先来看看 CDN 加速，至于图片压缩和自适应，下面展开。
 
 以腾讯云 CDN 为例，要给 COS 存储开启 CDN 还是比较简单的，2022年5月9日前，支持默认 CDN 加速域名，只需要简单开启就行。不过现在的话，只能用自定义域名，如果做国内加速，**域名还需要备案**。配置起来很简单，基本设置好加速的域名，以及源站地址就行。
 
@@ -78,7 +81,7 @@ CDN 还有**日志服务**，可以提供每个小时的访问日志下载，里
 在上了 CDN 后，用 [PageSpeed Insights](https://pagespeed.web.dev/) 测了下，发现图片加载比较耗时，优化方法主要有两个：
 
 1. **优化图片格式**，用 WebP 格式。博客的图片之前都是 png 的，虽然上传 COS 前自动压缩了，但是还是比较大。WebP 是一个非常出色的现代图片格式，与 PNG 相比，WebP **无损图片**的尺寸缩小了 26%。
-2. **响应式图片**。就是根据屏幕大小，加载不同尺寸的图片，比如手机屏幕加载小图，电脑屏幕加载大图。这样可以减少加载的流量，提升加载速度。
+2. **自适应图片**。就是根据屏幕大小，加载不同尺寸的图片，比如手机屏幕加载小图，电脑屏幕加载大图。这样可以减少加载的流量，提升加载速度。
 
 ### 图片格式优化
 
@@ -94,18 +97,92 @@ CDN 还有**日志服务**，可以提供每个小时的访问日志下载，里
 
 ![腾讯云 COS 图片处理 Bug](https://slefboot-1251736664.file.myqcloud.com/20240102_hexo_blog_speed_cdn_image_bug.png)
 
-### 响应式图片
+### 自适应图片
 
-在前面格式转换这里，有提到我建了多个样式，对应不同大小的 WebP 图片。接下来要做的就是，根据设备像素大小，来决定具体加载哪个尺寸的图片。在处理前，先推荐一个工具，[RespImageLint](https://ausi.github.io/respimagelint/)，可以检查页面中的响应式图片是否合理。
+在前面格式转换这里，提到我建了多个样式，对应不同大小的 WebP 图片。接下来要做的就是，根据设备像素大小，来决定具体加载哪个尺寸的图片。在处理前，先推荐一个工具，[RespImageLint](https://ausi.github.io/respimagelint/)，可以检查页面中的图片尺寸是否合理。
 
 把这个工具加到浏览器标签后，访问博客中的文章页面，然后点击 `Lint Images` 标签，工具就会模拟各种尺寸的设备来访问页面，然后看浏览器请求的图片是否合理。最后会生成一个报告，列出每个图片的检查结果。如下图：
 
-![RespImageLint 检查响应式图片](https://slefboot-1251736664.file.myqcloud.com/20240102_hexo_blog_speed_link_images.png)
+![RespImageLint 检查自适应图片](https://slefboot-1251736664.file.myqcloud.com/20240102_hexo_blog_speed_link_images.png)
 
+当然这个是我用了自适应图片后的检查结果了，如果没有做自适应，就会有很多警告。这里自适应基本思路就是用万象为每张图片提供多个版本大小，然后通过媒体查询、视口尺寸属性等指定在不同像素设备下使用的图片版本。具体到我博客里，在 hexo 渲染 HTML 的时候，用 js 脚本来替换图片链接，增加 srcset，sizes 属性。
+
+- 设置 srcset 属性。srcset 属性用于指定图片的不同尺寸来源，允许浏览器根据设备屏幕的大小和分辨率选择合适的图片版本。
+- 设置 sizes 属性。sizes 属性定义了图片在不同视口（viewport）宽度下应该使用的布局宽度，允许浏览器更准确地选择 srcset 中的合适图片。
+- 更新图片属性，更新 img 标签的 src、width 和 height 属性，确保图片的适当渲染和比例。
+
+具体就是在 hexo 项目的根目录下创建 scripts 目录，然后创建 `img.js` 文件，内容如下：
+
+```js
+const cheerio = require("cheerio");
+const path = require("path");
+const imageSize = require("image-size");
+const url = require("url");
+const fs = require("fs");
+
+hexo.extend.filter.register("after_render:html", function (str, data) {
+  const $ = cheerio.load(str);
+
+  $("img").each(function () {
+    const img = $(this);
+    const src = img.attr("src");
+
+    if (
+      src &&
+      (src.endsWith(".png") ||
+        src.endsWith(".jpeg") ||
+        src.endsWith(".jpg") ||
+        src.endsWith(".gif") || 
+        src.endsWith(".webp"))
+    ) {
+      const parsedUrl = url.parse(src);
+      const imgPathPart = parsedUrl.path;
+      const imgPath = path.join(__dirname, "../images", imgPathPart);
+
+      // 检查文件是否存在
+      if (fs.existsSync(imgPath)) {
+        const dimensions = imageSize(imgPath);
+        const width = dimensions.width;
+
+        const small = src + "/webp400";
+        const middle = src + "/webp800";
+        const large = src + "/webp1600";
+        const origin = src + "/webp";
+        let srcset = `${origin} ${width}w`;
+        if (width > 400) srcset += `, ${small} 400w`;
+        if (width > 800) srcset += `, ${middle} 800w`;
+        if (width > 1600) srcset += `, ${large} 1600w`;
+        img.attr("srcset", srcset);
+        let sizes;
+        if (width <= 400) {
+          sizes = `${width}px`;
+        } else {
+          sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)"
+        }
+        img.attr("sizes", sizes);
+        img.attr("src", origin);
+        const height = dimensions.height;
+        img.attr("width", width);
+        img.attr("height", height);
+      }
+    }
+  });
+
+  return $.html();
+});
+```
+
+然后 hexo 渲染的时候就会调用这个脚本来对图片属性进行处理，渲染后的结果如下：
+
+![自适应图片渲染后的结果](https://slefboot-1251736664.file.myqcloud.com/20240103_hexo_blog_speed_image_render.png)
+
+接着可以在浏览器的开发者工具中，**选择不同尺寸的屏幕大小**，然后看请求 Network 选项卡中，浏览器具体选择的是哪个图片版本。如下图，在小尺寸下选择的 400 的图片，中尺寸就是 800 的图片。
+
+![自适应图片渲染后在不同设备下的尺寸](https://slefboot-1251736664.file.myqcloud.com/20240103_hexo_blog_speed_image_render_choice.png)
 
 ## HTTP 2
 
-HTTP2 可以使用单个 TCP 连接来一次发送多个数据流，使得任何资源都不会会阻碍其他资源，可以很有效的提高网页加载速度。博客静态资源托管在了 Netlify，默认支持 http2，但是里面图片和一些 js 脚本，有的并不支持 http2。在浏览器的控制台工具中，通过 network 选项卡，可以看到每个资源的 http2 支持情况。
+最后一个优化就是，让博客中的请求尽量用 HTTP2 协议。HTTP2 做了很多优化，相比 HTTP1.1 有较大提升，可以很有效的提高网页加载速度。比如可以使用单个 TCP 连接来一次发送多个数据流，使得任何资源都不会会阻碍其他资源。博客静态资源托管在了 Netlify，默认支持 http2，但是里面图片和一些 js 脚本，有的并不支持 http2。在浏览器的控制台工具中，通过 network 选项卡，可以看到每个资源的 http2 支持情况。
 
 ![博客中各个资源的 HTTP2 支持情况](https://slefboot-1251736664.file.myqcloud.com/20240102_hexo_blog_speed_http2.png)
 
@@ -115,10 +192,47 @@ HTTP2 可以使用单个 TCP 连接来一次发送多个数据流，使得任何
 
 解决图片后，剩下的只有 **Disqus 评论系统**和**百度的统计脚本**还是用的 http1.1 了。看了下 Disqus 的官网，没发现怎么开启 http2，不过考虑到这里评论系统是动态加载，不影响页面加载速度，就先不管了。百度的[统计脚本](https://tongji.baidu.com/web/help/article?id=174&type=0) 也不支持 http2，不过考虑到流量没有多少来自百度，百度的统计也比较垃圾，这里就直接去掉百度统计了。目前接了 [Google Analytics](https://analytics.google.com/analytics/web/) 和 Cloudflare 的 [Web analytics](https://www.cloudflare.com/zh-cn/web-analytics/)，这两个都支持 http2，并且也足够用了。
 
-## 测试效果
+## 效果评估
 
+网页加载速度评估我这里主要用的是 [PageSpeed Insights](https://pagespeed.web.dev/)，和 Google 的 Lighthouse，一般评估网页的几个关键指标：
+
+- FCP，First Contentful Paint，**首次内容渲染** FCP 衡量的是用户到网页后，**浏览器呈现第一段 DOM 内容所用的时间**。网页上的图片、非白色元素和 SVG 都会被视为 DOM 内容。一般 1.8s 以内都是可以接受的，Google 也会认为是 Good。
+- LCP，Largest Contentful Paint，**最大内容渲染时间**用于测量视口中最大的内容元素何时渲染到屏幕上。这粗略地估算出网页主要内容何时对用户可见。
+- FID，First Input Delay，衡量的是从用户首次与网页互动（比如点击链接）到浏览器能够实际开始处理事件处理脚本以响应该互动的时间。
+
+下图是各个指标的效果分布：
+
+![网页加载指标评估效果](https://slefboot-1251736664.file.myqcloud.com/20240103_hexo_blog_speed_web_vitals.png)
+
+还有一些其他指标，这里就先不展开聊了。Google 的 Lighthouse 给出的优化建议会比较详细一些，比如：
+
+- 压缩 CSS 和 JS 的大小；
+- 移除用不到的 CSS 样式等；
+- 最大限度的减少主线程延迟
+
+不过这些优化对整体效果提升效果不是很明显，并且需要花费比较大的时间，博客里就没有做这些优化。本博客优化完之后，性能的评分基本在 95 分以上了。不过这里的指标基于你当前地区，比如图片加载速度，国内 CDN 速度就很快，这里评估肯定也不错。
+
+如果用了 Cloudflare 的 Web analytics，能看到实际访问博客的用户的各项指标，如下图：
+
+![Cloudflare Web analytics 博客访问性能实时监测](https://slefboot-1251736664.file.myqcloud.com/20240103_hexo_blog_speed_real_vitals.png)
+
+这里 LCP 有 5% 的 Poor，主要是因为博客中的图片，有些地区网络加载图片比较慢，这里也给出了明细，如下：
+
+```
+#layout>div.pure-u-1.pure-u-md-3-4>div.content_container>div.post>div.post-content>p>a.fancybox>img
+slefboot-1251736664.file.myqcloud.com/20230727_chatgpt_hacking_jailbreaking_cover.webp/webp
+5,485ms
+#layout>div.pure-u-1.pure-u-md-3-4>div.content_container>div.post>div.post-content>p>a.fancybox>img
+slefboot-1251736664.file.myqcloud.com/20231228_black_hat_SEO_search.png/webp1600
+8,311ms
+```
+
+说明 CDN 加速也不是 100% 就能解决所有地区的访问，可能换个比较好的 CDN 会有提升吧，不过作为个人博客，也没有继续折腾了。
 
 ## 参考文档
+[Web Vitals](https://web.dev/articles/vitals)
+[Eliminate render-blocking resources](https://developer.chrome.com/docs/lighthouse/performance/render-blocking-resources?hl=en)
 [An image format for the Web](https://developers.google.com/speed/webp)  
 [RespImageLint - Linter for Responsive Images](https://ausi.github.io/respimagelint/)  
 [Properly size images](https://developer.chrome.com/docs/lighthouse/performance/uses-responsive-images/)  
+[Lighthouse performance scoring](https://developer.chrome.com/docs/lighthouse/performance/performance-scoring?hl=en)
