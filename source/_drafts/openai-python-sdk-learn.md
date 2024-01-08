@@ -1,7 +1,7 @@
 ---
-title: ChatGPT openai-python 库源码剖析
-tags: [ChatGPT, Python]
-category: 源码剖析
+title: 跟 OpenAI 学习写 ChatGPT 的 Python SDK 库
+tags: [ChatGPT, Python, 方法]
+category: 项目实践
 toc: true
 description: 
 ---
@@ -10,18 +10,15 @@ ChatGPT 问世后，OpenAI 就开源了模型调用的 Python 库 [openai-python
 
 ![OpenAI-python 库的封装](https://slefboot-1251736664.file.myqcloud.com/20230831_openai_python_source_summary.webp)
 
-本文就来剖析一下 OpenAI Python 库的源码，希望能够帮助大家理解它的实现原理。
+这个库的第一个版本，实现了 ChatGPT 各种 API 的参数封装 Python 抽象类和调用方法，通过 requests 和 aiohttp 库来发送同步或者异步 HTTP 请求。整体来说，对外接口良好，很容易就会使用。并且整体源码实现有很好的逻辑抽象，用了很多 Python 高级特性，代码写的很漂亮，值得学习。但是从本质上讲，这还是 "**API boy**" 的工作，更多是重复体力劳动，没有太多技术含量。
+
+于是，OpenAI 在 2023.11.09 号，开始引入 [Stainless](https://www.stainlessapi.com/)，自此不用再手工编写 SDK 代码。每次只用提供 API 协议更新，然后就能自动生成代码，<span style='color: red'>摆脱了重复体力劳动</span>。
+
 <!-- more -->
 
-## 库的使用
-
-
-## 核心类实现
+## 手动打造的 SDK
 
 ![openai python 库的核心类图](https://slefboot-1251736664.file.myqcloud.com/20230829_openai_python_source_classes_core.png)
-
-
-## Python 高级用法
 
 
 ### 类型注解
@@ -99,3 +96,8 @@ override.py:22: note:     def add(a: int, b: int) -> int
 override.py:22: note:     def add(a: str, b: str) -> str
 ```
 
+## 自动化生成
+
+上面是比较传统的根据 API 接口定义来生成 Client 代码的方式。其实很多程序员日常的工作类似这种，提供 API 的各种参数然后去调用，或者是提供对外的接口，这就是所谓的 API boy。
+
+OpenAI 的程序员，显然不满足于做一个 API boy，从仓库的提交记录中可以看到，在 2023.11.09 号引入了一个 `stainless-bot`，
