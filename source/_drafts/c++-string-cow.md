@@ -7,7 +7,61 @@ date:
 description: 
 ---
 
+最近工作中有小伙伴遇到了一个奇怪的问题，C++中复制一个 string 后，更改复制后的内容，结果原值也被改了。对于不是很熟悉 C++ 的小伙伴来说，这就有点“见鬼”了。本文接下来从问题的简单复现，到背后的原理，以及 C++ 标准的变更，来一起深入讨论这个问题。
+
+![C++字符串修改副本影响到原来内容](https://slefboot-1251736664.file.myqcloud.com/20240115_c++_string_cow_cover.png)
+
 <!-- more -->
+
+## 问题复现
+
+这里直接给出可以稳定复现的代码，定义一个字符串 original，然后复制一份，接着调用一个函数来修改副本字符串的内容。业务中的函数比较复杂，这里复现用了一个简单的函数，只是修改 copy 的第一个字符。在修改副本 copy 前后，打印两个字符串的内容和内存地址。往下看之前，你可以先猜猜下面代码的输出。
+
+```c++
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+void ModifyStringInplace(string &str) {
+    size_t len = str.size();
+    char *s = const_cast<char *>(str.c_str());
+    s[0] = 'X';
+    return;
+}
+int main() {
+    string original = "Hello, World!";
+    string copy = original;
+
+    // 显示两个字符串的内存地址
+    cout << "Original: " << original << ", address: " << static_cast<const void*>(original.c_str()) << endl;
+    cout << "Copy    : " <<  copy << ", address: " << static_cast<const void*>(copy.c_str()) << endl;
+
+    // 修改副本
+    ModifyStringInplace(copy);
+
+    // 再次显示两个字符串的内存地址
+    cout << "After Modification:" << endl;
+    cout << "Original: " << original << ", address: " << static_cast<const void*>(original.c_str()) << endl;
+    cout << "Copy    : " <<  copy << ", address: " << static_cast<const void*>(copy.c_str()) << endl;
+
+    return 0;
+}
+```
+
+在业务生产环境上，用 G++ 4.9.3 编译上面的代码，运行结果如下：
+
+```bash
+Original: Hello, World!, address: 0x186c028
+Copy    : Hello, World!, address: 0x186c028
+After Modification:
+Original: Xello, World!, address: 0x186c028
+Copy    : Xello, World!, address: 0x186c028
+```
+
+可以看到在修改副本后，**原始字符串的内容也发生了变化**。还有一点奇怪的是，原始字符串和副本的**内存地址始终是一样的**。这究竟是怎么回事呢？
+
+## C++ string 的 COW 机制
 
 C++ 中，const_cast 用于移除对象的 const（常量）属性。通常情况下，std::string 的 c_str() 方法返回一个指向常量字符数组的指针。所以我们**不应该通过这个指针修改字符串的内容**，因为它是设计为只读的。上面的例子中，使用 const_cast 来强制去除这个 const 限定符，然后通过 memmove 修改数据，这种直接修改底层数据的操作不会被 std::string 的内部机制（包括 COW）所识别，因为它跳过了所有的高层接口和内部状态检查。因此，COW 机制可能不会触发，因为 std::string 实现可能没有检测到通过其正常接口之外的方式进行的修改。
 
