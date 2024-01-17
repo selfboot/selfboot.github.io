@@ -1,10 +1,10 @@
 ---
-title: C++ 数据意外修改之深入理解 string 的 COW 写时复制
+title: C++ string 意外修改之深入理解 COW 写时复制
 tags: [C++]
 category: 程序设计
 toc: true
 date: 
-description: 
+description: 本文通过示例代码复现字符串副本被修改后原字符串也跟着改变的问题，针对性地分析了问题根源。然后全面地讲解了写时复制的原理及存在的缺陷，如引起潜在内存错误、不适合多线程等。最后介绍C++11标准是如何修改约束和高版本字符串的SSO优化。
 ---
 
 最近工作中有小伙伴遇到了一个奇怪的问题，C++中复制一个 string 后，更改复制后的内容，结果原值也被改了。对于不是很熟悉 C++ 的小伙伴来说，这就有点“见鬼”了。本文接下来从问题的简单复现，到背后的原理，以及 C++ 标准的变更，来一起深入讨论这个问题。
@@ -116,7 +116,7 @@ Copy    : Hello, World!, address: 0x21f2058
 
 ## 写时复制的缺点
 
-用 COW 实现 string 的好处是可以减少不必要的数据复制，但是它也有一些缺点。先看一个简单示例，参考 [Legality of COW std::string implementation in C++11]([Legality of COW std::string implementation in C++11](https://stackoverflow.com/questions/12199710/legality-of-cow-stdstring-implementation-in-c11)) 下的一个回答。
+用 COW 实现 string 的好处是可以减少不必要的数据复制，但是它也有一些缺点。先看一个简单示例，参考 [Legality of COW std::string implementation in C++11](https://stackoverflow.com/questions/12199710/legality-of-cow-stdstring-implementation-in-c11) 下的一个回答。
 
 ```c++
 int main() {
@@ -130,17 +130,79 @@ int main() {
 }
 ```
 
-在 COW 机制下，当创建 copy 作为 s 的副本时，s 和 copy 实际上共享相同的底层数据，此时，p 指向的是这个共享数据的地址。然后 operator[] 导致 s 会触发重新分配内存，这时 p 对应内存部分的引用只有 copy 了。当 copy 的生命周期结束并被销毁，使得 p 成为**悬空指针（dangling pointer）**。后面访问悬空指针所指向的内存，这是[未定义行为（undefined behavior）](https://selfboot.cn/2016/09/18/c++_undefined_behaviours/)，可能导致程序崩溃或者输出不可预测的结果。如果不使用 COW 机制，这里就不会有这个问题。
+在 COW 机制下，当创建 copy 作为 s 的副本时，s 和 copy 实际上共享相同的底层数据，此时，p 指向的是这个共享数据的地址。然后 operator[] 导致 s 会触发重新分配内存，这时 p 对应内存部分的引用只有 copy 了。当 copy 的生命周期结束并被销毁，p 就成为**悬空指针（dangling pointer）**。后面访问悬空指针所指向的内存，这是[未定义行为（undefined behavior）](https://selfboot.cn/2016/09/18/c++_undefined_behaviours/)，可能导致程序崩溃或者输出不可预测的结果。如果不使用 COW 机制，这里就不会有这个问题。
 
 不过，就算是 C++11 及以后的标准中，标准库中的 std::string 不再使用 COW 机制了，**保留指向字符串内部数据的指针仍然是一种不安全的做法**，因为任何修改字符串的操作都**可能导致重新分配内部缓冲区，从而使得之前的指针或引用变得无效**。
 
-COW 写时复制除了带来上面这种潜在 bug 外，还有另外一个比较重要的缺陷，就是**不适合多线程环境**，详细可以阅读 [Concurrency Modifications to Basic String](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2534.html) 这篇文章。
+### 多线程问题
+
+COW 写时复制除了带来上面这些潜在 bug 外，还有一个比较重要的缺陷，就是**不适合多线程环境**，详细可以阅读 [Concurrency Modifications to Basic String](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2534.html) 这篇文章，COW 写时复制带来的问题就是：
+
+> The current definition of basic_string allows only **very limited concurrent access to strings**. Such limited concurrency will inhibit performance in multi-threaded applications.
+
+举个简单的例子，如下对于原始字符串，这里先复制了几个副本，然后分别在不同的线程中运行。在 COW 的实现中，必须保证这里各个线程操作独立副本字符串是线程安全的，也就要求COW 的实现中，**字符串中共享内存的引用计数必须是原子操作**。原子操作本身需要开销，而且在多线程环境下，多个 CPU 对同一个地址的原子操作开销更大。如果不用 COW 实现，本来是**可以避免这部分开销**的。
+
+```c++
+// StringOperations 这里修改字符串
+int main() {
+    std::string thread1 = "Hello, World! This is a test string."; // 共享字符串
+    std::string thread2(thread1);
+    std::string thread3(thread1);
+
+    std::vector<std::thread> threads;
+    threads.emplace_back(StringOperations, std::ref(thread1));
+    threads.emplace_back(StringOperations, std::ref(thread2));
+    threads.emplace_back(StringOperations, std::ref(thread3));
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    return 0;
+}
+```
+
+当然如果是不同线程之间共享同一个 string 对象，那么不管是不是写时复制，这里都要进行线程同步，才能保证线程安全，这里不做讨论了。
 
 ## C++11 标准改进
 
-C++11 之后，STL 里面的 string 类型不允许使用 COW 技术实现，GCC 编译器，从 5.1 开始不再用 COW 实现 string，可以参考 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)：
+鉴于上面提到的写时复制的缺点，GCC 编译器，从 5.1 开始不再用 COW 实现 string，可以参考 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)：
 
 > In the GCC 5.1 release libstdc++ introduced a new library ABI that includes new implementations of string and std::list. These changes were necessary to conform to the 2011 C++ standard which **forbids Copy-On-Write strings** and requires lists to keep track of their size.
 
+这里主要是因为 C++11 标准做了更改，[21.4.1 basic_string general requirements](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3690.pdf) 中有这样的描述：
 
-如果用COW实现，那么non-const operator[]可能会导致迭代器失效。而标准严格规定了哪些成员方法可以导致迭代器失效，其中不包括这个方法。
+> References, pointers, and iterators referring to the elements of a basic_string sequence may be invalidated by the following uses of that basic_string object:
+> - as an argument to any standard library function taking a reference to non-const basic_string as an argument.
+> - Calling non-const member functions, except operator[], at, front, back, begin, rbegin, end, and rend.
+
+如果是 COW 实现的字符串，如前面的例子，**只是调用 non-const operator[] 也会导致写时复制，从而导致原始字符串的引用失效**。
+
+## 高版本字符串优化
+
+高版本的 GCC，特别是遵循 C++11 标准和之后版本的实现，对 std::string 的实现进行了显著的修改，主要是为了提高性能和保证线程安全。高版本的 GCC 放弃了 COW，同时对小字符串做了优化（SSO）。当字符串足够短以至于可以直接存储在 std::string 对象的内部缓冲区中时，它就会使用这个内部缓冲区(在栈中)，而不是分配单独的堆内存。这可以减少内存分配的开销，并提高访问小字符串时的性能。
+
+可以用下面代码来验证下：
+
+```c++
+#include <iostream>
+using namespace std;
+
+int main() {
+    string a = "short";
+    string b = "this is a long string here, hahahhh";
+    cout << &a << ":" << static_cast<const void*>(a.c_str()) << endl;
+    cout << &b << ":" << static_cast<const void*>(b.c_str()) << endl;
+
+    return 0;
+}
+```
+
+用高版本编译运行，可以看到输出类似下面结果：
+
+```shell
+0x7ffcb9ff22d0:0x7ffcb9ff22e0
+0x7ffcb9ff22b0:0x421eb0
+```
+
+对于比较短的字符串，地址和变量本身地址十分接近，说明就在栈上。而对于比较长的字符串，地址和变量本身地址相差很大，说明是在堆上分配的。对于较长的字符串，高版本的 GCC 实现了更有效的动态内存分配和管理策略，包括避免不必要的内存重新分配，以及在增长字符串时采用增量或倍增的容量策略，以减少内存分配次数和提高内存利用率。
