@@ -4,7 +4,7 @@ tags:
   - 见闻
   - google
   - 方法
-category: 项目实战
+category: 社会百态
 toc: true
 description: 最近Google搜索结果第一页出现黑产引流页面，通过分析页面内容、套餐方案等透露黑产利用Google Map投放大量关键词页面，实现搜索结果黑灰产优化。虽然部分已被封禁，但手段值得警惕，Google搜索质量也面临巨大挑战。
 date: 2023-12-28 20:26:37
