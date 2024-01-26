@@ -122,6 +122,7 @@ g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata
 
 ![成功复现 coredump](https://slefboot-1251736664.file.myqcloud.com/20240119_object_memory_coredump_reproduced.png)
 
+
 ## 猜测与验证
 
 
