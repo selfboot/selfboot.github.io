@@ -56,17 +56,24 @@ message Data {
 }
 ```
   
-编译命令也很简单，`protoc --cpp_out=. data.proto` 即可。此外，有一个 processData 的函数，使用了上面的 proto 对象。这个函数被单独编译成了一个公共库 libdata.so：
+编译命令也很简单，`protoc --cpp_out=. data.proto` 即可。此外，libdata.cpp 文件有一个 processData 的函数，使用了上面的 proto 对象。这个cpp文件被编译进了一个公共库 `libdata.so`：
 
 ```cpp
-#include <string>
-namespace example {
-class Data {
-public:
-    Data() {}
-    ~Data() {}
-    std::string message;
-};
+// libdata.cpp
+#include "data.pb.h"
+#include <iostream>
+
+using example::Data;
+
+void processData(Data &req) {
+    Data data;
+    data.set_message("Hello from lib");
+    std::cout<< "In lib, data size: " << sizeof(data)<<std::endl;
+    std::cout<< "In lib, data  msg: " << data.message()<<std::endl;
+
+    std::cout<< "In lib, req size: " << sizeof(req)<<std::endl;
+    std::cout<< "In lib, req  msg: " << req.message()<<std::endl;
+    return;
 }
 ```
 
@@ -91,7 +98,7 @@ message Data {
 }
 ```
 
-**重新用 protoc 编译 proto 文件**。接着写我们的主程序，就叫 main.cpp ，也很简单，只是简单调用前面 `libdata.so` 库中的函数，内容如下：
+**然后重新用 protoc 编译 proto 文件**。接着写我们的主程序，就叫 main.cpp ，也很简单，只是简单调用前面 `libdata.so` 库中的函数，内容如下：
 
 ```cpp
 #include "data.pb.h"
@@ -120,16 +127,29 @@ g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata
 
 这里需要注意的是，我们的 `libdata.so` 库文件在当前目录，所以需要用 `-Wl,-rpath,.` 指定下动态库的搜索路径。然后运行程序，就必现了 coredump，如下图：
 
-![成功复现 coredump](https://slefboot-1251736664.file.myqcloud.com/20240119_object_memory_coredump_reproduced.png)
+![成功复现 coredump](https://slefboot-1251736664.file.myqcloud.com/20240131_object_memory_coredump_reproduced.png)
+
+## 深入验证
+
+大多时候，能成功稳定复现 coredump，基本就很容易找到 coredump 的原因了。
+
+在 C++ 中，对象的内存布局是由其类的定义决定的，这通常在头文件（.h）中给出。当您编译一个 C++ 程序时，编译器根据类的定义（包括成员变量的类型、数量、顺序以及任何内部填充）来确定每个对象的大小和内存布局。
+
+对于 Protobuf 生成的 C++ 类，类的定义通常包含在 .pb.h 文件中，而 .pb.cc 文件则包含这些类的方法的实现。
+
+主程序 main：使用新版本的 data.pb.h，因此 main 中的 Data 对象按照新的内存布局进行编译和构造。
+
+动态库 libdata.so：如果它是用旧版本的 data.pb.h 和 data.pb.cc 编译的，它将按照旧的内存布局来理解和操作 Data 对象。
 
 
-## 猜测与验证
+当更新 data.proto，添加了新的复杂类型 repeated 字段，protoc 重新编译会在生成的 Data 类中添加新的成员变量。这**改变了 Data 类的内存布局**，可能包括增加新的成员变量、更改内存对齐、或者添加用于内部管理的额外字段。这意味着 Data 类的实例（对象）的大小和内部成员的排列方式在新版本中与旧版本不同，而 main.cpp 里面用到的 Data 已经是新版本的 Data 类。
 
+动态库 libdata.so 在更新 proto 之后并没有重新生成，仍然使用基于旧版 data.proto 生成的 Data 类。在这个版本中，Data 类的内存布局不包括新版本中添加的字段和可能的内部变化。
 
-## ABI 二进制兼容
+### 不会 core
 
-二进制兼容性（Binary Compatibility）指的是在升级库文件(如动态链接库)时，已编译的应用程序无需重新编译即可继续运行。这种兼容性的核心在于应用程序二进制接口（Application Binary Interface，简称ABI），这是程序或程序库之间进行交互的接口，**涵盖数据类型、系统调用、调用约定**等。
+未触发内存布局不一致：由于 main 程序不再尝试修改或访问 req 对象的内容，因此不会触及由于内存布局不一致而可能导致的非法内存访问。在这种情况下，尽管 req 对象的内存布局可能与 libdata.so 中的期望不匹配，但由于没有实际操作这些不一致的内存区域，因此程序能够正常运行而不触发错误。
 
-在C/C++领域，二进制兼容性主要关注在**升级库文件时，可执行文件是否受影响**。一个典型的例子是Unix/C语言中的open()函数，它的参数在历史上由于二进制兼容性的考虑而没有进行过大的更改。在C++中，ABI的差异主要体现在函数名字修饰（Name Mangling）、虚函数表布局（Virtual Table Layout）、异常处理等方面。
+## 对象内存布局
 
-[C++ 工程实践(4)：二进制兼容性](https://www.cppblog.com/Solstice/archive/2011/03/09/141401.html)
+《深度探索 C++ 对象模型》 
