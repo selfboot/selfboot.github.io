@@ -80,7 +80,7 @@ void processData(Data &req) {
 编译为动态库的命令如下：
 
 ```bash
-g++ -fPIC -shared libdata.cpp data.pb.cc -o libdata.so -lprotobuf
+g++ -fPIC -shared libdata.cpp data.pb.cc -o libdata.so -lprotobuf -g
 ```
 
 这样我们就有了 `libdata.so` 动态库文件了。
@@ -98,9 +98,10 @@ message Data {
 }
 ```
 
-**然后重新用 protoc 编译 proto 文件**。接着写我们的主程序，就叫 main.cpp ，也很简单，只是简单调用前面 `libdata.so` 库中的函数，内容如下：
+**然后重新用 protoc 编译 proto 文件**。接着写我们的主程序，就叫 `main.cpp`，只是简单调用前面 `libdata.so` 库中的函数，内容如下：
 
 ```cpp
+// main.cpp
 #include "data.pb.h"
 #include <iostream>
 
@@ -122,31 +123,34 @@ int main() {
 然后编译链接我们的主程序，命令如下：
 
 ```bash
-g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata
+g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
 ```
 
 这里需要注意的是，我们的 `libdata.so` 库文件在当前目录，所以需要用 `-Wl,-rpath,.` 指定下动态库的搜索路径。然后运行程序，就必现了 coredump，如下图：
 
 ![成功复现 coredump](https://slefboot-1251736664.file.myqcloud.com/20240131_object_memory_coredump_reproduced.png)
 
-## 深入验证
+## 深入分析
 
-大多时候，能成功稳定复现 coredump，基本就很容易找到 coredump 的原因了。
+大多时候，能稳定复现 coredump，基本就很容易找到 coredump 的原因了。这里复现的代码很简单，用 `-g` 编译带上调试信息，然后就可以用 gdb 跟踪排查。因为在 `set_message` 这里会 core 掉，所以我们在这里打个断点，先查看下 req 对象的内存布局，然后执行到 core，查看堆栈即可。整体的结果如下图：
 
-在 C++ 中，对象的内存布局是由其类的定义决定的，这通常在头文件（.h）中给出。当您编译一个 C++ 程序时，编译器根据类的定义（包括成员变量的类型、数量、顺序以及任何内部填充）来确定每个对象的大小和内存布局。
+![gdb 查看 coredump 内存布局](https://slefboot-1251736664.file.myqcloud.com/20240202_object_memory_coredump_gdb_message.png)
 
-对于 Protobuf 生成的 C++ 类，类的定义通常包含在 .pb.h 文件中，而 .pb.cc 文件则包含这些类的方法的实现。
+先用 GDB 打印 req 的内容，**比较奇怪的是这里只有 message 字段，并没有看到 users 字段**。然后执行到 `req.set_message("test");` 这里，从 coredump 的堆栈来看，set_message 这里调用 this 和 value 地址都没问题。但是底层 `ArenaStringPtr::Set` 的时候，this 的地址是 `0x7fffffffe3a8`，这个感觉应该是 message 字段的地址。从前面输出来看，应该是 `0x555555559100` 才对(这里其实不确定，后面会验证这点)。
 
-主程序 main：使用新版本的 data.pb.h，因此 main 中的 Data 对象按照新的内存布局进行编译和构造。
+```
+#2  0x00005555555564e6 in google::protobuf::internal::ArenaStringPtr::Set (this=0x7fffffffe3a8,
+    default_value=0x555555559100 <google::protobuf::internal::fixed_address_empty_string[abi:cxx11]>, value="test",
+    arena=0x0) at /usr/include/google/protobuf/arenastring.h:81
+#3  0x0000555555556948 in example::Data::set_message (this=0x7fffffffe380, value=0x5555555570f0 "test")
+    at data.pb.h:288
+#4  0x0000555555556312 in main () at main.cpp:12
+```
 
-动态库 libdata.so：如果它是用旧版本的 data.pb.h 和 data.pb.cc 编译的，它将按照旧的内存布局来理解和操作 Data 对象。
+coredump 的原因初步推断，是 message 字段的内存错乱了。那么什么原因导致内存地址错了呢？这里就要回顾下我们的编译过程了。在 C++ 中，**对象的内存布局是由其类的定义决定的**，这通常在头文件（.h）中给出。当编译一个 C++ 程序时，编译器根据类的定义（包括成员变量的类型、数量、顺序等）来确定每个对象的大小和内存布局。具体到我们这里 Protobuf 生成的 C++ 类，类的定义通常包含在 .pb.h 文件中，而 .pb.cc 文件则包含这些类的方法的实现。
 
+我们上面的编译过程，主程序 `main.cpp` 使用了新版本的 `data.pb.h`，因此 main 中的 Data 对象**按照新的内存布局**进行编译和构造。但是动态库 `libdata.so` **并没有更新**， 在更新 proto 之后并没有重新生成，仍然使用基于旧版 data.proto 生成的 Data 类。在这个版本中，**Data 类的内存布局不包括新版本中添加的字段和可能的内部变化**。
 
-当更新 data.proto，添加了新的复杂类型 repeated 字段，protoc 重新编译会在生成的 Data 类中添加新的成员变量。这**改变了 Data 类的内存布局**，可能包括增加新的成员变量、更改内存对齐、或者添加用于内部管理的额外字段。这意味着 Data 类的实例（对象）的大小和内部成员的排列方式在新版本中与旧版本不同，而 main.cpp 里面用到的 Data 已经是新版本的 Data 类。
-
-动态库 libdata.so 在更新 proto 之后并没有重新生成，仍然使用基于旧版 data.proto 生成的 Data 类。在这个版本中，Data 类的内存布局不包括新版本中添加的字段和可能的内部变化。
-
-### 不会 core
 
 未触发内存布局不一致：由于 main 程序不再尝试修改或访问 req 对象的内容，因此不会触及由于内存布局不一致而可能导致的非法内存访问。在这种情况下，尽管 req 对象的内存布局可能与 libdata.so 中的期望不匹配，但由于没有实际操作这些不一致的内存区域，因此程序能够正常运行而不触发错误。
 
