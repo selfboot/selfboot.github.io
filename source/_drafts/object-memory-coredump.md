@@ -13,7 +13,7 @@ date:
 
 ![C++ coredump bazel依赖缺失](https://slefboot-1251736664.file.myqcloud.com/20231123_object_memory_coredump_cover.png)
 
-回过头来再看这个问题，发现其实是一个比较常见的**二进制兼容**问题。只是项目代码依赖比较复杂，对 bazel 编译过程的理解也不是很到位，所以定位比较曲折。另外，在复盘过程中，对这里的 coredump 以及 **C++ 对象内存分布**也有了更多理解。于是整理一篇文章，如有错误，欢迎指正。
+复盘下来，发现这类 coredump 问题确实比较罕见，排查起来也不是很容易。只有项目代码比较复杂，**编译依赖管理不是很合理的时候**，才可能出现。另外，在复盘过程中，对这里的 coredump 以及 **C++ 对象内存分布**也有了更多理解。于是整理一篇文章，如有错误，欢迎指正。
 
 <!-- more -->
 
@@ -136,7 +136,7 @@ g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
 
 ![gdb 查看 coredump 内存布局](https://slefboot-1251736664.file.myqcloud.com/20240202_object_memory_coredump_gdb_message.png)
 
-先用 GDB 打印 req 的内容，**比较奇怪的是这里只有 message 字段，并没有看到 users 字段**。然后执行到 `req.set_message("test");` 这里，从 coredump 的堆栈来看，set_message 这里调用 this 和 value 地址都没问题。但是底层 `ArenaStringPtr::Set` 的时候，this 的地址是 `0x7fffffffe3a8`，这个感觉应该是 message 字段的地址。从前面输出来看，应该是 `0x555555559100` 才对(这里其实不确定，后面会验证这点)。
+先用 GDB 打印 req 的内容，**比较奇怪的是这里只有 message 字段，并没有看到 users 字段**。然后执行到 `req.set_message("test");` 这里，从 coredump 的堆栈来看，set_message 这里调用 this 和 value 地址都没问题。但是底层 `ArenaStringPtr::Set` 的时候，this 的地址是 `0x7fffffffe3a8`，这个感觉应该是 message 字段的地址。从前面输出来看，应该是 `0x555555559100` 才对(这里不太确定，后面会验证这点)。
 
 ```
 #2  0x00005555555564e6 in google::protobuf::internal::ArenaStringPtr::Set (this=0x7fffffffe3a8,
@@ -147,9 +147,54 @@ g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
 #4  0x0000555555556312 in main () at main.cpp:12
 ```
 
-coredump 的原因初步推断，是 message 字段的内存错乱了。那么什么原因导致内存地址错了呢？这里就要回顾下我们的编译过程了。在 C++ 中，**对象的内存布局是由其类的定义决定的**，这通常在头文件（.h）中给出。当编译一个 C++ 程序时，编译器根据类的定义（包括成员变量的类型、数量、顺序等）来确定每个对象的大小和内存布局。具体到我们这里 Protobuf 生成的 C++ 类，类的定义通常包含在 .pb.h 文件中，而 .pb.cc 文件则包含这些类的方法的实现。
+coredump 的直接原因就是 message 字段的内存读错了。那么什么原因导致内存地址错了呢？这里就要回顾下我们的编译、运行过程了。我们知道在 C++ 中，**对象的内存布局是由其类的定义决定的**，这通常在头文件（.h）中给出。当编译一个 C++ 程序时，编译器根据类的定义（包括成员变量的类型、数量、顺序等）来确定每个对象的大小和内存布局。具体到我们这里 Protobuf 生成的 C++ 类，类的定义通常包含在 .pb.h 文件中，而 `.pb.cc` 文件则包含这些类的方法的实现，包含字段访问器（如 set_message 和 message）和其他成员函数的实现。这些实现负责**实际的数据操作，如分配内存、修改字段值、生成对象的字符串表示**等。
 
-我们上面的编译过程，主程序 `main.cpp` 使用了新版本的 `data.pb.h`，因此 main 中的 Data 对象**按照新的内存布局**进行编译和构造。但是动态库 `libdata.so` **并没有更新**， 在更新 proto 之后并没有重新生成，仍然使用基于旧版 data.proto 生成的 Data 类。在这个版本中，**Data 类的内存布局不包括新版本中添加的字段和可能的内部变化**。
+### 对象内存分布
+
+我们上面的编译过程，主程序 `main.cpp` 使用了新版本的 `data.pb.h`，因此 main 中的 Data 对象**按照新的内存布局**进行编译。这里对象的内存布局包括成员变量的排列、对象的总大小以及可能的填充（为了满足对齐要求），所以 **main 中的 Data 对象是包含了 users 字段的**。怎么验证这一点呢？很简单，我们可以在 main 中打印下 Data 对象的大小，如下先注释掉会导致 coredump 的 set_message 以及读取 message 的代码：
+
+```cpp
+// main.cpp
+#include "data.pb.h"
+#include <iostream>
+
+using example::Data;
+
+extern void processData(Data&);
+
+int main() {
+    Data req;
+    std::cout << "main: " << sizeof(req) << std::endl;
+    // req.set_message("test");
+    processData(req);  // 调用库函数
+    // std::cout << req.message() << std::endl;
+    std::cout << "main: " << sizeof(req) << std::endl;
+    return 0;
+}
+```
+
+然后重新编译链接，运行程序，输出如下：
+
+```
+main: 56
+In lib, data size: 32
+In lib, data  msg: Hello from lib
+In lib, req size: 32
+In lib, req  msg:
+main: 56
+```
+
+可以看到 main 中 data 的大小是 56，而 lib 中的 data 大小是 32。这里的大小差异就是因为 main 中的 Data 对象包含了 users 字段，而 lib 中的 Data 对象没有。那么问题来了，前面 **gdb 打印 main.cpp 中的 req 对象的内存布局是不包含 users 字段的**，这又是为什么呢？
+
+我们知道，GDB 之所以能输出对象成员、局部变量等信息，是用到了二进制文件中的符号表信息，gcc 编译的时候带上`-g`就会有这些调试信息。对于 pb 对象来说，这些调试信息是在 `.pb.cc` 文件中的。而我们的链接过程中，
+
+### 运行期对象实现
+
+
+
+但是动态库 `libdata.so` 在更新 proto 之后并没有重新生成，仍然使用基于旧版 data.proto 生成的 Data 类。
+
+当 main 程序调用 `req.set_message("test");` 时，实际上是在一个内存布局不一致的 Data 对象上进行操作。这就导致了内存读写错误，从而触发了 coredump。
 
 
 未触发内存布局不一致：由于 main 程序不再尝试修改或访问 req 对象的内容，因此不会触及由于内存布局不一致而可能导致的非法内存访问。在这种情况下，尽管 req 对象的内存布局可能与 libdata.so 中的期望不匹配，但由于没有实际操作这些不一致的内存区域，因此程序能够正常运行而不触发错误。
