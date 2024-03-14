@@ -9,7 +9,7 @@ description:
 date: 
 ---
 
-最近在项目中遇到了一个奇怪的 coredump 问题，排查过程并不顺利。经过不断分析，找到了一个复现 coredump 的步骤，经过合理猜测和谨慎验证，最终才定位到原因。
+最近在项目中遇到了一个奇怪的 coredump 问题，排查过程并不顺利。经过不断分析，找到了一个复现的步骤，经过合理猜测和谨慎验证，最终才定位到原因。
 
 ![C++ coredump bazel依赖缺失](https://slefboot-1251736664.file.myqcloud.com/20231123_object_memory_coredump_cover.png)
 
@@ -19,7 +19,7 @@ date:
 
 ## 问题描述
 
-先说下后台基本服务架构，最外面是 cgi 层处理 nginx 转发的 http 请求，然后具体业务在中间的逻辑层处理。逻辑层是微服务框架，不同服务之间通过 RPC 调用，用的类似 [grpc](https://grpc.io/)。
+先说下后台服务的基本架构，最外面是 cgi 层处理 nginx 转发的 http 请求，然后具体业务在中间的逻辑层处理。逻辑层是微服务框架，不同服务之间通过 RPC 调用，用的类似 [grpc](https://grpc.io/)。
 
 某次变更，在服务 A 的 `service.proto` 文件中，对某个 rpc 请求参数增加了一个字段(比如下面的 age)：
 
@@ -42,11 +42,11 @@ message HelloReply {
 
 ## 复现步骤
 
-这里看了现网的 core 文件，没有发现特别有用的信息。就想着先看看能不能稳定复现一下，毕竟对于 core 的问题，如果能稳定复现，问题基本就解决一大半了。好在通过一番尝试，找到了一个可以稳定复现的步骤。
+这里看了现网的 core 文件，没有发现特别有用的信息(通过 core 文件定位问题的功力还是不太够)。就想着先看看能不能稳定复现一下，毕竟对于 core 的问题，如果能稳定复现，问题基本就解决一大半了。好在通过一番尝试，找到了一个可以稳定复现的步骤。
 
 ### 老版本 proto
 
-创建一个开始版本的 proto 文件，这里就叫 data.proto，并用 protoc 编译为 pb.h 和 pb.cc，其中 proto 文件内容如下：
+创建一个最初版本的 proto 文件，这里就叫 data.proto，并用 protoc 编译为 `data.pb.h` 和 `data.pb.cc`，其中 proto 文件内容如下：
 
 ```proto
 syntax = "proto3";
@@ -56,7 +56,7 @@ message Data {
 }
 ```
   
-编译命令也很简单，`protoc --cpp_out=. data.proto` 即可。此外，libdata.cpp 文件有一个 processData 的函数，使用了上面的 proto 对象。这个cpp文件被编译进了一个公共库 `libdata.so`：
+编译命令也很简单，`protoc --cpp_out=. data.proto` 即可。此外，还有一个 libdata.cpp 文件，定义了一个 processData 函数，使用了上面的 proto 对象。这个cpp文件被编译进了一个公共库 `libdata.so`：
 
 ```cpp
 // libdata.cpp
@@ -87,7 +87,7 @@ g++ -fPIC -shared libdata.cpp data.pb.cc -o libdata.so -lprotobuf -g
 
 ### 更新 proto
 
-接下来我们修改下 data.proto 文件，增加一个 repeated 字段，如下：
+接下来我们修改下 data.proto 文件，增加一个 **repeated 字段**，如下：
 
 ```proto
 syntax = "proto3";
@@ -126,13 +126,13 @@ int main() {
 g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
 ```
 
-这里需要注意的是，我们的 `libdata.so` 库文件在当前目录，所以需要用 `-Wl,-rpath,.` 指定下动态库的搜索路径。然后运行程序，就必现了 coredump，如下图：
+这里需要注意的是，我们的 `libdata.so` 库文件在当前目录，所以需要用 `-Wl,-rpath,.` 指定下动态库的搜索路径。然后运行程序，就会必现 coredump，如下图：
 
 ![成功复现 coredump](https://slefboot-1251736664.file.myqcloud.com/20240131_object_memory_coredump_reproduced.png)
 
 ## 深入分析
 
-大多时候，能稳定复现 coredump，基本就很容易找到 coredump 的原因了。这里复现的代码很简单，用 `-g` 编译带上调试信息，然后就可以用 gdb 跟踪排查。因为在 `set_message` 这里会 core 掉，所以我们在这里打个断点，先查看下 req 对象的内存布局，然后执行到 core，查看堆栈即可。整体的结果如下图：
+大多时候，能稳定复现 coredump，基本就很容易找到 coredump 的原因了。用 `-g` 编译带上调试信息，然后就可以用 gdb 跟踪排查。因为在 `set_message` 这里会 core 掉，所以我们在这里打个断点，先查看下 req 对象的内存布局，然后执行到 core，查看堆栈即可。整体的结果如下图：
 
 ![gdb 查看 coredump 内存布局](https://slefboot-1251736664.file.myqcloud.com/20240202_object_memory_coredump_gdb_message.png)
 
@@ -151,7 +151,7 @@ coredump 的直接原因就是 message 字段的内存读错了。那么什么�
 
 ### 对象内存分布
 
-我们上面的编译过程，主程序 `main.cpp` 使用了新版本的 `data.pb.h`，因此 main 中的 Data 对象**按照新的内存布局**进行编译。这里对象的内存布局包括成员变量的排列、对象的总大小以及可能的填充（为了满足对齐要求），所以 **main 中的 Data 对象是包含了 users 字段的**。怎么验证这一点呢？很简单，我们可以在 main 中打印下 Data 对象的大小，如下先注释掉会导致 coredump 的 set_message 以及读取 message 的代码：
+我们上面的编译过程，主程序 `main.cpp` 使用了新版本的 `data.pb.h`，因此 main 中的 Data 对象**按照新的内存布局**进行编译。这里对象的内存布局包括成员变量的排列、对象的总大小以及可能的填充（为了满足对齐要求），所以 **main 中的 Data 对象是包含了 users 字段的**。怎么验证这一点呢？很简单，我们可以在 main 中打印下 Data 对象的大小，如下先**注释掉会导致 coredump 的 set_message 以及读取 message 的代码**：
 
 ```cpp
 // main.cpp
@@ -184,21 +184,46 @@ In lib, req  msg:
 main: 56
 ```
 
-可以看到 main 中 data 的大小是 56，而 lib 中的 data 大小是 32。这里的大小差异就是因为 main 中的 Data 对象包含了 users 字段，而 lib 中的 Data 对象没有。那么问题来了，前面 **gdb 打印 main.cpp 中的 req 对象的内存布局是不包含 users 字段的**，这又是为什么呢？
+可以看到 **main 中 data 的大小是 56，而 lib 中的 data 大小是 32**。通过这个验证，我们可以确定 main 中的 Data 对象是包含了 users 字段的，所以会比 lib 中的 Data 对象大。
 
-我们知道，GDB 之所以能输出对象成员、局部变量等信息，是用到了二进制文件中的符号表信息，gcc 编译的时候带上`-g`就会有这些调试信息。对于 pb 对象来说，这些调试信息是在 `.pb.cc` 文件中的。而我们的链接过程中，
+既然包含了 users 字段，为什么前面**gdb 打印 main.cpp 中的 req 对象的时候，又不包含 users 字段呢？**我们知道，GDB 之所以能输出对象成员、局部变量等信息，是用到了二进制文件中的**符号表信息**，gcc 编译的时候带上`-g`就会有这些调试信息。对于 pb 对象来说，这些调试信息是在 `.pb.cc` 文件中，包含了如何序列化和反序列化字段、如何进行内存管理（包括对于动态分配的字段如字符串和重复字段的处理）等逻辑。
 
-### 运行期对象实现
+我们再仔细回顾下前面 main 的编译链接命令，其实我们链接到的是动态库 libdata.so 中的老的 data.pb.cc 实现，这个版本的实现中并没有 users 字段。所以 gdb 打印的时候，无法显示出来。
 
+```bash
+g++ main.cpp -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
+```
 
+其实这里还有个问题需要解释下，为什么前面注释掉 set_message 以及读取 message 的代码，程序就没有 core 了呢？这是因为 main 程序不再尝试修改或访问 req 对象的内容，因此**不会触及由于内存布局不一致而可能导致的非法内存访问**。在这种情况下，尽管 req 对象的内存布局可能与 libdata.so 中的期望不匹配，但由于没有实际操作这些不一致的内存区域，因此程序能够正常运行而不触发错误。
 
-但是动态库 `libdata.so` 在更新 proto 之后并没有重新生成，仍然使用基于旧版 data.proto 生成的 Data 类。
+### 链接新版本 pb 实现
 
-当 main 程序调用 `req.set_message("test");` 时，实际上是在一个内存布局不一致的 Data 对象上进行操作。这就导致了内存读写错误，从而触发了 coredump。
+前面我们链接 main 的时候，用的是动态库里面的老的 `data.pb.cc`，如果改成链接新的 `data.pb.cc`，程序还会 core 吗？我们稍微改下前面的编译链接命令，注意 main.cpp 中仍然注释 set_message 部分：
 
+```bash
+g++ main.cpp data.pb.cc  -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
+```
 
-未触发内存布局不一致：由于 main 程序不再尝试修改或访问 req 对象的内容，因此不会触及由于内存布局不一致而可能导致的非法内存访问。在这种情况下，尽管 req 对象的内存布局可能与 libdata.so 中的期望不匹配，但由于没有实际操作这些不一致的内存区域，因此程序能够正常运行而不触发错误。
+关于这里链接符号决议的过程，可以参考我之前的文章[深入理解 C++ 链接符号决议：从符号重定义说起](https://selfboot.cn/2023/09/19/c++_symbol_resolution/)。这里只需要知道把 `data.pb.cc` 放在 `-ldata` 前面，就会链接到新的pb实现。
 
-## 对象内存布局
+运行程序，发现果然又 core 了，不过这次 core 的位置在 `libdata.cpp` 中的 `processData` 函数中，具体在 `data.set_message("Hello from lib");` 这里，如下图所示：
 
-《深度探索 C++ 对象模型》 
+![改变链接顺序后继续 coredump](https://slefboot-1251736664.file.myqcloud.com/20240314_object_memory_coredump_core_inlib.png)
+
+这是因为我们的 `libdata.so` 中的 Data 对象定义是用的老的 `data.pb.h`，而链接到的实现又是新的`data.pb.cc`，导致对象不一致，所以内存会错乱导致 core。
+
+这里 **core 的位置也挺有意思的**，如果 main.cpp 不注释 set_message 部分，如下：
+
+```c++
+int main() {
+    Data req;
+    std::cout << "main: " << sizeof(req) << std::endl;
+    req.set_message("test");    // 不注释这里
+    processData(req);  // 调用库函数
+    std::cout << req.message() << std::endl; // 不注释这里
+    std::cout << "main: " << sizeof(req) << std::endl;
+    return 0;
+}
+```
+
+程序并没有 core 在动态库 processData 中，反而是 core 在了 `req.message()` 中了。大概是因为 processData 中刚好没有访问错误的内存地址，直到 main 中访问 req.message() 的时候才触发内存错误。
