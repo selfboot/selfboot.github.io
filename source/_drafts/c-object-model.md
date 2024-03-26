@@ -11,6 +11,8 @@ description:
 
 ## 简单对象内存分布
 
+下面以一个最简单的 Basic 类为例，来看看只含有基本数据类型的对象是怎么分配内存的。
+
 ```c++
 #include <iostream>
 using namespace std;
@@ -29,6 +31,16 @@ int main() {
     return 0;
 }
 ```
+
+编译运行后，可以用 GDB 来查看对象的内存分布。如下图：
+
+![Basic 基础数据类的内存分布-GDB调试](https://slefboot-1251736664.file.myqcloud.com/20240326_c++_object_model_basic_gdb.png)
+
+对象 temp 的起始地址是 0x7fffffffe3b0，这是整个对象在内存中的位置。成员变量a的地址也是 0x7fffffffe3b0，表明int a是对象temp中的第一个成员，位于对象的起始位置。成员变量b的类型为double，其地址是 0x7fffffffe3b8(a的地址+8)，内存布局如下图：
+
+![Basic 基础数据类的内存分布示意图](https://slefboot-1251736664.file.myqcloud.com/20240326_c++_object_model_basic_demo.png)
+
+int类型在当前平台上占用4个字节（可以用sizeof(int)验证），而这里double成员的起始地址与int成员的起始地址之间相差8个字节，说明在a之后存在**内存对齐填充**（具体取决于编译器的实现细节和平台的对齐要求）
 
 
 ## 地址空间布局随机化
