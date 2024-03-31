@@ -218,11 +218,49 @@ int main() {
 
 ### 静态成员
 
+静态成员变量在类的所有实例之间共享，**不管你创建了多少个类的对象，静态成员变量只有一份数据**。
+
+```c++
+#include <iostream>
+
+class Basic {
+public:
+    int a;
+    double b;
+
+    void setB(double value) {
+        b = value; // 直接访问成员变量b
+	secret(b);
+    }
+private:
+    int c;
+    double d;
+
+    void secret(int temp) {
+        d = temp + c;
+    }
+public:
+    static float alias;
+    static void show() {
+        std::cout << alias << std::endl;
+    }
+};
+
+float Basic::alias = 0.233;
+int main() {
+    Basic temp;
+    temp.a = 10;
+    temp.setB(3.14);
+    temp.show();
+    return 0;
+}
+```
 
 
-## 简单继承
+## 继承类的内存布局
 
-## 带有虚函数的继承
+### 不带虚函数的继承
+### 带有虚函数的继承
 
 
 ## 地址空间布局随机化
@@ -233,7 +271,7 @@ int main() {
 
 在 Linux 操作系统上，可以通过 `cat /proc/sys/kernel/randomize_va_space` 查看当前系统的 ASLR 是否启用，基本上默认都是开启状态(值为 2)，如果是 0，则是禁用状态。
 
-前面使用 GDB 进行调试时，可能会观察到内存地址是固定不变的，这是因为 GDB 默认禁用了ASLR，以便于调试过程中更容易重现问题。可以在使用 GDB 时启用 ASLR，从而让调试环境更贴近实际运行环境。启动 GDB 后，可以通过下面命令开启地址空间的随机化。
+前面使用 GDB 进行调试时，之所以观察到内存地址是固定不变的，这是因为 GDB 默认禁用了ASLR，以便于调试过程中更容易重现问题。可以在使用 GDB 时启用 ASLR，从而让调试环境更贴近实际运行环境。启动 GDB 后，可以通过下面命令开启地址空间的随机化。
 
 ```
 (gdb) set disable-randomization off
@@ -242,3 +280,6 @@ int main() {
 之后再多次运行，这里的地址就会变化了。
 
 ![GDB 开启地址空间布局随机化](https://slefboot-1251736664.file.myqcloud.com/20240319_c++_object_model_gdb_disable.png)
+
+## 总结
+
