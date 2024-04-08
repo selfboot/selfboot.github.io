@@ -250,8 +250,95 @@ int main() {
 
 ## 类继承的内存布局
 
+当然，既然是在聊面向对象的类，那就少不了继承了。我们还是从具体例子来看看，在继承情况下，类的内存布局情况。
 ### 不带虚函数的继承
+
+先来看看不带虚函数的继承，示例代码如下：
+
+```c++
+#include <iostream>
+
+class Basic {
+public:
+    int a;
+    double b;
+
+    void setB(double value) {
+        b = value; // 直接访问成员变量b
+    }
+};
+
+class Derived : public Basic {
+public:
+    int c;
+    void setC(int value) {
+        c = value; // 直接访问成员变量c
+    }
+};
+
+int main() {
+    Derived temp;
+    temp.a = 10;
+    temp.setB(3.14);
+    temp.c = 1;
+    temp.setC(2);
+    return 0;
+}
+```
+
+编译运行后，用 GDB 打印成员变量的内存分布，发现 `Derived` 类的对象在内存中的布局首先包含其基类`Basic`的所有成员变量，紧接着是 Derived 类自己的成员变量。
+
+
+对于成员函数（包括普通函数和静态函数），它们不占用对象实例的内存空间。不论是基类的成员函数还是派生类的成员函数，它们都存储在程序的代码段中（.text段）。
+
 ### 带有虚函数的继承
+
+带有虚函数的继承，稍微有点复杂了。
+
+```c++
+#include <iostream>
+
+class Basic {
+public:
+    int a;
+    double b;
+
+    virtual void printInfo() {
+        std::cout << "Basic: a = " << a << ", b = " << b << std::endl;
+    }
+
+    void setB(double value) {
+        b = value; // 直接访问成员变量b
+    }
+};
+
+class Derived : public Basic {
+public:
+    int c;
+
+    void printInfo() override {
+        std::cout << "Derived: a = " << a << ", b = " << b << ", c = " << c << std::endl;
+    }
+
+    void setC(int value) {
+        c = value; // 直接访问成员变量c
+    }
+};
+
+int main() {
+    Derived derivedObj;
+    derivedObj.a = 10;
+    derivedObj.setB(3.14);
+    derivedObj.c = 1;
+    derivedObj.setC(2);
+
+    Basic* ptr = &derivedObj; // 基类指针指向派生类对象
+    ptr->printInfo(); // 多态调用
+
+    return 0;
+}
+```
+
 
 ## 地址空间布局随机化
 
