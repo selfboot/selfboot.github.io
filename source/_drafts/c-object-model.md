@@ -344,6 +344,13 @@ int main() {
     ptr->printInfo(); // 多态调用
     ptr->printB(); // 调用
 
+    Basic  basicObj;
+    basicObj.a = 10;
+    basicObj.setB(3.14);
+
+    Basic* anotherPtr = &basicObj;
+    anotherPtr->printInfo();
+    anotherPtr->printB();
     return 0;
 }
 ```
@@ -354,9 +361,9 @@ int main() {
 
 这里重点看下 Derived 类对象的内存布局，如下图：
 
-![带虚函数的继承类内存布局](https://slefboot-1251736664.file.myqcloud.com/20240509_c++_object_model_virtual_pointer.png)
+![带虚函数的继承类内存布局](https://slefboot-1251736664.file.myqcloud.com/20240509_c++_object_model_virtual_derived_pointer.png)
 
-可以看到对象的开始部分有一个 8 字节的虚函数表指针 vptr，这个指针指向一个虚函数表（vtable），虚函数表中存储了虚函数的地址。在这个例子中，`Derived` 类有两个虚函数，`printInfo` 和 `printB`，所以虚函数表中有两个函数指针。这个虚函数表是在编译时生成的，存储在程序的数据段中，是只读的。画一个图来描述的更清晰些：
+可以看到派生类对象的开始部分有一个 8 字节的虚函数表指针 vptr，这个指针指向一个虚函数表（vtable），虚函数表中存储了虚函数的地址。在这个例子中，`Derived` 类有两个虚函数，`printInfo` 和 `printB`，所以虚函数表中有两个函数指针。这个虚函数表是在编译时生成的，存储在程序的数据段中，是只读的。基类的情况类似，下面画一个图来描述更清晰些：
 
 ![带虚函数的继承类内存布局示意图](https://slefboot-1251736664.file.myqcloud.com/20240509_c++_object_model_virtual_pointer_demo.png)
 
