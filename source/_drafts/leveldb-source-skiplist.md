@@ -16,7 +16,7 @@ typedef SkipList<const char*, KeyComparator> Table;
 
 ## 跳表简单介绍
 
-![跳表实现的启发思路](slefboot-1251736664.file.myqcloud.com/20240321_leveldb_source_skiplist.png)
+![跳表实现的启发思路](https://slefboot-1251736664.file.myqcloud.com/20240321_leveldb_source_skiplist.png)
 
 
 ## LevelDB 中实现
@@ -57,7 +57,7 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 }
 ```
 
-### FindGreaterOrEqual 查找插入位置
+### 查找插入位置
 
 这个函数可以查找并返回大于等于 key 的节点 n，查找过程中会填充 prev 数组，保留节点 n 每一层的**前驱节点**。
 
