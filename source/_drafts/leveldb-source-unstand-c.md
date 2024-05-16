@@ -92,6 +92,8 @@ class LEVELDB_EXPORT Iterator {
 
 ## 其他
 
+### constexpr
+
 `constexpr` 指定了用于声明常量表达式的变量或函数。这种声明的目的是告知编译器**这个值或函数在编译时是已知**的，这允许在编译期间进行更多的优化和检查。
 
 ```c++
