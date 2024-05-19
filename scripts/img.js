@@ -10,7 +10,10 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
   $("img").each(function () {
     const img = $(this);
     const src = img.attr("src");
-
+    const parsedUrl = url.parse(src, true); 
+    if (parsedUrl.query && parsedUrl.query.noresize) {
+      return; // 如果找到 noresize 参数，跳过处理
+    }
     if (
       src &&
       (src.endsWith(".png") ||

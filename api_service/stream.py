@@ -66,4 +66,3 @@ async def chunked_transfer():
             yield f"{i}"
             await asyncio.sleep(0.1)
     return StreamingResponse(generate_large_data(), media_type="text/plain")
-
