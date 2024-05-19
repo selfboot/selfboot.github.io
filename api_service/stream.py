@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 import time
+import asyncio
 
 stream_app = FastAPI()
 
@@ -39,10 +40,10 @@ async def polling(cnt: int = 1):
 # SSE
 @stream_app.get("/events")
 async def get_events():
-    def event_stream():
+    async def event_stream():
         for i in message:
             yield f"data: {i}\n\n"  # 注意数据格式
-            time.sleep(0.1)
+            await asyncio.sleep(0.1)
         
         yield f"data: END\n\n" 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
@@ -51,16 +52,18 @@ async def get_events():
 @stream_app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    while True:
-        idx = await websocket.receive_text()
-        await websocket.send_text(f"{message[idx]}")
+    for i in message:
+        await websocket.send_text(f"{i}")
+        await asyncio.sleep(0.1) 
+    await websocket.close()
+
 
 # 分块传输
 @stream_app.get("/chunked")
 async def chunked_transfer():
-    def generate_large_data():
+    async def generate_large_data():
         for i in message:
             yield f"{i}"
-            time.sleep(0.1)  # 模拟数据生成时间
+            await asyncio.sleep(0.1)
     return StreamingResponse(generate_large_data(), media_type="text/plain")
 

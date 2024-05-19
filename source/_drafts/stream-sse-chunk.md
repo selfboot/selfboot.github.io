@@ -10,6 +10,9 @@ mathjax: true
 description:
 ---
 
+实现流式输出
+
+<!-- more -->
 
 <style>
 .data-container {
@@ -86,23 +89,14 @@ description:
 
 ## Web Socket
 
-<div>
-<script>
-    let ws;
-    function startWebSocket() {
-        ws = new WebSocket('ws://localhost:8000/ws');
-        ws.onmessage = function(event) {
-            document.getElementById('websocketData').innerText += event.data;
-        };
-        ws.onopen = function(event) {
-            // 假设用户发送固定的索引位置进行测试
-            ws.send("0");
-        };
-    }
-</script>
-<div id="websocketData" style="height: 100px; overflow: auto; border: 1px solid #ccc;"></div>
-<button onclick="startWebSocket()">开始</button>
+<div class="data-container">
+    <div id="wsData" class="data-block"></div>
+    <div class="button-container">
+        <button onclick="startWebSocket()" class="action-button">开始</button>
+        <button onclick="stopWebSocket()" class="action-button">结束</button>
+    </div>
 </div>
+
 
 
 <script>
@@ -190,4 +184,35 @@ function stopSSE() {
     }
     document.getElementById('sseData').innerHTML = '';
 }
+
+let websocket;
+function startWebSocket() {
+    document.getElementById('wsData').innerHTML = '';
+    websocket = new WebSocket('ws://127.0.0.1:8000/stream/ws');
+
+    websocket.onopen = function() {
+        console.log('WebSocket connection opened');
+    };
+
+    websocket.onmessage = function(event) {
+        document.getElementById('wsData').innerHTML += event.data;
+    };
+
+    websocket.onerror = function(event) {
+        console.error('WebSocket error observed:', event);
+    };
+
+    websocket.onclose = function(event) {
+        console.log('WebSocket connection closed');
+    };
+}
+
+function stopWebSocket() {
+    if (websocket) {
+        websocket.send('stop'); // 发送停止信号
+        websocket.close(); // 关闭连接
+    }
+    document.getElementById('wsData').innerHTML = '';
+}
+
 </script>
