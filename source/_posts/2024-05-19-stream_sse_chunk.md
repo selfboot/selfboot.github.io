@@ -3,16 +3,15 @@ title: 结合实例理解流式输出的几种实现方法
 tags:
   - Python
   - 方法
-category: 项目时间
+category: 项目实践
 toc: true
-date: 
-mathjax: true
-description:
+description: 通过交互和控制台截图，详细介绍了在浏览器端实现流式输出的4种常见方法。轮询方式简单但效率低下。分块传输利用HTTP/1.1特性，服务器可分多个数据块响应，提高效率。Server-Sent Events 基于HTTP，服务器可主动向客户端推送事件流，应用于单向实时数据传输场景。WebSocket是独立协议，支持全双工通信，适合交互式Web应用。
+date: 2024-05-19 21:42:37
 ---
 
 如果有用过 ChatGPT 等大语言模型，可能就会发现在聊天对话中，AI 的输出文本是一批批“蹦出来”的，这就是所谓的**流式输出**。在浏览器上，是怎么实现这种效果呢？
 
-本篇文章会介绍4种方法来实现流式输出效果，每种方法都会结合实际例子来演示。具体选择哪种方法，取决于你的需求和场景。
+本篇文章会介绍 4 种常见方法来实现流式输出效果，每种方法都会结合实际例子来演示。在业务中选择哪种方法，取决于具体的需求和场景。
 
 1. **客户端轮询**：客户端定时（如每几秒）发送请求到后端服务，获取新的数据。
 2. **分块传输**：HTTP/1.1 支持，服务器一次可以只发送部分响应内容，客户端接收到部分数据后就可以开始处理。
@@ -25,7 +24,7 @@ description:
 
 首先是最简单的轮询方法，客户端每隔一段时间向服务器发送请求，获取新的数据。实现轮询的时候，客户端和服务器需要用 HTTP 请求参数和回包**约定数据更新或者结束**的方式。比如简单的用一个请求字段 cnt 来约定这是第几次请求，返回中用 400 错误码来约定本次轮询结束。
 
-本文示例种的服务，是用 Python 的 FastAPI 框架写的，轮询的服务实现示例代码如下：
+下面用 Python 的 FastAPI 写一个简单示例，每次带一个下标来请求一段文本中的内容，如果超过文本长度，就返回 400。
 
 ```python
 async def polling(cnt: int = 1):
@@ -55,7 +54,7 @@ async def polling(cnt: int = 1):
 
 ## 分块传输编码
 
-上面轮询机制的缺点显而易见，主要是因为需要很多 HTTP 连接来更新数据。其实在 HTTP/1.1 中，还有一种更好的方式，就是利用**分块传输编码**。分块传输编码实现流式输出更加高效，客户端只用请求一次，服务器**以多个“块”的形式响应，直到所有数据都发送完毕**。分块传输适用于响应体很大或由于内容是实时生成的而无法预知大小的情况，常见于大文件下载、视频流或实时数据流的传输。目前如果想在微信小程序中实现流式输出，可以用分块编码。
+上面轮询机制的缺点显而易见，主要是因为需要很多 HTTP 连接来更新数据。其实在 HTTP/1.1 中，还有一种更好的方式，就是利用**分块传输编码**。分块传输编码实现流式输出更加高效，客户端只用请求一次，服务器**以多个“块”的形式响应，直到所有数据都发送完毕**。分块传输适用于响应体很大或由于内容是实时生成的而无法预知大小的情况，常见于大文件下载、视频流或实时数据流的传输。目前如果想在微信小程序中实现流式输出，最方便就是分块编码。
 
 分块传输编码的协议稍微复杂一点，在响应头中用 `Transfer-Encoding: chunked` 表明响应将以分块的形式发送。每个块开始前，服务器发送一行包含当前块大小的数据，后跟一个回车换行（CRLF），紧接着是实际的块数据，再后面是一个CRLF。传输结束时，服务器发送一个大小为0的块，表示没有更多的数据块，通常后跟一个 CRLF。
 
@@ -87,7 +86,9 @@ async def chunked_transfer():
 
 ![分块传输编码的动态图](https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_chunked.gif?noresize=true)
 
-值得注意的是，分块传输编码只在 HTTP/1.1 中支持。在 HTTP/2 中，分块传输编码的概念已经不存在了，这主要是因为 HTTP/2 的工作方式有很大的不同。HTTP/2 引入了多路复用（multiplexing）、二进制帧（binary framing）和流控制（stream prioritization）等新的机制来提高效率和性能。
+值得注意的是，分块传输编码只在 HTTP/1.1 中支持。在 HTTP/2 中，分块传输编码的概念已经不存在了，这主要是因为 HTTP/2 的工作方式有很大的不同。HTTP/2 引入了多路复用（multiplexing）、二进制帧（binary framing）和流控制（stream prioritization）等新的机制来提高效率和性能。 在 HTTP/2 中，所有通信都在单一的 TCP 连接上通过帧进行。数据帧（DATA frames）被用来传输消息体数据。服务器可以根据需要连续发送多个数据帧，每个帧携带一部分消息内容。客户端按接收顺序重新组装这些帧来重建完整的消息。
+
+不过我这里的示例，在 HTTP/2 下仍然是流式输出的，这是因为这里前端用的 `Fetch API` 和流处理 `response.body.getReader().read()`，它提供了一致的接口来处理流数据，不论底层协议是 HTTP/1.1 还是 HTTP/2。当调用的是 HTTP/2 接口时，也能正常从数据帧中读取数据。
 
 ## Server-Sent Events
 
@@ -125,7 +126,7 @@ async def get_events():
 
 ![Server-Sent Events 的动态图](https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_sse.gif?noresize=true)
 
-大多数现代浏览器都支持SSE，不像分块编码只能在 HTTP/1.1 使用，SSE 也能在 HTTP/2 下使用。不过 SSE 有一个缺点，就是**只能从服务器到客户端单向传输**，客户端不能向服务器发送数据。如果需要双向通信，就需要使用 Web Socket。
+大多数现代浏览器都支持SSE，使用 SSE 用户体验比较好，也十分节省资源。不过 SSE 有一个缺点，就是**只能从服务器到客户端单向传输**，客户端不能向服务器发送数据。如果需要双向通信，就需要使用 Web Socket。
 
 ## Web Socket
 
@@ -163,6 +164,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
 ![Web Socket 的动态图](https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_websocket.gif?noresize=true)
 
+当然，WebSocket 协议相对 HTTP 更复杂，需要服务器和客户端都实现更多的逻辑。
+
+本文结合具体的例子，介绍了 4 种常见的实现流式输出的方法，每种方法都有自己的优缺点，适用于不同的场景。以下是一些建议:
+
+1. 针对简单的单向推送场景，如新闻实时更新、股票行情等，可以考虑使用 Server-Sent Events。实现简单，支持主流浏览器，且能有效节省服务器资源。
+2. 对于需要双向通信的交互场景，如即时通讯、协作办公、在线游戏等，WebSocket 是更合适的选择。全双工通信，支持文本和二进制数据，延迟较低。但需要客户端和服务器端均实现 WebSocket 协议逻辑。
+3. 如果对延迟要求不太高，可以考虑使用轮询或分块传输编码。轮询实现最简单，但频繁请求会增加服务器负担。分块传输编码效率更高,无需频繁建立连接。
+4. 对于需要向老旧浏览器提供支持的应用，轮询可能是唯一可选方案，因为旧版本浏览器可能不支持 WebSocket 或 Server-Sent Events。
+
+总的来说，流式输出在现代 Web 应用中得到了越来越广泛的应用。特别是大语言模型兴起之后，几乎所有的文本生成应用，都是用流式输出来提升用户体验。
 
 <style>
 .data-container {
@@ -207,7 +218,7 @@ function fetchData() {
 }
 
 function fetchPolling() {
-    fetch('http://localhost:8000/stream/polling?cnt=' + count)
+    fetch('https://api.selfboot.cn/stream/polling?cnt=' + count)
         .then(response => {
             if (!response.ok && response.status === 400) {
                 throw new Error('Server returned 400 error');
@@ -232,7 +243,7 @@ function stopPolling() {
 let reader; // 用于Chunked传输的reader
 function startChunked() {
     document.getElementById('chunkedData').innerHTML = '';
-    fetch('http://localhost:8000/stream/chunked')
+    fetch('https://api.selfboot.cn/stream/chunked')
         .then(response => {
             reader = response.body.getReader();
             readChunked();
@@ -260,7 +271,7 @@ function stopChunked() {
 let eventSource; // 用于SSE的EventSource对象
 function startSSE() {
     document.getElementById('sseData').innerHTML = '';
-    eventSource = new EventSource('http://localhost:8000/stream/events');
+    eventSource = new EventSource('https://api.selfboot.cn/stream/events');
     eventSource.onmessage = function(event) {
         if (event.data === "END") {
             eventSource.close();
@@ -285,7 +296,7 @@ function stopSSE() {
 let websocket;
 function startWebSocket() {
     document.getElementById('wsData').innerHTML = '';
-    websocket = new WebSocket('ws://127.0.0.1:8000/stream/ws');
+    websocket = new WebSocket('wss://api.selfboot.cn/stream/ws');
 
     websocket.onopen = function() {
         console.log('WebSocket connection opened');
