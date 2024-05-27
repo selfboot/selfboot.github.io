@@ -173,7 +173,7 @@ inline uint32_t Unmask(uint32_t masked_crc) {
 
 这里其实有个有意思的地方，原始 CRC32 值交换高 15 位后，加上常量后可能会大于 uint32_t 的最大值，**导致溢出**。**在 C++ 中，无符号整型的溢出行为是定义良好的，按照取模运算处理**。比如当前 crc 是 32767，这里移动后加上常量，结果是7021325016，按照 $ 2^{32} $ 取模后结果是 2726357720。而在 Unmask 中的减法操作，同样会溢出，C++中这里也是按照取模运算处理的。这里 $ 2726357720-kMaskDelta = -131072 $ 按照 $ 2^{32} $ 后结果是 4294836224，再交换高低位就拿到了原始 CRC 32767 了。
 
-## 数字编、解码
+## 整数编、解码
 
 LevelDB 中经常需要将数字存储在字节流或者从字节流中解析数字，比如 key 中存储长度信息，在批量写的任务中存储序列号等。在 `util/coding.h` 中实现了一系列编码和解码的工具函数，方便在字节流中存储和解析数字。首先来看固定长度的编、解码，主要有下面几个函数：
 
@@ -218,4 +218,56 @@ inline uint32_t DecodeFixed32(const char* ptr) {
          (static_cast<uint32_t>(buffer[3]) << 24);
 }
 ```
+
+除了将整数编码为固定长度的字节，LevelDB 还支持使用变长整数（Varint）编码来存储数字。因为很多时候，需要存的是范围很广但常常偏小的值，这时候都用 4 个字节来存储整数有点浪费。Varint 是一种高效的数据压缩方法，小的数值占用的字节少，可以节省空间。
+
+Varint 原理很简单，使用一个或多个字节来存储整数的方法，其中**每个字节的最高位（第8位）用来表示是否还有更多的字节**。如果这一位是1，表示后面还有字节；如果是0，表示这是最后一个字节。剩下的7位用来存储实际的数字值。下图展示了从一个到三个字节的 varint 编码（更多字节类似，这里不列出）：
+
+数值范围      | Varint 字节表达式
+--------------|---------------------------------
+1-127         | 0xxxxxxx
+128-16383     | 1xxxxxxx 0xxxxxxx
+16384-2097151 | 1xxxxxxx 1xxxxxxx 0xxxxxxx
+
+具体实现中，EncodeVarint32 和 EncodeVarint64 略有不同，32 位的直接先判断需要的字节数，然后硬编码写入。64 位的则是循环写入，每次处理 7 位，直到数值小于 128。
+
+```c++
+char* EncodeVarint64(char* dst, uint64_t v) {
+  static const int B = 128;
+  uint8_t* ptr = reinterpret_cast<uint8_t*>(dst);
+  while (v >= B) {
+    *(ptr++) = v | B;
+    v >>= 7;
+  }
+  *(ptr++) = static_cast<uint8_t>(v);
+  return reinterpret_cast<char*>(ptr);
+}
+```
+
+当然，这里是编码，对应有从字节流中解码出 Varint 的实现。主要实现如下：
+
+```c++
+const char* GetVarint64Ptr(const char* p, const char* limit, uint64_t* value) {
+  uint64_t result = 0;
+  for (uint32_t shift = 0; shift <= 63 && p < limit; shift += 7) {
+    uint64_t byte = *(reinterpret_cast<const uint8_t*>(p));
+    p++;
+    if (byte & 128) {
+      // More bytes are present
+      result |= ((byte & 127) << shift);
+    } else {
+      result |= (byte << shift);
+      *value = result;
+      return reinterpret_cast<const char*>(p);
+    }
+  }
+  return nullptr;
+}
+```
+
+这里是编码的逆过程，成功解码一个整数后，它会返回一个新的指针，指向字节流中紧跟着解码整数之后的位置。GetVarint64 函数用这个实现，从 input 中解析出一个 64 位整数后，还更新了 input 的状态，**使其指向剩余未处理的数据**。这里更新字节流，对于连续处理数据流中的多个数据项非常有用，例如在解析由多个 varint 编码的整数组成的数据流时，每次调用 GetVarint64 后，input 都会更新，准备好解析下一个整数。
+
+这里还一类辅助函数，比如 PutLengthPrefixedSlice 用于将一个字符串编码为一个长度前缀和字符串内容的组合，而 GetLengthPrefixedSlice 则是对应的解码函数。这些编码和解码函数在 LevelDB 中被广泛应用，用于存储和解析各种数据结构，比如 memtable 中的 key 和 value，SSTable 文件的 block 数据等。
+
+这里整数的编、解码配有大量的测试用例，放在 `util/coding_test.cc` 中。里面有正常的编码和校对测试，比如 0 到 100000 的 Fixed32 的编、解码校验。此外还有一些**异常测试**，比如错误的 Varint32 的解码用例 Varint32Overflow，用 GetVarint32Ptr 来解码 "\x81\x82\x83\x84\x85\x11"。
 
