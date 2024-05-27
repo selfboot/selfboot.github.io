@@ -172,3 +172,50 @@ inline uint32_t Unmask(uint32_t masked_crc) {
 ```
 
 这里其实有个有意思的地方，原始 CRC32 值交换高 15 位后，加上常量后可能会大于 uint32_t 的最大值，**导致溢出**。**在 C++ 中，无符号整型的溢出行为是定义良好的，按照取模运算处理**。比如当前 crc 是 32767，这里移动后加上常量，结果是7021325016，按照 $ 2^{32} $ 取模后结果是 2726357720。而在 Unmask 中的减法操作，同样会溢出，C++中这里也是按照取模运算处理的。这里 $ 2726357720-kMaskDelta = -131072 $ 按照 $ 2^{32} $ 后结果是 4294836224，再交换高低位就拿到了原始 CRC 32767 了。
+
+## 数字编、解码
+
+LevelDB 中经常需要将数字存储在字节流或者从字节流中解析数字，比如 key 中存储长度信息，在批量写的任务中存储序列号等。在 `util/coding.h` 中实现了一系列编码和解码的工具函数，方便在字节流中存储和解析数字。首先来看固定长度的编、解码，主要有下面几个函数：
+
+```c++
+void PutFixed32(std::string* dst, uint32_t value);
+void PutFixed64(std::string* dst, uint64_t value);
+void EncodeFixed32(char* dst, uint32_t value);
+void EncodeFixed64(char* dst, uint64_t value);
+```
+
+以 32 位的编码为例，`PutFixed32` 函数将一个 32 位的无符号整数 value 编码为 4 个字节，然后追加到 dst 字符串的末尾。`EncodeFixed32` 函数则将 value 编码为 4 个字节，存储到 dst 指向的内存中。PutFixed32 底层以 EncodeFixed32 为基础，只是将结果追加到了 dst 字符串中。
+
+```c++
+inline void EncodeFixed32(char* dst, uint32_t value) {
+  uint8_t* const buffer = reinterpret_cast<uint8_t*>(dst);
+
+  // Recent clang and gcc optimize this to a single mov / str instruction.
+  buffer[0] = static_cast<uint8_t>(value);
+  buffer[1] = static_cast<uint8_t>(value >> 8);
+  buffer[2] = static_cast<uint8_t>(value >> 16);
+  buffer[3] = static_cast<uint8_t>(value >> 24);
+}
+```
+
+首先通过 `reinterpret_cast<uint8_t*>(dst)` 将 `char*` 类型的指针转换为 `uint8_t*` 类型，使得后续可以直接操作单个字节。然后使用位移和掩码操作将 value 的每一个字节分别写入到 buffer 数组中，value 的低位字节存储在低地址中（小端序）。假设我们有一个 uint32_t 的数值 0x12345678（十六进制表示），我们想将这个值编码到一个字符数组中，然后再从数组中解码出来。
+
+- buffer[0] 存储 value 的最低8位，即 0x78。
+- buffer[1] 存储 value 的次低8位，即 0x56。
+- buffer[2] 存储 value 的次高8位，即 0x34。
+- buffer[3] 存储 value 的最高8位，即 0x12。
+
+编码完之后，dst 中的内容将是：`78 56 34 12`。解码的过程就是将这 4 个字节按照相反的顺序组合起来，得到原始的 value 值。
+
+```c++
+inline uint32_t DecodeFixed32(const char* ptr) {
+  const uint8_t* const buffer = reinterpret_cast<const uint8_t*>(ptr);
+
+  // Recent clang and gcc optimize this to a single mov / ldr instruction.
+  return (static_cast<uint32_t>(buffer[0])) |
+         (static_cast<uint32_t>(buffer[1]) << 8) |
+         (static_cast<uint32_t>(buffer[2]) << 16) |
+         (static_cast<uint32_t>(buffer[3]) << 24);
+}
+```
+

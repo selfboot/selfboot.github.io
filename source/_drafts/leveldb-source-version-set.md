@@ -90,6 +90,55 @@ Status DBImpl::NewDB() {
 
 ### 主要操作
 
+这里 VersionEdit 提供的方法主要分为两类，第一类是设置各种前面提到的各种记录，比如：
+
+```c++
+void RemoveFile(int level, uint64_t file);
+void AddFile(int level, uint64_t file, uint64_t file_size,
+               const InternalKey& smallest, const InternalKey& largest);
+void SetCompactPointer(int level, const InternalKey& key);
+void SetLogNumber(uint64_t num)
+```
+
+这类方法比较简单，这里不再赘述了。第二类就是序列化和反序列化的方法了，这里主要是 `EncodeTo` 和 `DecodeFrom` 方法，确保所有重要的状态信息都能被编码并在需要时重新解码来重建对象的状态。每个成员变量的序列化都开始于一个标签（Tag 枚举），该标签唯一地标识了随后的数据类型和意图。标签之后是该字段的实际数据，数据格式依据数据类型有所不同（如使用变长整数或长度前缀字符串）。
+
+```c++
+// db/version_edit.cc
+void VersionEdit::EncodeTo(std::string* dst) const {
+  if (has_comparator_) {
+    PutVarint32(dst, kComparator);
+    PutLengthPrefixedSlice(dst, comparator_);
+  }
+  if (has_log_number_) {
+    PutVarint32(dst, kLogNumber);
+    PutVarint64(dst, log_number_);
+  }
+  // ...
+  for (const auto& deleted_file_kvp : deleted_files_) {
+    PutVarint32(dst, kDeletedFile);
+    PutVarint32(dst, deleted_file_kvp.first);   // level
+    PutVarint64(dst, deleted_file_kvp.second);  // file number
+  }
+  // ...
+```
+
+VersionEdit::DecodeFrom 则是对 EncodeTo 的逆操作，将序列化的数据解析为 VersionEdit 对象。这里循环读取 input 数据，通过 GetVarint32 读取字段的标签（tag），然后确定如何解析后续的数据。
 
 ### 自动化测试
 
+这里的测试也是比较简单的，主要验证 VersionEdit 对象的序列化 (EncodeTo) 和反序列化 (DecodeFrom) 有没有问题。
+
+```c++
+// db/version_edit_test.cc
+static void TestEncodeDecode(const VersionEdit& edit) {
+  std::string encoded, encoded2;
+  edit.EncodeTo(&encoded);
+  VersionEdit parsed;
+  Status s = parsed.DecodeFrom(encoded);
+  ASSERT_TRUE(s.ok()) << s.ToString();
+  parsed.EncodeTo(&encoded2);
+  ASSERT_EQ(encoded, encoded2);
+}
+```
+
+这里 `ASSERT_TRUE(s.ok()) << s.ToString();` 如果 s.ok() 为 false，会输出错误信息，这样可以方便地查看解析失败的原因。
