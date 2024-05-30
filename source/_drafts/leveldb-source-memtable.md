@@ -177,7 +177,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 }
 ```
 
-这里遍历 memtable 时，用到一个友元类，为啥不直接提供一些 public 的接口来遍历呢？友元类设计的一个好处是，**类的职责划分比较清晰**。MemTableIterator 负责遍历 MemTable 的数据，而 MemTable 负责管理数据的存储。这种分离有助于清晰地定义类的职责，遵循单一职责原则，每个类只处理一组特定的任务，使得系统的设计更加模块化。
+这里遍历 memtable 时，用到一个友元类，为啥不直接提供一些 public 的接口来遍历呢？使用友元类的一个好处是，**类的职责划分比较清晰**。MemTableIterator 负责遍历 memTable 的数据，而 memTable 负责管理数据的存储。这种分离有助于清晰地定义类的职责，遵循单一职责原则，每个类只处理一组特定的任务，使得系统的设计更加模块化。
 
 ## 内存管理
 
