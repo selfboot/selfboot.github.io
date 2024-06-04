@@ -6,7 +6,11 @@ toc: true
 description: 
 ---
 
-TableCache 是 LevelDB 中用于缓存打开的 sstable 文件的数据结构，以加快数据读取速度。在 TableCacheSize 函数中，从 max_open_files 中减去一个常数 kNumNonTableCacheFiles（通常为 10），是为了留出一部分文件描述符给其他用途，比如日志文件和 manifest 文件的打开。
+LevelDB 中有大量的 sstable 文件存储在磁盘中，这些文件是 LevelDB 存储数据的基本单位。每次读取 key 的话，如果在内存的 memtable 和 immutable memtable 中没有找到，就需要从 sstable 文件中查找。如果每次都需要从磁盘读取文件，解析里面的文件内容，然后再进行查找，效率会非常低下。
+
+为了提高数据的读取速度，LevelDB 使用了一个 TableCache 来缓存打开的 sstable 文件，LevelDB 在适当的时机将打开的文件添加到缓存中，又在删除文件的时候主动淘汰缓存的 sstable 文件。通过维护这里的缓存，可以有效减少磁盘 I/O 操作，提高数据的读取速度。
+
+TableCache 实现比较简单，在 [LRU cache](/leveldb_source_LRU_cache) 的基础上做了封装，然后提供几个接口用于操作缓存。借助这里 TableCache，我们可以更好地理解 LRU cache 的用法。 
 
 <!-- more -->
 
@@ -30,11 +34,29 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
 2. 如果需要频繁访问的数据量比较大，考虑到每个 SSTable 文件推荐占用 2MB 空间，可以适当增大 max_open_files 的值，以提高缓存命中率。
 3. 增加 max_open_files 可以减少磁盘I/O，提高性能，但也会增加内存的使用。每个打开的文件都需要一定的内存来维护相关数据结构，如文件描述符和缓冲区。因此，需要在性能提升与内存使用之间找到平衡。
 
-其实 TableCache 在初始化的时候，会从 `max_open_files` 中减去一个常数 `kNumNonTableCacheFiles`（通常为 10），这样可以留出一部分文件描述符给其他用途，比如日志文件和 manifest 文件的使用。
+其实 TableCache 在初始化的时候，会从 `max_open_files` 中减去一个常数 `kNumNonTableCacheFiles`（这里是 10），这样可以留出一部分文件描述符给其他用途，比如日志文件和 manifest 文件的使用。
 
 ### 添加缓存
 
-首先来看什么时机下会主动将 sstable 文件添加到缓存中。
+首先来看什么时机下会主动将 sstable 文件添加到缓存中。我们知道，LevelDB 内存中的 immutable memtable 会被转换为 sstable 文件，这个过程会调用 `WriteLevel0Table` 函数。这个过程会调用 BuildTable 来生成 Level-0 下的 sstable 文件，然后写入硬盘。在成功写入磁盘后，LevelDB 就会用 TableCache 读取这个文件，除了用来验证确实写入成功，这个过程也会将新创建的文件添加到缓存中。
+
+```c++
+
+Status BuildTable(const std::string& dbname, Env* env, const Options& options,
+                  TableCache* table_cache, Iterator* iter, FileMetaData* meta) {
+    // ..
+    if (s.ok()) {
+      // Verify that the table is usable
+      Iterator* it = table_cache->NewIterator(ReadOptions(), meta->number,
+                                              meta->file_size);
+      s = it->status();
+      delete it;
+    }
+  }
+  //...
+  return s;
+}
+```
 
 ### 使用缓存
 
