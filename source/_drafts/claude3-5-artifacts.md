@@ -79,12 +79,17 @@ Anthropic **不声不响**地发布了 [Claude 3.5 模型](https://www.anthropic
     </div>
 </div>
 
-## Anthropic 缺陷
+## Anthropic 不足
 
-当然，目前的 Anthropic 只是一个 beta 版本，还有很多不足之处。
+当然，目前的 Anthropic 只是一个 beta 版本，还有很多不足之处。文章标题写着免费 Claude3.5，不过这里免费版限制也比较多，首先是[对话长度有限制](https://support.anthropic.com/en/articles/7996848-how-large-is-claude-s-context-window)，内容稍微长一点，添加附件就会提示：
 
+> Your message will exceed the length limit for this chat. Try attaching fewer or smaller files or starting a new conversation. Or consider upgrading to Claude Pro.
 
+就算没附件，对话轮次太多也会提示：
 
+> Your message will exceed the length limit for this chat. Try shortening your message or starting a new conversation. Or consider upgrading to Claude Pro.
+
+当然这些
 <!-- 俄罗斯方块 -->
 <style>
     #tetrisContainer {
