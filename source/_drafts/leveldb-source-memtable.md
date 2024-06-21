@@ -1,6 +1,6 @@
 ---
 title: LevelDB 源码阅读：MemTable 内存表的实现细节
-tags: [C++, LevalDB]
+tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 

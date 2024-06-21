@@ -1,6 +1,6 @@
 ---
 title: LevelDB 源码阅读：学习利用编译器特性
-tags: [C++, LevalDB]
+tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 

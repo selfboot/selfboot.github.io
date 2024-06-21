@@ -1,6 +1,6 @@
 ---
 title: LevelDB 源码阅读：写操作的详细流程
-tags: [C++, LevalDB]
+tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 

@@ -1,6 +1,6 @@
 ---
 title: LevelDB 源码阅读：理解其中的 C++ 高级技巧
-tags: [C++, LevalDB]
+tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 

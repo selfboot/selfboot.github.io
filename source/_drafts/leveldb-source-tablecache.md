@@ -1,6 +1,6 @@
 ---
 title: LevelDB 源码阅读：TableCache 的应用和实现
-tags: [C++, LevalDB]
+tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
