@@ -1,0 +1,486 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="深入探讨 Anthropic 新发布的 Claude 3.5 模型及其 Artifacts 功能，通过五子棋和俄罗斯方块游戏的快速实现，展示了代码生成和问题解决方面的卓越能力。还讨论了当前版本的一些局限性，如工作空间功能的限制，并展望了未来 AI 辅助编程的发展方向。"><title>免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><meta name="generator" content="Hexo 7.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏</h1><a id="logo" href="/.">Just For Fun</a><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/aboutme.html"><i class="fa fa-user"> 关于</i></a><a href="/links.html"><i class="fa fa-user-graduate"> 小盛律师</i></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"> 法律普及</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏</h1><div class="post-meta">2024/06/22<span> | </span><span class="category"><a href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2024/06/22/claude35_artifacts/" href="/2024/06/22/claude35_artifacts/#disqus_thread"></a><div class="post-content"><p>Anthropic <strong>不声不响</strong>地发布了 <a target="_blank" rel="noopener" href="https://www.anthropic.com/news/claude-3-5-sonnet">Claude 3.5 模型</a>，除了模型效果提升，还支持了 Artifacts。初步体验后，感觉这才是未来 AI 的样子，比之前 GPT4-o 更让我震撼。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_artifacts.png/webp" alt="Artifacts 工作空间内写代码" srcset="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_artifacts.png/webp 1600w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_artifacts.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_artifacts.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1600" height="1264"></p>
+<p>在 Artifacts 之前，如果想用 ChatGPT 等 LLM 来帮忙实现程序功能，需要先提功能需求，然后复制 AI 的代码到自己的环境中运行。如果和预期不符合，要再追问、再修改代码运行。需要重复这个过程，直到满意或者放弃（有些复杂代码目前 AI 还是写不太好）。</p>
+<span id="more"></span>
+
+<p>现在有了 Artifacts，提供具体功能需求后，Claude 会创建一个<strong>工作空间</strong>，后续对话过程中，AI 可以在这个动态工作空间中实时查看、编辑代码。这样，Claude 就从普通的对话式生成 AI 变成了一个<strong>协作工作环境</strong>，或许在不久的将来，可以将 Claude 引入到我们自己的项目中，让它像普通团队成员一样参与到开发。</p>
+<p>愿景当然很美好，不过目前的 Artifacts 还只是 beta 功能，表现如何呢？下面来试试看。</p>
+<h2 id="AI-实现五子棋游戏"><a href="#AI-实现五子棋游戏" class="headerlink" title="AI 实现五子棋游戏"></a>AI 实现五子棋游戏</h2><p>先试着让 Claude 实现一个 web 版五子棋游戏，我的提示词也很简单：</p>
+<blockquote>
+<p>我想写一个网页五子棋游戏，给出完整的实现代码</p>
+</blockquote>
+<p>然后，就看到了 Artifacts 的工作空间，里面已经有了一个代码文件，并且在自动生成代码。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_code.png/webp" alt="Artifacts 生成五子棋代码文件中" srcset="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_code.png/webp 3420w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_code.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_code.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_code.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3420" height="1968"></p>
+<p>代码生成之后，直接跳到了一个预览页面，可以看到五子棋的界面。本来以为这个预览页面是静态的，没想到还可以在这个页面上进行交互，点击棋盘上的位置，会轮流下黑白子。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_preview.png/webp" alt="Artifacts 生成五子棋界面预览" srcset="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_preview.png/webp 3422w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_preview.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_preview.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_gobang_preview.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3422" height="1972"></p>
+<p>既然能下子，那么到底有没有实现五子棋的规则呢？于是玩了下，发现 AI 确实实现了五子棋的规则，而且还有胜负判断。</p>
+<p><strong>完全超出预期了</strong>！！！一句话，真的只要一句话，<strong>AI 就实现了一个还算完整的五子棋游戏，有美观的界面，有规则判断，还有胜负判定，已经完全可以拿来玩了</strong>。</p>
+<p>关键是 AI 还接着给出了一些继续完善游戏的建议，比如：</p>
+<ul>
+<li>添加悔棋功能</li>
+<li>实现计时器</li>
+<li>添加音效</li>
+<li>实现AI对手</li>
+<li>优化移动设备上的体验</li>
+</ul>
+<p>感觉这不是一个 AI，而是一个有血有肉，有自己想法，经验丰富的前端工程师了。</p>
+<h3 id="五子棋游戏演示"><a href="#五子棋游戏演示" class="headerlink" title="五子棋游戏演示"></a>五子棋游戏演示</h3><p>大家可以在博客文章中的<a href="#%E4%BA%94%E5%AD%90%E6%A3%8B%E6%B8%B8%E6%88%8F%E6%BC%94%E7%A4%BA">演示地址</a>体验下 AI 写的五子棋游戏。</p>
+<div id="game-container">
+    <div id="board"></div>
+    <p id="status">黑方回合</p>
+    <button onclick="resetGame()">重新开始</button>
+</div>
+
+<p>跟朋友展示了 Claude3.5 生成的五子棋效果后，朋友有点怀疑 AI 是从哪里抄的代码。毕竟五子棋的实现网上到处都是，AI 学到的别人的代码并拿来用。这样说也不是没道理，那就只能升级下难度，来看看 Claude3.5 的表现如何。</p>
+<h2 id="AI-实现俄罗斯方块"><a href="#AI-实现俄罗斯方块" class="headerlink" title="AI 实现俄罗斯方块"></a>AI 实现俄罗斯方块</h2><p>接着再来一个复杂点的游戏，俄罗斯方块。也是从一句简单的提示开始，AI 生成了一个初始的 python 版本。为了在博客里直接跑，就让它换成 web 版的。开始生成的第一个版本，嵌入到博客后，发现边框没有了，并且上下键切换形状的时候，网页会跟随滚动。于是让 Claude 解决这个问题，没想到一次就给出了完美的代码。</p>
+<p>从下图也可以看到，重新提示后，Claude 给出可第 2 版本的文件，然后预览页面就是一个完整的俄罗斯方块游戏，可以通过键盘控制方块的移动和旋转。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_tetris.png/webp" alt="Artifacts 生成俄罗斯方块界面预览" srcset="https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_tetris.png/webp 3390w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_tetris.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_tetris.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240621_claude35_artifacts_tetris.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3390" height="1958"></p>
+<p>这里后续又<strong>通过不断的对话提示</strong>，对一些功能进行了修改，第 5 个版本，就拿到了一个很不错的功能雏形了。整个对话过程感觉 Claude3.5 的<strong>理解能力还是很不错的</strong>，和 GPT4 差别不是很大，最后实现的效果也是超出预期。</p>
+<h3 id="俄罗斯方块演示"><a href="#俄罗斯方块演示" class="headerlink" title="俄罗斯方块演示"></a>俄罗斯方块演示</h3><p>我把 AI 生成的代码直接嵌入到博客中，大家可以在<a href="###%E4%BF%84%E7%BD%97%E6%96%AF%E6%96%B9%E5%9D%97%E6%BC%94%E7%A4%BA">下面的演示</a>中体验俄罗斯方块游戏。</p>
+<div id="tetrisContainer">
+    <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+    <button id="startButton">开始游戏</button>
+    <div id="gameOverMessage">
+        游戏结束！<br>
+        你的得分是：<span id="finalScore"></span><br>
+        <button id="restartButton">重新开始</button>
+    </div>
+</div>
+
+<p>从这里俄罗斯方块的不断修改过程来看，AI 的理解能力和代码能力还是很强的，和 GPT4 应该在一个段位。</p>
+<h2 id="人人用-AI-写程序"><a href="#人人用-AI-写程序" class="headerlink" title="人人用 AI 写程序"></a>人人用 AI 写程序</h2><p>从上面写的简单游戏来看，Anthropic 表现很不错。其实我还尝试用它来做一些算法的 Web 可视化演示，Claude3.5 给出的示例也很可以。比如我让它实现了一个令牌桶限频算法，可以设置令牌桶的容量和速率，以及消耗令牌速度，然后让它绘制一个请求监控曲线。</p>
+<p>每次设置好参数后，会动态生成监控曲线。然后可以随时暂停，重新设置参数，再继续生成新的监控曲线。设置几个参数，并运行后，就得到了下面结果：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240622_claude35_artifacts_token_bucket.png/webp" alt="Artifacts 生成令牌桶限频算法界面预览" srcset="https://slefboot-1251736664.file.myqcloud.com/20240622_claude35_artifacts_token_bucket.png/webp 1714w, https://slefboot-1251736664.file.myqcloud.com/20240622_claude35_artifacts_token_bucket.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240622_claude35_artifacts_token_bucket.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240622_claude35_artifacts_token_bucket.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1714" height="1352"></p>
+<p>对于没有前端开发经验的人来说，能够很快实现一个可视化的算法演示，真的是神奇。在 Anthropic 的帮助下，每个人都可以破圈，<strong>不再受限于自己的技术经验，快速实现自己的一些想法</strong>。</p>
+<p>特别是对于想学习编程的人来说，以前基本要先啃书，学习技能，然后逐步应用在项目中。现在可以带着问题和 AI 对话，让 AI 帮忙实现，中间有任何问题，可以随时和 AI 沟通，<strong>这样的学习过程更加有趣</strong>。毕竟，如果让我先学习一堆前端语法，然后磕磕碰碰去实现一个俄罗斯方块，我很快就会放弃。而如果我一句话，就生成了一个完整可运行的游戏，然后可以和 AI 一起交流实现的过程和代码细节，就会有趣很多，也会有更多的成就感。</p>
+<h2 id="Anthropic-不足"><a href="#Anthropic-不足" class="headerlink" title="Anthropic 不足"></a>Anthropic 不足</h2><p>当然，目前的 Anthropic 只是一个 beta 版本，还有很多不足之处。文章标题写着使用免费 Claude3.5，不过这里免费版限制也比较多，首先是<a target="_blank" rel="noopener" href="https://support.anthropic.com/en/articles/7996848-how-large-is-claude-s-context-window">对话长度有限制</a>，内容稍微长一点，添加附件就会提示：</p>
+<blockquote>
+<p>Your message will exceed the length limit for this chat. Try attaching fewer or smaller files or starting a new conversation. Or consider upgrading to Claude Pro.</p>
+</blockquote>
+<p>就算没附件，对话轮次太多也会提示：</p>
+<blockquote>
+<p>Your message will exceed the length limit for this chat. Try shortening your message or starting a new conversation. Or consider upgrading to Claude Pro.</p>
+</blockquote>
+<p>此外，免费版<strong>每小时可以发的消息条数也是有限制的</strong>，很容易触发限制。不过这些都还是小问题，升级 Pro 之后，都能解决。在我看来，目前 Anthropic <strong>最大的缺陷在于工作空间功能太受限</strong>，离真正实用还差不少距离。</p>
+<p>目前(2024.06.22)工作空间中的代码只能是 AI 生成，<strong>不能自己编辑</strong>，也不能上传自己的代码。如果想在 AI 代码基础上做一些简单改动，就很困难。另外，每个对话中，工作空间里生成的内容都放在一起，<strong>不能像在文件系统里一样，生成多个文件</strong>。</p>
+<p>比如我想用 python 实现一个 web 后端服务，用 fastapi 框架，实现带鉴权功能的 api，要求方便用 docker 部署。Claude3.5 在工作空间<strong>只生成了一个文件</strong>，然后在里面放了 main.py，Dockfile，requirements.txt 等内容。我想拿来用的话，还需要在本地创建文件夹，把里面的内容单独拷贝到不同文件，然后再初始化环境运行。</p>
+<p>如果 Anthropic 的工作空间，<strong>能够创建文件夹，然后在里放入整个项目的代码</strong>，并提供下载整个项目的功能，就方便很多。甚至更进一步，Anthropic 可以提供 Python 的运行环境，<strong>让用户直接在工作空间里运行并调试代码</strong>。这样的话，Anthropic 就可以成为一个真正的协作工作环境，而不仅仅是一个代码生成工具。</p>
+<p>理想状况下，未来的 Anthropic 应该可以在工作空间生成并管理多个文件夹或者文件，允许我们人工修改部分代码，并在工作空间调试代码。然后 Anthropic 可以在调试过程中发现问题，并进行修复。也就是说，<strong>AI 可以了解整个项目代码，并和人一起，参与到开发的每个过程中去</strong>。</p>
+<p>或许这样的 Anthropic 很快就会诞生吧。</p>
+<!-- 俄罗斯方块 -->
+<style>
+    #tetrisContainer {
+        position: relative;
+        width: 300px;
+        height: 600px;
+        margin: 20px auto;
+    }
+    #tetrisCanvas {
+        border: 2px solid #333;
+    }
+    #startButton {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    #gameOverMessage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: none;
+        width: 80%;
+        box-sizing: border-box;
+    }
+    #restartButton {
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+
+
+<script>
+    const canvas = document.getElementById('tetrisCanvas');
+    const ctx = canvas.getContext('2d');
+    const startButton = document.getElementById('startButton');
+    const restartButton = document.getElementById('restartButton');
+    const gameOverMessage = document.getElementById('gameOverMessage');
+    const finalScoreSpan = document.getElementById('finalScore');
+
+    const ROWS = 20;
+    const COLS = 10;
+    const BLOCK_SIZE = 30;
+
+    const SHAPES = [
+        [[1, 1, 1, 1]],
+        [[1, 1], [1, 1]],
+        [[1, 1, 1], [0, 1, 0]],
+        [[1, 1, 1], [1, 0, 0]],
+        [[1, 1, 1], [0, 0, 1]],
+        [[1, 1, 0], [0, 1, 1]],
+        [[0, 1, 1], [1, 1, 0]]
+    ];
+
+    const COLORS = [
+        '#00FFFF', '#FFFF00', '#FF00FF', '#FF0000',
+        '#00FF00', '#0000FF', '#FFA500'
+    ];
+
+    let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+    let currentPiece = null;
+    let score = 0;
+    let gameActive = false;
+    let gameLoop;
+
+    function createPiece() {
+        const shapeIndex = Math.floor(Math.random() * SHAPES.length);
+        const colorIndex = Math.floor(Math.random() * COLORS.length);
+        return {
+            shape: SHAPES[shapeIndex],
+            color: COLORS[colorIndex],
+            x: Math.floor(COLS / 2) - Math.floor(SHAPES[shapeIndex][0].length / 2),
+            y: 0
+        };
+    }
+
+    function drawBlock(x, y, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        ctx.strokeStyle = '#000';
+        ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+    }
+
+    function drawBoard() {
+        board.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value) {
+                    drawBlock(x, y, value);
+                }
+            });
+        });
+    }
+
+    function drawPiece() {
+        currentPiece.shape.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value) {
+                    drawBlock(currentPiece.x + x, currentPiece.y + y, currentPiece.color);
+                }
+            });
+        });
+    }
+
+    function isValidMove(piece, x, y) {
+        return piece.shape.every((row, dy) => {
+            return row.every((value, dx) => {
+                let newX = x + dx;
+                let newY = y + dy;
+                return (
+                    value === 0 ||
+                    (newX >= 0 && newX < COLS && newY < ROWS && (newY < 0 || board[newY][newX] === 0))
+                );
+            });
+        });
+    }
+
+    function rotatePiece() {
+        let rotated = currentPiece.shape[0].map((_, i) =>
+            currentPiece.shape.map(row => row[i]).reverse()
+        );
+        if (isValidMove({...currentPiece, shape: rotated}, currentPiece.x, currentPiece.y)) {
+            currentPiece.shape = rotated;
+        }
+    }
+
+    function movePiece(dx, dy) {
+        if (isValidMove(currentPiece, currentPiece.x + dx, currentPiece.y + dy)) {
+            currentPiece.x += dx;
+            currentPiece.y += dy;
+            return true;
+        }
+        return false;
+    }
+
+    function mergePiece() {
+        currentPiece.shape.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value) {
+                    board[currentPiece.y + y][currentPiece.x + x] = currentPiece.color;
+                }
+            });
+        });
+    }
+
+    function clearLines() {
+        let linesCleared = 0;
+        for (let y = ROWS - 1; y >= 0; y--) {
+            if (board[y].every(cell => cell !== 0)) {
+                board.splice(y, 1);
+                board.unshift(Array(COLS).fill(0));
+                linesCleared++;
+            }
+        }
+        if (linesCleared > 0) {
+            score += linesCleared * 100;
+        }
+    }
+
+    function gameOver() {
+        return board[0].some(cell => cell !== 0);
+    }
+
+    function updateGame() {
+        if (!movePiece(0, 1)) {
+            mergePiece();
+            clearLines();
+            if (gameOver()) {
+                endGame();
+            } else {
+                currentPiece = createPiece();
+            }
+        }
+        drawGame();
+    }
+
+    function drawGame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBoard();
+        if (currentPiece) {
+            drawPiece();
+        }
+    }
+
+    function startGame() {
+        board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+        score = 0;
+        currentPiece = createPiece();
+        gameActive = true;
+        startButton.style.display = 'none';
+        gameOverMessage.style.display = 'none';
+        drawGame();
+        gameLoop = setInterval(updateGame, 500); // 每500毫秒更新一次游戏状态
+    }
+
+    function endGame() {
+        gameActive = false;
+        clearInterval(gameLoop);
+        finalScoreSpan.textContent = score;
+        gameOverMessage.style.display = 'block';
+    }
+
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+
+    document.addEventListener('keydown', event => {
+        if (!gameActive) return;
+
+        event.preventDefault();
+        switch (event.keyCode) {
+            case 37: // 左箭头
+                movePiece(-1, 0);
+                break;
+            case 39: // 右箭头
+                movePiece(1, 0);
+                break;
+            case 40: // 下箭头
+                movePiece(0, 1);
+                break;
+            case 38: // 上箭头
+                rotatePiece();
+                break;
+        }
+        drawGame();
+    });
+
+    drawGame();
+</script>
+
+
+<!-- 五子棋游戏 -->
+
+<script>
+    const boardSize = 15;
+    let currentPlayer = 'black';
+    let gameBoard = [];
+
+    function createBoard() {
+        const board = document.getElementById('board');
+        for (let i = 0; i < boardSize; i++) {
+            const row = document.createElement('div');
+            row.className = 'row';
+            gameBoard[i] = [];
+            for (let j = 0; j < boardSize; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.onclick = () => placePiece(i, j);
+                row.appendChild(cell);
+                gameBoard[i][j] = '';
+            }
+            board.appendChild(row);
+        }
+    }
+
+    function placePiece(row, col) {
+        if (gameBoard[row][col] !== '') return;
+
+        const cell = document.getElementById('board').children[row].children[col];
+        const piece = document.createElement('div');
+        piece.className = `piece ${currentPlayer}`;
+        cell.appendChild(piece);
+
+        gameBoard[row][col] = currentPlayer;
+
+        if (checkWin(row, col)) {
+            document.getElementById('status').textContent = `${currentPlayer === 'black' ? '黑' : '白'}方获胜！`;
+            disableBoard();
+        } else {
+            currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+            document.getElementById('status').textContent = `${currentPlayer === 'black' ? '黑' : '白'}方回合`;
+        }
+    }
+
+    function checkWin(row, col) {
+        const directions = [
+            [1, 0], [0, 1], [1, 1], [1, -1]
+        ];
+
+        for (const [dx, dy] of directions) {
+            let count = 1;
+            count += countDirection(row, col, dx, dy);
+            count += countDirection(row, col, -dx, -dy);
+
+            if (count >= 5) return true;
+        }
+
+        return false;
+    }
+
+    function countDirection(row, col, dx, dy) {
+        let count = 0;
+        let x = row + dx;
+        let y = col + dy;
+
+        while (x >= 0 && x < boardSize && y >= 0 && y < boardSize && gameBoard[x][y] === currentPlayer) {
+            count++;
+            x += dx;
+            y += dy;
+        }
+
+        return count;
+    }
+
+    function disableBoard() {
+        const cells = document.getElementsByClassName('cell');
+        for (const cell of cells) {
+            cell.onclick = null;
+        }
+    }
+
+    function resetGame() {
+        const board = document.getElementById('board');
+        board.innerHTML = '';
+        gameBoard = [];
+        currentPlayer = 'black';
+        document.getElementById('status').textContent = '黑方回合';
+        createBoard();
+    }
+
+    createBoard();
+</script>
+
+<style>
+    #game-container {
+        text-align: center;
+    }
+    #board {
+        display: inline-block;
+        background-color: #d4a36a;
+        padding: 10px;
+        border: 2px solid #8b4513;
+    }
+    .row {
+        display: flex;
+    }
+    .cell {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+    .piece {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+    }
+    .black {
+        background-color: #000;
+    }
+    .white {
+        background-color: #fff;
+    }
+</style></div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target="_blank">个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>本文章已自动同步在<b style="color:red">个人公众号</b>，欢迎去 <a href="https://selfboot.cn/aboutme.html" target="_blank">个人主页 </a> 扫码关注</p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏</p><p>本文链接为：https://selfboot.cn/2024/06/22/claude35_artifacts/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="打赏"></a><div class="donate_txt"> ↑<br>内容不错，打赏你啦<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/LLM/"><i class="fa fa-tag"></i>LLM</a></div><div class="post-nav"><a class="next" href="/2024/06/13/async_pool_block_problem/">溢出、异常、线程池、阻塞，奇怪的服务重启问题定位</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2024/06/22/claude35_artifacts/';
+    this.page.identifier = '2024/06/22/claude35_artifacts/';
+    this.page.title = '免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">29</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/">工具介绍</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/">法律普及</a><span class="category-list-count">25</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A4%BE%E4%BC%9A%E7%99%BE%E6%80%81/">社会百态</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%87%91%E8%9E%8D/">金融</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/">项目实践</a><span class="category-list-count">10</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 15px;">教程</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 15px;">总结</a> <a href="/tags/%E6%96%B9%E6%B3%95/" style="font-size: 15px;">方法</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a> <a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 15px;">思考</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 15px;">前端</a> <a href="/tags/Django/" style="font-size: 15px;">Django</a> <a href="/tags/DNS/" style="font-size: 15px;">DNS</a> <a href="/tags/%E8%A7%81%E9%97%BB/" style="font-size: 15px;">见闻</a> <a href="/tags/Protocol/" style="font-size: 15px;">Protocol</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/Flask/" style="font-size: 15px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a> <a href="/tags/%E6%B3%95%E5%BE%8B/" style="font-size: 15px;">法律</a> <a href="/tags/ChatGPT/" style="font-size: 15px;">ChatGPT</a> <a href="/tags/Prompt/" style="font-size: 15px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15px;">Issue</a> <a href="/tags/eBPF/" style="font-size: 15px;">eBPF</a> <a href="/tags/%E5%A9%9A%E5%A7%BB%E5%AE%B6%E5%BA%AD/" style="font-size: 15px;">婚姻家庭</a> <a href="/tags/Go/" style="font-size: 15px;">Go</a> <a href="/tags/%E5%88%91%E4%BA%8B/" style="font-size: 15px;">刑事</a> <a href="/tags/%E5%8A%B3%E5%8A%A8%E7%BA%A0%E7%BA%B7/" style="font-size: 15px;">劳动纠纷</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 15px;">数学</a> <a href="/tags/Gemini/" style="font-size: 15px;">Gemini</a> <a href="/tags/google/" style="font-size: 15px;">google</a> <a href="/tags/LLM/" style="font-size: 15px;">LLM</a></div></div><!-- Debug: page.path = 2024/06/22/claude35_artifacts/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul><li><a href="/2024/06/22/claude35_artifacts/" title="免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏">免费版 Claude3.5 配合 Artifacts，一句话就能写个游戏</a></li><li><a href="/2024/06/13/async_pool_block_problem/" title="溢出、异常、线程池、阻塞，奇怪的服务重启问题定位">溢出、异常、线程池、阻塞，奇怪的服务重启问题定位</a></li><li><a href="/2024/05/19/stream_sse_chunk/" title="结合实例理解流式输出的几种实现方法">结合实例理解流式输出的几种实现方法</a></li><li><a href="/2024/05/10/c++_object_model/" title="结合实例深入理解 C++ 对象的内存布局">结合实例深入理解 C++ 对象的内存布局</a></li><li><a href="/2024/05/07/variadic_arguments_in_c++/" title="C++ 函数可变参实现方法的演进">C++ 函数可变参实现方法的演进</a></li><li><a href="/2024/03/15/object_memory_coredump/" title="Bazel 依赖缺失导致的 C++ 进程 coredump 问题分析">Bazel 依赖缺失导致的 C++ 进程 coredump 问题分析</a></li><li><a href="/2024/01/25/why_need_use_gpt_asap/" title="为什么一定要尽快用上 ChatGPT 等大语言模型">为什么一定要尽快用上 ChatGPT 等大语言模型</a></li><li><a href="/2024/01/18/supply_chain_attack_on_pytorch/" title="我们是如何对 PyTorch 发起供应链攻击的 (译文)">我们是如何对 PyTorch 发起供应链攻击的 (译文)</a></li><li><a href="/2024/01/17/c++_string_cow/" title="C++ string 意外修改之深入理解 COW 写时复制">C++ string 意外修改之深入理解 COW 写时复制</a></li><li><a href="/2024/01/09/openai_python_sdk_learn/" title="跟 OpenAI 学写 ChatGPT API 的 Python SDK 库">跟 OpenAI 学写 ChatGPT API 的 Python SDK 库</a></li></ul></div><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> 文章目录</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AI-%E5%AE%9E%E7%8E%B0%E4%BA%94%E5%AD%90%E6%A3%8B%E6%B8%B8%E6%88%8F"><span class="toc-number">1.</span> <span class="toc-text">AI 实现五子棋游戏</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E5%AD%90%E6%A3%8B%E6%B8%B8%E6%88%8F%E6%BC%94%E7%A4%BA"><span class="toc-number">1.1.</span> <span class="toc-text">五子棋游戏演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AI-%E5%AE%9E%E7%8E%B0%E4%BF%84%E7%BD%97%E6%96%AF%E6%96%B9%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">AI 实现俄罗斯方块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%84%E7%BD%97%E6%96%AF%E6%96%B9%E5%9D%97%E6%BC%94%E7%A4%BA"><span class="toc-number">2.1.</span> <span class="toc-text">俄罗斯方块演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%BA%E4%BA%BA%E7%94%A8-AI-%E5%86%99%E7%A8%8B%E5%BA%8F"><span class="toc-number">3.</span> <span class="toc-text">人人用 AI 写程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anthropic-%E4%B8%8D%E8%B6%B3"><span class="toc-number">4.</span> <span class="toc-text">Anthropic 不足</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量<span id="busuanzi_value_site_pv"></span>次，<span id="busuanzi_container_site_uv"></span>本站访客数<span id="busuanzi_value_site_uv"></span>人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
