@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://selfboot.cn/2023/11/21/divorce_settlement_description/</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/12/01/long_term_illness_lawer/</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/12/06/bert_nlp_classify/</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2023/12/09/why_not_overtime_pay/</loc>
     
     <lastmod>2024-06-22</lastmod>
@@ -191,15 +218,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/aboutme.html</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/google0b4c8a25b65d7c2a.html</loc>
     
     <lastmod>2024-06-22</lastmod>
@@ -209,7 +227,43 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/aboutme.html</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/links.html</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/07/07/gpt4_worker_copilot/</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/07/09/gpt4_code_interpreter_limit/</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/07/10/gpt4_code_interpreter_data/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -237,6 +291,15 @@
   
   <url>
     <loc>https://selfboot.cn/2023/07/20/claude_gpt4_compare/</loc>
+    
+    <lastmod>2024-06-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/07/21/divorce_legal_knowlage/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -290,7 +353,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/07/21/divorce_legal_knowlage/</loc>
+    <loc>https://selfboot.cn/2023/08/05/divorce_legal_longtime/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -300,15 +363,6 @@
   
   <url>
     <loc>https://selfboot.cn/2023/08/02/redis_python_bug/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/08/05/divorce_legal_longtime/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -524,7 +578,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/11/21/divorce_settlement_description/</loc>
+    <loc>https://selfboot.cn/2015/11/14/dns_practice/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -533,7 +587,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/12/01/long_term_illness_lawer/</loc>
+    <loc>https://selfboot.cn/2015/11/25/skip_classes/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -542,7 +596,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/12/06/bert_nlp_classify/</loc>
+    <loc>https://selfboot.cn/2016/05/04/pythonic/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -821,7 +875,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/06/13/gpt4_leetcode_2352/</loc>
+    <loc>https://selfboot.cn/2023/06/14/bug_redis_deadlock_1/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -830,7 +884,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/06/14/bug_redis_deadlock_1/</loc>
+    <loc>https://selfboot.cn/2023/06/13/gpt4_leetcode_2352/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -867,33 +921,6 @@
   
   <url>
     <loc>https://selfboot.cn/2023/06/30/ebpf_func_time/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/07/07/gpt4_worker_copilot/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/07/09/gpt4_code_interpreter_limit/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/07/10/gpt4_code_interpreter_data/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
@@ -1155,33 +1182,6 @@
   
   <url>
     <loc>https://selfboot.cn/2015/11/05/dns_theory/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/11/14/dns_practice/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2015/11/25/skip_classes/</loc>
-    
-    <lastmod>2024-06-22</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2016/05/04/pythonic/</loc>
     
     <lastmod>2024-06-22</lastmod>
     
