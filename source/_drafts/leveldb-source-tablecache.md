@@ -16,7 +16,7 @@ TableCache 实现比较简单，在 [LRU cache](/leveldb_source_LRU_cache) 的�
 
 ## TableCache 的应用
 
-TableCache 主要用在 DBImpl 类中，用于缓存打开的 sstable 文件。在 DBImpl 的构造函数中，会初始化一个 TableCache 对象，代码如下：
+先来看看 TableCache 的应用场景。TableCache 主要用在 DBImpl 类中，用于缓存打开的 sstable 文件。在 DBImpl 的构造函数中，会初始化一个 TableCache 对象，代码如下：
 
 ```c++
 DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
@@ -110,3 +110,73 @@ void DBImpl::RemoveObsoleteFiles() {
 
 ## TableCache 的实现
 
+TableCache 用 LRU Cache 来做缓存，对外提供了 3 个接口 NewIterator，Get 和 Evict。这三个接口在前面应用部分都有介绍使用场景，接下来看看具体是怎么实现的。
+
+TableCache 类中成员变量 `Cache* cache_` 是一个 LRU Cache 对象，用于存储 sstable 文件的缓存。在 TableCache 的构造函数中，`cache_(NewLRUCache(entries))` 会初始化这个 cache_ 对象。此外还有成员变量 Options 用来记录一些读配置，Env 来支持不同平台的文件操作。该类核心逻辑放在私有方法 `FindTable`，下面是实现代码。
+
+```c++
+Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
+                             Cache::Handle** handle) {
+  Status s;
+  char buf[sizeof(file_number)];
+  EncodeFixed64(buf, file_number);
+  Slice key(buf, sizeof(buf));
+  *handle = cache_->Lookup(key);
+  if (*handle == nullptr) {
+    std::string fname = TableFileName(dbname_, file_number);
+    RandomAccessFile* file = nullptr;
+    Table* table = nullptr;
+    s = env_->NewRandomAccessFile(fname, &file);
+    if (!s.ok()) {
+      std::string old_fname = SSTTableFileName(dbname_, file_number);
+      if (env_->NewRandomAccessFile(old_fname, &file).ok()) {
+        s = Status::OK();
+      }
+    }
+    if (s.ok()) {
+      s = Table::Open(options_, file, file_size, &table);
+    }
+
+    if (!s.ok()) {
+      assert(table == nullptr);
+      delete file;
+    } else {
+      TableAndFile* tf = new TableAndFile;
+      tf->file = file;
+      tf->table = table;
+      *handle = cache_->Insert(key, tf, 1, &DeleteEntry);
+    }
+  }
+  return s;
+}
+```
+
+整体上和一般的缓存业务流程差不太多，**先尝试在缓存中查找，如果找到直接返回。找不到的话，就从磁盘中读取并解析文件，然后插入到缓存中**。
+
+接下来看一些细节部分，这里缓存的 key 是根据文件编号（file_number）生成的，因为整个 LevelDB 数据库中所有磁盘文件的编号都是唯一的。具体做法是用 EncodeFixed64 将文件编号编码成固定长度的字符串，接着生成 Slice 对象作为键。EncodeFixed64 在 [整数编、解码](/leveldb-source-utils/#整数编、解码) 里面有详细介绍，这里不再赘述。
+
+打开文件部分可以看到会先尝试 TableFileName，失败的话，再尝试 SSTTableFileName。这两个函数的区别在于拿到的文件名后缀不同，TableFileName 是 ".ldb"，SSTTableFileName 是 ".sst"。这是因为新版本用 ".ldb" 作为文件后缀，旧版本用 ".sst" 作为文件后缀。这里做了版本兼容，如果打开新版本的文件失败，就尝试打开旧版本的文件。
+
+打开文件后，就会调用 Table::Open 函数来解析文件，生成 Table 对象。如果中间一切正常，会把文件对象指针和 Table 指针一起放到 TableAndFile 中，然后将 TableAndFile* 作为 value 插入到缓存中。调用 cache_ 的 Insert 插入缓存的时候，TableAndFile* 会隐式转换为 void*。这里 TableAndFile 的定义如下：
+
+```c++
+struct TableAndFile {
+  RandomAccessFile* file;
+  Table* table;
+};
+```
+
+在插入 cache_ 的时候，还指定了缓存释放的回调函数 DeleteEntry，这个函数会在缓存淘汰的时候被调用，用于释放资源。
+
+```c++
+static void DeleteEntry(const Slice& key, void* value) {
+  TableAndFile* tf = reinterpret_cast<TableAndFile*>(value);
+  delete tf->table;
+  delete tf->file;
+  delete tf;
+}
+```
+
+注意 cache_ 中的 value 是 void* 类型，提供的回调函数第二个参数也必须是 void* 类型。然后在 DeleteEntry 中通过 reinterpret_cast 将 void* 转换为 TableAndFile* ，然后释放资源。C++中，void* 是一种特殊的指针类型，用于指向任何类型的数据，但**无法直接对指向的数据进行操作，除非将其转换回其原始类型**。void* 提供了一种在不知道指针具体类型的情况下存储和传递地址的方式。
+
+### 接口实现
