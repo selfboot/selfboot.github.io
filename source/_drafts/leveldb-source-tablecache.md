@@ -38,7 +38,7 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
 
 ### 添加缓存
 
-首先来看什么时机下会主动将 sstable 文件添加到缓存中。我们知道，LevelDB 内存中的 immutable memtable 会被转换为 sstable 文件，这个过程会调用 `WriteLevel0Table` 函数。这个过程会调用 BuildTable 来生成 Level-0 下的 sstable 文件，然后写入硬盘。在成功写入磁盘后，LevelDB 就会用 TableCache 读取这个文件，除了用来验证确实写入成功，这个过程也会将新创建的文件添加到缓存中。
+首先来看什么时机下会主动将 sstable 文件添加到缓存中。我们知道，LevelDB 内存中的 immutable memtable 会被转换为 sstable 文件，这个过程会调用 `WriteLevel0Table` 函数。这个过程会调用 db/builder.cc 里的 BuildTable 来生成 Level-0 下的 sstable 文件，然后写入硬盘。在成功写入磁盘后，LevelDB 就会用 TableCache 读取这个文件，除了用来验证确实写入成功，这个过程也会将新创建的文件添加到缓存中。
 
 ```c++
 
@@ -110,9 +110,11 @@ void DBImpl::RemoveObsoleteFiles() {
 
 ## TableCache 的实现
 
-TableCache 用 LRU Cache 来做缓存，对外提供了 3 个接口 NewIterator，Get 和 Evict。这三个接口在前面应用部分都有介绍使用场景，接下来看看具体是怎么实现的。
+TableCache 用 LRU Cache 来做缓存，对外提供了 3 个接口 NewIterator，Get 和 Evict。这 3 个接口在前面应用部分都有介绍使用场景，那么具体怎么实现的呢？Evict 其实比较简单，直接调用 LRUCache 中的 Erase 清理相应 key 即可，下面看看其他 2 个怎么实现的。
 
-TableCache 类中成员变量 `Cache* cache_` 是一个 LRU Cache 对象，用于存储 sstable 文件的缓存。在 TableCache 的构造函数中，`cache_(NewLRUCache(entries))` 会初始化这个 cache_ 对象。此外还有成员变量 Options 用来记录一些读配置，Env 来支持不同平台的文件操作。该类核心逻辑放在私有方法 `FindTable`，下面是实现代码。
+### TableCache::FindTable
+
+TableCache 类中成员变量 `Cache* cache_` 是一个 LRU Cache 对象，用于存储 sstable 文件的缓存数据。在 TableCache 的构造函数中，`cache_(NewLRUCache(entries))` 会初始化这个 cache_ 对象。此外还有成员变量 Options 用来记录一些读配置，Env 来支持不同平台的文件操作。该类核心逻辑放在私有方法 `FindTable`，NewIterator，Get 都会用到，先来看看实现代码。
 
 ```c++
 Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
@@ -151,7 +153,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
 }
 ```
 
-整体上和一般的缓存业务流程差不太多，**先尝试在缓存中查找，如果找到直接返回。找不到的话，就从磁盘中读取并解析文件，然后插入到缓存中**。
+整体上和一般的缓存逻辑差不太多，**先尝试在缓存中查找，如果找到直接返回。找不到的话，就从磁盘中读取并解析文件，然后插入到缓存中**。
 
 接下来看一些细节部分，这里缓存的 key 是根据文件编号（file_number）生成的，因为整个 LevelDB 数据库中所有磁盘文件的编号都是唯一的。具体做法是用 EncodeFixed64 将文件编号编码成固定长度的字符串，接着生成 Slice 对象作为键。EncodeFixed64 在 [整数编、解码](/leveldb-source-utils/#整数编、解码) 里面有详细介绍，这里不再赘述。
 
@@ -166,7 +168,7 @@ struct TableAndFile {
 };
 ```
 
-在插入 cache_ 的时候，还指定了缓存释放的回调函数 DeleteEntry，这个函数会在缓存淘汰的时候被调用，用于释放资源。
+在插入 cache_ 的时候，还指定了缓存释放的回调函数 DeleteEntry，这个函数会在缓存淘汰的时候被调用，用于释放相应的资源。注意 cache_ 中的 value 是 void* 类型，提供的回调函数 DeleteEntry 第二个参数也必须是 void* 类型。在 DeleteEntry 中通过 reinterpret_cast 将 void* 转换为 TableAndFile* ，然后释放资源。
 
 ```c++
 static void DeleteEntry(const Slice& key, void* value) {
@@ -177,6 +179,64 @@ static void DeleteEntry(const Slice& key, void* value) {
 }
 ```
 
-注意 cache_ 中的 value 是 void* 类型，提供的回调函数第二个参数也必须是 void* 类型。然后在 DeleteEntry 中通过 reinterpret_cast 将 void* 转换为 TableAndFile* ，然后释放资源。C++中，void* 是一种特殊的指针类型，用于指向任何类型的数据，但**无法直接对指向的数据进行操作，除非将其转换回其原始类型**。void* 提供了一种在不知道指针具体类型的情况下存储和传递地址的方式。
+C++中，void* 是一种特殊的指针类型，用于指向任何类型的数据，但**无法直接对指向的数据进行操作，除非将其转换回其原始类型**。void* 提供了一种在不知道指针具体类型的情况下存储和传递地址的方式。
 
-### 接口实现
+### TableCache::Get
+
+接着来看看 TableCache 对外提供的接口实现。先来看下 Get，完整代码如下：
+
+```c++
+Status TableCache::Get(const ReadOptions& options, uint64_t file_number,
+                       uint64_t file_size, const Slice& k, void* arg,
+                       void (*handle_result)(void*, const Slice&,
+                                             const Slice&)) {
+  Cache::Handle* handle = nullptr;
+  Status s = FindTable(file_number, file_size, &handle);
+  if (s.ok()) {
+    Table* t = reinterpret_cast<TableAndFile*>(cache_->Value(handle))->table;
+    s = t->InternalGet(options, k, arg, handle_result);
+    cache_->Release(handle);
+  }
+  return s;
+}
+```
+
+首先调用 FindTable 方法来拿到 sstable 文件的缓存 handle (如果第一次读需要先解析然后放到 cache 中)，接着从 handle 中拿到对应的 Table* 指针。调用 Table 类的 InternalGet 方法，该方法负责在 sstable 文件中查找键，并使用**提供的回调函数 handle_result**返回解析后的结果。前面提过在 db/version_set.cc 中有调用 Get 方法，就是用函数 SaveValue 将 Table 中读取到的 value 解析为 state->saver。
+
+当然，用完缓存之后，需要调用 `cache_->Release(handle);` 来释放对当前 handle 的引用，如果这个 handle 没有其他引用，就可以等待被回收。
+
+### TableCache::NewIterator
+
+除了 Get，TableCache 还支持用 NewIterator 返回一个迭代器，可以遍历里面所有 key。虽然使用的时候，没用来遍历所有 key，只是验证 SST 文件写成功而已。具体实现如下，省略掉一些不重要的边界和异常处理代码。
+
+```c++
+Iterator* TableCache::NewIterator(const ReadOptions& options,
+                                  uint64_t file_number, uint64_t file_size,
+                                  Table** tableptr) {
+  // ...
+  Cache::Handle* handle = nullptr;
+  Status s = FindTable(file_number, file_size, &handle);
+  // ...
+
+  Table* table = reinterpret_cast<TableAndFile*>(cache_->Value(handle))->table;
+  Iterator* result = table->NewIterator(options);
+  result->RegisterCleanup(&UnrefEntry, cache_, handle);
+  if (tableptr != nullptr) {
+    *tableptr = table;
+  }
+  return result;
+}
+```
+
+这里也是先通过 FindTable 来拿到缓存 handle 指针，解析出 table 后调用 NewIterator 拿到迭代器 result。值得注意的是，这里用迭代器的 RegisterCleanup 方法，来注册迭代器失效后的清理函数 UnrefEntry。UnrefEntry 要做的事情也很简单，释放 LRUCache 的 handle 占用即可。
+
+```c++
+static void UnrefEntry(void* arg1, void* arg2) {
+  Cache* cache = reinterpret_cast<Cache*>(arg1);
+  Cache::Handle* h = reinterpret_cast<Cache::Handle*>(arg2);
+  cache->Release(h);
+}
+```
+
+RegisterCleanup 的实现在 table/iterator.cc 中，在迭代器对象中维护一个清理操作链表。每次添加新的注册回调，就在链表中增加一个节点。在迭代器析构的时候，遍历这里的链表，取出每个回调函数和参数然后进行处理。
+

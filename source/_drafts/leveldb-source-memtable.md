@@ -6,11 +6,15 @@ toc: true
 description: 
 ---
 
-MemTable 的主要作用是存储最近写入的数据。在 LevelDB 中，所有的写操作首先都会被记录到一个 [Write-Ahead Log（WAL，预写日志）](/leveldb-source-wal-log)中，以确保持久性，然后数据会被存储在 MemTable 中。当 MemTable 达到一定的大小阈值后，它会被转换为一个不可变的 Immutable MemTable，并且一个新的 MemTable 会被创建来接收新的写入。此时会触发一个后台过程将其写入磁盘形成 SSTable。这个过程中，一个新的 MemTable 被创建来接受新的写入操作。这样可以保证写入操作的连续性，不受到影响。
+在 LevelDB 中，所有的写操作首先都会被记录到一个 [Write-Ahead Log（WAL，预写日志）](/leveldb-source-wal-log)中，以确保持久性。接着数据会被存储在 MemTable 中，MemTable 的主要作用是**在内存中有序存储最近写入的数据**，到达一定条件后批量落磁盘。
+
+LevelDB 在内存中维护两种 MemTable，一个是可写的，接受新的写入请求。当达到一定的大小阈值后，会被转换为一个不可变的 Immutable MemTable，接着会触发一个后台过程将其写入磁盘形成 SSTable。这个过程中，会创建一个新的 MemTable 来接受新的写入操作。这样可以保证写入操作的连续性，不受到影响。
+
+在读取数据时，LevelDB 首先查询 MemTable。如果在 MemTable 中找不到，然后会依次查询不可变的 Immutable MemTable，最后是磁盘上的 SSTable 文件。
 
 <!-- more -->
 
-在读取数据时，LevelDB 首先查询 MemTable。如果在 MemTable 中找不到，然后会依次查询不可变的 Immutable MemTable，最后是磁盘上的 SSTables。
+本篇文章一起来看看 Memtable 是怎么实现的。
 
 ## Memtable 实现
 
