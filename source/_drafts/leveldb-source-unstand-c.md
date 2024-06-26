@@ -90,6 +90,49 @@ class LEVELDB_EXPORT Iterator {
 
 在没有定义 `LEVELDB_SHARED_LIBRARY` 的时候，LEVELDB_EXPORT 宏**被定义为空**，这意味着当 leveldb  被编译为静态库时，所有原本可能需要特殊导出导入标记的符号都不需要这样的标记了。静态链接的情况下，符号导出对于链接过程不是必需的，因为静态库的代码在编译时会直接被包含到最终的二进制文件中。
 
+## Pimpl 类设计
+
+在 LevelDB 的许多类中，都是只有一个指针类型的私有成员变量。比如 `include/leveldb/table_builder.h` 头文件的 TableBuild 类定义中，有私有成员变量 Rep *rep_，它是一个指向 Rep 结构体的指针：
+
+```cpp
+ private:
+  struct Rep;
+  Rep* rep_;
+```
+
+然后在 `table/table_builder.cc` 文件中定义了 Rep 结构体：
+
+```cpp
+struct TableBuilder::Rep {
+  Rep(const Options& opt, WritableFile* f)
+      : options(opt),
+        index_block_options(opt),
+        file(f),
+// ...
+```
+
+这里**为什么不直接在头文件中定义 Rep 结构体**呢？其实这里是使用了 **Pimpl(Pointer to Implementation)** 设计模式，主要有下面几个优点：
+
+- **二进制兼容**（ABI stability）。当 TableBuilder 类库更新时，只要其接口(.h 文件)保持不变，即使实现中 Rep 结构体增加成员，或者更改接口的实现，依赖该库的应用程序**只用更新动态库文件，无需重新编译**。如果没有做到二进制兼容，比如为公开的类增加一些成员变量，应用程序只更新动态库，不重新编译的话，运行时就会因为对象内存分布不一致，导致程序崩溃。可以参考之前业务遇到的类似问题，[Bazel 依赖缺失导致的 C++ 进程 coredump 问题分析](https://selfboot.cn/2024/03/15/object_memory_coredump/)。
+- **减少编译依赖**。如果 Rep 结构体的定义在头文件中，那么任何对 Rep 结构体的修改都会导致包含了 table_builder.h 的文件重新编译。而将 Rep 结构体的定义放在源文件中，只有 table_builder.cc 需要重新编译。
+- **接口与实现分离**。接口（在 .h 文件中定义的公共方法）和实现（在 .cc 文件中定义的 Rep 结构体以及具体实现）是完全分开的。这使得在不更改公共接口的情况下，开发者可以自由地修改实现细节，如添加新的私有成员变量或修改内部逻辑。
+
+**为什么使用成员指针后，会有上面的优点呢**？这就要从 C++ 对象的内存布局说起，一个类的对象在内存中的布局是连续的，并且直接包含其所有的非静态成员变量。如果成员变量是简单类型（如 int、double 等）或其他类的对象，这些成员将直接嵌入到对象内存布局中。可以参考我之前的文章[结合实例深入理解 C++ 对象的内存布局](https://selfboot.cn/2024/05/10/c++_object_model/) 了解更多内容。
+
+当成员变量是一个指向其他类的指针，该成员在内存中的布局只有一个指针（Impl* pImpl），而不是具体的类对象。这个**指针的大小和对齐方式是固定的，与 Impl 中具体包含什么数据无关**。因此无论指针对应的类内部实现如何变化（例如增加或移除数据成员、改变成员的类型等），外部类的大小和布局都保持不变，也不会受影响。
+
+在 《Effective C++》中，条款 31 就提到用这种方式来减少编译依赖：
+
+> 如果使用 object references 或 object pointers 可以完成任务，就不要使用objects。你可以只靠一个类型声明式就定义出指向该类型的 references 和 pointers；但如果定义某类型的 objects，就需要用到该类型的定义式。
+
+当然，软件开发没有银弹，这里的优点需要付出相应的开销，参考 [cppreference.com: PImpl](https://en.cppreference.com/w/cpp/language/pimpl)：
+
+- **生命周期管理开销（Runtime Overhead）**: Pimpl 通常需要在堆上动态分配内存来存储实现对象（Impl 对象）。这种动态分配比**在栈上分配对象（通常是更快的分配方式）慢**，且涉及到更复杂的内存管理。此外，堆上分配内存，如果没有释放会造成内存泄露。不过就上面例子来说，Rep 在对象构造时分配，并在析构时释放，不会造成内存泄露。
+- **访问开销（Access Overhead）**: 每次通过 Pimpl 访问私有成员函数或变量时，都需要通过指针间接访问。
+- **空间开销（Space Overhead）**: 每个使用 Pimpl 的类都会在其对象中增加至少一个指针的空间开销来存储实现的指针。如果实现部分需要访问公共成员，可能还需要额外的指针或者通过参数传递指针。
+
+总的来说，对于基础库来说，Pimpl 是一个很好的设计模式。也可以参考 [Is the PIMPL idiom really used in practice?](https://stackoverflow.com/questions/8972588/is-the-pimpl-idiom-really-used-in-practice) 了解更多讨论。
+
 ## 其他
 
 ### constexpr
