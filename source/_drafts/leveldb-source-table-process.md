@@ -90,7 +90,7 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
   }
 ```
 
-接着处理 FilterBlock 过滤索引块，
+接着处理 FilterBlock 过滤索引块，该块用来快速判断某个 key 是否存在于当前 SSTable 中。FilterBlock 是可选的，如果设置了 options.filter_policy，那么就会在 TableBuilder 中创建一个 FilterBlock。其核心代码如下：
 
 ```cpp
   if (r->filter_block != nullptr) {
@@ -104,29 +104,23 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 
 ## 创建 SSTable  
 
-在 db/builder.cc 中封装了一个函数 BuildTable 来创建 SSTable 文件，主要就是调用 TableBuilder 类的接口来实现的。核心部分代码如下：
+在 db/builder.cc 中封装了一个函数 BuildTable 来创建 SSTable 文件，主要就是调用 TableBuilder 类的接口来实现的。省略其他无关代码，核心代码如下：
 
 ```cpp
 Status BuildTable(const std::string& dbname, Env* env, const Options& options,
                   TableCache* table_cache, Iterator* iter, FileMetaData* meta) {
     // ...
     TableBuilder* builder = new TableBuilder(options, file);
-    meta->smallest.DecodeFrom(iter->key());
+    // ...
     Slice key;
     for (; iter->Valid(); iter->Next()) {
       key = iter->key();
       builder->Add(key, iter->value());
     }
-    if (!key.empty()) {
-      meta->largest.DecodeFrom(key);
-    }
-
+    // ...
     // Finish and check for builder errors
     s = builder->Finish();
-    if (s.ok()) {
-      meta->file_size = builder->FileSize();
-      assert(meta->file_size > 0);
-    }
+    // ...
     delete builder;
     //..
 }
