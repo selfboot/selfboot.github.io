@@ -171,7 +171,7 @@ Mesh 层的代码由专人维护，在提交 Issue 后难以确定何时能修�
 
 于是就开心的去改了业务发请求部分的代码，在发起网络请求前设置 header，改动如下：
 
-```c++
+```cpp
 {
     // ....
     // Disable "Expect: 100-continue" header

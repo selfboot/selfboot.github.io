@@ -80,7 +80,7 @@ return heapq.nlargest(k, num_count, key=lambda x: num_count[x])
 
 而用 C++ 实现的话，代码会多很多，带来的好处就是速度的飞跃。具体代码在[这里](https://github.com/xuelangZF/LeetCode/blob/master/Heap/347_TopKFrequentElements.cpp)，建立大小为 k 的小顶堆，每次进堆时和堆顶进行比较，核心代码如下：
 
-```c++
+```cpp
 // Build the min-heap with size k.
 for(auto it = num_count.begin(); it != num_count.end(); it++){
     if(frequent_heap.size() < k){
@@ -100,7 +100,7 @@ for(auto it = num_count.begin(); it != num_count.end(); it++){
 
 如果用 C++ 的话，相信很多人也能避开求中间值的整型溢出的坑：`int mid = low + (high - low) / 2;`，于是写出下面的代码：
 
-```c++
+```cpp
 int low = 0, high = x;
 while(low <= high){
 // int mid = (low+high) / 2,  may overflow.
@@ -118,7 +118,7 @@ while(low <= high){
 
 除了臭名昭著的整型溢出问题，c++ 和 python 在位运算上也有着一点不同。以 [371 Sum of Two Integers](https://LeetCode.com/problems/sum-of-two-integers/) 为例，不用 +, - 实现 int 型的加法 `int getSum(int a, int b)`。其实就是模拟计算机内部加法的实现，很明显是一个位运算的问题，c++实现起来比较简单，如下：
 
-```c++
+```cpp
 int getSum(int a, int b) {
     if(b==0){
         return a;

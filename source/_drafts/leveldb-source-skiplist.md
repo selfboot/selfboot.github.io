@@ -9,7 +9,7 @@ description:
 在 LevelDB 中，MemTable 中的数据存储在 Table 中，而这里 Table 底层实现就是 SkipList(跳表)。跳表是William Pugh 在论文 [Skip Lists: A Probabilistic Alternative to
 Balanced Trees](https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf) 中提出的一种概率性数据结构。有点类似**有序链表**，但是可以有多层，通过空间换时间，允许快速的查询、插入和删除操作，平均时间复杂度为 `O(log n)`。和一些平衡树比起来，代码实现也比较简单，性能稳定，因此应用比较广泛。
 
-```c++
+```cpp
 typedef SkipList<const char*, KeyComparator> Table;
 ```
 
@@ -33,7 +33,7 @@ LevelDB 中 skiplist 的实现代码很简练，这里以 Inert 插入函数为�
 
 完整代码很简练如下，省掉了部份注释。
 
-```c++
+```cpp
 template <typename Key, class Comparator>
 void SkipList<Key, Comparator>::Insert(const Key& key) {
   Node* prev[kMaxHeight];           // 1
@@ -71,7 +71,7 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 
 完整的代码如下：
 
-```c++
+```cpp
 template <typename Key, class Comparator>
 typename SkipList<Key, Comparator>::Node*
 SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,

@@ -27,7 +27,7 @@ date: 2023-10-19 20:13:29
 
 这里为了能够方便地复现问题，直接把生成 Zip 包部分抽离出来，写了一个简单的示例，核心代码如下：
 
-```c++
+```cpp
 zip* archive = zip_open(tmpFile, ZIP_CREATE | ZIP_TRUNCATE, &error);
 if (archive == NULL) {
     printf("fail to open %s err %d", tmpFile, error);
@@ -83,7 +83,7 @@ ChatGPT 果真是江湖百晓通，一下子就给出了一个看起来正确的
 
 按照 ChatGPT 的回答，这里循环 FileInfos 执行完后，zip_close 被调用之前，`item.htmltemlate` 内存里的内容可能已经被释放了，所以这里添加的内容不对。这个结论很容易**验证**是不是靠谱，直接改下这行代码：
 
-```c++
+```cpp
 for (const auto &item : FileInfos) {
 ```
 

@@ -134,7 +134,7 @@ ChatGPT 自从有了 All-Tools，这种涉及到计算的部分，一般都会�
 
 Bard 每个题目会同时给出 3 个回答，这里 Draft A 的回答，代码写的不对。我看了下 Draft B，代码是没有问题的，也有注释。不过和 ChatGPT 的比，还是复杂难懂了些，并且解释也没有 ChatGPT 的清晰。
 
-```c++
+```cpp
 class Solution {
 public:
   int minFlips(int a, int b, int c) {

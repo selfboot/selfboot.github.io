@@ -61,7 +61,7 @@ worker idle 0, busy 200;
 
 我们先来看下这段有问题的代码，简化后并隐去关键信息，大致如下：
 
-```c++
+```cpp
 int func() {
 	const int gramCount = 3;
 	vector<int> posVec;
@@ -92,7 +92,7 @@ int func() {
 
 为了验证上面的猜想，写了一个简单的测试程序，模拟业务中线程池的工作流程。这里用 C++11 的 thread 来开启 5 个新线程，并且让这些线程 sleep 一段时间模拟执行任务。当所有线程都执行完任务后，最后一个完成的线程向管道写入一个字符，主线程阻塞在管道读取上。测试代码如下：
 
-```c++
+```cpp
 #include <iostream>
 #include <stdexcept>
 #include <thread>
@@ -170,7 +170,7 @@ Main thread finished Thread ID: 140358584862528 - 2024-06-12 11:40:52
 
 现在让**最后一个子线程直接抛出异常，来看看主线程是否阻塞**。在上面代码基础上改动如下：
 
-```c++
+```cpp
 //...
     if (finished == totalThreads) {
         throw std::out_of_range("Out of range exception"); // 模拟 at 越界访问数组，抛出异常
@@ -234,7 +234,7 @@ C++11 引入了 std::async，这是一个用于**简化并发编程**的高级�
 
 哈哈，看完这里的介绍，是不是一头雾水、不知所云？没事，先抛开这些，直接看代码先。我们在前面 thread 示例代码的基础上，稍加改动，用 async 来并发执行，完整代码如下：
 
-```c++
+```cpp
 #include <iostream>
 #include <stdexcept>
 #include <future>
@@ -303,7 +303,7 @@ Completed Thread ID: 140098007656192 - 2024-06-12 21:06:01
 
 成功复现了业务中的问题。在继续深入分析前，先来看看 async 的用法，主要如下：
 
-```c++
+```cpp
     int totalThreads = 5;
     std::vector<std::future<void>> futures;
     for (int i = 0; i < totalThreads; ++i) {
@@ -337,7 +337,7 @@ Completed Thread ID: 140098007656192 - 2024-06-12 21:06:01
 
 这里我们可以在示例程序 read 前调用 get 来捕获异常，然后打印出来验证下。
 
-```c++
+```cpp
     // ...
     for (auto& future : futures) {
         try {

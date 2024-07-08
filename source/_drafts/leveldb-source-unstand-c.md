@@ -10,7 +10,7 @@ description:
 
 在 `util/cache.cc` 的 LRUHandle 结构体定义中，有一个柔性数组(**flexible array member**) `char key_data[1]`，用来在`C/C++`中实现**可变长数据结构**。
 
-```c++
+```cpp
 struct LRUHandle {
   // ...
   char key_data[1];  // Beginning of key
@@ -24,7 +24,7 @@ struct LRUHandle {
 
 在这个 handle 结构体中，`key_data[1]`实际上只是一个占位符，真正分配给`key_data`的空间要比 1 字节大，它由 malloc 时计算的total_size确定。具体到 LevelDB 的实现中，在插入新的缓存条目时，会根据 key 的长度动态分配内存，然后将 key 的内容拷贝到这块内存中。如下代码：
 
-```c++
+```cpp
 Cache::Handle* LRUCache::Insert(const Slice& key, uint32_t hash, void* value,
                                 size_t charge,
                                 void (*deleter)(const Slice& key,
@@ -50,7 +50,7 @@ Cache::Handle* LRUCache::Insert(const Slice& key, uint32_t hash, void* value,
 
 在 `include/leveldb/*.h` 中的类，定义的时候都带有一个宏 `LEVELDB_EXPORT`，比如：
 
-```c++
+```cpp
 class LEVELDB_EXPORT Iterator {
  public:
  ...
@@ -59,7 +59,7 @@ class LEVELDB_EXPORT Iterator {
 
 这里宏的定义在 `include/leveldb/export.h` 中，为了方便看分支，下面加了缩进(实际代码没有)，如下：
 
-```c++
+```cpp
 #if !defined(LEVELDB_EXPORT)
     #if defined(LEVELDB_SHARED_LIBRARY)
         #if defined(_WIN32)
@@ -139,7 +139,7 @@ struct TableBuilder::Rep {
 
 `constexpr` 指定了用于声明常量表达式的变量或函数。这种声明的目的是告知编译器**这个值或函数在编译时是已知**的，这允许在编译期间进行更多的优化和检查。
 
-```c++
+```cpp
 static constexpr int kCacheSize = 1000;
 ```
 

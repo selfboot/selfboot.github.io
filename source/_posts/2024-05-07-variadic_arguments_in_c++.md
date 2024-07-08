@@ -10,7 +10,7 @@ description: C++ 中实现可变参数函数的三种方法:C 风格变长参数
 
 可变参数函数是**接受可变数量参数的函数**，在不少场景下，可变参数函数是非常有用的。比如想打印日志时，可以接受任意数量的参数，然后将这些参数拼接输出到控制台，如下：
 
-```c++
+```cpp
 {
     // ...;
     LogInfo(user, cost, action, result);
@@ -25,7 +25,7 @@ description: C++ 中实现可变参数函数的三种方法:C 风格变长参数
 
 最早是 C 风格的变长参数列表，它通过 `<cstdarg>` 中定义的宏实现，主要包括：`va_list, va_start, va_arg, va_end`。下面是一个使用 C 风格变长参数的例子，实现了一个函数来计算任意数量整数的和：
 
-```c++
+```cpp
 #include <cstdarg>
 #include <iostream>
 
@@ -53,7 +53,7 @@ int main() {
 
 要注意这种方式**不检查数据类型**，错误地传递参数类型可能导致运行时错误。比如下面的调用中，第 1 个参数传成了字符串，编译器不会报错，但是运行时计算出来的结果是不对的。
 
-```c++
+```cpp
 std::cout << sum(5, "1", 2, 3, 4, 5) << std::endl;
 ```
 
@@ -61,7 +61,7 @@ std::cout << sum(5, "1", 2, 3, 4, 5) << std::endl;
 
 随着 C++ 模板技术的发展，为了更好支持变参函数，C++11 引入了变参模板，**不需要在调用时指定参数的个数，而是通过模板和递归函数展开来处理任意数量和类型的参数**。上面的 sum 函数用变参模板实现如下：
 
-```c++
+```cpp
 #include <iostream>
 
 // 基本案例：当只有一个参数时，直接返回该参数
@@ -89,7 +89,7 @@ int main() {
 
 我们可以在上面模板函数中添加打印语句，然后在运行时观察到模板展开的结果。虽然这种方法不能直接展示编译时的情况，但它可以帮助理解模板是如何逐步被实例化和展开的。
 
-```c++
+```cpp
 template<typename T>
 T sum(T t) {
     std::cout << "Base case with " << t << std::endl;
@@ -128,7 +128,7 @@ clang++ -fsyntax-only -Xclang -ast-print -std=c++11 test.cpp
 
 可以看到当函数 `sum(1, 2, 3, 4, 5)` 被调用时，编译器生成如下展开：
 
-```c++
+```cpp
 sum<int, int, int, int, int>(int first, int args, int args, int args, int args)
 sum<int, int, int, int>(int first, int args, int args, int args)
 sum<int, int, int>(int first, int args, int args)
@@ -142,7 +142,7 @@ sum<int>(int first)
 
 变参模板有一个优点就是**类型安全**，这是因为变参模板的实现依赖于**编译器的模板展开机制，可以在编译时进行类型检查**。前面 C 风格的变长参数 sum 实现中，函数调用时候，如果传入参数是一个 string，是可以通过编译的，在运行时结果才会出错。
 
-```c++
+```cpp
 std::cout << sum(1, "2", 3, 4, 5) << std::endl; // 输出: 15
 ```
 
@@ -156,7 +156,7 @@ std::cout << sum(1, "2", 3, 4, 5) << std::endl; // 输出: 15
 
 当然变参模板也有一些局限，熟悉递归的人可能会想到，递归展开的深度往往是有限的。这个问题在变参模板中也是存在的，**编译器对递归展开的深度有限制，当参数过多时，可能会导致编译失败**。Clang 编译器的默认**模板递归实例化深度在 Mac 上是 1024 层**，可以使用下面的 C++ 程序来测试 Clang 的模板递归深度限制。
 
-```c++
+```cpp
 #include <iostream>
 
 template<int N>
@@ -191,7 +191,7 @@ int main() {
 
 先来看简单示例代码，一个变参的 sum 和 show 打印函数，从代码行数来说比之前方案就简单了很多：
 
-```c++
+```cpp
 #include <iostream>
 
 // 变参的 sum 函数使用折叠表达式实现
@@ -244,7 +244,7 @@ int main() {
 
 许多现代 C++ 库利用了变参模板和折叠表达式来实现其功能，使得这些库更加灵活、强大和类型安全。比如 [fmt](https://github.com/fmtlib/fmt) 是一个现代化的 C++ 格式化库，提供了一种类型安全的方法来替换 C 风格的printf。在C++20标准中，fmt的核心功能被采纳为标准库的一部分，即`std::format`。它的用法很现代化，和 python 的 print 用法有点类似，如下：
 
-```c++
+```cpp
 std::string s = fmt::format("The answer is {}.", 42);
 fmt::print("Hello, {name}! The answer is {number}. Goodbye, {name}.",
            fmt::arg("name", "World"), fmt::arg("number", 42));

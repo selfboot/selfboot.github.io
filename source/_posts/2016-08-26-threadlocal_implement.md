@@ -31,7 +31,7 @@ except ImportError:
 
 嗯，自带解释，非常好。我们要做的是继续往下深挖具体实现，用同样的方法（⌘↓）找 _local 的实现，好像不太妙，没有找到纯 python 实现：
 
-```c++
+```cpp
 class _local(object):
     """ Thread-local data """
     def __delattr__(self, name): # real signature unknown; restored from __doc__

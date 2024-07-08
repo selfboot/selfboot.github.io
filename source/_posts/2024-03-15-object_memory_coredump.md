@@ -216,7 +216,7 @@ g++ main.cpp data.pb.cc  -o main -L. -lprotobuf -Wl,-rpath,. -ldata -g
 
 这里 **core 的位置也挺有意思的**，如果 main.cpp 不注释 set_message 部分，如下：
 
-```c++
+```cpp
 int main() {
     Data req;
     std::cout << "main: " << sizeof(req) << std::endl;
@@ -230,7 +230,7 @@ int main() {
 
 程序并没有 core 在动态库 processData 中，反而是 core 在 main 中的 `req.message()` 了。大概是因为 processData 中访问对象**凑巧**没有错乱，直到 main 中访问 `req.message()` 的时候才触发内存错误。那么如果把 `req.message()` 这行也注释呢，如下代码还会 core 吗？
 
-```c++
+```cpp
 int main() {
     Data req;
     std::cout << "main: " << sizeof(req) << std::endl;

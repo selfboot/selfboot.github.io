@@ -60,7 +60,7 @@ date: 2023-09-07 22:24:48
 
 首先是 `modelA/data.proto`，里面记录一个字段，对应我们项目中比较老的 proto：
 
-```c++
+```cpp
 syntax = "proto2";
 package model;
 message HWPushAndroid{
@@ -70,7 +70,7 @@ message HWPushAndroid{
 
 然后是 `modelB/data.proto`，里面的 proto package 和 message name 都和 `modelA/data.proto` 一样，但是里面多了两个字段，对应项目中比较新的 proto：
 
-```c++
+```cpp
 syntax = "proto2";
 package model;
 message HWPushAndroid{
@@ -82,7 +82,7 @@ message HWPushAndroid{
 
 接着我们在 `main.cpp` 中使用 `modelB/data.proto` 中的字段，先给每个字段赋值，然后打印出来：
 
-```c++
+```cpp
 #include <iostream>
 #include "modelB/data.pb.h"  // 假设我们想使用 modelB 的版本
 
@@ -105,7 +105,7 @@ protoc --cpp_out=. modelB/data.proto
 
 接着编译、链接 main 如下：
 
-```c++
+```cpp
 g++ main.cpp -I./ -o main ./modelA/data.pb.cc -lprotobuf
 ```
 
@@ -224,7 +224,7 @@ model::HWPushAndroid::_internal_target_user_type() const
 
 再进一步，如果我在 main.cpp 直接访问这里的 target_user_type 字段，会发生什么呢？如下代码：
 
-```c++
+```cpp
 ...
 std::cout << androidMessage.target_user_type() << std::endl;
 std::cout << androidMessage.DebugString() << std::endl;

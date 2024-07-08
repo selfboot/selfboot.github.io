@@ -25,7 +25,7 @@ LevelDB 支持写入单个键值对和批量写入多个键值对，这两种操
 
 我们先来看 `write_batch.h` 文件，这里定义了 WriteBatch 类对外暴露的一些接口。 LevelDB 代码中的注释十分清晰，不过这里先省略注释：
 
-```c++
+```cpp
 class LEVELDB_EXPORT WriteBatch {
  public:
   class LEVELDB_EXPORT Handler {

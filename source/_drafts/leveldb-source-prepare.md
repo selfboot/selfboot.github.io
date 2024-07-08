@@ -54,7 +54,7 @@ Clangd 是一个基于 LLVM 项目的语言服务器，主要支持 C 和 C++ �
 
 比如这类代码：
 
-```c++
+```cpp
 int A[10];
 memset(A, 0, sizeof(A + 0));
 
@@ -110,7 +110,7 @@ ldd ./build/leveldb_tests
 
 **测试用例可以帮助更好的理解代码逻辑。**在阅读代码的过程中，有时候想验证一些逻辑，因此可以改动一下测试用例。比如我把一个能通过的测试用例故意改坏：
 
-```c++
+```cpp
 --- a/util/cache_test.cc
 +++ b/util/cache_test.cc
 @@ -69,7 +69,7 @@ TEST_F(CacheTest, HitAndMiss) {

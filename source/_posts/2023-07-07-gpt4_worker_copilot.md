@@ -74,7 +74,7 @@ GPT4 对这段代码的总体解释如下：
 
 对于一些实现细节也有不错的解释，比如
 
-```c++
+```cpp
 #define M(NAME, DOCUMENTATION) extern const Metric NAME = Metric(__COUNTER__); 
 // 这一行定义了一个宏M，它接受两个参数NAME和DOCUMENTATION，并定义一个外部常量NAME，其类型为Metric，值为Metric(__COUNTER__)。这里的__COUNTER__是一个预处理器宏，它表示这个宏每次展开时的递增整数。
 ```

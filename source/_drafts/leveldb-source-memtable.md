@@ -22,7 +22,7 @@ MemTable 内部使用跳表（Skip List）来存储键值对，跳表提供了�
 
 类内部来声明了一个跳表对象 table_ 成员变量，跳表的 key 是 `const char*` 类型，value 是 `KeyComparator` 类型。KeyComparator 是一个自定义的比较器，它包含了一个 `InternalKeyComparator` 类型的成员变量 comparator，用来比较 internal key 的大小。比较器的 `operator()` 重载了函数调用操作符，先解码 length-prefixed string，拿到 internal key 然后调用 comparator 的 Compare 方法来比较大小。 
 
-```c++
+```cpp
 int MemTable::KeyComparator::operator()(const char* aptr,
                                         const char* bptr) const {
   // Internal keys are encoded as length-prefixed strings.
@@ -36,7 +36,7 @@ int MemTable::KeyComparator::operator()(const char* aptr,
 
 Memtable 封装后的跳表，主要支持下面两个方法：
 
-```c++
+```cpp
   // Add an entry into memtable that maps key to value at the
   // specified sequence number and with the specified type.
   // Typically value will be empty if type==kTypeDeletion.
@@ -58,7 +58,7 @@ Add 方法用于往 MemTable 中添加一个键值对，其中 key 和 value 是
 
 在 LevelDB 的 `db/write_batch.cc` 中定义的 MemTableInserter 类中有写入 memtable 的逻辑，主要是调用 MemTable 的 Add 方法来添加键值对。这里 write_batch 的实现，可以参考 [LevelDB 源码阅读：批量写的优雅设计](/leveldb_source_write_batch/)。
 
-```c++
+```cpp
   void Put(const Slice& key, const Slice& value) override {
     mem_->Add(sequence_, kTypeValue, key, value);
     sequence_++;
@@ -67,7 +67,7 @@ Add 方法用于往 MemTable 中添加一个键值对，其中 key 和 value 是
 
 下面来看看具体的写入逻辑：
 
-```c++
+```cpp
 // db/memtable.cc
 void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
                    const Slice& value) {
@@ -100,7 +100,7 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 
 这里写入键值对的格式在代码注释中写的很清晰，主要由 5 部分组成：
 
-```c++
+```cpp
 +-----------+-----------+----------------------+----------+--------+
 | Key Size  | User Key  |          tag         | Val Size | Value  |
 +-----------+-----------+----------------------+----------+--------+
@@ -113,7 +113,7 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 
 从 memtable 中查询 key 主要是通过跳表的 Seek 方法来查找 key，然后根据 key 的 tag 来确定返回结果。完整代码如下：
 
-```c++
+```cpp
 // db/memtable.cc
 bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
   Slice memkey = key.memtable_key();
@@ -162,7 +162,7 @@ bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
 
 在 db_impl.cc 中，当需要将 immemtable 落地到 Level0 的 SST文件时，就会用到 MemTableIterator 来遍历 memTable 中的键值对。使用部分的代码如下，BuildTable 中会遍历 memTable，将键值对写入到 SST 文件中。
 
-```c++
+```cpp
 // db/db_impl.cc
 Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
                                 Version* base) {
@@ -187,7 +187,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 最后来看看 MemTable 的内存管理。MemTable 使用**引用计数**机制来管理内存，引用计数允许多个部分的代码共享对 MemTable 的访问权，而不需要担心资源释放的问题。这里对外提供了 Ref 和 Unref 两个方法来增加和减少引用计数：
 
-```c++
+```cpp
   // Increase reference count.
   void Ref() { ++refs_; }
 
@@ -203,7 +203,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 
 当引用计数减至零时，MemTable 自动删除自己，然后就会调用析构函数 `~MemTable()` 来释放内存。对象析构时，对于自定义的成员变量，**会调用各自的析构函数来释放资源**。在 MemTable 中，用跳表来存储 key，跳表的内存则是通过 `Arena arena_;` 来管理的。MemTable 析构过程，会调用 area_ 的析构函数来释放之前分配的内存。
 
-```c++
+```cpp
 Arena::~Arena() {
   for (size_t i = 0; i < blocks_.size(); i++) {
     delete[] blocks_[i];

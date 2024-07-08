@@ -18,7 +18,7 @@ TableCache 实现比较简单，在 [LRU cache](/leveldb_source_LRU_cache) 的�
 
 先来看看 TableCache 的应用场景。TableCache 主要用在 DBImpl 类中，用于缓存打开的 sstable 文件。在 DBImpl 的构造函数中，会初始化一个 TableCache 对象，代码如下：
 
-```c++
+```cpp
 DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
     : env_(raw_options.env),
       // ...
@@ -40,7 +40,7 @@ DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
 
 首先来看什么时机下会主动将 sstable 文件添加到缓存中。我们知道，LevelDB 内存中的 immutable memtable 会被转换为 sstable 文件，这个过程会调用 `WriteLevel0Table` 函数。这个过程会调用 db/builder.cc 里的 BuildTable 来生成 Level-0 下的 sstable 文件，然后写入硬盘。在成功写入磁盘后，LevelDB 就会用 TableCache 读取这个文件，除了用来验证确实写入成功，这个过程也会将新创建的文件添加到缓存中。
 
-```c++
+```cpp
 
 Status BuildTable(const std::string& dbname, Env* env, const Options& options,
                   TableCache* table_cache, Iterator* iter, FileMetaData* meta) {
@@ -62,7 +62,7 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
 
 其实不止是生成 sstable 文件的时候会主动添加到 TableCache 中，在读取过程中，函数会先尝试从 TableCache 中查找，如果缓存中没有命中，则会从磁盘中读取文件并缓存起来。LevelDB 中的 Version::Get 方法用于执行查找操作，这个函数通过查询不同版本的 sstable 文件来查找一个特定的键，并根据查找结果返回相应的值或状态。在查找的时候，对于每个 sstable 文件，
 
-```c++
+```cpp
 Status Version::Get(const ReadOptions& options, const LookupKey& k,
                     std::string* value, GetStats* stats) {
     // ...
@@ -84,7 +84,7 @@ TableCache 会在一定条件下**主动淘汰一些缓存的 sstable 文件，�
 
 删除文件时，除了将其文件名添加到删除列表中，还**需要从 TableCache 中删掉这个文件的缓存**。这是因为，一旦文件被物理删除，其相关的缓存条目就变得无效，继续保留会浪费资源。
 
-```c++
+```cpp
 // db/db_impl.cc
 void DBImpl::RemoveObsoleteFiles() {
   std::vector<std::string> filenames;
@@ -116,7 +116,7 @@ TableCache 用 LRU Cache 来做缓存，对外提供了 3 个接口 NewIterator�
 
 TableCache 类中成员变量 `Cache* cache_` 是一个 LRU Cache 对象，用于存储 sstable 文件的缓存数据。在 TableCache 的构造函数中，`cache_(NewLRUCache(entries))` 会初始化这个 cache_ 对象。此外还有成员变量 Options 用来记录一些读配置，Env 来支持不同平台的文件操作。该类核心逻辑放在私有方法 `FindTable`，NewIterator，Get 都会用到，先来看看实现代码。
 
-```c++
+```cpp
 Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
                              Cache::Handle** handle) {
   Status s;
@@ -161,7 +161,7 @@ Status TableCache::FindTable(uint64_t file_number, uint64_t file_size,
 
 打开文件后，就会调用 Table::Open 函数来解析文件，生成 Table 对象。如果中间一切正常，会把文件对象指针和 Table 指针一起放到 TableAndFile 中，然后将 TableAndFile* 作为 value 插入到缓存中。调用 cache_ 的 Insert 插入缓存的时候，TableAndFile* 会隐式转换为 void*。这里 TableAndFile 的定义如下：
 
-```c++
+```cpp
 struct TableAndFile {
   RandomAccessFile* file;
   Table* table;
@@ -170,7 +170,7 @@ struct TableAndFile {
 
 在插入 cache_ 的时候，还指定了缓存释放的回调函数 DeleteEntry，这个函数会在缓存淘汰的时候被调用，用于释放相应的资源。注意 cache_ 中的 value 是 void* 类型，提供的回调函数 DeleteEntry 第二个参数也必须是 void* 类型。在 DeleteEntry 中通过 reinterpret_cast 将 void* 转换为 TableAndFile* ，然后释放资源。
 
-```c++
+```cpp
 static void DeleteEntry(const Slice& key, void* value) {
   TableAndFile* tf = reinterpret_cast<TableAndFile*>(value);
   delete tf->table;
@@ -185,7 +185,7 @@ C++中，void* 是一种特殊的指针类型，用于指向任何类型的数�
 
 接着来看看 TableCache 对外提供的接口实现。先来看下 Get，完整代码如下：
 
-```c++
+```cpp
 Status TableCache::Get(const ReadOptions& options, uint64_t file_number,
                        uint64_t file_size, const Slice& k, void* arg,
                        void (*handle_result)(void*, const Slice&,
@@ -209,7 +209,7 @@ Status TableCache::Get(const ReadOptions& options, uint64_t file_number,
 
 除了 Get，TableCache 还支持用 NewIterator 返回一个迭代器，可以遍历里面所有 key。虽然使用的时候，没用来遍历所有 key，只是验证 SST 文件写成功而已。具体实现如下，省略掉一些不重要的边界和异常处理代码。
 
-```c++
+```cpp
 Iterator* TableCache::NewIterator(const ReadOptions& options,
                                   uint64_t file_number, uint64_t file_size,
                                   Table** tableptr) {
@@ -230,7 +230,7 @@ Iterator* TableCache::NewIterator(const ReadOptions& options,
 
 这里也是先通过 FindTable 来拿到缓存 handle 指针，解析出 table 后调用 NewIterator 拿到迭代器 result。值得注意的是，这里用迭代器的 RegisterCleanup 方法，来注册迭代器失效后的清理函数 UnrefEntry。UnrefEntry 要做的事情也很简单，释放 LRUCache 的 handle 占用即可。
 
-```c++
+```cpp
 static void UnrefEntry(void* arg1, void* arg2) {
   Cache* cache = reinterpret_cast<Cache*>(arg1);
   Cache::Handle* h = reinterpret_cast<Cache::Handle*>(arg2);

@@ -31,7 +31,7 @@ LevelDB 没有使用系统默认的 malloc 来分配内存，也没有使用比�
 
 内存 memtable 的数据其实存储在 skiplist 中的。每次插入 key，就需要往 skiplist 中插入节点，这里节点使用的内存就是用 arena 来分配的。如果是小 key，这里会优先从当前 block 中剩余内存中拿，不够的话才会走到分配逻辑。Allocate 的代码如下：
 
-```c++
+```cpp
 inline char* Arena::Allocate(size_t bytes) {
   assert(bytes > 0);
   if (bytes <= alloc_bytes_remaining_) {
@@ -46,7 +46,7 @@ inline char* Arena::Allocate(size_t bytes) {
 
 通过系统调用分配内存的逻辑在 `AllocateFallback` 中，如果需要的内存大于 `kBlockSize / 4`，则按照实际需要分配。否则的话，就直接分配一个 block 的内存，然后更新使用情况。这里没有用完的内存余量，可以在下次分配内存的时候使用。如果不够下次需要的量，则重新走系统调用来分配。
 
-```c++
+```cpp
 char* Arena::AllocateFallback(size_t bytes) {
   if (bytes > kBlockSize / 4) {
     // Object is more than a quarter of our block size.  Allocate it separately
@@ -70,7 +70,7 @@ char* Arena::AllocateFallback(size_t bytes) {
 
 顺便再提一下这里最后的内存回收，每次调用 `new []` 分配内存后，会把首地址放到 vector 中，然后在 Arena 类析构的时候，遍历拿出所有的内存块，统一进行释放。
 
-```c++
+```cpp
 char* Arena::AllocateNewBlock(size_t block_bytes) {
   char* result = new char[block_bytes];
   blocks_.push_back(result);
@@ -99,7 +99,7 @@ seed_ = (seed_ * A) % M
 
 构造函数接收一个 32 位无符号整数作为种子（seed_），并确保种子落在有效范围内（非 0 且不等于 2147483647L，即 2^31 - 1）。这是因为种子的值直接影响随机数生成过程，而这两个特定的值（0 和 2^31 - 1）在计算过程中会导致生成的序列失去随机性。
 
-```c++
+```cpp
   explicit Random(uint32_t s) : seed_(s & 0x7fffffffu) {
     // Avoid bad seeds.
     if (seed_ == 0 || seed_ == 2147483647L) {
@@ -110,7 +110,7 @@ seed_ = (seed_ * A) % M
 
 生成随机数的代码很精简，如下（忽略原有注释）：
 
-```c++
+```cpp
   uint32_t Next() {
     static const uint32_t M = 2147483647L;  // 2^31-1
     static const uint64_t A = 16807;        // bits 14, 8, 7, 5, 2, 1, 0
@@ -131,7 +131,7 @@ seed_ = (seed_ * A) % M
 
 Skewed 的实现比较有意思，首先从 [0, max_log] 范围内均匀选择一个基数 base，接着用 `Uniform(1 << base)` 返回 [0, 2^base - 1] 范围内的一个随机数。这里基数 base 的选择概率是均匀的，这意味着选择一个较小的 base（从而生成较小的随机数）与选择一个较大的 base（从而生成较大的随机数）的概率是相同的。然而，由于 base 的值越小，能生成的随机数的范围就越小，这自然导致了**函数倾向于生成较小的数值**。
 
-```c++
+```cpp
   // Skewed: pick "base" uniformly from range [0,max_log] and then
   // return "base" random bits.  The effect is to pick a number in the
   // range [0,2^max_log-1] with exponential bias towards smaller numbers.
@@ -144,7 +144,7 @@ CRC（**Cyclic Redundancy Check，循环冗余检查**）是一种通过特定�
 
 CRC 的计算基于**多项式除法**，处理的数据被视为一个巨大的多项式，通过**这个多项式除以另一个预定义的“生成多项式”**，然后取余数作为输出的CRC值。CRC算法具有天然的**流式计算特性**，可以先计算消息的一部分的CRC，然后将这个结果作为下一部分计算的初始值（init_crc）。下面的 `Extend` 函数接受一个初始的 CRC 值（可能是之前数据块的CRC结果），然后计算加上新的数据块后的CRC值。这使得 LevelDB 能够在不断追加数据时连续计算CRC，而不需要每次都从头开始。
 
-```c++
+```cpp
 // Return the crc32c of concat(A, data[0,n-1]) where init_crc is the
 // crc32c of some string A.  Extend() is often used to maintain the
 // crc32c of a stream of data.
@@ -160,7 +160,7 @@ inline uint32_t Value(const char* data, size_t n) { return Extend(0, data, n); }
 
 另外在 `crc32c.h` 中还看到有一个 Mask，这里代码注释也写的很清楚了，如果数据本身包含CRC值，然后直接在包含CRC的数据上再次计算CRC，可能会降低CRC的错误检测能力。因此，LevelDB 对CRC值进行高低位交换后加上一个常数（kMaskDelta），来“掩码”原始的CRC值。这种变换后的CRC值可以存储在文件中，当要验证数据完整性时，使用 Unmask 函数将掩码后的CRC值转换回原始的CRC值，再与当前数据的CRC计算结果进行比较。
 
-```c++
+```cpp
 // Return a masked representation of crc.
 //
 // Motivation: it is problematic to compute the CRC of a string that
@@ -184,7 +184,7 @@ inline uint32_t Unmask(uint32_t masked_crc) {
 
 LevelDB 中经常需要将数字存储在字节流或者从字节流中解析数字，比如 key 中存储长度信息，在批量写的任务中存储序列号等。在 `util/coding.h` 中实现了一系列编码和解码的工具函数，方便在字节流中存储和解析数字。首先来看固定长度的编、解码，主要有下面几个函数：
 
-```c++
+```cpp
 void PutFixed32(std::string* dst, uint32_t value);
 void PutFixed64(std::string* dst, uint64_t value);
 void EncodeFixed32(char* dst, uint32_t value);
@@ -193,7 +193,7 @@ void EncodeFixed64(char* dst, uint64_t value);
 
 以 32 位的编码为例，`PutFixed32` 函数将一个 32 位的无符号整数 value 编码为 4 个字节，然后追加到 dst 字符串的末尾。`EncodeFixed32` 函数则将 value 编码为 4 个字节，存储到 dst 指向的内存中。PutFixed32 底层以 EncodeFixed32 为基础，只是将结果追加到了 dst 字符串中。
 
-```c++
+```cpp
 inline void EncodeFixed32(char* dst, uint32_t value) {
   uint8_t* const buffer = reinterpret_cast<uint8_t*>(dst);
 
@@ -214,7 +214,7 @@ inline void EncodeFixed32(char* dst, uint32_t value) {
 
 编码完之后，dst 中的内容将是：`78 56 34 12`。解码的过程就是将这 4 个字节按照相反的顺序组合起来，得到原始的 value 值。
 
-```c++
+```cpp
 inline uint32_t DecodeFixed32(const char* ptr) {
   const uint8_t* const buffer = reinterpret_cast<const uint8_t*>(ptr);
 
@@ -238,7 +238,7 @@ Varint 原理很简单，使用一个或多个字节来存储整数的方法，�
 
 具体实现中，EncodeVarint32 和 EncodeVarint64 略有不同，32 位的直接先判断需要的字节数，然后硬编码写入。64 位的则是循环写入，每次处理 7 位，直到数值小于 128。
 
-```c++
+```cpp
 char* EncodeVarint64(char* dst, uint64_t v) {
   static const int B = 128;
   uint8_t* ptr = reinterpret_cast<uint8_t*>(dst);
@@ -253,7 +253,7 @@ char* EncodeVarint64(char* dst, uint64_t v) {
 
 当然，这里是编码，对应有从字节流中解码出 Varint 的实现。主要实现如下：
 
-```c++
+```cpp
 const char* GetVarint64Ptr(const char* p, const char* limit, uint64_t* value) {
   uint64_t result = 0;
   for (uint32_t shift = 0; shift <= 63 && p < limit; shift += 7) {

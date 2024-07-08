@@ -109,7 +109,7 @@ struct redisObject {
 
 后来再思考这里的时候，才发现自己完全也能找到。因为这里 list 在循环中肯定不断添加 client，而 redis 里面 list 尾部添加元素的函数很容易找到就是 `listAddNodeTail`：
 
-```c++
+```cpp
 // adlist.c
 list *listAddNodeTail(list *list, void *value)
 {

@@ -8,7 +8,7 @@ description:
 
 LevelDB 源码中有一个获取 Comparator 的函数，第一次看到的时候觉得有点奇怪，看起来像是构造了一个单例，但又略复杂。完整代码如下：
 
-```c++
+```cpp
 // util/comparator.cc
 const Comparator* BytewiseComparator() {
   static NoDestructor<BytewiseComparatorImpl> singleton;
@@ -24,7 +24,7 @@ const Comparator* BytewiseComparator() {
 
 我们先来看看 `NoDestructor` 模板类，它用于**包装一个实例，使得其析构函数不会被调用**。这个模板类用了比较多的高级特性，如模板编程、完美转发、静态断言、对齐要求、以及原地构造（placement new）等，接下来一一解释。这里先给出完整的代码实现：
 
-```c++
+```cpp
 // util/no_destructor.h
 // Wraps an instance whose destructor is never called.
 // This is intended for use with function-level static variables.
@@ -71,7 +71,7 @@ class NoDestructor {
 
 回到文章开始的例子，singleton 对象是一个静态局部变量，第一次调用 BytewiseComparator() 时被初始化，它的生命周期和程序的整个生命周期一样长。程序退出的时候，**singleton 对象本身会被析构销毁掉**，但是 NoDestructor 没有在其析构函数中添加任何逻辑来析构 instance_storage_ 中构造的对象，因此 instance_storage_ 中的 BytewiseComparatorImpl 对象永远不会被析构。
 
-```c++
+```cpp
 const Comparator* BytewiseComparator() {
   static NoDestructor<BytewiseComparatorImpl> singleton;
   return singleton.get();
@@ -84,7 +84,7 @@ LevelDB 中还提供了一个测试用例，用来验证这里的 NoDestructor �
 
 在 `util/no_destructor_test.cc` 中首先定义了一个结构体 `DoNotDestruct`，这个结构体在析构函数中调用了 std::abort()。如果程序运行或者最后退出的时候，调用了 DoNotDestruct 对象的析构函数，那么测试程序将会异常终止。
 
-```c++
+```cpp
 struct DoNotDestruct {
  public:
   DoNotDestruct(uint32_t a, uint64_t b) : a(a), b(b) {}
@@ -98,7 +98,7 @@ struct DoNotDestruct {
 
 接着定义了 2 个测试用例，一个定义了栈上的 NoDestructor 对象，另一个定义了一个静态的 NoDestructor 对象。这两个测试用例分别验证 NoDestructor 对象在栈上和静态存储区上的行为。
 
-```c++
+```cpp
 TEST(NoDestructorTest, StackInstance) {
   NoDestructor<DoNotDestruct> instance(kGoldenA, kGoldenB);
   ASSERT_EQ(kGoldenA, instance.get()->a);
@@ -118,7 +118,7 @@ TEST(NoDestructorTest, StaticInstance) {
 
 这里我们可以增加个测试用例，验证下如果直接定义 DoNotDestruct 对象的话，测试进程会不会异常终止。可以先定义一个栈上的对象来测试，放在其他 2 个测试用例前面，如下：
 
-```c++
+```cpp
 TEST(NoDestructorTest, Instance) {
   DoNotDestruct instance(kGoldenA, kGoldenB);
   ASSERT_EQ(kGoldenA, instance.a);
@@ -138,7 +138,7 @@ TEST(NoDestructorTest, Instance) {
 
 举一个例子，假设有两个类，一个是日志系统，另一个是某种服务，服务在析构时需要向日志系统记录信息。日志类的代码如下：
 
-```c++
+```cpp
 // logger.h
 #include <iostream>
 #include <string>
@@ -169,7 +169,7 @@ public:
 
 注意这个类的 isAlive 成员变量，在构造函数中初始化为 true，析构函数中置为 false。在 log 函数中，会先检查 isAlive 是否为 true，如果为 false，就会触发断言失败。接着是服务类的代码，这里作为示例，只让它在析构的时候用日志类的静态局部变量记录一条日志。
 
-```c++
+```cpp
 // Service.h
 #include <string>
 
@@ -183,7 +183,7 @@ public:
 
 在 main 函数中，使用全局变量 globalService 和 globalLogger，其中 globalService 是一个全局 Service 实例，globalLogger 是一个 Logger 单例。
 
-```c++  
+```cpp  
 // main.cpp
 #include "logger.h"
 #include "service.h"

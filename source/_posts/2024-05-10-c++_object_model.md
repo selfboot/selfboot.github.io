@@ -21,7 +21,7 @@ description: 通过实例来深入理解 C++ 对象的内存布局，包括基�
 
 首先以一个最简单的 Basic 类为例，来看看只含有基本数据类型的对象是怎么分配内存的。
 
-```c++
+```cpp
 #include <iostream>
 using namespace std;
 
@@ -54,7 +54,7 @@ int main() {
 
 带有方法的类又是什么样呢？接着上面的例子，在类中增加一个方法 setB，用来设置其中成员 b 的值。
 
-```c++
+```cpp
 #include <iostream>
 
 class Basic {
@@ -93,7 +93,7 @@ int main() {
 
 那么成员方法中又是如何拿到成员变量的地址呢？在解决这个疑问前，先来仔细看下 setB 的函数原型`(void (*)(Basic * const, double))`，这里函数的第一个参数是`Basic*` 指针，而在代码中的调用是这样：`temp.setB(3.14)`。这种用法其实是一种语法糖，**编译器在调用成员函数时自动将当前对象的地址作为this指针传递给了函数的**。
 
-```c++
+```cpp
 (gdb) p &Basic::setB(double)
 $7 = (void (*)(Basic * const, double)) 0x5555555551d2 <Basic::setB(double)>
 ```
@@ -143,7 +143,7 @@ $ g++ basic_method.cpp -o basic_method_O2 -O2 -g -std=c++11
 
 先来看私有成员，接着上面的例子，增加私有成员变量和方法。整体代码如下：
 
-```c++
+```cpp
 #include <iostream>
 
 class Basic {
@@ -180,7 +180,7 @@ int main() {
 
 那么**运行期是否有保护呢？**我们来验证下。前面已经验证 private 成员变量也是根据偏移来找到内存位置的，我们可以在代码中直接根据偏移找到内存位置并更改里面的值。
 
-```c++
+```cpp
 int* pC = reinterpret_cast<int*>(reinterpret_cast<char*>(&temp) + 16);
 *pC = 12; // 直接修改c的值
 ```
@@ -189,7 +189,7 @@ int* pC = reinterpret_cast<int*>(reinterpret_cast<char*>(&temp) + 16);
 
 私有方法和普通成员方法一样存储在文本段，我们拿到其地址后，可以通过这个地址调用吗？这里需要一些骚操作，我们**在类定义中添加额外的接口来暴露私有成员方法的地址**，然后通过成员函数指针来调用私有成员函数。整体代码如下：
 
-```c++
+```cpp
 class Basic {
 ...
 public:
@@ -220,7 +220,7 @@ int main() {
 
 下面以一个具体的例子，来看看静态成员变量和静态成员方法的内存布局以及实现特点。继续接着前面代码例子，这里省略掉其他无关代码了。
 
-```c++
+```cpp
 #include <iostream>
 
 class Basic {
@@ -258,7 +258,7 @@ int main() {
 
 先来看看不带虚函数的继承，示例代码如下：
 
-```c++
+```cpp
 #include <iostream>
 
 class Basic {
@@ -301,7 +301,7 @@ int main() {
 
 带有虚函数的继承，稍微有点复杂了。在前面继承例子基础上，增加一个虚函数，然后在 main 中用多态的方式调用。
 
-```c++
+```cpp
 #include <iostream>
 
 class Basic {
@@ -369,7 +369,7 @@ int main() {
 
 现在搞清楚了虚函数在类对象中的内存布局。在编译器实现中，**虚函数表指针是每个对象实例的一部分，占用对象实例的内存空间**。对于一个实例对象，**通过其地址就能找到对应的虚函数表，然后通过虚函数表找到具体的虚函数地址，实现多态调用**。那么为什么**必须通过引用或者指针才能实现多态调用**呢？看下面 3 个调用，最后一个没法多态调用。
 
-```c++
+```cpp
 Basic& ref = derivedObj; 
 Basic* ptr = &derivedObj;
 Basic dup = derivedObj; // 没法实现多态调用

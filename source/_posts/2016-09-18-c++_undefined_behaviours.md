@@ -8,7 +8,7 @@ description: 深入探讨C++中的未定义行为。这篇文章详细解释了�
 
 现在我们需要一个程序从控制台读入一个 INT 型整数（输入确保是INT），然后输出其绝对值，你可能闭着眼睛就会写出下面的代码：
 
-```c++
+```cpp
 #include <iostream>
 
 int main()
@@ -55,7 +55,7 @@ C++ 标准中有大量的未定义行为，如果在标准中查找 `undefined b
 
 解引用一个指向已销毁对象的指针，有时候很容易就会犯这个错误，例如在[函数中返回局部指针地址](https://github.com/xuelangZF/CS_Offer/blob/master/C%2B%2B/Function.md#函数返回值)。 一些简单的错误代码如下：
 
-```c++
+```cpp
 #include <iostream>
 
 int * get(int tmp){
@@ -107,7 +107,7 @@ C++ 程序经常因为未定义行为而出现各种千奇百怪的 Bug，调试
 
 C++ 标准还规定了一些 **Unspecified Behavior**，一个简单的例子（一个大公司曾经的笔试题目）如下：
 
-```c++
+```cpp
 #include <iostream>
 using namespace std;
 

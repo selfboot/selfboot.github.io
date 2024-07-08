@@ -20,7 +20,7 @@ Partition 可不只用在快速排序中，还可以用于 [Selection algorithm]
 
 Partition 的一个直观简单实现如下（这里取数组的第一个元素为pivot）：
 
-```c++
+```cpp
 // Do partition in arr[begin, end), with the first element as the pivot.
 int partition(vector<int>&arr, int begin, int end){
     int pivot = arr[begin];
@@ -47,7 +47,7 @@ int partition(vector<int>&arr, int begin, int end){
 
 如果我们考虑用 [Two Pointers](https://github.com/xuelangZF/LeetCode/tree/master/TwoPointers) 的思想，保持头尾两个指针向中间扫描，每次在头部找到大于pivot的值，同时在尾部找到小于pivot的值，然后将它们做一个交换，就可以一次把这两个数字放到最终的位置。一种比较明智的写法如下：
 
-```c++
+```cpp
 int partition(vector<int>&arr, int begin, int end)
 {
     int pivot = arr[begin];
@@ -73,7 +73,7 @@ int partition(vector<int>&arr, int begin, int end)
 
 我们都知道经典的快速排序就是首先用 partition 将数组分为两部分，然后分别对左右两部分递归进行快速排序，过程如下：
 
-```c++
+```cpp
 void quick_sort(vector<int> &arr, int begin, int end){
     if(begin >= end - 1){
         return;
@@ -95,7 +95,7 @@ void quick_sort(vector<int> &arr, int begin, int end){
 
 下面给出基于迭代的实现（这里寻找第 k 小的数字）：
 
-```c++
+```cpp
 int find_kth_number(vector<int> &arr, int k){
     int begin = 0, end = arr.size();
     assert(k>0 && k<=end);
@@ -130,7 +130,7 @@ int find_kth_number(vector<int> &arr, int k){
 
 可以结合下面代码来理解具体的逻辑：
 
-```c++
+```cpp
 // Assume target is in the arr.
 void three_way_partition(vector<int> &arr, int target){
     int next_less_pos = 0, next_bigger_pos = arr.size()-1;

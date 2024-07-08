@@ -62,6 +62,8 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
 }
 ```
 
+#### 前置校验
+
 在 Add 方法中，首先会先读出来 rep_ 的数据，做一些前置校验，比如验证文件没有被关闭，保证键值对是有序的。
 
 ```cpp
@@ -73,11 +75,13 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
   }
 ```
 
-接着会检查是否需要更新索引块 (IndexBlock)，该块用来快速检索某个 key 可能落在哪个 DataBlock 中。**每个 DataBlock 都对应索引块中的一条记录**，每当处理完一个 DataBlock 时，就会将 pending_index_entry 设置为 true，等到下次全新的 DataBlock 增加第一个 key 前，再更新上个 DataBlock 的索引记录。
+#### 处理索引记录
+
+接着会检查是否需要添加索引记录 (IndexBlock)，这些记录被用来快速检索 key 对应的 DataBlock 位置。**每个 DataBlock 都对应索引块中的一条记录**，每当处理完一个 DataBlock 时，就会将 pending_index_entry 设置为 true，等到下次全新的 DataBlock 增加第一个 key 前，再更新上个 DataBlock 的索引记录。
 
 这里之所以要等到新 DataBlock 增加第一个 key 的时候才更新索引块，是**为了减少索引键的长度**，从而减少索引块的大小。比如前一个 DataBlock 中的最后(也是最大)一个 key 是 "the quick brown fox"，新的 DataBlock 即将插入的第一个(也是最小) key 是 "the who"，那么索引块中增加的索引键可以为 "the w"。这里 "the w" 是位于 "the quick brown fox" 和 "the who" 之间的**最短分隔 key**。这里计算字符串之间的最短分割 key，是通过调用 options.comparator->FindShortestSeparator，其默认实现在 `util/comparator.cc`。
 
-每个 DataBlock 索引记录的 value 是该块在文件内的偏移和 size，这是通过 pending_handle 来记录的。当通过 WriteRawBlock 将 DataBlock 写文件的时候，会更新 pending_handle 的偏移和大小。然后写索引的时候，用 EncodeTo 将偏移和 size 编码到字符串中，和前面的索引 key 一起插入到 IndexBlock 中。索引部分的核心代码如下：
+每条索引记录的 value 是**该块在文件内的偏移和 size**，这是通过 pending_handle 来记录的。当通过 WriteRawBlock 将 DataBlock 写文件的时候，会更新 pending_handle 的偏移和大小。然后写索引的时候，用 EncodeTo 将偏移和 size 编码到字符串中，和前面的索引 key 一起插入到 IndexBlock 中。索引部分的核心代码如下：
 
 ```cpp
   if (r->pending_index_entry) {
@@ -90,13 +94,55 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
   }
 ```
 
-接着处理 FilterBlock 过滤索引块，该块用来快速判断某个 key 是否存在于当前 SSTable 中。FilterBlock 是可选的，如果设置了 options.filter_policy，那么就会在 TableBuilder 中创建一个 FilterBlock。其核心代码如下：
+#### 处理过滤记录
+
+接着处理 FilterBlock 过滤索引块，该块用来**快速判断某个 key 是否存在于当前 SSTable 中**。如果设置需要过滤，在添加 key 的时候，则需要同步添加索引，其核心代码如下：
 
 ```cpp
   if (r->filter_block != nullptr) {
     r->filter_block->AddKey(key);
   }
 ```
+
+这里添加 key 之后，只是在内存中存储索引，要等到最后 TableBuild 写完所有的 Block 之后，才会将 FilterBlock 写入文件。**FilterBlock 本身是可选的**，通过 options.filter_policy 来设置。在初始化 TableBuilder::Rep 的时候，会根据 options.filter_policy 来初始化 FilterBlockBuilder 指针，如下：
+
+```cpp
+  Rep(const Options& opt, WritableFile* f)
+      : options(opt),
+        // ...
+        filter_block(opt.filter_policy == nullptr
+                         ? nullptr
+                         : new FilterBlockBuilder(opt.filter_policy)),
+        pending_index_entry(false) {
+    // ...
+  }
+```
+
+这里值得注意的是 filter_block 之所以是指针，主要是因为除了用默认的布隆过滤器，还可以**用多态机制使用自己的过滤器**。这里用 new 在堆上创建的对象，为了**防止内存泄露**，在 TableBuilder 析构的时候，先释放掉 filter_block，再接着释放 rep_。
+
+```cpp
+TableBuilder::~TableBuilder() {
+  assert(rep_->closed);  // Catch errors where caller forgot to call Finish()
+  delete rep_->filter_block;
+  delete rep_;
+}
+```
+
+之所以需要释放 rep_，是因为它是在 TableBuilder 构造的时候，在堆上创建的，如下：
+
+```cpp
+TableBuilder::TableBuilder(const Options& options, WritableFile* file)
+    : rep_(new Rep(options, file)) {
+  if (rep_->filter_block != nullptr) {
+    rep_->filter_block->StartBlock(0);
+  }
+}
+```
+
+关于 LevelDB 默认的布隆过滤器实现，可以参考[LevelDB 源码阅读：布隆过滤器的实现](/leveldb_source_filterblock)。
+
+#### 处理数据块
+
 
 ### Finish 写入文件
 

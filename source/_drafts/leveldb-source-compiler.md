@@ -14,7 +14,7 @@ description:
 
 比如 LRU Cache 的定义：
 
-```c++
+```cpp
 class LRUCache {
  public:
  // ...

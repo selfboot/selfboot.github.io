@@ -38,7 +38,7 @@ eBPF 支持用户空间追踪 (uprobes)，允许我们附加 eBPF 程序到用�
 
 这里模拟耗时的函数实现如下：
 
-```c++
+```cpp
 void someFunction(int iteration) {
     // 模拟一个通常执行得很快，但每 100 次迭代中的最后一次耗时较长的函数
     volatile double result = 0.0;
@@ -52,7 +52,7 @@ void someFunction(int iteration) {
 
 为了提供一个耗时的计算基准，在测试代码中我们也添加了耗时统计，计算函数的平均耗时和 P99 耗时。具体方法是，在一个无限循环中，它每次调用函数并记录执行时间。每当累计执行时间超过一秒，它就计算并输出这段时间内函数执行的平均时间和P99 时间。然后，它清除所有已记录的执行时间，准备开始下一轮的数据收集和分析，如下实现：
 
-```c++
+```cpp
 int main() {
     std::vector<double> timings;
     int iteration = 0;
@@ -95,7 +95,7 @@ BCC 提供了方便的方法，便于我们统计函数的耗时分布。首先�
 探针函数 `trace_start` 在每次函数调用开始时捕获当前的时间戳，并将其与表示当前进程的键一起存储在 BPF 哈希映射 start 中。当函数调用结束时，`trace_end` 探针函数查找起始时间戳，并计算出函数执行的时间差。这个时间差被记录到 BPF 直方图 dist 中，用于后续的性能分析。完整的脚本 `func_time_hist.py` 在 [gist](https://gist.github.com/selfboot/3c78f4c50c70bce22e1ce61b7d72dbda) 上。
 
 
-```c++
+```cpp
 int trace_start(struct pt_regs *ctx) {
     struct key_t key = {};
     u64 ts;
@@ -139,7 +139,7 @@ $ python func_time_hist.py 832965  _Z12someFunctioni
 
 很多时候我们不只想看到函数耗时分布，还想知道平均耗时和 P99 耗时，只需要对上面的 BCC 脚本稍作改动即可。每次函数执行后，使用 BPF 的 PERF 输出接口来收集执行时间到用户空间。具体通过在 BPF 程序的 `trace_end` 函数中使用 `perf_submit` 助手函数来实现。
 
-```c++
+```cpp
 int trace_end(struct pt_regs *ctx) {
     struct key_t key = {};
     struct data_t data = {};

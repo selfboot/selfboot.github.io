@@ -17,7 +17,7 @@ description: 本文通过示例代码复现字符串副本被修改后原字符�
 
 这里直接给出可以稳定复现的代码，定义一个字符串 original，然后复制一份，接着调用一个函数来修改副本字符串的内容。业务中的函数比较复杂，这里复现用了一个简单的函数，只是修改 copy 的第一个字符。在修改副本 copy 前后，打印两个字符串的内容和内存地址。往下看之前，你可以先猜猜下面代码的输出。
 
-```c++
+```cpp
 #include <iostream>
 #include <cstring>
 
@@ -85,7 +85,7 @@ Copy    : Xello, World!, address: 0x607058
 
 其实用 `[]` 只读取字符串中某位的内容，也会触发写时复制。比如下面的代码：
 
-```c++
+```cpp
 {
     string original = "Hello, World!";
     string copy = original;
@@ -118,7 +118,7 @@ Copy    : Hello, World!, address: 0x21f2058
 
 用 COW 实现 string 的好处是可以减少不必要的数据复制，但是它也有一些缺点。先看一个简单示例，参考 [Legality of COW std::string implementation in C++11](https://stackoverflow.com/questions/12199710/legality-of-cow-stdstring-implementation-in-c11) 下的一个回答。
 
-```c++
+```cpp
 int main() {
     std::string s("str");
     const char* p = s.data();
@@ -142,7 +142,7 @@ COW 写时复制除了带来上面这些潜在 bug 外，还有一个比较重�
 
 举个简单的例子，如下对于原始字符串，这里先复制了几个副本，然后分别在不同的线程中运行。在 COW 的实现中，必须保证这里各个线程操作独立副本字符串是线程安全的，也就要求COW 的实现中，**字符串中共享内存的引用计数必须是原子操作**。原子操作本身需要开销，而且在多线程环境下，多个 CPU 对同一个地址的原子操作开销更大。如果不用 COW 实现，本来是**可以避免这部分开销**的。
 
-```c++
+```cpp
 // StringOperations 这里修改字符串
 int main() {
     std::string thread1 = "Hello, World! This is a test string."; // 共享字符串
@@ -184,7 +184,7 @@ int main() {
 
 可以用下面代码来验证下：
 
-```c++
+```cpp
 #include <iostream>
 using namespace std;
 

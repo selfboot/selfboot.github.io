@@ -71,7 +71,7 @@ Nerdtree用来浏览文件系统并打开文件或目录，它提供如下功能
 
 如果输入不完整的代码片段名字，键入`<C-\>`之后就会给出所有可能的片段名称。另外可以嵌套使用代码片段名字，例如在C文件中输入`switch<C-\>`，会产生一个switch片段，然后在
 
-```c++
+```cpp
 switch ( var ) {
        case constant :
                /* cursor */
@@ -81,7 +81,7 @@ switch ( var ) {
 
 然后两次`<Tab>`跳到`cursor`位置，然后`if<C-\>`插入if片段，如下：
 
-```c++
+```cpp
 switch ( var ) {
        case constant :
                if ( condition ) {

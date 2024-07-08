@@ -24,7 +24,7 @@ date: 2023-11-08 13:21:26
 
 下面是一个简单的内存泄露模拟程序，程序会在循环中分配内存，但是没有释放，从而导致内存泄露。main 程序如下，发生泄露的函数调用链路是 `main->caller->slowMemoryLeak`：
 
-```c++
+```cpp
 #include <iostream>
 
 namespace LeakLib {
@@ -45,7 +45,7 @@ int main() {
 
 其中内存泄露的代码在 `slowMemoryLeak` 函数中，具体如下：
 
-```c++
+```cpp
 namespace LeakLib {
     void slowMemoryLeak() {
         int arrSize = 10;
@@ -192,7 +192,7 @@ $ objdump -h /usr/local/lib/libtcmalloc_debug.so.4 | grep debug
 
 那么下面就来看下满足这两个条件后，内存泄露的分析结果。修改上面的 leak_lib.cpp 中内存分配的代码：
 
-```c++
+```cpp
 // int* p = new int[arrSize];
 int* p = (int*)malloc(arrSize * sizeof(int));
 ```

@@ -48,13 +48,13 @@ updated: 2023-09-20 22:00:01
 
 从最简单的示例入手，demoA 和 demoB 里面的 sum.h 里声明函数如下:
 
-```c++
+```cpp
 int sum(int a, int b);
 ```
 
 具体实现在各自的 cpp 文件中，DemoB 中的输出是 "DemoB"，这样通过输出就知道用的哪个库里面的实现。DemoA 中的 cpp 定义如下：
 
-```c++
+```cpp
 #include "sum.h"
 #include <iostream>
 int sum(int a, int b) {
@@ -65,7 +65,7 @@ int sum(int a, int b) {
 
 main.cpp 很简单，就是调用一个 sum：
 
-```c++
+```cpp
 #include "demoB/sum.h"
 int main() {
     int result = sum(1, 2);
@@ -94,7 +94,7 @@ DemoB
 
 前面复现代码和项目中的代码还是有一点不同的，接下来尽量模拟项目中的改动方法。在 demoA 的 sum.h 中增加一个类，如下：
 
-```c++
+```cpp
 // sum.h
 class Demo{
 public:
@@ -113,7 +113,7 @@ Demo::Demo(int a){
 
 然后对于 DemoB 中的类的构造函数，增加一个默认参数 b：
 
-```c++
+```cpp
 // sum.h
 class Demo{
 public:
@@ -132,7 +132,7 @@ Demo::Demo(int a, int b){
 
 之后 main 里面增加一个类对象的定义：
 
-```c++
+```cpp
 int main() {
     int result = sum(1, 2);
     Demo de(10, 10);
@@ -181,7 +181,7 @@ int main() {
 
 也就是说**当链接器从静态库的 .o 文件中引用一个符号时，它实际上会把包含该符号的整个对象文件都链接到最终的可执行文件**。为了验证这一点，把 demoB/sum.cpp 里面 Demo 类的构造函数定义拆分出来为一个新的编译单元 demo.cpp，如下：
 
-```c++
+```cpp
 // cat demoB/demo.cpp
 #include "sum.h"
 #include <iostream>

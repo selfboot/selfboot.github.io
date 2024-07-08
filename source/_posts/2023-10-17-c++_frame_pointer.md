@@ -45,7 +45,7 @@ DWARF由一系列的“调试节”组成，每个节包含特定类型的调试
 
 对于 C++ 项目来说，为了在编译时生成包含 DWARF 调试信息的二进制文件，需要使用编译器的编译选项。对于 GCC 和 Clang 编译器，这通常是通过使用 `-g` 标志来完成的。下面是一个简单的示例代码：
 
-```c++
+```cpp
 // dwarf.cpp
 #include <iostream>
 
@@ -75,7 +75,7 @@ $ perf record --call-graph dwarf ./my_program
 
 为了在生成的二进制文件中保留帧指针，要确保在编译程序时启用帧指针。这可以通过使用编译器标志来完成，例如在 GCC 中使用 `-fno-omit-frame-pointer`。下面是一个简单的示例代码：
 
-```c++
+```cpp
 // fp_demo_write.cpp
 #include <unistd.h>
 #include <chrono>

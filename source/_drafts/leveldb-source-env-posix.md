@@ -18,7 +18,7 @@ description:
 
 当然，注释里也说明了这个类需要**调用者进行同步，以确保线程安全**。在 POSIX 环境下，这个类的实现是 `PosixSequentialFile`。这个类 final 继承自 SequentialFile，阻止被其他任何类继承，同时实现了上述两个虚函数。其中 Read 的实现如下：
 
-```c++
+```cpp
 Status Read(size_t n, Slice* result, char* scratch) override {
     Status status;
     while (true) {
@@ -50,7 +50,7 @@ Status Read(size_t n, Slice* result, char* scratch) override {
 
 在 POSIX 环境下，这个类的实现是 `PosixWritableFile`。类内部使用了一个缓冲区 `buf_`，Append的时候将小的写操作缓存起来，一次性写入较大块数据到文件系统，这样可以减少对底层文件系统的调用次数，从而提高写操作的效率。如果是写入大块内容，则直接写入文件。把数据写入文件通过系统调用 [write()](https://man7.org/linux/man-pages/man2/write.2.html) 实现，主要代码如下：
 
-```c++
+```cpp
   Status WriteUnbuffered(const char* data, size_t size) {
     while (size > 0) {
       ssize_t write_result = ::write(fd_, data, size);
@@ -69,7 +69,7 @@ Status Read(size_t n, Slice* result, char* scratch) override {
 
 这里返回成功，不保证数据已经写入磁盘，甚至不能保证磁盘有足够的空间来存储内容。如果要保证数据写物理磁盘文件成功，需要调用 Sync() 方法，如下：
 
-```c++
+```cpp
   Status Sync() override {
     Status status = SyncDirIfManifest();
     if (!status.ok()) {
