@@ -143,8 +143,86 @@ TableBuilder::TableBuilder(const Options& options, WritableFile* file)
 
 #### 处理数据块
 
+接着需要将键值对添加到 DataBlock 中。DataBlock 是 SSTable 文件中存储实际键值对的地方，代码如下：
 
-### Finish 写入文件
+```cpp
+  r->last_key.assign(key.data(), key.size());
+  r->num_entries++;
+  r->data_block.Add(key, value);
+
+  const size_t estimated_block_size = r->data_block.CurrentSizeEstimate();
+  if (estimated_block_size >= r->options.block_size) {
+    Flush();
+  }
+```
+
+这里调用 BlockBuilder 中的 Add 方法，将键值对添加到 DataBlock 中，关于 BlockBuilder 的实现，参考本系列 [LevelDB 源码阅读：SSTable 中数据块 Block 的处理](/leveldb-source-table-block/)。每次添加键值对后，都会检查当前 DataBlock 的大小是否超过了 block_size，如果超过了，则调用 Flush 方法将 DataBlock 写入磁盘文件。这里的 block_size 是在 options 中设置的，默认是 4KB。这里是键值压缩前的大小，如果开启了压缩，实际写入文件的大小会小于 block_size。
+
+```cpp
+  // Approximate size of user data packed per block.  Note that the
+  // block size specified here corresponds to uncompressed data.  The
+  // actual size of the unit read from disk may be smaller if
+  // compression is enabled.  This parameter can be changed dynamically.
+  size_t block_size = 4 * 1024;
+```
+
+### Flush 写数据块
+
+在前面的 Add 方法中，如果一个块的大小凑够 4KB，就会调用 Flush 方法写磁盘文件。Flush 的实现如下：
+
+```cpp
+void TableBuilder::Flush() {
+  Rep* r = rep_;
+  assert(!r->closed);
+  if (!ok()) return;
+  if (r->data_block.empty()) return;
+  assert(!r->pending_index_entry);
+  WriteBlock(&r->data_block, &r->pending_handle);
+  if (ok()) {
+    r->pending_index_entry = true;
+    r->status = r->file->Flush();
+  }
+  if (r->filter_block != nullptr) {
+    r->filter_block->StartBlock(r->offset);
+  }
+}
+```
+
+开始部分也就是一些前置校验，注意 Flush 只是用来刷 DataBlock 部分，如果 data_block 为空，就直接返回。接着调用 WriteBlock 方法将 DataBlock 写入文件，然后**更新 pending_index_entry 为 true，表示下次添加 key 时，需要更新索引块**。最后调用 file->Flush() 强制刷磁盘，确保数据写入硬盘中，不会因为操作系统宕机而丢失。如果有 filter_block，还需要调用 StartBlock 方法，用来记录当前 DataBlock 的偏移量。
+
+### WriteBlock 写文件
+
+Flush 中会调用 WriteBlock 方法将 DataBlock 写入文件，该方法在下面要提到的 Finish 中也会被调用，用来在最后写索引块，过滤块等内容。WriteBlock 的实现比较简单，如果调用 leveldb 时设置了需要压缩，并且编译库时链接了压缩库，就会选择对应的压缩算法对 Block 进行压缩。如果压缩比 (compression_ratio) 小于等于 0.85，就会将压缩后的数据写入文件，否则直接写入原始数据。这里写文件调用 WriteRawBlock 方法，主要代码如下：
+
+```cpp
+void TableBuilder::WriteRawBlock(const Slice& block_contents,
+                                 CompressionType type, BlockHandle* handle) {
+  Rep* r = rep_;
+  handle->set_offset(r->offset);
+  handle->set_size(block_contents.size());
+  r->status = r->file->Append(block_contents);
+  if (r->status.ok()) {
+    char trailer[kBlockTrailerSize];
+    trailer[0] = type;
+    uint32_t crc = crc32c::Value(block_contents.data(), block_contents.size());
+    crc = crc32c::Extend(crc, trailer, 1);  // Extend crc to cover block type
+    EncodeFixed32(trailer + 1, crc32c::Mask(crc));
+    r->status = r->file->Append(Slice(trailer, kBlockTrailerSize));
+    if (r->status.ok()) {
+      r->offset += block_contents.size() + kBlockTrailerSize;
+    }
+  }
+}
+```
+
+在每个块的尾部有 5 字节的 trailer 部分，第一个字节是压缩类型，目前支持的压缩算法有 snappy 和 zstd。后面 4 字节是 crc32 校验和，这里用 crc32c::Value 计算数据块的校验和，然后把压缩类型一起计算进去校验和。这里 crc32 部分，可以参考本系列 [LevelDB 源码阅读：utils 组件代码](/leveldb-source-utils/#CRC32-循环冗余校验) 了解更多细节。
+
+### Finish 全部落盘
+
+将 immemtable 保存为 SSTable 文件时，会迭代 immemtable 中的键值对，然后调用上面的 Add 方法来添加。Add 中会更新相关 block 的内容，然后当 DataBlock 超过 block_size 时，会调用 Flush 方法将 DataBlock 写入文件。等所有键值对写完，需要调用 Finish 方法，来进行一些收尾工作，比如将最后一个 Datablock 的数据写入文件，写入 IndexBlock，FilterBlock 等。
+
+Finish 的实现代码如下：
+
 
 
 
