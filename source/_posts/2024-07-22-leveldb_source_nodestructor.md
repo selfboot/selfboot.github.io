@@ -1,9 +1,12 @@
 ---
 title: LevelDB 源码阅读：禁止对象被析构
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-description: 
+date: 2024-07-22 18:03:10
+description: 深入探讨LevelDB源码中的 NoDestructor 模板类，揭示其禁止对象析构的实现原理和背后动机。分析C++静态局部变量析构顺序问题，介绍NoDestructor的设计细节、测试用例及实际应用场景。适合C++开发者和对底层系统感兴趣的程序员阅读，助您掌握高级C++编程技巧。
 ---
 
 LevelDB 源码中有一个获取 Comparator 的函数，第一次看到的时候觉得有点奇怪，看起来像是构造了一个单例，但又略复杂。完整代码如下：
