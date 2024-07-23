@@ -1,4 +1,4 @@
-title: LevelDB 源码阅读：SSTable 文件生成与解析
+title: LevelDB 源码阅读：SSTable 文件落磁盘以及解析
 tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
@@ -221,10 +221,27 @@ void TableBuilder::WriteRawBlock(const Slice& block_contents,
 
 将 immemtable 保存为 SSTable 文件时，会迭代 immemtable 中的键值对，然后调用上面的 Add 方法来添加。Add 中会更新相关 block 的内容，然后当 DataBlock 超过 block_size 时，会调用 Flush 方法将 DataBlock 写入文件。等所有键值对写完，需要调用 Finish 方法，来进行一些收尾工作，比如将最后一个 Datablock 的数据写入文件，写入 IndexBlock，FilterBlock 等。
 
-Finish 的实现代码如下：
+Finish 的实现如下，开始之前先用 Flush 把剩余的 DataBlock 部分刷到磁盘文件中，接着会处理其他块：
 
+```cpp
+Status TableBuilder::Finish() {
+  Rep* r = rep_;
+  Flush();
+  assert(!r->closed);
+  r->closed = true;
 
+  BlockHandle filter_block_handle, metaindex_block_handle, index_block_handle;
 
+  // Write filter block
+  // Write metaindex block
+  // Write index block
+  // Write footer
+
+  return r->status;
+}
+```
+
+过滤索引块需要
 
 ## 创建 SSTable  
 
