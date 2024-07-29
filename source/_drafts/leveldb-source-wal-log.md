@@ -11,20 +11,30 @@ description:
 
 LevelDB 使用 WAL（Write-Ahead Logging）日志来确保数据的持久性。当写入操作发生时，LevelDB 首先将数据写入到日志文件中，然后再应用到内存中的数据结构（如 MemTable）。系统或数据库崩溃后重新启动时，LevelDB 会检查 WAL 日志文件中的记录。通过读取并重放这些日志记录，LevelDB 可以重建那些在崩溃发生时还未被完全写入磁盘的数据状态。
 
+![LevelDB WAL 日志写入流程](https://slefboot-1251736664.file.myqcloud.com/20240723_leveldb_source_wal_log_cover.svg)
+
+整个 WAL 日志相关的操作流程如下：
+
+1. LevelDB首先将数据写入WAL日志。确保即使在系统崩溃的情况下，数据也不会丢失。
+2. 数据被写入内存中的MemTable，这个是内存操作，很快。
+3. LevelDB向客户端确认写入完成。
+4. 随着时间推移，当MemTable满了之后，它会被刷新到磁盘上的SSTable文件中。
+5. 一旦MemTable被成功刷新到SSTable，相应的WAL日志就可以被清除了。
+
 <!-- more -->
 
 ## 写 WAL 日志
 
-在 LevelDB 中，`db/log_writer.h` 中定义了个 Writer 类，用于写入 WAL 日志文件。Writer 类的主要方法是 `AddRecord`，用于将一个记录追加到日志文件中。Writer 中主要的数据成员是 `WritableFile* dest_;`，用于指向支持追加写的日志文件。这里 WritableFile 是 `include/leveldb/env.h` 中定义的抽象类接口，用于封装文件系统的操作，具体接口和实现可以参考 [LevelDB 源码阅读：封装的各种系统实现](/leveldb_source_env_posix#WritableFile)。
+先来看看 LevelDB 是如何写 WAL 日志的。在 LevelDB 中，[db/log_writer.h](https://github.com/google/leveldb/blob/main/db/log_writer.h) 中定义了个 Writer 类，用于写入 WAL 日志文件。Writer 类的主要方法是 `AddRecord`，用于将一个记录追加到日志文件中。主要的数据成员是 `WritableFile* dest_;`，指向支持追加写的日志文件。这里 WritableFile 是 [include/leveldb/env.h](https://github.com/google/leveldb/blob/main/include/leveldb/env.h#L277) 中定义的抽象类接口，用于封装文件系统的操作，具体接口和实现可以参考 [LevelDB 源码阅读：封装的各种系统实现](/leveldb_source_env_posix#WritableFile)。
 
-WAL 日志写入的主要实现在 `db/log_writer.cc` 文件中，整体流程比较清晰。`AddRecord` 方法处理不同大小的数据，确保它们按照正确的格式和类型进行切分，然后调用 EmitPhysicalRecord 设置头部，存储单条记录。
+WAL 日志写入的主要实现在 [db/log_writer.cc](https://github.com/google/leveldb/blob/main/db/log_writer.cc) 文件中，整体流程比较清晰。AddRecord 方法处理不同大小的数据，确保它们按照正确的格式和类型进行切分，然后调用 [EmitPhysicalRecord](https://github.com/google/leveldb/blob/main/db/log_writer.cc#L82) 设置头部，存储单条记录。
 
 ### 单条记录存储格式
 
-单条记录存储格式比较清晰，EmitPhysicalRecord 中有完整的实现。每条记录由 2 部分组成：**7 字节固定长度**的 Header以及 长度不定的 Data 部分。Header 部分包括 1 字节的记录类型、2 字节的记录长度和 4 字节的校验码。其中：
+单条记录存储格式比较清晰，EmitPhysicalRecord 中有完整的实现。每条记录由 2 部分组成：**7 字节固定长度**的 Header以及长度不定的 Data 部分。Header 部分包括 1 字节的记录类型、2 字节的记录长度和 4 字节的校验码。其中：
 
 - Record Type：记录类型，标识是完整记录、第一部分、中间部分还是最后部分。
-- Length：记录长度，指的是数据部分的长度，不包括头部的长度。单条记录长度最长为kBlockSize - kHeaderSize，用 2 个字节表达足够了。
+- Length：单条记录长度，指的是数据部分的长度，不包括头部的长度。单条记录长度最长为 kBlockSize - kHeaderSize，用 2 个字节表达足够了。
 - CRC32：循环冗余校验码，用于检查数据在存储或传输过程中是否发生了更改。
 
 如下图；
@@ -67,13 +77,13 @@ Status Writer::EmitPhysicalRecord(RecordType t, const char* ptr,
 }
 ```
 
-注意这里计算 CRC32 的时候，用了`type_crc_[t]`，这个数组是在 Writer 的构造函数中用 InitTypeCrc 函数来进行初始化，这样可以提高计算效率，避免在每次写入记录时都重新计算 CRC32 校验码。如果没有初始化 type_crc_ 数组，其实也可以使用 `crc32c::Extend(0, ptr, length)` 来计算 CRC 校验码。不过这样的话，只计算了数据部分的 CRC 校验码，而没有考虑**记录类型**。用 type_crc_ 的话，把记录类型作为 crc32 计算的初始值，这样同样的内容，如果类型不同，计算出的 crc32 也不同。
+这里计算 CRC32 的时候，用了`type_crc_[t]`，这个数组是在 Writer 的构造函数中用 InitTypeCrc 函数来进行初始化，这样可以提高计算效率，避免在每次写入记录时都重新计算 CRC32 校验码。如果没有初始化 type_crc_ 数组，其实也可以使用 `crc32c::Extend(0, ptr, length)` 来计算 CRC 校验码。不过这样的话，只计算了数据部分的 CRC 校验码，而没有考虑**记录类型**。用 type_crc_ 的话，把记录类型作为 crc32 计算的初始值，这样同样的内容，如果类型不同，计算出的 crc32 也不同。
 
-这里提到了记录类型，代码中还记录了一个 block_offset_，这些又是做什么用的呢？这就是 AddRecord 中做的数据切分逻辑了。
+这里提到了记录类型，代码中还记录了一个 `block_offset_`，这些又是做什么用的呢？这就是 AddRecord 中做的**数据切分逻辑**了。
 
 ### 数据切分记录
 
-在写数据的时候，如果单条数据太大，LevelDB 会将数据进行切分，分为多条记录，然后来一点点写入。经过切分后，一条数据可能就会包含多条记录，因此需要设计好**记录组织格式**，以便在读取时能够正确地重建完整的数据。这里 LevelDB 的做法比较直接，每条记录增加一个记录类型，用于标识是完整记录、第一部分、中间部分还是最后部分。这样在读取时，只要按照记录类型的顺序组装数据即可。这样一条数据的记录可能分下面几种情况：
+**在写数据的时候，如果单条数据太大，LevelDB 会将数据进行切分，分为多条记录，然后来一点点写入**。经过切分后，一条数据可能就会包含多条记录，因此需要设计好**记录组织格式**，以便在读取时能够正确地重建完整的数据。这里 LevelDB 的做法比较直接，每条记录增加一个记录类型，用于标识是完整记录、第一部分、中间部分还是最后部分。这样在读取时，只要按照记录类型的顺序组装数据即可。这样一条数据可能分下面几种切分情况：
 
 ```shell
 first(R1), middle(R1), middle(R1), ..., last(R1)
@@ -81,7 +91,7 @@ first(R2), last(R2)
 full(R3)
 ```
 
-这里的 first、middle、last 和 full 分别表示记录的类型。所有的记录都放在**逻辑块**中，逻辑块的大小是 kBlockSize（32768=32KB），这个值在 `db/log_format.h` 中定义。在切分数据的时候会保证，**单条记录不跨越逻辑块**。整体切分记录的逻辑在 AddRecord 中实现，主要是根据数据的大小，当前逻辑块剩余空间，然后判断是否需要切分。对于需要切分的场景，将数据切分记录，设置好正确的记录类型，然后调用 EmitPhysicalRecord 逐条写入。核心代码如下，去掉了部分注释和 assert 校验逻辑。
+这里的 first、middle、last 和 full 分别表示记录的类型。所有的记录都放在**逻辑块**中，逻辑块的大小是 kBlockSize（32768=32KB），这个值在 [db/log_format.h](https://github.com/google/leveldb/blob/main/db/log_format.h#L27) 中定义。在切分数据的时候会保证，**单条记录不跨越逻辑块**。整体切分记录的逻辑在 AddRecord 中实现，主要是根据数据的大小，当前逻辑块剩余空间，然后判断是否需要切分。对于需要切分的场景，将数据切分记录，设置好正确的记录类型，然后调用 EmitPhysicalRecord 逐条写入。核心代码如下，去掉了部分注释和 assert 校验逻辑。
 
 ```cpp
 Status Writer::AddRecord(const Slice& slice) {
@@ -129,7 +139,7 @@ Status Writer::AddRecord(const Slice& slice) {
 
 这里**判断当前记录类型的实现比较聪明**，只需要维护两个标志 begin 和 end。刚开始写入数据的时候，begin 为 true，写入一条记录后，就更新 begin 为 false。end 的更新则是根据剩余数据长度是否为 0 来判断。然后根据 begin 和 end 的值，就可以确定当前记录的类型了。注意这里 if else 的顺序也很关键，即是 begin 又是 end 的说明是 kFullType 的记录；接着如果只是 begin，就是 kFirstType；如果只是 end，就是 kLastType，其他情况就是 kMiddleType。
 
-[TODO] 切分的考虑点，为什么不跨逻辑块。
+这里有个设计值得思考下，**切分记录的时候，为什么不跨逻辑块**？其实如果看后面读取 WAL 日志部分代码，就会发现这样设计后可以按块进行读取。**每个块内的记录都是完整的，这意味着不需要处理跨块的记录，大大简化了读取逻辑**。另外，如果某个块损坏，只会影响该块内的记录，不会影响其他块的记录。
 
 至此，将数据写入 WAL 日志文件的流程就介绍完了。下面我们来看看如何读取 WAL 日志文件。
 
