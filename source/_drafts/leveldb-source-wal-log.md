@@ -8,7 +8,6 @@ mathjax: true
 description:
 ---
 
-
 LevelDB 使用 WAL（Write-Ahead Logging）日志来确保数据的持久性。当写入操作发生时，LevelDB 首先将数据写入到日志文件中，然后再应用到内存中的数据结构（如 MemTable）。系统或数据库崩溃后重新启动时，LevelDB 会检查 WAL 日志文件中的记录。通过读取并重放这些日志记录，LevelDB 可以重建那些在崩溃发生时还未被完全写入磁盘的数据状态。
 
 ![LevelDB WAL 日志写入流程](https://slefboot-1251736664.file.myqcloud.com/20240723_leveldb_source_wal_log_cover.svg)
