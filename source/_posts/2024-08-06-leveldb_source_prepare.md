@@ -1,14 +1,17 @@
 ---
-title: LevelDB 源码阅读：准备与简单使用
-tags: [C++]
+title: LevelDB 源码阅读：准备开发环境
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-description: 
+description: 介绍如何为 LevelDB 准备开发环境，包括源码拉取、编译和 VSCode 配置。通过简单的读写示例，读者可以对 LevelDB 有一个初步的认识。文章还介绍了如何使用 gtest 框架运行和修改测试用例，以便更好地理解代码逻辑。
+date: 2024-08-06 20:31:43
 ---
 
-LevelDB 是 C++ 开发的优秀的 LSM Tree 的存储组件，整体代码量不大，但是设计精巧，值得学习。我写了[系列文章](https://selfboot.cn/tags/LevelDB/)，逐步拆解 LevelDB 的实现细节。不过在阅读代码前，最好先准备整个开发环境。
+LevelDB 是 C++ 开发的优秀的 LSM Tree 的存储组件，整体代码量不大，但是设计精巧，值得学习。在阅读源码过程中，整理了[系列文章](https://selfboot.cn/tags/LevelDB/)，逐步拆解 LevelDB 的实现细节。不过在阅读代码前，最好先准备好整个开发环境。
 
-本文会从最基本的拉取代码开始，记录自己准备整个环境的过程，包括配置 VSCode IDE 的配置和 clangd 插件使用，以及如何配置编译选项等。然后会通过简单的读写代码 demo，来简单使用下 LevelDB，对这个库有个感性的认识。另外，还会介绍如何运行测试用例，LevelDB 的测试用例写的很好，在代码阅读过程中，可以借助用例更好的理解代码。
+本文会从最基本的拉取代码开始，记录自己准备整个环境的过程，包括配置 VSCode IDE 和 clangd 插件使用，以及如何配置编译选项等。然后会通过简单的读写代码 demo，来简单使用下 LevelDB，对这个库有个感性的认识。另外，还会介绍如何运行测试用例，LevelDB 的测试用例写的很好，在代码阅读过程中，可以借助用例更好的理解代码。
 
 <!-- more -->
 
@@ -245,3 +248,7 @@ cmake --build . --target leveldb_tests
 ![测试用例不过](https://slefboot-1251736664.file.myqcloud.com/20240515_leveldb_source_prepare_gtest_cache_test_fail.png)
 
 可以看到测试用例验证失败的具体原因。在阅读代码过程中，可以随时修改部分代码的用例，验证自己的理解是否正确。
+
+## 总结
+
+跟着本文，大家应该都能快速准备好 LevelDB 的开发环境了吧。配置好 IDE，编译好源码，跑完简单的读写示例以及测试用例，然后一起来阅读源码吧～
