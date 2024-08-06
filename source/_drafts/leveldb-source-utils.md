@@ -9,27 +9,27 @@ mathjax: true
 description:
 ---
 
-LevelDB 中实现了不少 utils 工具，比如定制的内存分配器 Arena，随机数生成 Random 类，实现都会考虑到具体的使用场景，做了优化以及取舍，值得好好学习。本篇文章详细聊聊其中下面实现：
+LevelDB 中实现了不少 utils 工具，比如定制的内存分配器 Arena，随机数生成 Random 类，实现中都会考虑到具体的使用场景，做了优化以及取舍，值得好好学习。本篇文章聊聊下面部分的实现：
 
 - 内存管理 Arena，一个简单高效，适合 LevelDB 的内存分配管理器；
-- 随机数 Random，一个不错的线性同余伪随机生成算法，用位运算替代取模优化了执行效率。
+- 随机数 Random，一个不错的**线性同余伪随机生成**算法，用位运算替代取模优化了执行效率。
 - CRC32 循环冗余校验，用于检测数据传输或存储过程中是否发生错误；
 - 整数编、解码，用于将数字存储在字节流或者从字节流中解析数字。
 
-此外，还有些 utils 组件比较复杂些，放在单独的文章里聊，比如：
+此外，还有些 utils 组件比较复杂些，会放在单独的文章里聊，比如：
 
-- [LevelDB 源码阅读：禁止对象被析构](/leveldb_source_nodestructor) 讲 NoDestructor 模板类的实现和考虑点。
+- [LevelDB 源码阅读：禁止对象被析构](https://selfboot.cn/2024/07/22/leveldb_source_nodestructor/) 讲 NoDestructor 模板类的实现和考虑点。
 
 <!-- more -->
 
 ## 内存管理 Arena 类
 
-LevelDB 没有使用系统默认的 malloc 来分配内存，也没有使用比如 tcmalloc 这些第三方库来管理内存的分配和释放，而是自己实现了一个简单的内存分配器。这里的内存分配器可以说是**量身订制**，主要是因为下面特点：
+LevelDB 没有使用系统默认的 malloc 来分配内存，也没有使用 tcmalloc 等第三方库来管理内存的分配和释放，而是自己实现了一个简单的内存分配器。这里的内存分配器可以说是**量身订制**，主要基于下面考虑：
 
 1. 主要在 memtable 中使用，会有大量的分配，可能有很多小内存分配；
 2. 统一回收时机，在 memtable 数据落磁盘后，会一并回收；
 
-内存 memtable 的数据其实存储在 skiplist 中的。每次插入 key，就需要往 skiplist 中插入节点，这里节点使用的内存就是用 arena 来分配的。如果是小 key，这里会优先从当前 block 中剩余内存中拿，不够的话才会走到分配逻辑。Allocate 的代码如下：
+内存 memtable 的数据其实存储在 skiplist 中的。每次插入 key，就需要往 skiplist 中插入节点，这里节点使用的内存就是用 arena 来分配的。如果是小 key，这里会优先从当前 block 剩余内存中拿，不够的话才会走到分配逻辑。[Allocate](https://github.com/google/leveldb/blob/main/util/arena.h#L55) 的代码如下：
 
 ```cpp
 inline char* Arena::Allocate(size_t bytes) {
@@ -89,7 +89,7 @@ Arena::~Arena() {
 
 ## 随机数 Random 类
 
-LevelDB 的 `util/random.h` 中实现了一个[伪随机数生成器(PRNG)](https://en.wikipedia.org/wiki/Pseudorandom_number_generator)类 Random，用在**跳表生成层高**等场景。这个随机数生成器是基于线性同余生成器（LCG）实现，随机数的生成公式如下：
+LevelDB 的 [util/random.h](https://github.com/google/leveldb/blob/main/util/random.h) 中实现了一个[伪随机数生成器(PRNG)](https://en.wikipedia.org/wiki/Pseudorandom_number_generator)类 Random，用在**跳表生成层高**等场景。这个随机数生成器是基于线性同余生成器（LCG）实现，随机数的生成公式如下：
 
 ```shell
 seed_ = (seed_ * A) % M
@@ -154,11 +154,11 @@ uint32_t Extend(uint32_t init_crc, const char* data, size_t n);
 inline uint32_t Value(const char* data, size_t n) { return Extend(0, data, n); }
 ```
 
-`crc32c.cc` 中的实现比较比较复杂，涉及到查找表（table-driven approach）、数据对齐、和可能的硬件加速，具体的原理可以参考 [A PAINLESS GUIDE TO CRC ERROR DETECTION ALGORITHMS](http://www.ross.net/crc/download/crc_v3.txt)。其中**生成多项式**的选择对CRC算法的有效性和错误检测能力至关重要。生成多项式并不是随意选取的，它们通常通过数学和计算机模拟实验被设计出来，以确保最大化特定数据长度和特定应用场景下的错误检测能力，常见的生成多项式`0x04C11DB7` 就是在IEEE 802.3标准中为 CRC-32 算法选定的。
+[crc32c.cc](https://github.com/google/leveldb/blob/main/util/crc32c.cc) 中的实现比较比较复杂，涉及到查找表（table-driven approach）、数据对齐、和可能的硬件加速，具体的原理可以参考 [A PAINLESS GUIDE TO CRC ERROR DETECTION ALGORITHMS](http://www.ross.net/crc/download/crc_v3.txt)。其中**生成多项式**的选择对CRC算法的有效性和错误检测能力至关重要。生成多项式并不是随意选取的，它们通常通过数学和计算机模拟实验被设计出来，以确保最大化特定数据长度和特定应用场景下的错误检测能力，常见的生成多项式`0x04C11DB7` 就是在IEEE 802.3标准中为 CRC-32 算法选定的。
 
-这里补充说下，CRC 只是用来**检测随机错误**，比如网络传输或者磁盘存储中某些比特位发生了翻转。它不是纠错校验码，只能检测到错误，并**不能纠正错误**。此外我们也可以故意对内容进行篡改然后保证 CRC 结果一样，如果要防篡改，则要用到更为复杂的加密哈希函数或者数字签名技术。
+这里补充说下，CRC 只是用来**检测随机错误**，比如网络传输或者磁盘存储中某些比特位发生了翻转。它不是纠错校验码，只能检测到错误，并**不能纠正错误**。我们可以故意对内容进行篡改然后保证 CRC 结果一样，如果要防篡改，要用到更为复杂的加密哈希函数或者数字签名技术。
 
-另外在 `crc32c.h` 中还看到有一个 Mask，这里代码注释也写的很清楚了，如果数据本身包含CRC值，然后直接在包含CRC的数据上再次计算CRC，可能会降低CRC的错误检测能力。因此，LevelDB 对CRC值进行高低位交换后加上一个常数（kMaskDelta），来“掩码”原始的CRC值。这种变换后的CRC值可以存储在文件中，当要验证数据完整性时，使用 Unmask 函数将掩码后的CRC值转换回原始的CRC值，再与当前数据的CRC计算结果进行比较。
+另外在 [crc32c.h](https://github.com/google/leveldb/blob/main/util/crc32c.h) 中还看到有一个 Mask，这里代码注释也写的很清楚了，如果数据本身包含CRC值，然后直接在包含CRC的数据上再次计算CRC，可能会降低CRC的错误检测能力。因此，LevelDB 对CRC值进行高低位交换后加上一个常数（kMaskDelta），来“掩码”原始的CRC值。这种变换后的CRC值可以存储在文件中，当要验证数据完整性时，使用 Unmask 函数将掩码后的CRC值转换回原始的CRC值，再与当前数据的CRC计算结果进行比较。
 
 ```cpp
 // Return a masked representation of crc.
@@ -182,7 +182,7 @@ inline uint32_t Unmask(uint32_t masked_crc) {
 
 ## 整数编、解码
 
-LevelDB 中经常需要将数字存储在字节流或者从字节流中解析数字，比如 key 中存储长度信息，在批量写的任务中存储序列号等。在 `util/coding.h` 中实现了一系列编码和解码的工具函数，方便在字节流中存储和解析数字。首先来看固定长度的编、解码，主要有下面几个函数：
+LevelDB 中经常需要将数字存储在字节流或者从字节流中解析数字，比如 key 中存储长度信息，在批量写的任务中存储序列号等。在 [util/coding.h](https://github.com/google/leveldb/blob/main/util/coding.h) 中定义了一系列编码和解码的工具函数，方便在字节流中存储和解析数字。首先来看固定长度的编、解码，主要有下面几个函数：
 
 ```cpp
 void PutFixed32(std::string* dst, uint32_t value);
@@ -205,7 +205,7 @@ inline void EncodeFixed32(char* dst, uint32_t value) {
 }
 ```
 
-首先通过 `reinterpret_cast<uint8_t*>(dst)` 将 `char*` 类型的指针转换为 `uint8_t*` 类型，使得后续可以直接操作单个字节。然后使用位移和掩码操作将 value 的每一个字节分别写入到 buffer 数组中，value 的低位字节存储在低地址中（小端序）。假设我们有一个 uint32_t 的数值 0x12345678（十六进制表示），我们想将这个值编码到一个字符数组中，然后再从数组中解码出来。
+首先通过 `reinterpret_cast<uint8_t*>(dst)` 将 `char*` 类型的指针转换为 `uint8_t*` 类型，使得后续可以直接操作单个字节。然后使用位移和掩码操作将 value 的每一个字节分别写入到 buffer 数组中，**value 的低位字节存储在低地址中（小端序）**。假设我们有一个 uint32_t 的数值 0x12345678（十六进制表示），我们想将这个值编码到一个字符数组中，然后再从数组中解码出来。
 
 - buffer[0] 存储 value 的最低8位，即 0x78。
 - buffer[1] 存储 value 的次低8位，即 0x56。
@@ -276,5 +276,5 @@ const char* GetVarint64Ptr(const char* p, const char* limit, uint64_t* value) {
 
 这里还一类辅助函数，比如 PutLengthPrefixedSlice 用于将一个字符串编码为一个长度前缀和字符串内容的组合，而 GetLengthPrefixedSlice 则是对应的解码函数。这些编码和解码函数在 LevelDB 中被广泛应用，用于存储和解析各种数据结构，比如 memtable 中的 key 和 value，SSTable 文件的 block 数据等。
 
-这里整数的编、解码配有大量的测试用例，放在 `util/coding_test.cc` 中。里面有正常的编码和校对测试，比如 0 到 100000 的 Fixed32 的编、解码校验。此外还有一些**异常测试**，比如错误的 Varint32 的解码用例 Varint32Overflow，用 GetVarint32Ptr 来解码 "\x81\x82\x83\x84\x85\x11"。
+这里整数的编、解码配有大量的测试用例，放在 [util/coding_test.cc](https://github.com/google/leveldb/blob/main/util/coding_test.cc) 中。里面有正常的编码和校对测试，比如 0 到 100000 的 Fixed32 的编、解码校验。此外还有一些**异常测试**，比如错误的 Varint32 的解码用例 Varint32Overflow，用 GetVarint32Ptr 来解码 "\x81\x82\x83\x84\x85\x11"。
 
