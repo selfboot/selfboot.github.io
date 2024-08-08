@@ -1,10 +1,13 @@
-title: LevelDB 源码阅读：布隆过滤器的原理与实现
-tags: [C++, LevelDB]
+---
+title: LevelDB 源码阅读：布隆过滤器原理、实现、测试与可视化
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-date: 
 mathjax: true
-description:
+date: 2024-08-08 11:38:52
+description: 文章详细介绍了布隆过滤器的基本概念、数学原理和参数选择，并分析了LevelDB源码中的具体实现，包括哈希函数选择、过滤器创建和查询过程。同时展示了LevelDB的布隆过滤器测试用例，验证其正确性和性能。文章还提供了布隆过滤器的可视化演示，帮助读者直观理解其工作原理。
 ---
 
 LevelDB 中数据存储在 SSTable 文件中，当用 Get() 来查询 key 的时候，可能需要从 SST 文件中读取多个块。为了减少磁盘读取，LevelDB 提供了 FilterPolicy 过滤策略，如果判断出来一个 Key 不在当前 SSTable 文件中，那么就可以跳过读取该文件，从而提高查询效率。
@@ -218,8 +221,88 @@ bool KeyMayMatch(const Slice& key, const Slice& bloom_filter) const override {
 
 接下来的部分和创建过滤器的时候类似，使用 BloomHash 函数计算键的哈希值，然后进行位旋转以生成 delta，用于在循环中修改哈希值以模拟多个哈希函数的效果。在这个过程中，如果任何一个位为 0，则表明**键绝对不在集合中**，函数返回 false。如果所有相关位都是 1，则返回 true，表示**键可能在集合中**。
 
+## 布隆过滤器测试
+
+LevelDB 中布隆过滤器的实现还提供了完整的测试代码，可以在 [bloom_test.cc](https://github.com/google/leveldb/blob/main/util/bloom_test.cc) 中找到。
+
+首先从 testing::Test 类派生 BloomTest 类，用于组织和执行与布隆过滤器相关的测试用例。其构造函数和析构函数用于创建和释放 NewBloomFilterPolicy 的实例，确保每个测试用例都能在一个干净的环境中运行。Add 方法用于向布隆过滤器添加键，Build 将收集的键转换成过滤器。Matches 方法用于检查特定键是否与过滤器匹配，而 FalsePositiveRate 方法用于**评估过滤器的误判率**。
+
+接着就是一系列 TEST_F 宏定义的具体测试用例，允许每个测试用例自动拥有 BloomTest 类中定义的方法和属性。前面两个测试用例比较简单：
+
+- EmptyFilter: 测试空过滤器，即没有添加任何键的情况下，过滤器是否能正确判断键不存在。
+- Small: 测试添加少量键的情况，检查过滤器是否能正确判断键是否存在。
+
+这里值得注意的是 VaryingLengths 测试用例，它是一个比较复杂的测试用例，来评估和验证**布隆过滤器在不同数据规模（即不同数量的键）下的性能和效率**。通过定义的 NextLength 函数来递增键的数量，测试在不同的键集大小下布隆过滤器的表现。主要测试下面三个方面：
+
+1. 确保构建的布隆过滤器的大小在预期范围内;
+2. 确保所有添加到过滤器的键都能被正确地识别为存在;
+3. 评估布隆过滤器在不同长度下的误判率（假阳性率），确保误判率不超过2%。同时，根据误判率的大小分类过滤器为“好”（good）或“一般”（mediocre），并对它们的数量进行统计和比较，确保“一般”过滤器的数量不会太多。
+
+完整的测试代码如下：
+
+```cpp
+  TEST_F(BloomTest, VaryingLengths) {
+  char buffer[sizeof(int)];
+
+  // Count number of filters that significantly exceed the false positive rate
+  int mediocre_filters = 0;
+  int good_filters = 0;
+
+  for (int length = 1; length <= 10000; length = NextLength(length)) {
+    Reset();
+    for (int i = 0; i < length; i++) {
+      Add(Key(i, buffer));
+    }
+    Build();
+
+    ASSERT_LE(FilterSize(), static_cast<size_t>((length * 10 / 8) + 40))
+        << length;
+
+    // All added keys must match
+    for (int i = 0; i < length; i++) {
+      ASSERT_TRUE(Matches(Key(i, buffer)))
+          << "Length " << length << "; key " << i;
+    }
+
+    // Check false positive rate
+    double rate = FalsePositiveRate();
+    if (kVerbose >= 1) {
+      std::fprintf(stderr,
+                   "False positives: %5.2f%% @ length = %6d ; bytes = %6d\n",
+                   rate * 100.0, length, static_cast<int>(FilterSize()));
+    }
+    ASSERT_LE(rate, 0.02);  // Must not be over 2%
+    if (rate > 0.0125)
+      mediocre_filters++;  // Allowed, but not too often
+    else
+      good_filters++;
+  }
+  if (kVerbose >= 1) {
+    std::fprintf(stderr, "Filters: %d good, %d mediocre\n", good_filters,
+                 mediocre_filters);
+  }
+  ASSERT_LE(mediocre_filters, good_filters / 5);
+}
+```
+
+这里是执行测试的结果：
+
+![布隆过滤器测试结果](https://slefboot-1251736664.file.myqcloud.com/20240808_leveldb_source_bloom_filter_testcase.png)
+
+## 布隆过滤器可视化
+
+在结束文章之前，我们再来看下[布隆过滤器的一个可视化演示](https://gallery.selfboot.cn/zh/algorithms/bloomfilter)，把上面的原理和实现用图表展示出来，加深理解。
+
+![布隆过滤器可视化演示](https://slefboot-1251736664.file.myqcloud.com/20240808_leveldb_source_bloom_filter_visualization.png)
+
+这个演示站点中，可以选择不同的哈希函数数量、预测 key 的数量。然后会自动调整位数组，之后可以添加元素，并检查元素是否在布隆过滤器中。如果在的话，会用黑色方框显示相应数组位。如果不在的话，会用红色方框显示相应数组位。这样可以直观理解布隆过滤器的工作原理。
+
+同时为了方便演示，点击位组的时候会显示有哪些 key 经过 hash 后会落在这里。实际上布隆过滤器是不会存储这些信息的，这里是额外存储的，只是为了方便演示。
+
 ## 总结
 
 布隆过滤器是一种高效的数据结构，用于判断一个元素是否存在于一个集合中。它的核心是一个位数组和多个哈希函数，通过多次哈希计算来设置位数组中的位。通过严谨的数学推导，可以得出布隆过滤器的误判率与哈希函数的数量、位数组的大小和添加的元素数量有关。在实际应用中，可以通过调整哈希函数的数量来优化误判率。
 
-LevelDB 中实现了一个布隆过滤器，作为默认的过滤策略，可以通过工厂函数创建，保留了扩展性。为了节省 hash 资源消耗，LevelDB 通过双重哈希方法生成多个伪独立的哈希值，然后设置对应的位。在查询时，也是通过多次哈希计算来判断键是否存在于集合中。
+LevelDB 中实现了一个布隆过滤器，作为默认的过滤策略，可以通过工厂函数创建，保留了扩展性。为了节省 hash 资源消耗，LevelDB 通过双重哈希方法生成多个伪独立的哈希值，然后设置对应的位。在查询时，也是通过多次哈希计算来判断键是否存在于集合中。LevelDB 提供了完整的测试用例，用于验证布隆过滤器的正确性和误判率。
+
+另外，为了直观理解布隆过滤器的工作原理，我这里还做了一个布隆过滤器的可视化演示，通过图表展示了布隆过滤器的原理。
