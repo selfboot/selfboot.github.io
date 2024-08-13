@@ -1,14 +1,19 @@
 ---
 title: LevelDB 源码阅读：理解其中的 C++ 高级技巧
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-description: 
+date: 2024-08-13 21:00:00
+description: 深入解析了 LevelDB 中使用的 C++ 高级技巧，包括柔性数组、链接符号导出和 Pimpl 类设计等。文章通过具体代码示例详细说明了如何通过柔性数组实现可变长数据结构，优化内存使用和减少内存碎片。同时，介绍了符号导出的不同方法及其对跨平台编译的重要性，以及 Pimpl 设计模式在封装和二进制兼容性方面的应用。
 ---
+
+LevelDB 整体代码还是比较好懂，**没有用很多 C++奇淫技巧**。不过还是有部分实现，相当比较少见，比如柔性数组、链接符号导出、Pimpl 类设计等。本文会梳理这里的 C++ 高级技巧，帮助更好地理解 LevelDB 的实现。
 
 ## 柔性数组
 
-在 `util/cache.cc` 的 LRUHandle 结构体定义中，有一个柔性数组(**flexible array member**) `char key_data[1]`，用来在`C/C++`中实现**可变长数据结构**。
+在 [util/cache.cc](https://github.com/google/leveldb/blob/main/util/cache.cc) 的 LRUHandle 结构体定义中，有一个柔性数组(**flexible array member**) `char key_data[1]`，用来在 C/C++ 中实现**可变长数据结构**。
 
 ```cpp
 struct LRUHandle {
@@ -21,6 +26,8 @@ struct LRUHandle {
   }
 };
 ```
+
+<!-- more -->
 
 在这个 handle 结构体中，`key_data[1]`实际上只是一个占位符，真正分配给`key_data`的空间要比 1 字节大，它由 malloc 时计算的total_size确定。具体到 LevelDB 的实现中，在插入新的缓存条目时，会根据 key 的长度动态分配内存，然后将 key 的内容拷贝到这块内存中。如下代码：
 
@@ -40,7 +47,7 @@ Cache::Handle* LRUCache::Insert(const Slice& key, uint32_t hash, void* value,
   // ... 忽略
 ```
 
-上面代码在单个 malloc 调用中同时为 LRUHandle 结构体和尾部的 key_data 数组**分配连续的内存**。避免了为键数据单独分配内存，从而**减少了额外的内存分配开销和潜在的内存碎片问题**。同时 LRUHandle 的整个数据结构紧凑地存储在一块连续的内存中，提高了空间利用率，还可能改善缓存局部性（cache locality）。如果改为使用 `std::vector` 或 `std::string`，将需要为每个 LRUHandle 对象分配两次内存：一次是为LRUHandle对象本身，一次是std::vector或std::string为存储数据动态分配的内存。在一个高性能的数据库实现中，这种内存分配的开销是不容忽视的。
+上面代码在单个 malloc 调用中同时为 LRUHandle 结构体和尾部的 key_data 数组**分配连续的内存**。避免了为键数据单独分配内存，从而**减少了额外的内存分配开销和潜在的内存碎片问题**。同时 LRUHandle 的整个数据结构紧凑地存储在一块连续的内存中，提高了空间利用率，还可能改善缓存局部性（cache locality）。如果改为使用 std::vector 或 std::string，将需要为每个 LRUHandle 对象分配两次内存：一次是为LRUHandle对象本身，一次是std::vector或std::string为存储数据动态分配的内存。在一个高性能的数据库实现中，这种内存分配的开销是不容忽视的。
 
 另外，这里结构体尾部的数组长度为 1，还有不少代码中，**尾部数组长度为 0 或者直接不写**，这两种方法有啥区别吗？其实这两种做法都用于在结构体末尾添加可变长度的数据，`char key_data[];`是一种更明确的尾部数组声明方式，直接表示数组本身没有分配任何空间，是在C99标准中引入。不过这种声明在某些标准 C++ 版本中并不合法，尽管一些编译器可能作为扩展支持它。在C++中，为了避免兼容性问题，通常推荐使用`char key_data[1];`，因为在编译器中通常有更好的支持。
 
@@ -48,16 +55,16 @@ Cache::Handle* LRUCache::Insert(const Slice& key, uint32_t hash, void* value,
 
 ## 链接符号导出
 
-在 `include/leveldb/*.h` 中的类，定义的时候都带有一个宏 `LEVELDB_EXPORT`，比如：
+在 include/leveldb 中的很多类，比如 [db.h](https://github.com/google/leveldb/blob/main/include/leveldb/db.h) 中的 [DB 类](https://github.com/google/leveldb/blob/main/include/leveldb/db.h#L46)， 定义的时候带有一个宏 `LEVELDB_EXPORT`，如下：
 
 ```cpp
-class LEVELDB_EXPORT Iterator {
+class LEVELDB_EXPORT DB {
  public:
  ...
 };
 ```
 
-这里宏的定义在 `include/leveldb/export.h` 中，为了方便看分支，下面加了缩进(实际代码没有)，如下：
+这里宏的定义在 [include/leveldb/export.h](https://github.com/google/leveldb/blob/main/include/leveldb/export.h) 中，有许多编译选项分支，为了方便看，下面加了缩进(实际代码没有)，如下：
 
 ```cpp
 #if !defined(LEVELDB_EXPORT)
@@ -86,13 +93,13 @@ class LEVELDB_EXPORT Iterator {
 
 在 Linux 系统上，编译库时如果有定义 LEVELDB_COMPILE_LIBRARY，则会加上 `__attribute__((visibility("default")))` 属性。它会将符号的链接可见性设置为默认的，这样其他链接到这个共享库的代码都可以使用这个类。
 
-如果不加这个宏来导出符号有什么问题吗？在 Linux 环境下，所有符号默认都是可见的，这样会导出更多的符号，这不仅会导致库的尺寸增大，还可能与其他库中的符号发生冲突。而隐藏部分不对外公开的符号则可以帮助链接器优化程序，**提高加载速度，减少内存占用**。此外，通过导出宏，可以显式地控制哪些接口是公共的，哪些是私有的，**隐藏实现细节实现良好的封装**。
+如果不加这个宏来导出符号有什么问题吗？在 Linux 环境下，**所有符号默认都是可见的**，这样会导出更多的符号，这不仅会导致库的尺寸增大，还可能与其他库中的符号发生冲突。而隐藏部分不对外公开的符号则可以帮助链接器优化程序，**提高加载速度，减少内存占用**。此外，通过导出宏，可以显式地控制哪些接口是公共的，哪些是私有的，**隐藏实现细节实现良好的封装**。
 
 在没有定义 `LEVELDB_SHARED_LIBRARY` 的时候，LEVELDB_EXPORT 宏**被定义为空**，这意味着当 leveldb  被编译为静态库时，所有原本可能需要特殊导出导入标记的符号都不需要这样的标记了。静态链接的情况下，符号导出对于链接过程不是必需的，因为静态库的代码在编译时会直接被包含到最终的二进制文件中。
 
 ## Pimpl 类设计
 
-在 LevelDB 的许多类中，都是只有一个指针类型的私有成员变量。比如 `include/leveldb/table_builder.h` 头文件的 TableBuild 类定义中，有私有成员变量 Rep *rep_，它是一个指向 Rep 结构体的指针：
+在 LevelDB 的许多类中，都是只有一个指针类型的私有成员变量。比如 include/leveldb/table_builder.h 头文件的 TableBuild 类定义中，有私有成员变量 Rep *rep_，它是一个指向 Rep 结构体的指针：
 
 ```cpp
  private:
@@ -100,7 +107,7 @@ class LEVELDB_EXPORT Iterator {
   Rep* rep_;
 ```
 
-然后在 `table/table_builder.cc` 文件中定义了 Rep 结构体：
+然后在 [table/table_builder.cc](https://github.com/google/leveldb/blob/main/table/table_builder.cc) 文件中定义了 Rep 结构体：
 
 ```cpp
 struct TableBuilder::Rep {
