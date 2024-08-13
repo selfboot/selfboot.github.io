@@ -20,11 +20,13 @@ LevelDB 使用 WAL（Write-Ahead Logging）日志来确保数据的持久性。�
 4. 随着时间推移，当MemTable满了之后，它会被刷新到磁盘上的SSTable文件中。
 5. 一旦MemTable被成功刷新到SSTable，相应的WAL日志就可以被清除了。
 
+接下来详细看看这里的实现。
+
 <!-- more -->
 
 ## 写 WAL 日志
 
-先来看看 LevelDB 是如何写 WAL 日志的。在 LevelDB 中，[db/log_writer.h](https://github.com/google/leveldb/blob/main/db/log_writer.h) 中定义了个 Writer 类，用于写入 WAL 日志文件。Writer 类的主要方法是 `AddRecord`，用于将一个记录追加到日志文件中。主要的数据成员是 `WritableFile* dest_;`，指向支持追加写的日志文件。这里 WritableFile 是 [include/leveldb/env.h](https://github.com/google/leveldb/blob/main/include/leveldb/env.h#L277) 中定义的抽象类接口，用于封装文件系统的操作，具体接口和实现可以参考 [LevelDB 源码阅读：封装的各种系统实现](/leveldb_source_env_posix#WritableFile)。
+先来看看 LevelDB 是如何写 WAL 日志的。在 LevelDB 中，[db/log_writer.h](https://github.com/google/leveldb/blob/main/db/log_writer.h) 中定义了个 Writer 类，用于写入 WAL 日志文件。Writer 类的主要方法是 `AddRecord`，用于将一个记录追加到日志文件中。主要的数据成员是 `WritableFile* dest_;`，指向支持追加写的日志文件。这里 WritableFile 是 [include/leveldb/env.h](https://github.com/google/leveldb/blob/main/include/leveldb/env.h#L277) 中定义的抽象类接口，用于封装顺序写文件的操作，具体接口和实现可以参考 [LevelDB 源码阅读：Posix 文件操作接口实现细节](https://selfboot.cn/2024/08/02/leveldb_source_env_posixfile/#%E9%A1%BA%E5%BA%8F%E5%86%99%E6%96%87%E4%BB%B6)。
 
 WAL 日志写入的主要实现在 [db/log_writer.cc](https://github.com/google/leveldb/blob/main/db/log_writer.cc) 文件中，整体流程比较清晰。AddRecord 方法处理不同大小的数据，确保它们按照正确的格式和类型进行切分，然后调用 [EmitPhysicalRecord](https://github.com/google/leveldb/blob/main/db/log_writer.cc#L82) 设置头部，存储单条记录。
 
@@ -144,9 +146,9 @@ Status Writer::AddRecord(const Slice& slice) {
 
 ## 读 WAL 日志
 
-相比把数据切分记录然后写日志文件，读取日志并重构数据的逻辑稍微复杂一些。`db/log_reader.h` 中定义了 Reader 类，用于从日志文件中读取数据。Reader 中主要的数据成员是 `SequentialFile* const file_;`，指向**支持顺序读取的日志文件**。和 WritableFile 类似，SequentialFile 也是在 include/leveldb/env.h 中定义的抽象类接口，封装了文件系统的顺序读取操作，具体接口和实现可以参考 [LevelDB 源码阅读：封装的各种系统实现](/leveldb_source_env_posix#/#SequentialFile)。
+相比把数据切分记录然后写日志文件，读取日志并重构数据的逻辑稍微复杂一些。[db/log_reader.h](https://github.com/google/leveldb/blob/main/db/log_reader.h#L20) 中定义了 Reader 类，用于从日志文件中读取数据。Reader 中主要的数据成员是 `SequentialFile* const file_;`，指向**支持顺序读取的日志文件**。和 WritableFile 类似，SequentialFile 也是在 include/leveldb/env.h 中定义的抽象类接口，封装了文件系统的顺序读取操作，具体接口和实现可以参考 [LevelDB 源码阅读：Posix 文件操作接口实现细节](https://selfboot.cn/2024/08/02/leveldb_source_env_posixfile/#%E9%A1%BA%E5%BA%8F%E8%AF%BB%E6%96%87%E4%BB%B6)。
 
-Reader 类的主要方法是 `ReadRecord`，用于读取一条完整的数据，可以多次调用，顺序读取出所有的数据。读取过程如果发生一些意外数据，比如记录长度不合法、CRC 校验失败等，可以用 Reader 中定义的 Reporter 接口来记录错误信息。此外，Reader 还支持跳过文件中一定长度的数据，用于恢复数据时跳过已经读取过的数据。完整的实现在 `db/log_reader.cc` 中，下面详细看看。
+Reader 类的主要方法是 `ReadRecord`，用于读取一条完整的数据，可以多次调用，顺序读取出所有的数据。读取过程如果发生一些意外数据，比如记录长度不合法、CRC 校验失败等，可以用 Reader 中定义的 Reporter 接口来记录错误信息。此外，Reader 还支持跳过文件中一定长度的数据，用于恢复数据时跳过已经读取过的数据。完整的实现在 [db/log_reader.cc](https://github.com/google/leveldb/blob/main/db/log_reader.cc) 中，下面详细看看。
 
 ### 跳过开头数据
 
@@ -249,7 +251,7 @@ bool Reader::ReadRecord(Slice* record, std::string* scratch) {
 
 ### 读取单个逻辑块
 
-ReadPhysicalRecord **封装了从逻辑块提取记录的过程**。一个逻辑块的大小是 kBlockSize=32KB，这个值在 `db/log_format.h` 中定义。我们从磁盘读取文件的时候，**以逻辑块为最小读取单元**，读出来后缓存在内存中，然后逐条解析记录。这里最外层是一个 while 循环，首先判断 buffer_ 的大小，如果 buffer_ 中的数据不足以解析出一条记录(长度小于 kHeaderSize)，则从文件中读取一个逻辑块的数据到 buffer_ 中。
+ReadPhysicalRecord **封装了从逻辑块提取记录的过程**。一个逻辑块的大小是 kBlockSize=32KB，这个值在 [db/log_format.h](https://github.com/google/leveldb/blob/main/db/log_format.h#L27) 中定义。我们从磁盘读取文件的时候，**以逻辑块为最小读取单元**，读出来后缓存在内存中，然后逐条解析记录。这里最外层是一个 while 循环，首先判断 buffer_ 的大小，如果 buffer_ 中的数据不足以解析出一条记录(长度小于 kHeaderSize)，则从文件中读取一个逻辑块的数据到 buffer_ 中。
 
 - 如果从文件读取出来的长度小于 kBlockSize，说明读到了文件末尾，则设置 eof_ 为 true，然后继续进来循环，清空 buffer_ 中的数据，然后返回 kEof。
 - 如果读文件出错，用 ReportDrop 报告读失败，清理 buffer_，设置 eof_ 为 true，然后直接返回 kEof。 
@@ -287,7 +289,7 @@ unsigned int Reader::ReadPhysicalRecord(Slice* result) {
 
 ## WAL 读写测试
 
-`db/log_test.cc` 中提供了一些工具辅助类和函数，以及详细的测试用例，来完整测试这里的 WAL 日志读写。比如用 BigString 生成指定长度的字符串，LogTest 类封装了 Reader 和 Writer 的读写逻辑，暴露了方便测试的接口，比如 Write、ShrinkSize、Read 等。此外这里没有直接读取文件，而是自己实现了 StringSource 类，继承自 SequentialFile，用 string 模拟读文件。实现了 StringDest 类，继承自 WritableFile，也是用 string 模拟写文件。
+[db/log_test.cc](https://github.com/google/leveldb/blob/main/db/log_test.cc) 中提供了一些工具辅助类和函数，以及详细的测试用例，来完整测试这里的 WAL 日志读写。比如用 BigString 生成指定长度的字符串，LogTest 类封装了 Reader 和 Writer 的读写逻辑，暴露了方便测试的接口，比如 Write、ShrinkSize、Read 等。此外这里没有直接读取文件，而是自己实现了 StringSource 类，继承自 SequentialFile，用 string 模拟读文件。实现了 StringDest 类，继承自 WritableFile，也是用 string 模拟写文件。
 
 下面是一些正常读写的测试 case：
 
