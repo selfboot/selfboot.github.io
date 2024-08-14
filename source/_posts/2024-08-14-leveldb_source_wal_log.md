@@ -1,11 +1,13 @@
 ---
 title: LevelDB 源码阅读：读写 WAL 日志保证持久性
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-date: 
 mathjax: true
-description:
+date: 2024-08-14 21:05:31
+description: 探讨 LevelDB 的WAL（Write-Ahead Logging）日志读写接口。详细分析 WAL日志的写入过程，包括数据切分、记录格式和存储方式，同时阐述了日志读取的复杂逻辑，如何处理跨块记录和异常情况。还展示了相关的测试用例，验证WAL日志在各种场景下的正确性。
 ---
 
 LevelDB 使用 WAL（Write-Ahead Logging）日志来确保数据的持久性。当写入操作发生时，LevelDB 首先将数据写入到日志文件中，然后再应用到内存中的数据结构（如 MemTable）。系统或数据库崩溃后重新启动时，LevelDB 会检查 WAL 日志文件中的记录。通过读取并重放这些日志记录，LevelDB 可以重建那些在崩溃发生时还未被完全写入磁盘的数据状态。
