@@ -1,23 +1,21 @@
 ---
-title: LevelDB 源码阅读：从原理到实现深入理解跳表
+title: LevelDB 源码阅读：跳表的原理、实现、测试以及可视化
 tags: [C++]
 category: 源码剖析
 toc: true
+date: 2024-08-17 21:00:00
 description: 
 ---
 
-在 LevelDB 中，MemTable 中的数据存储在 Table 中，而这里 Table 底层实现就是 SkipList(跳表)。跳表是William Pugh 在论文 [Skip Lists: A Probabilistic Alternative to
-Balanced Trees](https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf) 中提出的一种概率性数据结构。有点类似**有序链表**，但是可以有多层，通过空间换时间，允许快速的查询、插入和删除操作，平均时间复杂度为 `O(log n)`。和一些平衡树比起来，代码实现也比较简单，性能稳定，因此应用比较广泛。
+在 LevelDB 中，内存 MemTable 中的数据存储在 SkipList(跳表) 中，用来进行快速插入操作。跳表是William Pugh 在论文 [Skip Lists: A Probabilistic Alternative to Balanced Trees](https://15721.courses.cs.cmu.edu/spring2018/papers/08-oltpindexes1/pugh-skiplists-cacm1990.pdf) 中提出的一种概率性数据结构。有点类似**有序链表**，但是可以有多层，通过空间换时间，允许快速的查询、插入和删除操作，平均时间复杂度为 `O(log n)`。和一些平衡树比起来，代码实现也比较简单，性能稳定，因此应用比较广泛。
 
-```cpp
-typedef SkipList<const char*, KeyComparator> Table;
-```
+![跳表实现的启发思路](https://slefboot-1251736664.file.myqcloud.com/20240321_leveldb_source_skiplist.png)
+
+那么跳表的原理是什么？ LevelDB 中跳表又是怎么实现的呢？本文将从跳表的原理、实现、测试等方面来深入探讨。最后还提供了一个可视化页面，可以直观看到跳表的构建过程。
 
 <!-- more -->
 
 ## 跳表简单介绍
-
-![跳表实现的启发思路](https://slefboot-1251736664.file.myqcloud.com/20240321_leveldb_source_skiplist.png)
 
 
 ## LevelDB 中实现
@@ -95,3 +93,15 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
   }
 }
 ```
+
+## 跳表在线可视化
+
+为了直观看看跳表构建的过程，我用 Claude3.5 做了一个[跳表可视化页面](https://gallery.selfboot.cn/en/algorithms/skiplist)。可以指定跳表的最大层高，以及调整递增层高的概率，然后可以随机初始化跳表，或者插入、删除、查找节点，观察跳表结构的变化。 
+
+![跳表在线可视化](https://slefboot-1251736664.file.myqcloud.com/20240815_leveldb_source_skiplist_visualization.png)
+
+在最高 12 层，递增概率为 1/4 的情况下，可以看到跳表平均层高还是挺低的。这里也可以调整概率为 1/2，看看跳表的变化。
+
+## 总结
+
+跳表是一种概率性数据结构，可以用来替代平衡树，实现了快速的插入、删除和查找操作。LevelDB 中的跳表实现代码简洁，性能稳定，适合用来存储内存 MemTable 中的数据。本文从跳表的原理、实现、测试等方面来深入探讨，最后还提供了一个可视化页面，可以直观看到跳表的构建过程。
