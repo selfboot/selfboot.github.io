@@ -5,13 +5,6 @@ function createLanguageSpecificCollection(items, lang) {
   );
 }
 
-  
-// function createLanguageSpecificCollection(items, lang) {
-  // return items.filter(item =>
-  //   item.posts.data.some(post => post.lang === lang || (lang === 'zh-CN' && !post.lang))
-  // );
-// }
-
 // 优化 before_generate 过滤器
 hexo.extend.filter.register('before_generate', function () {
   const allPosts = hexo.locals.get('posts');
