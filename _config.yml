@@ -8,7 +8,11 @@ subtitle: 知其然，知其所以然。知识广度是深度的副产品！
 description:
 author: FeiZhao
 email: xuezaigds@gmail.com
-language: zh-CN
+language: 
+- zh-CN
+- en
+
+i18n_dir: :lang
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -19,7 +23,6 @@ tag_dir: tags
 archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
-permalink_defaults:
 
 # Directory
 source_dir: source
