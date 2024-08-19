@@ -103,18 +103,35 @@ hexo.extend.generator.register('archives', createPageGenerator('archives', 'zh-C
 hexo.extend.generator.register('en_archives', createPageGenerator('archives', 'en'));
 
 // 标签和分类生成器
+const typeMap = {
+  'tags': 'tag',
+  'categories': 'category'
+};
+
 function createTaxonomyGenerator(type, lang) {
   return function (locals) {
+    const singularType = typeMap[type];
     const taxonomies = lang === 'en' ? locals[`en_${type}`] : locals[`zh_${type}`];
-    return taxonomies.map(taxonomy => ({
-      path: lang === 'en' ? `en/${type}/${taxonomy.slug}/index.html` : `${type}/${taxonomy.slug}/index.html`,
-      data: {
-        [type]: taxonomy,
-        posts: taxonomy.posts.filter(post => post.lang === lang || (lang === 'zh-CN' && !post.lang)),
-        lang: lang
-      },
-      layout: [type, 'archive', 'index']
-    }));
+    
+    return taxonomies.map((taxonomy) => {
+      const data = {
+        posts: taxonomy.posts
+        .filter(post => post.lang === lang || (lang === 'zh-CN' && !post.lang))
+        .sort('-date'),
+        lang: lang,
+        [singularType]: taxonomy.name, // 使用单数形式作为键
+        [type]: true, // 保留复数形式的布尔标志
+      };
+
+      return {
+        path:
+          lang === "en"
+            ? `en/${type}/${taxonomy.slug}/index.html`
+            : `${type}/${taxonomy.slug}/index.html`,
+        data: data,
+        layout: [singularType, "archive", "index"],
+      };
+    });
   };
 }
 

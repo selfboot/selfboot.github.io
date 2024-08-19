@@ -1,15 +1,254 @@
 ---
-title: LevelDB 源码阅读：准备开发环境
+title: LevelDB Explained - Preparing the Development Environment
 tags:
   - C++
   - LevelDB
-category: 源码剖析
+category: Source Code Analysis
 toc: true
-description: 介绍如何为 LevelDB 准备开发环境，包括源码拉取、编译和 VSCode 配置。通过简单的读写示例，读者可以对 LevelDB 有一个初步的认识。文章还介绍了如何使用 gtest 框架运行和修改测试用例，以便更好地理解代码逻辑。
+description: This article introduces how to prepare the development environment for LevelDB, including source code retrieval, compilation, and VSCode configuration. Through simple read and write examples, readers can gain a preliminary understanding of LevelDB. The article also explains how to use the gtest framework to run and modify test cases for better understanding of the code logic.
 date: 2024-08-06 20:31:43
-lang: en
 ---
 
+LevelDB is an excellent LSM Tree storage component developed in C++. Although its overall codebase is not large, its design is ingenious and worth studying. During the process of reading the source code, I have compiled a [series of articles](https://selfboot.cn/en/tags/LevelDB/) to gradually break down the implementation details of LevelDB. However, before reading the code, it's best to prepare the entire development environment.
 
+This article will start from the most basic step of pulling the code, recording my process of preparing the entire environment, including configuring the VSCode IDE and using the clangd plugin, as well as how to configure compilation options. Then, through a simple read and write code demo, we'll briefly use LevelDB to gain a perceptual understanding of this library. Additionally, we'll introduce how to run test cases. LevelDB's test cases are well-written, and during the code reading process, we can use these cases to better understand the code.
 
-source c
+<!-- more -->
+
+## Source Code Compilation
+
+First is pulling the code. Here we use `git clone --recurse-submodules`, which can pull all submodules at once. Although LevelDB's implementation doesn't depend on third-party libraries, benchmark is used for pressure testing and googletest is used for functional testing, both of which are introduced as submodules.
+
+If you encounter network issues when pulling the code, such as the following, you need to bypass the firewall first. You can refer to the methods in the article [Safe, Fast, and Affordable Access to ChatGPT, Latest and Most Comprehensive Practical Tutorial!](https://selfboot.cn/2023/12/25/how-to-use-chatgpt/).
+
+```shell
+Cloning into '/root/leveldb/third_party/googletest'...
+fatal: unable to access 'https://github.com/google/googletest.git/': GnuTLS recv error (-110): The TLS connection was non-properly terminated.
+fatal: clone of 'https://github.com/google/googletest.git' into submodule path '/root/leveldb/third_party/googletest' failed
+Failed to clone 'third_party/googletest'. Retry scheduled
+```
+
+Next is compiling the entire source code. LevelDB uses cmake for building. To facilitate later code reading, we add `-DCMAKE_EXPORT_COMPILE_COMMANDS=1` during compilation, which will generate a `compile_commands.json` file. This file is a configuration file for tools like clangd and can help IDEs like VSCode better understand the code. With this file, features like code jumping and auto-completion will work better. Additionally, to facilitate debugging with GDB, we add `-DCMAKE_BUILD_TYPE=Debug` to generate libraries with debugging information.
+
+You can refer to the complete command below:
+
+```shell
+git clone --recurse-submodules  git@github.com:google/leveldb.git
+
+cd leveldb
+mkdir -p build && cd build
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_INSTALL_PREFIX=$(pwd) .. && cmake --build . --target install
+```
+
+The `CMAKE_INSTALL_PREFIX` option is used to specify the installation directory. Here it's specified as the current directory (build directory), so after compilation, the generated library files and header files will be placed in the build directory for convenient future use.
+
+There are quite a few options for CMake building here. For example, `BUILD_SHARED_LIBS` is used to control whether the generated library is a static link library (.a file) or a dynamic link library (.so file). If `BUILD_SHARED_LIBS` is not explicitly set in CMakeLists.txt or through command-line arguments passed to CMake, CMake's default behavior is usually not to enable shared library building. You can use `cmake -DBUILD_SHARED_LIBS=ON ..` on the command line to enable shared library building.
+
+## IDE Configuration
+
+I personally use vscode quite often. As a code IDE, vscode can be said to be very user-friendly. For C++ projects, although Microsoft provides an official [C++ plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) for convenient code jumping and other features, from my personal experience, it's not very user-friendly. Here, I strongly recommend using clangd to read C++ code. You only need to **install Clangd on the server, then install the clangd plugin in vscode, and use it in conjunction with the compile_commands.json compilation database file generated by Cmake earlier**.
+
+Clangd is a language server based on the LLVM project, mainly supporting code analysis for C and C++. It can **provide code completion, diagnostics (i.e., errors and warnings), code jumping, and code formatting features**. Compared to Microsoft's built-in C++ plugin, clangd responds very quickly and can achieve more precise jumping and warnings with the help of clang. It also supports using `clang-tidy` to perform static analysis on project code to discover potential errors.
+
+For example, in the code below, clang-tidy found a suspicious issue: `Suspicious usage of 'sizeof(A*)'`, and also provided the clang-tidy check rule item [bugprone-sizeof-expression](https://clang.llvm.org/extra/clang-tidy/checks/bugprone/sizeof-expression.html), which is used to check whether the use of `sizeof` expressions is correct.
+
+![Suspicious spot found by clangd plugin using clang-tidy](https://slefboot-1251736664.file.myqcloud.com/20240515_leveldb_source_prepare_clangd_tidy.png)
+
+Here, new_list itself is a pointer to a pointer, so new_list[0] is actually a pointer. sizeof(new_list[0]) is getting the size of the pointer, not the size of the element pointed to by the pointer. However, this is the intended design here, which is to set the initial value of the new bucket to nullptr. In fact, this rule is intended to prevent errors like the following:
+
+> A common mistake is to compute the size of a pointer instead of its pointee. These cases may occur because of explicit cast or implicit conversion.
+
+For example, code like this:
+
+```cpp
+int A[10];
+memset(A, 0, sizeof(A + 0));
+
+struct Point point;
+memset(point, 0, sizeof(&point));
+```
+
+Overall, the code quality of LevelDB is very high, with very few clang-tidy prompts. It's a world apart from business code, so it's very worth learning.
+
+## LevelDB Read, Modify, Write
+
+LevelDB is **not a database like MySQL**, nor does it support SQL queries and other features. It's just a **fast key-value storage library**. LevelDB doesn't come with client and server code. If you need to provide storage functionality, you need to implement the corresponding logic yourself. Additionally, it only supports single-process access to a specified database and does not support multi-process access.
+
+In the industry, LevelDB is generally used as an underlying dependency for storage components. For example, WeChat's core storage [paxosstore](https://github.com/Tencent/paxosstore) uses LevelDB to store data. Getting started with LevelDB is relatively simple. You just need to include the header file and then call the corresponding interfaces. The code below implements a simple command-line interface that uses the LevelDB library to read and write keys.
+
+```cpp
+// simple_client.cpp
+#include <iostream>
+#include <string>
+
+#include "leveldb/db.h"
+
+int main() {
+  leveldb::DB* db;
+  leveldb::Options options;
+  options.create_if_missing = true;
+  leveldb::Status status = leveldb::DB::Open(options, "./db", &db);
+
+  if (!status.ok()) {
+    std::cerr << "Unable to open/create test database './db'" << std::endl;
+    std::cerr << status.ToString() << std::endl;
+    return -1;
+  }
+
+  std::string key;
+  std::string value;
+  std::string cmd;
+
+  while (true) {
+    std::cout << "leveldb> ";
+    std::cin >> cmd;
+
+    if (cmd == "set") {
+      std::cin >> key >> value;
+      status = db->Put(leveldb::WriteOptions(), key, value);
+      if (status.ok()) {
+        std::cout << "OK" << std::endl;
+      } else {
+        std::cout << "Error setting value: " << status.ToString() << std::endl;
+      }
+    } else if (cmd == "get") {
+      std::cin >> key;
+      status = db->Get(leveldb::ReadOptions(), key, &value);
+      if (status.ok()) {
+        std::cout << value << std::endl;
+      } else {
+        std::cout << "Not found" << std::endl;
+      }
+    } else if (cmd == "del") {
+      std::cin >> key;
+      status = db->Delete(leveldb::WriteOptions(), key);
+      if (status.ok()) {
+        std::cout << "OK" << std::endl;
+      } else {
+        std::cout << "Error deleting key: " << status.ToString() << std::endl;
+      }
+    } else if (cmd == "exit") {
+      break;
+    } else {
+      std::cout << "Unknown command. Supported commands are: set, get, del, exit" << std::endl;
+    }
+  }
+
+  delete db;
+  return 0;
+}
+```
+
+Here we use Cmake to build. You can refer to the following CMakeLists.txt file. Of course, the directories for include and lib libraries need to be changed according to the previously compiled directories.
+
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(SimpleLevelDBExamples VERSION 1.0)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+# Set build type to Debug to include debugging information
+set(CMAKE_BUILD_TYPE Debug)
+add_executable(SimpleClient simple_client.cpp)
+include_directories(../build/include)
+target_link_libraries(SimpleClient ${CMAKE_SOURCE_DIR}/../build/libleveldb.a pthread)
+```
+
+Then you can use `cmake --build .` to compile the binary file. Of course, if you're not used to cmake, you can also use gcc directly, but you need to manually specify the paths for header files and library files. Then execute as shown in the image below, you can operate LevelDB in a command-line client similar to redis.
+
+![Simple read and write command-line interface for LevelDB](https://slefboot-1251736664.file.myqcloud.com/20240806_leveldb_source_prepare_simpleclient.png)
+
+You can see LevelDB's data storage files in the db folder of the current directory, as follows:
+
+```shell
+$ ls db 
+000005.ldb  000018.ldb  000020.ldb  000031.ldb  000036.log  CURRENT  LOCK  LOG  LOG.old  MANIFEST-000035
+```
+
+We will explain LevelDB's data storage method in detail later, and will also expand on the functions of these files. Let's not go into details here.
+
+## Running Test Cases
+
+So far, we have compiled the LevelDB library and written a simple read and write command-line interface using LevelDB. Next, let's look at LevelDB's test cases. LevelDB's core code all has corresponding test cases, such as [cache_test.cc](https://github.com/google/leveldb/blob/main/util/cache_test.cc) in LRU cache, [db_test.cc](https://github.com/google/leveldb/blob/main/db/db_test.cc) in db implementation, [table_test.cc](https://github.com/google/leveldb/blob/main/table/table_test.cc) in table, and so on. The executable file `build/leveldb_tests` for test cases is generated along with the library using the previous compilation command.
+
+### Dynamic Library Dependencies
+
+If you run `leveldb_tests` directly, it may prompt that the `libtcmalloc` dynamic library is missing. This is a memory allocator from Google Perftools, which LevelDB uses and needs to be installed on the system.
+
+```shell
+./build/leveldb_tests: error while loading shared libraries: libtcmalloc.so.4: cannot open shared object file: No such file or directory
+```
+
+The installation command is also simple. For example, on a debian system, you can use the following command:
+
+```shell
+sudo apt-get update
+sudo apt-get install libgoogle-perftools-dev
+```
+
+After installation, you can use `ldd` to check if it can be found. If it's normal as follows, you can run the binary.
+
+```shell
+ldd ./build/leveldb_tests
+	linux-vdso.so.1 (0x00007ffc0d1fc000)
+	libtcmalloc.so.4 => /usr/local/lib/libtcmalloc.so.4 (0x00007f5277e91000)
+	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f5277c77000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f5277b98000)
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f5277b78000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f5277997000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f52782ed000)
+```
+
+Before installing the library, it prompted `libtcmalloc.so.4 => not found`, but after installing the dynamic library, it **automatically linked** to the correct path. How is this achieved? This is because the binary file contains references to dynamic libraries, especially **the name of the library and the required symbols (functions or data)**. The dynamic linker (usually `ld-linux.so` in Linux) is responsible for handling these references. It determines which libraries the binary file needs, and then loads the used libraries according to the specified paths and methods.
+
+After we install the tcmalloc library, the dynamic library file libtcmalloc.so.4 is copied to the system's library directory /usr/local/lib. Then the installation program executes ldconfig to update ld.so.cache, which contains path information for libraries to speed up library lookup. This way, when running the binary again, the dynamic linker checks the cache, finds the newly installed library, and resolves all relevant symbol references, thus completing the linking.
+
+### Modifying and Running
+
+These functional test cases are all written using the gtest framework. We can view all the test cases using the `--gtest_list_tests` parameter. As shown in the image below:
+
+![All current test cases for LevelDB](https://slefboot-1251736664.file.myqcloud.com/20240515_leveldb_source_prepare_gtest_list_tests.png)
+
+If you run leveldb_tests directly, it will execute all the test cases. However, we can use the `--gtest_filter` parameter to specify running only certain test cases, for example, `--gtest_filter='CacheTest.*'` only runs the test cases related to LRU cache. The result is as follows:
+
+![Running only certain test cases](https://slefboot-1251736664.file.myqcloud.com/20240515_leveldb_source_prepare_gtest_cache_test.png)
+
+**Test cases can help better understand the code logic.** During the process of reading the code, sometimes we want to verify some logic, so we can modify the test cases a bit. For example, I deliberately broke a test case that could pass:
+
+```cpp
+--- a/util/cache_test.cc
++++ b/util/cache_test.cc
+@@ -69,7 +69,7 @@ TEST_F(CacheTest, HitAndMiss) {
+
+   Insert(100, 101);
+   ASSERT_EQ(101, Lookup(100));
+-  ASSERT_EQ(-1, Lookup(200));
++  ASSERT_EQ(101, Lookup(200));
+   ASSERT_EQ(-1, Lookup(300));
+
+   Insert(200, 201);
+(END)
+```
+
+After modifying the test case, you need to recompile leveldb_tests. Because we configured the project's compilation options during the previous compilation, CMake has already cached them, so the following command automatically uses the previous configuration items, such as -DCMAKE_BUILD_TYPE=Debug, etc.
+
+```shell
+cmake --build . --target leveldb_tests
+
+[  2%] Built target gtest
+[ 58%] Built target leveldb
+[ 61%] Built target gtest_main
+[ 64%] Built target gmock
+[ 65%] Building CXX object CMakeFiles/leveldb_tests.dir/util/cache_test.cc.o
+[ 67%] Linking CXX executable leveldb_tests
+[100%] Built target leveldb_tests
+```
+
+Note that from the output above, you can see that only the modified file was recompiled here, generating a new object file `cache_test.cc.o`, so the compilation speed is very fast. After running it again, you'll see that the test case doesn't pass, as shown below:
+
+![Test case failing](https://slefboot-1251736664.file.myqcloud.com/20240515_leveldb_source_prepare_gtest_cache_test_fail.png)
+
+You can see the specific reason for the test case validation failure. During the process of reading the code, you can modify the test cases of some code at any time to verify whether your understanding is correct.
+
+## Summary
+
+Following this article, everyone should be able to quickly prepare the development environment for LevelDB. After configuring the IDE, compiling the source code, running simple read and write examples and test cases, let's start reading the source code together!
