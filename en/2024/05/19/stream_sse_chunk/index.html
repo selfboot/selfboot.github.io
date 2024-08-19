@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Through interaction and console screenshots, this article details four common methods for implementing stream output in the browser. Polling is simple but inefficient. Chunked transfer utilizes HTTP/1.1 features, allowing servers to respond with multiple data chunks, improving efficiency. Server-Sent Events, based on HTTP, enable servers to proactively push event streams to clients, suitable for unidirectional real-time data transmission scenarios. WebSocket is an independent protocol supporting full-duplex communication, ideal for interactive web applications."><title>Understand Web Stream Output Implementation with Examples</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Understand Web Stream Output Implementation with Examples</h1><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN">中文</option><option value="en" selected="">English</option></select></div><p class="description">Know what it is, and know why it is so. The breadth of knowledge is a byproduct of its depth!</p></div><div id="nav-menu"><a href="/en/."><i class="fa fa-home"></i><span> Home</span></a><a href="/en/archives/"><i class="fa fa-archive"></i><span> Archive</span></a><a href="/en/aboutme.html"><i class="fa fa-user"></i><span> About</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Understand Web Stream Output Implementation with Examples</h1><div class="post-meta">2024/05/19<span> | </span><span class="category"><a href="/categories/Programming/">Programming</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a class="disqus-comment-count" data-disqus-identifier="en/2024/05/19/stream_sse_chunk/" href="/en/2024/05/19/stream_sse_chunk/#disqus_thread"></a><div class="post-content"><p>If you’ve used large language models like ChatGPT, you may have noticed that the AI’s output text appears in “bursts” during chat conversations. This is known as <strong>stream output</strong>. How is this effect achieved in the browser?</p>
+<p>This article will introduce 4 common methods to implement stream output effects, each demonstrated with practical examples. The choice of method in business applications depends on specific requirements and scenarios.</p>
+<ol>
+<li><strong>Client-side polling</strong>: The client sends requests to the backend service at regular intervals (e.g., every few seconds) to retrieve new data.</li>
+<li><strong>Chunked transfer</strong>: Supported by HTTP/1.1, the server can send only part of the response content at a time, and the client can start processing as soon as it receives partial data.</li>
+<li><strong>Server-Sent Events</strong>: The server pushes information to the browser. The browser creates a one-way connection to the server, through which the server can send multiple messages.</li>
+<li><strong>WebSocket</strong>: Establishes a persistent, full-duplex connection, allowing real-time, two-way communication between the server and client.</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="Simple-Polling"><a href="#Simple-Polling" class="headerlink" title="Simple Polling"></a>Simple Polling</h2><p>First is the simplest polling method, where the client sends requests to the server at regular intervals to retrieve new data. When implementing polling, the client and server need to <strong>agree on how to indicate data updates or completion</strong> using HTTP request parameters and response. For example, a simple request field ‘cnt’ can be used to indicate which request this is, and a 400 error code in the response can indicate the end of polling.</p>
+<p>Below is a simple example using Python’s FastAPI, where each request carries an index to request content from a text, and if it exceeds the text length, it returns a 400 error.</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">polling</span>(<span class="params">cnt: <span class="built_in">int</span> = <span class="number">1</span></span>):</span><br><span class="line">    <span class="keyword">if</span> cnt &gt;= <span class="built_in">len</span>(message) <span class="keyword">or</span> cnt &lt; <span class="number">0</span>:  <span class="comment"># Check if cnt is valid</span></span><br><span class="line">        <span class="keyword">raise</span> HTTPException(status_code=<span class="number">400</span>, detail=<span class="string">"Invalid index"</span>)</span><br><span class="line">    data = {<span class="string">"message"</span>: message[cnt]}</span><br><span class="line">    <span class="keyword">return</span> JSONResponse(content=data)</span><br></pre></td></tr></tbody></table></figure>
+
+<div id="anchorPolling"></div>
+
+<p><a href="#anchorPolling">Here</a> is an interactive demonstration of polling:</p>
+<div class="data-container">
+    <div id="pollingData" class="data-block"></div>
+    <div class="button-container">
+        <button onclick="fetchData()" class="action-button">Start</button>
+        <button onclick="stopPolling()" class="action-button">End</button>
+    </div>
+</div>
+
+<p>After clicking start, you can see the data continuously updating until it ends. If you open the console, you’ll see the browser making an HTTP request every 100ms, with the parameter ‘cnt’ indicating which request it is.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_polling.png/webp" alt="View polling requests in the console" srcset="https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_polling.png/webp 1926w, https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_polling.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_polling.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_polling.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1926" height="1100"></p>
+<p>The advantage of this method is that it’s easy to understand and implement. However, the disadvantages are also obvious: <strong>frequent HTTP requests</strong> increase server load and network transmission overhead. With <code>HTTP/1.1</code>, each request needs to establish a TCP connection, increasing overhead even more. Additionally, the polling interval is difficult to control. If it’s too short, data might not have updated, wasting requests. If it’s too long, user experience suffers.</p>
+<h2 id="Chunked-Transfer-Encoding"><a href="#Chunked-Transfer-Encoding" class="headerlink" title="Chunked Transfer Encoding"></a>Chunked Transfer Encoding</h2><p>The disadvantages of the polling mechanism above are evident, mainly due to the need for many HTTP connections to update data. In fact, HTTP/1.1 offers a better way: <strong>chunked transfer encoding</strong>. Chunked transfer encoding implements stream output more efficiently. The client only needs to request once, and the server <strong>responds in multiple “chunks” until all data is sent</strong>. Chunked transfer is suitable for situations where the response body is very large or its size is unknown due to real-time content generation, common in large file downloads, video streams, or real-time data streams. Currently, if you want to implement stream output in WeChat Mini Programs, chunked encoding is the most convenient method.</p>
+<p>The chunked transfer encoding protocol is slightly more complex. The response header uses <code>Transfer-Encoding: chunked</code> to indicate that the response will be sent in chunks. Before each chunk, the server sends a line containing the size of the current chunk, followed by a carriage return and line feed (CRLF), then the actual chunk data, followed by another CRLF. When the transmission ends, the server sends a chunk of size 0, indicating no more data chunks, usually followed by a CRLF.</p>
+<p>Implementing the chunked encoding protocol with Python’s FastAPI is also relatively simple. Below is a simple example that outputs content every 100ms and transmits it using chunked encoding:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@stream_app.get(<span class="params"><span class="string">"/chunked"</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">chunked_transfer</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">generate_large_data</span>():</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> message:</span><br><span class="line">            <span class="keyword">yield</span> <span class="string">f"<span class="subst">{i}</span>"</span></span><br><span class="line">            <span class="keyword">await</span> asyncio.sleep(<span class="number">0.1</span>)</span><br><span class="line">    <span class="keyword">return</span> StreamingResponse(generate_large_data(), media_type=<span class="string">"text/plain"</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<div id="anchorChunked"></div>
+
+<p><a href="#anchorChunked">Here</a> is an interactive demonstration of chunked transfer encoding:</p>
+<div class="data-container">
+    <div id="chunkedData" class="data-block"></div>
+    <div class="button-container">
+        <button onclick="startChunked()" class="action-button">Start</button>
+        <button onclick="stopChunked()" class="action-button">End</button>
+    </div>
+</div>
+
+<p>After clicking start, you can similarly see the data continuously updating until all content is printed. If you open the console, you’ll see the browser only sends one HTTP request, and the response header contains <code>Transfer-Encoding: chunked</code>. The size of the response data keeps updating over time. Below is an animated GIF:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_chunked.gif?noresize=true" alt="Animated GIF of chunked transfer encoding"></p>
+<p>It’s worth noting that chunked transfer encoding is only supported in HTTP/1.1. In HTTP/2, the concept of chunked transfer encoding no longer exists, mainly because HTTP/2 works very differently. HTTP/2 introduced new mechanisms such as multiplexing, binary framing, and stream prioritization to improve efficiency and performance. In HTTP/2, all communication occurs through frames on a single TCP connection. Data frames are used to transmit message body data. The server can continuously send multiple data frames as needed, with each frame carrying a portion of the message content. The client reassembles these frames in the order received to reconstruct the complete message.</p>
+<p>However, in my example here, stream output still works under HTTP/2. This is because the frontend uses the <code>Fetch API</code> and stream processing <code>response.body.getReader().read()</code>, which provide a consistent interface for handling stream data, regardless of whether the underlying protocol is HTTP/1.1 or HTTP/2. When calling an HTTP/2 interface, it can still read data normally from the data frames.</p>
+<h2 id="Server-Sent-Events"><a href="#Server-Sent-Events" class="headerlink" title="Server-Sent Events"></a>Server-Sent Events</h2><p>OpenAI doesn’t use the two methods above in its chat tool ChatGPT, but instead uses <code>Server-Sent Events (SSE)</code> to implement stream output. SSE allows servers to proactively push events to browsers or other clients. SSE is designed primarily to simplify unidirectional real-time data streams from server to client, particularly suitable for Web applications that require fast, continuous data updates, such as real-time news updates, stock quotes, or social media real-time messages.</p>
+<p>SSE is based on the HTTP protocol and uses standard HTTP requests to initiate connections. First, the client initiates a standard HTTP GET request to start an SSE connection. The request header usually includes <code>Accept: text/event-stream</code>, telling the server that the client wants to open an SSE connection. The server responds to this request and <strong>keeps the connection open</strong>, with the Content-Type of the response set to <code>text/event-stream</code>. Subsequently, the server can send <strong>event streams in plain text form</strong>. Each event consists of an optional event name and a required data field. Events start with <code>data:</code>, followed by the specific message data, with events separated by two newline characters <code>\n\n</code>. Throughout the process, the HTTP connection remains open, allowing the server to send new events at any time, with the client processing the data upon receiving each event. Once an SSE connection is established, the server can continuously send data updates to the client until the connection is closed.</p>
+<p>Implementing SSE with Python’s FastAPI is relatively simple. Below is a simple example that returns content to the client every 100ms, and the server ends the connection after all content is output:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@stream_app.get(<span class="params"><span class="string">"/events"</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">get_events</span>():</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">event_stream</span>():</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> message:</span><br><span class="line">            <span class="keyword">yield</span> <span class="string">f"data: <span class="subst">{i}</span>\n\n"</span>  <span class="comment"># Note the data format</span></span><br><span class="line">            <span class="keyword">await</span> asyncio.sleep(<span class="number">0.1</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">yield</span> <span class="string">f"data: END\n\n"</span> </span><br><span class="line">    <span class="keyword">return</span> StreamingResponse(event_stream(), media_type=<span class="string">"text/event-stream"</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<div id="anchorSSE"></div>
+
+<p><a href="#anchorSSE">Here</a> is an interactive demonstration of SSE:</p>
+<div class="data-container">
+    <div id="sseData" class="data-block"></div>
+    <div class="button-container">
+        <button onclick="startSSE()" class="action-button">Start</button>
+        <button onclick="stopSSE()" class="action-button">End</button>
+    </div>
+</div>
+
+<p>After clicking start, you can see the data continuously updating until all content is printed. If you open the console, you’ll see the browser only sends one HTTP request, and the response header contains <code>Content-Type: text/event-stream</code>. The size of the response data keeps updating over time. Below is an animated GIF of the entire process:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_sse.gif?noresize=true" alt="Animated GIF of Server-Sent Events"></p>
+<p>Most modern browsers support SSE, which provides a good user experience and is very resource-efficient. However, SSE has one drawback: it only allows <strong>unidirectional transmission from server to client</strong>, and the client cannot send data to the server. If bidirectional communication is needed, WebSocket should be used.</p>
+<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p>The three methods mentioned above are all based on the HTTP protocol, mainly to solve the problem of pushing data from server to client. WebSocket, on the other hand, is an independent protocol that allows <strong>real-time, bidirectional communication</strong> between client and server, effectively supporting complex interactive applications such as online games, trading platforms, and collaboration tools.</p>
+<p>WebSocket is also implemented based on the TCP protocol, with the specific protocol defined by IETF’s <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455</a>. First is the handshake phase, where a WebSocket connection is initiated through the HTTP protocol. The client needs to send a special HTTP request including the <code>Upgrade: websocket</code> and <code>Connection: Upgrade</code> headers, requesting the server to switch to the WebSocket protocol. If the server supports WebSocket, it will return an HTTP response code <code>101 Switching Protocols</code>, indicating agreement to switch to WebSocket.</p>
+<p>Once the handshake is successful, the connection is upgraded to WebSocket, and both parties can start sending data through frames. The WebSocket protocol defines various frame types for transmitting data, closing connections, ping/pong, etc. The WebSocket protocol <strong>supports both text and binary messages</strong>, allowing messages to be sent in a single frame or in fragments.</p>
+<p>Here’s how to implement a WebSocket server using Python’s FastAPI:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@stream_app.websocket(<span class="params"><span class="string">"/ws"</span></span>)</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">websocket_endpoint</span>(<span class="params">websocket: WebSocket</span>):</span><br><span class="line">    <span class="keyword">await</span> websocket.accept()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> message:</span><br><span class="line">        <span class="keyword">await</span> websocket.send_text(<span class="string">f"<span class="subst">{i}</span>"</span>)</span><br><span class="line">        <span class="keyword">await</span> asyncio.sleep(<span class="number">0.1</span>) </span><br><span class="line">    <span class="keyword">await</span> websocket.close()</span><br></pre></td></tr></tbody></table></figure>
+
+<div id="anchorWS"></div>
+
+<p><a href="#anchorWS">Here</a> is an interactive demonstration of WebSocket:</p>
+<div class="data-container">
+    <div id="wsData" class="data-block"></div>
+    <div class="button-container">
+        <button onclick="startWebSocket()" class="action-button">Start</button>
+        <button onclick="stopWebSocket()" class="action-button">End</button>
+    </div>
+</div>
+
+<p>After starting here, you can see the data transmitted in the WebSocket in the console. Chrome’s developer tools have a message status bar where you can see the data content throughout the full-duplex communication process. Below is an animated GIF of the entire process:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240519_stream_sse_chunk_websocket.gif?noresize=true" alt="Animated GIF of WebSocket"></p>
+<p>Of course, the WebSocket protocol is more complex compared to HTTP, requiring both the server and client to implement more logic.</p>
+<p>This article has introduced 4 common methods for implementing stream output, each with its own advantages and disadvantages, suitable for different scenarios. Here are some suggestions:</p>
+<ol>
+<li>For simple unidirectional push scenarios, such as real-time news updates or stock quotes, consider using Server-Sent Events. It’s simple to implement, supported by mainstream browsers, and can effectively save server resources.</li>
+<li>For interactive scenarios requiring bidirectional communication, such as instant messaging, collaborative office work, or online games, WebSocket is a more suitable choice. It offers full-duplex communication, supports text and binary data, and has low latency. However, it requires both client and server to implement WebSocket protocol logic.</li>
+<li>If latency requirements are not too high, consider using polling or chunked transfer encoding. Polling is the simplest to implement, but frequent requests increase server load. Chunked transfer encoding is more efficient and doesn’t require frequent connection establishment.</li>
+<li>For applications that need to support older browsers, polling might be the only option, as older browser versions may not support WebSocket or Server-Sent Events.</li>
+</ol>
+<p>Overall, stream output has been increasingly widely used in modern Web applications. Especially after the rise of large language models, almost all text generation applications use stream output to enhance user experience.</p>
+<style>
+.data-container {
+    margin-bottom: 20px;
+}
+
+.data-block {
+    min-height: 100px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: end; /* 按钮靠右对齐 */
+    margin-top: 10px;
+}
+
+.action-button {
+    margin-left: 10px; /* 按钮之间的水平间隔 */
+    padding: 5px 10px;
+}
+
+.action-button:disabled {
+    opacity: 0.5; /* 禁用按钮时的样式 */
+    cursor: not-allowed; /* 鼠标样式表明按钮不可点击 */
+}
+</style>
+
+<script>
+let count = 0;
+let pollingTimer; // 用于取消轮询的定时器
+
+function fetchData() {
+    document.getElementById('pollingData').innerHTML = '';
+    count = 0;
+    fetchPolling(); // 开始轮询
+}
+
+function fetchPolling() {
+    fetch('https://api.selfboot.cn/stream/polling?cnt=' + count)
+        .then(response => {
+            if (!response.ok && response.status === 400) {
+                throw new Error('Server returned 400 error');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('pollingData').innerText += data.message;
+            count++;
+            pollingTimer = setTimeout(fetchPolling, 100);  // 安排下一次请求
+        })
+        .catch(error => {
+            console.error('Polling stopped: ', error);
+        });
+}
+
+function stopPolling() {
+    clearTimeout(pollingTimer); // 取消定时器，停止轮询
+    document.getElementById('pollingData').innerHTML = ''; // 清空数据区
+}
+
+let reader; // 用于Chunked传输的reader
+function startChunked() {
+    document.getElementById('chunkedData').innerHTML = '';
+    fetch('https://api.selfboot.cn/stream/chunked')
+        .then(response => {
+            reader = response.body.getReader();
+            readChunked();
+        })
+        .catch(console.error);
+}
+
+function readChunked() {
+    reader.read().then(({done, value}) => {
+        if (!done) {
+            const text = new TextDecoder().decode(value);
+            document.getElementById('chunkedData').innerText += text;
+            readChunked();
+        }
+    });
+}
+
+function stopChunked() {
+    if (reader) {
+        reader.cancel(); // 取消读取操作，终止流
+    }
+    document.getElementById('chunkedData').innerHTML = '';
+}
+
+let eventSource; // 用于SSE的EventSource对象
+function startSSE() {
+    document.getElementById('sseData').innerHTML = '';
+    eventSource = new EventSource('https://api.selfboot.cn/stream/events');
+    eventSource.onmessage = function(event) {
+        if (event.data === "END") {
+            eventSource.close();
+        } else if (event.data === "") {
+            document.getElementById('sseData').innerHTML += '<br>';
+        } else {
+            document.getElementById('sseData').innerHTML += event.data;
+        }
+    };
+    eventSource.onerror = function(event) {
+        console.error("SSE failed:", event);
+    };
+}
+
+function stopSSE() {
+    if (eventSource) {
+        eventSource.close(); // 关闭SSE连接
+    }
+    document.getElementById('sseData').innerHTML = '';
+}
+
+let websocket;
+function startWebSocket() {
+    document.getElementById('wsData').innerHTML = '';
+    websocket = new WebSocket('wss://api.selfboot.cn/stream/ws');
+
+    websocket.onopen = function() {
+        console.log('WebSocket connection opened');
+    };
+
+    websocket.onmessage = function(event) {
+        document.getElementById('wsData').innerHTML += event.data;
+    };
+
+    websocket.onerror = function(event) {
+        console.error('WebSocket error observed:', event);
+    };
+
+    websocket.onclose = function(event) {
+        console.log('WebSocket connection closed');
+    };
+}
+
+function stopWebSocket() {
+    if (websocket) {
+        websocket.send('stop'); // 发送停止信号
+        websocket.close(); // 关闭连接
+    }
+    document.getElementById('wsData').innerHTML = '';
+}
+
+</script></div><div class="article-footer-copyright"><p> Written in Chinese, LLM translated into English</p><p>Non-commercial reproduction is allowed with proper attribution to the author and source. </p><p>For commercial reproduction, please contact the <a href="mailto:xuezaigds@gmail.com">author</a></p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="Sponsor"></a><div class="donate_txt"> ↑<br>Good content, Sponsor it<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="WeChat Sponsor"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="Alipay Sponsor"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/Python/"><i class="fa fa-tag"></i>Python</a><a href="/tags/Web/"><i class="fa fa-tag"></i>Web</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/en/2024/05/19/stream_sse_chunk/';
+    this.page.identifier = 'en/2024/05/19/stream_sse_chunk/';
+    this.page.title = 'Understand Web Stream Output Implementation with Examples';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Categories</span></div><ul><li><a href="/en/categories/Programming/">Programming</a> (2)</li><li><a href="/en/categories/Artificial-Intelligence/">Artificial Intelligence</a> (1)</li><li><a href="/en/categories/Source-Code-Analysis/">Source Code Analysis</a> (6)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Tags</span></div><div class="tagcloud"><a href="/en/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/en/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/en/tags/Web/" style="font-size: 15.00px;">Web</a> <a href="/en/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/en/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = en/2024/05/19/stream_sse_chunk/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>Recent</span></div><ul><li><a href="/en/2024/08/14/leveldb_source_wal_log/" title="LevelDB Explained - How To Read and Write WAL Logs">LevelDB Explained - How To Read and Write WAL Logs</a></li><li><a href="/en/2024/08/13/leveldb_source_unstand_c++/" title="LevelDB Explained -  Understanding Advanced C++ Techniques">LevelDB Explained -  Understanding Advanced C++ Techniques</a></li><li><a href="/en/2024/08/08/leveldb_source_bloom_filter/" title="LevelDB Explained - Bloom Filter Implementation and Visualization">LevelDB Explained - Bloom Filter Implementation and Visualization</a></li><li><a href="/en/2024/08/06/leveldb_source_prepare/" title="LevelDB Explained - Preparing the Development Environment">LevelDB Explained - Preparing the Development Environment</a></li><li><a href="/en/2024/08/02/leveldb_source_env_posixfile/" title="LevelDB Explained - Posix File Operation Details">LevelDB Explained - Posix File Operation Details</a></li><li><a href="/en/2024/07/22/leveldb_source_nodestructor/" title="LevelDB Explained - Preventing C++ Object Destruction">LevelDB Explained - Preventing C++ Object Destruction</a></li><li><a href="/en/2024/06/22/claude35_artifacts/" title="Creating Games Using Free Claude3.5 with Artifacts">Creating Games Using Free Claude3.5 with Artifacts</a></li><li><a href="/en/2024/06/13/async_pool_block_problem/" title="How an Async Thread Pool Exception Caused Service Chaos">How an Async Thread Pool Exception Caused Service Chaos</a></li><li><a href="/en/2024/05/19/stream_sse_chunk/" title="Understand Web Stream Output Implementation with Examples">Understand Web Stream Output Implementation with Examples</a></li></ul></div><!-- Debug: Current Language = en, Filtered Posts Count = 9 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"> Contents</i></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Simple-Polling"><span class="toc-number">1.</span> <span class="toc-text">Simple Polling</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chunked-Transfer-Encoding"><span class="toc-number">2.</span> <span class="toc-text">Chunked Transfer Encoding</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Server-Sent-Events"><span class="toc-number">3.</span> <span class="toc-text">Server-Sent Events</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WebSocket"><span class="toc-number">4.</span> <span class="toc-text">WebSocket</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>Total Site Visits:  <span id="busuanzi_value_site_pv"></span> Times，<span id="busuanzi_container_site_uv"></span>Unique Visitors:  <span id="busuanzi_value_site_uv"></span> People</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>

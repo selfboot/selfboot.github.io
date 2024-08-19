@@ -78,6 +78,10 @@ div {
 }
 #header .site-name {
   margin-bottom: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 #header .site-name h1 {
   padding: 0;
@@ -88,6 +92,8 @@ div {
 #header .site-name #logo {
   font: bold 38px/1.12 "Times New Roman", Georgia, Times, sans-serif;
   color: #555;
+  flex-grow: 1;
+  margin-right: 20px;
 }
 #header .site-name #logo span, #header .site-name #logo:hover {
   color: #777;
@@ -95,6 +101,41 @@ div {
 #header .site-name .description {
   margin: 0.2em 0 0;
   color: #999;
+  width: 100%;
+  order: 3;
+}
+#header .site-name .lang-select-wrapper {
+  align-self: center;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+#header .site-name .lang-select-wrapper .fa-globe {
+  margin-right: 8px;
+  color: #555;
+  font-size: 16px;
+}
+#header .site-name .lang-select-wrapper #lang-select {
+  padding: 5px 10px;
+  padding-right: 25px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  color: #555;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23555' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+#header .site-name .lang-select-wrapper #lang-select:hover {
+  border-color: #999;
+}
+#header .site-name .lang-select-wrapper #lang-select:focus {
+  outline: none;
+  border-color: #777;
 }
 #header #nav-menu {
   margin: 10px 0 -1px;
@@ -102,13 +143,14 @@ div {
   position: absolute;
   right: 0;
   bottom: 0;
+  font-family: "Monaco", "Segoe UI", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "微软雅黑", sans-serif;
 }
 #header #nav-menu a {
   display: inline-block;
   padding: 3px 20px 3px;
   line-height: 30px;
   color: #444;
-  font-size: 13px;
+  font-size: 14px;
   border: 1px solid transparent;
 }
 #header #nav-menu a:hover {
@@ -134,6 +176,8 @@ div {
   line-height: 2.7;
   margin-top: 0;
   font-size: 16px;
+  font-weight: bold !important;
+  font-family: "Monaco", "Segoe UI", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "微软雅黑", sans-serif;
   border-bottom: 1px solid #ddd;
   display: block;
   font-weight: normal;
