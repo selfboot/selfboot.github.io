@@ -7,6 +7,7 @@ category: Source Code Analysis
 toc: true
 date: 2024-08-13 21:00:00
 description: This article delves into the advanced C++ techniques used in LevelDB, including flexible arrays, symbol exporting for linking, and the Pimpl class design. Through specific code examples, it explains in detail how to implement variable-length data structures using flexible arrays, optimizing memory usage and reducing memory fragmentation. It also introduces different methods of symbol exporting and their importance for cross-platform compilation, as well as the application of the Pimpl design pattern in encapsulation and binary compatibility.
+lang: en
 ---
 
 The overall code of LevelDB is quite understandable, **without using many esoteric C++ techniques**. However, there are some implementations that are relatively uncommon, such as flexible arrays, symbol exporting for linking, and Pimpl class design. This article will review these advanced C++ techniques to help better understand the implementation of LevelDB.

@@ -8,6 +8,7 @@ toc: true
 mathjax: true
 date: 2024-08-08 11:38:52
 description: This article provides a detailed introduction to the basic concepts, mathematical principles, and parameter selection of Bloom filters. It analyzes the specific implementation in LevelDB's source code, including hash function selection, filter creation, and query processes. The article also showcases LevelDB's Bloom filter test cases, verifying its correctness and performance. Additionally, it offers a visual demonstration of Bloom filters to help readers intuitively understand their working principles.
+lang: en
 ---
 
 In LevelDB, data is stored in SSTable files. When using Get() to query a key, it may be necessary to read multiple blocks from the SST file. To reduce disk reads, LevelDB provides a FilterPolicy strategy. If it can determine that a key is not in the current SSTable file, it can skip reading that file, thus improving query efficiency.

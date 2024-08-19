@@ -8,6 +8,7 @@ toc: true
 mathjax: true
 date: 2024-08-14 21:05:31
 description: This article explores the Write-Ahead Logging (WAL) log read and write interfaces in LevelDB. It provides a detailed analysis of the WAL log writing process, including data segmentation, record format, and storage methods. It also explains the complex logic of log reading, including how to handle cross-block records and abnormal situations. Additionally, it showcases relevant test cases to verify the correctness of WAL logs in various scenarios.
+lang: en
 ---
 
 LevelDB uses Write-Ahead Logging (WAL) to ensure data durability. When a write operation occurs, LevelDB first writes the data to the log file, and then applies it to the in-memory data structure (such as MemTable). When the system or database restarts after a crash, LevelDB checks the records in the WAL log file. By reading and replaying these log records, LevelDB can rebuild the data state that had not been fully written to disk when the crash occurred.

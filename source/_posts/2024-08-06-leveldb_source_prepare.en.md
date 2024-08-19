@@ -7,6 +7,7 @@ category: Source Code Analysis
 toc: true
 description: This article introduces how to prepare the development environment for LevelDB, including source code retrieval, compilation, and VSCode configuration. Through simple read and write examples, readers can gain a preliminary understanding of LevelDB. The article also explains how to use the gtest framework to run and modify test cases for better understanding of the code logic.
 date: 2024-08-06 20:31:43
+lang: en
 ---
 
 LevelDB is an excellent LSM Tree storage component developed in C++. Although its overall codebase is not large, its design is ingenious and worth studying. During the process of reading the source code, I have compiled a [series of articles](https://selfboot.cn/en/tags/LevelDB/) to gradually break down the implementation details of LevelDB. However, before reading the code, it's best to prepare the entire development environment.
