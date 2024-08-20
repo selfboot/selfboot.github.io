@@ -2,9 +2,7 @@ function createPageGenerator(type, lang) {
   return function (locals) {
     const allPosts = locals["posts"];
     const enPosts = allPosts.filter((post) => post.lang === "en");
-    const zhPosts = allPosts.filter(
-      (post) => post.lang === "zh-CN" || !post.lang
-    );
+    const zhPosts = allPosts.filter((post) => post.lang === "zh-CN" || !post.lang);
 
     const posts = lang === "en" ? enPosts : zhPosts;
     // console.log("Cal", allPosts.length, enPosts.length, zhPosts.length, posts.length);
@@ -74,14 +72,8 @@ function createPageGenerator(type, lang) {
 // 注册生成器
 hexo.extend.generator.register("index", createPageGenerator("", "zh-CN"));
 hexo.extend.generator.register("en_index", createPageGenerator("", "en"));
-hexo.extend.generator.register(
-  "archives",
-  createPageGenerator("archives", "zh-CN")
-);
-hexo.extend.generator.register(
-  "en_archives",
-  createPageGenerator("archives", "en")
-);
+hexo.extend.generator.register("archives", createPageGenerator("archives", "zh-CN"));
+hexo.extend.generator.register("en_archives", createPageGenerator("archives", "en"));
 
 // 标签和分类生成器
 const typeMap = {
@@ -98,36 +90,14 @@ function createLanguageSpecificCollection(items, lang) {
   );
 }
 
-// 优化 before_generate 过滤器
-hexo.extend.filter.register("before_generate", function () {
-  // 分离标签
-  const allTags = hexo.locals.get("tags");
-  const enTags = createLanguageSpecificCollection(allTags.toArray(), "en");
-  const zhTags = createLanguageSpecificCollection(allTags.toArray(), "zh-CN");
-  hexo.locals.set("en_tags", () => enTags);
-  hexo.locals.set("zh_tags", () => zhTags);
-
-  // 分离分类
-  const allCategories = hexo.locals.get("categories");
-  const enCategories = createLanguageSpecificCollection(
-    allCategories.toArray(),
-    "en"
-  );
-  const zhCategories = createLanguageSpecificCollection(
-    allCategories.toArray(),
-    "zh-CN"
-  );
-  hexo.locals.set("en_categories", () => enCategories);
-  hexo.locals.set("zh_categories", () => zhCategories);
-});
-
 function createTaxonomyGenerator(type, lang) {
   // console.log("Register", type, lang);
   return function (locals) {
     const singularType = typeMap[type];
-    const taxonomies =
-      lang === "en" ? locals[`en_${type}`] : locals[`zh_${type}`];
-
+    const allTypes = hexo.locals.get(type);
+    const langType = lang === "en" ? "en" : "zh-CN";
+    const taxonomies = createLanguageSpecificCollection(allTypes.toArray(), langType);
+    // console.log("Generate", type, lang, taxonomies.length);
     return taxonomies.map((taxonomy) => {
       const data = {
         posts: taxonomy.posts
