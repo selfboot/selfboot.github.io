@@ -69,11 +69,22 @@ time_format: H:mm:ss
 per_page: 3
 pagination_dir: page
 
+exclude:
+  - 'custom.xml'
+  - 'custom_en.xml'
 feed:
-  type: atom
-  path: atom.xml
+  type: 
+    - atom
+    - rss2
+  path: 
+    - atom.xml
+    - en/atom.xml
   limit: 20
   hub:
+  content_limit: 100
+  template:
+    - ./source/custom.xml
+    - ./source/custom_en.xml
       
 # Extensions
 ## Plugins: https://github.com/hexojs/hexo/wiki/Plugins
