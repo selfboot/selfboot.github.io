@@ -292,7 +292,7 @@ Here's the result of executing the test:
 
 ## Bloom Filter Visualization
 
-Before concluding the article, let's take a look at [a visualization demonstration of the Bloom filter](https://gallery.selfboot.cn/zh/algorithms/bloomfilter), which displays the principles and implementation discussed above in the form of charts, deepening our understanding.
+Before concluding the article, let's take a look at [a visualization demonstration of the Bloom filter](https://gallery.selfboot.cn/en/algorithms/bloomfilter), which displays the principles and implementation discussed above in the form of charts, deepening our understanding.
 
 ![Bloom Filter Visualization Demo](https://slefboot-1251736664.file.myqcloud.com/20240808_leveldb_source_bloom_filter_visualization.png)
 
