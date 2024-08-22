@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="This article provides a detailed guide on how to train a text classifier using the BERT model from scratch to identify legal consultation questions. It covers data collection, model construction, training, and deployment, with accompanying code examples, using Flask and Docker containerization. The goal is to minimize entry barriers, allowing anyone to quickly get started and complete an online service."><title>Training and Deploying a Text Classification Model with BERT from Scratch</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml,en/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Training and Deploying a Text Classification Model with BERT from Scratch</h1><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN">中文</option><option value="en" selected="">English</option></select></div><p class="description">Know what it is, and know why it is so. The breadth of knowledge is a byproduct of its depth!</p></div><div id="nav-menu"><a href="/en/."><i class="fa fa-home"></i><span> Home</span></a><a href="/en/archives/"><i class="fa fa-archive"></i><span> Archive</span></a><a href="/en/aboutme.html"><i class="fa fa-user"></i><span> About</span></a><a href="/en/atom.xml"><i class="fa fa-rss"></i><span> RSS</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Training and Deploying a Text Classification Model with BERT from Scratch</h1><div class="post-meta">2023/12/06<span> | </span><span class="category"><a href="/categories/Artificial-Intelligence/">Artificial Intelligence</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a class="disqus-comment-count" data-disqus-identifier="en/2023/12/06/bert_nlp_classify/" href="/en/2023/12/06/bert_nlp_classify/#disqus_thread"></a><div class="post-content"><p>Previously, I created a tool for <a href="https://selfboot.cn/links.html">Lawyer Xiao Sheng</a> to <strong>regularly screen posts online and determine if they are legal consultation-related</strong>. This requires text classification to judge whether the specified post content involves legal issues. As a backend developer with no experience in natural language processing, I only had a basic understanding of machine learning principles from my studies, but had never actually done a classification task. Fortunately, with ChatGPT now available, I decided to use its API for classification.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp" alt="Text Classification Task: Determining if a Post is a Legal Consultation" srcset="https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp 1970w, https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231130_bert_nlp_classify_index.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1970" height="1212"></p>
+<span id="more"></span>
+
+<p>After running ChatGPT for a while, I found two problems with using it for classification:</p>
+<ol>
+<li><strong>High cost</strong>. Currently using the GPT3.5 model, if there are many posts, it costs several dollars per day. So the current approach is to first filter with keywords, and then use the GPT3.5 model for classification, which misses some relevant posts without keywords.</li>
+<li><strong>Misidentification</strong>. Some posts that are not legal consultation questions are also misjudged by GPT3.5. This hallucination problem persists even after improving the prompt. You can see examples in my article <a href="https://selfboot.cn/2023/08/23/not-smart-chatgpt/#%E6%88%BF%E4%B8%9C%E4%B8%8D%E9%80%80%E6%8A%BC%E9%87%91%EF%BC%9F">Real Examples Showing How ChatGPT Can Make Things Up!</a>.</li>
+</ol>
+<p>So I thought about training my own model for text classification. The most famous model in natural language processing is BERT, so I trained a classification model based on <code>bert-base-chinese</code>, which works quite well. This article mainly records the entire process of dataset preparation, model training, and model deployment. With the help of ChatGPT, the whole process was much simpler than I imagined.</p>
+<h2 id="Online-Experience"><a href="#Online-Experience" class="headerlink" title="Online Experience"></a>Online Experience</h2><p>Before we begin, let me give you an experience of this model (only available at the original blog post URL). Enter some text in the input box below, click the “Real-time Model Prediction” button, and you’ll see the prediction result. Due to my <strong>personal server’s poor configuration</strong>, each prediction takes about 2 seconds here, and only one request can be processed at a time. If it takes too long, you can try again later.</p>
+<div>
+    <form id="predictionForm">
+        <label for="content">Enter text:</label><br>
+        <textarea id="content" name="content" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Real-time Model Prediction">
+    </form>
+    <p id="result"></p>
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var content = document.getElementById('content').value;
+            var resultElement = document.getElementById('result');
+            resultElement.style.color = 'black'; 
+            resultElement.textContent = 'Predicting...';
+            fetch('https://api.selfboot.cn/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultElement.textContent = 'This ' + (data.is_lawer ? 'is' : 'is not') + " a legal consultation question";
+                resultElement.style.color = data.is_lawer ? 'green' : 'red';
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                resultElement.textContent = 'Model prediction error, please try again';
+            });
+        });
+    </script>
+    <style>
+    #predictionForm textarea {
+        width: 100%; /* Ensure textarea width is 100% */
+        box-sizing: border-box; /* Include padding and border in the width */
+        resize: vertical; /* Allow only vertical resizing */
+    }
+    </style>
+</div>
+
+<p>For example, the following are consultation-type texts:</p>
+<blockquote>
+<p>My car was hit in the parking lot of the community and the hit-and-run vehicle was found on surveillance. What responsibility should they bear in this accident?<br>In November 2021, I worked with an individual contractor in Wuan City Smart City, and in the end, wages were owed and not given. How can I get them back?</p>
+</blockquote>
+<p>The following are non-legal consultation texts, excerpted from article titles in my blog:</p>
+<blockquote>
+<p>Analysis of C++ process coredump caused by missing dependencies in Bazel<br>ChatGPT Penetration Analysis: Search Trends, Demand Map, and Population Characteristics</p>
+</blockquote>
+<h2 id="Dataset-Preparation"><a href="#Dataset-Preparation" class="headerlink" title="Dataset Preparation"></a>Dataset Preparation</h2><p>The prerequisite for training a model is to have a dataset. Specifically for my classification task, I needed to find many legal consultation texts and non-legal consultation texts.</p>
+<p>Non-legal consultation texts are easy to find. I used post content from the programmer community V2EX. V2EX also provides a convenient API to directly get the titles and content of posts. I spent a day crawling about 200,000 post contents and saved them in a PostgreSQL database. Actually, there are a few legal consultation contents among these posts, but the overall proportion is very small and should not significantly affect the overall training effect of the model. Legal consultation texts are harder to find. After some attempts, I finally found some on a public site, totaling about 200,000.</p>
+<p>I saved these two types of texts in separate files, with each line being a JSON file containing the text content. Here are some examples:</p>
+<table>
+<thead>
+<tr>
+<th>Text Content</th>
+<th>Is Consultation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Will filing for divorce investigate the bank card transactions or deposits of the other party or both parties?</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The person being executed has the ability to repay, for example, work income, monthly income of 4,000, repaying 1,000 per month, but the person being executed evades and does not repay a penny. Can they be held accountable, and what are the legal provisions?</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>I lent money to someone, they always say they’ll repay but never do, I didn’t write an IOU at the time, I want to ask what to do!</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>I want to find the icon in this Android game apk file</td>
+<td>No</td>
+</tr>
+<tr>
+<td>I’ve never developed an official account, I want to ask, when the official account receives a push message, then clicking the message jumps to a third-party application, can this be achieved? The third-party application is not listed on the app store</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Apart from competing with competitors for screen ratio and looking cooler, I really can’t think of any practical significance, it feels more solid with a border</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<h2 id="Model-Training"><a href="#Model-Training" class="headerlink" title="Model Training"></a>Model Training</h2><p>With the dataset prepared, we can start training the model. I hadn’t had much exposure to BERT before, nor had I done neural network model training. Fortunately, with ChatGPT, I quickly wrote a complete training code. I used PyTorch for training here, and ChatGPT provided complete training code along with detailed code explanations. For any parts I didn’t understand, I first asked AI, then combined it with some materials to gradually understand.</p>
+<p>The complete training script is on <a target="_blank" rel="noopener" href="https://gist.github.com/selfboot/8a0cb6129d000a01e0e3605f829b62ea">Gist</a>, and the overall process can be summarized as follows:</p>
+<ol>
+<li>Data loading and preprocessing: Load the dataset from JSON files, convert the data into (text, label) format and shuffle randomly. Use <code>train_test_split</code> to divide the data into training and validation sets.</li>
+<li>Encoding using <code>BERT Tokenizer</code>: Use BertTokenizer for text tokenization and encoding, including adding special tokens, truncation, and padding.</li>
+<li>Building datasets and data loaders: Convert the encoded data into TensorDataset. Create data loaders for training and validation sets using DataLoader.</li>
+<li>Defining <strong>model, loss function, and optimizer</strong>: Define a custom PyTorch model containing the BERT model and additional classification layers. Use Focal Loss as the loss function, suitable for handling class imbalance problems. Use the AdamW optimizer.</li>
+<li><strong>Model training and validation</strong>: In the training loop, process data in batches, calculate loss, backpropagate, and update model parameters. Evaluate model performance using the validation set at the end of each training epoch. Apply <strong>learning rate scheduler and early stopping mechanism to optimize the training process</strong>.</li>
+<li>Performance evaluation: Calculate and print metrics such as accuracy, precision, recall, and F1 score.</li>
+<li>Model saving: Save the model’s state when performance improves.</li>
+</ol>
+<p>Here, you don’t even need any neural network or machine learning basics. With just a dataset and ChatGPT, you can continuously adjust the code and train a model with good performance. However, as an ambitious developer, I still want to try my best to understand the principles behind each line of code, so that I can better understand the process of model training. In addition to constantly questioning ChatGPT and verifying its answers, I also found a good deep learning beginner tutorial, <a target="_blank" rel="noopener" href="https://d2l.ai/">Dive into Deep Learning</a>, which contains a lot of deep learning knowledge and code practices, very suitable for beginners.</p>
+<p>Model training requires GPU machines. If you don’t have a good GPU personally, you can use the free T4 GPU quota on <a target="_blank" rel="noopener" href="https://colab.research.google.com/">Google Colab</a> for training. However, memory is limited, so when training, be sure to appropriately reduce the batch_size. I usually use batch_size=16 on Colab. If the dataset is too large, training one epoch here may take a long time, and the free quota may only be enough for a few epochs of training.</p>
+<h2 id="Model-Deployment"><a href="#Model-Deployment" class="headerlink" title="Model Deployment"></a>Model Deployment</h2><p>After the model is trained, a torch model file model.pt will be saved. How to deploy an HTTP service using this model file? In simple terms, you can use ONNX Runtime + Flask + Gunicorn + Docker + Nginx for deployment.</p>
+<ul>
+<li>ONNX Runtime is a high-performance inference engine that can be used to load and run models.</li>
+<li>Flask is a Python Web framework used to write Web services. Gunicorn is a Python WSGI HTTP server used to start Flask services.</li>
+<li>Docker is a containerization tool used to package and run services.</li>
+</ul>
+<p>The overall deployment structure can be referred to in the following diagram:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp" alt="Model Deployment Structure" srcset="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp 1650w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_model_server.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1650" height="964"></p>
+<p>After Nginx receives an HTTP request, it will forward it to Gunicorn. Gunicorn will start the Flask service. The Flask service uses the loaded ONNX model file and inference environment to predict the requested text and finally return the prediction result. The core code of the Flask service is very simple, as follows:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">session = ort.InferenceSession(<span class="string">'model.onnx'</span>)</span><br><span class="line">input_name = session.get_inputs()[<span class="number">0</span>].name</span><br><span class="line">output_name = session.get_outputs()[<span class="number">0</span>].name</span><br><span class="line"></span><br><span class="line">tokenizer = BertTokenizer.from_pretrained(<span class="string">'./model'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tokenize</span>(<span class="params">content, max_length=<span class="number">512</span></span>):</span><br><span class="line">    encoded = tokenizer.encode_plus(</span><br><span class="line">        content,</span><br><span class="line">        max_length=max_length,</span><br><span class="line">        padding=<span class="string">'max_length'</span>,</span><br><span class="line">        truncation=<span class="literal">True</span>,</span><br><span class="line">        return_tensors=<span class="string">"np"</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> encoded[<span class="string">'input_ids'</span>], encoded[<span class="string">'attention_mask'</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">content</span>):</span><br><span class="line">    input_ids, attention_mask = tokenize(content)</span><br><span class="line">    result = session.run(</span><br><span class="line">        [output_name], {input_name: input_ids, <span class="string">'attention_mask'</span>: attention_mask})</span><br><span class="line">    pred_label = np.argmax(result[<span class="number">0</span>], axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> pred_label[<span class="number">0</span>] == <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">'/predict'</span>, methods=[<span class="string">'POST'</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict_route</span>():</span><br><span class="line">    content = request.json.get(<span class="string">'content'</span>)</span><br><span class="line">    is_lawer = predict(content)</span><br><span class="line">    <span class="keyword">return</span> jsonify({<span class="string">'is_lawer'</span>: <span class="number">1</span> <span class="keyword">if</span> is_lawer <span class="keyword">else</span> <span class="number">0</span>})</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app.run(host=<span class="string">'0.0.0.0'</span>, port=<span class="number">5000</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>To facilitate the deployment of Gunicorn, Flask, and various dependencies, Docker is used to package them. The Dockerfile is as follows:</p>
+<figure class="highlight dockerfile"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> python:<span class="number">3.8</span>-slim</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> requirements.txt .</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install --no-cache-dir -r requirements.txt</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install gunicorn</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Download BertTokenizer files</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> -p /app/model</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> python -c <span class="string">"from transformers import BertTokenizer; tokenizer = BertTokenizer.from_pretrained('bert-base-chinese'); tokenizer.save_pretrained('/app/model')"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copy current directory contents to /app in the container</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> . .</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">5000</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">"gunicorn"</span>, <span class="string">"-b"</span>, <span class="string">"0.0.0.0:5000"</span>, <span class="string">"run:app"</span>]</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>Then you can start the service with the following command:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker build -t lawer_model .</span><br><span class="line">docker stop lawer_model_container &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">docker rm lawer_model_container &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">docker run -d --name lawer_model_container --restart on-failure:5 -p 5000:5000 -v ~/logs:/app/logs lawer_model</span><br></pre></td></tr></tbody></table></figure>
+
+<p>The Nginx reverse proxy configuration is not mentioned here. At this point, the entire service has been deployed. However, to better monitor the service, you can use <strong>Sentry for performance monitoring and error tracking</strong>. The service can also add some logs appropriately to facilitate troubleshooting.</p>
+<p>Additionally, my service domain is <code>api.selfboot.cn</code>. To access it from the blog page, we need to open CORS restrictions to allow cross-origin access. Here, <code>flask-cors</code> is used. You just need to add the following line of code in the Flask service:</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CORS(app, resources={<span class="string">r"/*"</span>: {<span class="string">"origins"</span>: [<span class="string">"https://selfboot.cn"</span>]}})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>Up to this point, the above is basically enough as a demonstration service. However, to serve as a formal online service, we need to consider disaster recovery and other issues, which may require the introduction of cluster deployment solutions such as k8s. We won’t expand on this here.</p>
+<h2 id="Some-Shortcomings"><a href="#Some-Shortcomings" class="headerlink" title="Some Shortcomings"></a>Some Shortcomings</h2><p>After running this model for a while, I found that some text classifications are still not very accurate. For example, the following are also <strong>misjudged by the model</strong> as legal consultation questions:</p>
+<blockquote>
+<p>My friend asked me to lend him money, should I lend it to him or not?<br>Borrowing money<br>I want to consult, how can I earn more money?<br>If I can’t get into university, what should I do?</p>
+</blockquote>
+<p>This has a lot to do with the dataset. There is a lot of similar content in the legal consultation dataset, causing the model to learn incorrect features. Some keywords appear frequently in consultations, causing the model to tend to consider content with these keywords as legal consultations. For example, just entering “<strong>borrowing money</strong>“ or “<strong>I want to consult</strong>“ will be judged by the model as legal consultation. To see the distribution of some keywords in the legal consultation texts in the training set, I generated a word cloud with this part of the data, as shown in the following figure:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp" alt="Word Cloud of Keywords in Legal Consultation Texts" srcset="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp 2195w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_dataset_cloud.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2195" height="1196"></p>
+<p>If you want to optimize this, you need to focus on the dataset, such as <strong>selectively adding some non-legal consultation texts</strong>, or doing some cleaning on the dataset to remove some noisy data. I didn’t continue to optimize here, as the current classification effect already meets the usage requirements.</p>
+<h2 id="Changes-Brought-by-AI"><a href="#Changes-Brought-by-AI" class="headerlink" title="Changes Brought by AI"></a>Changes Brought by AI</h2><p>The process of model training and deployment would have taken me a lot of time in the past. Because I would need to look up various materials and documents before I could write training code, write deployment services, and write Docker configurations. But now with ChatGPT, the whole process didn’t take much time. Most of the code in this article was completed with the help of ChatGPT, and some configurations and details were also completed by ChatGPT. For example, the ONNX model inference part in the following image:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp" alt="ONNX inference code generated by ChatGPT" srcset="https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp 1364w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231206_bert_nlp_classify_onnx.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1364" height="1028"></p>
+<p>Even the code for crawling the dataset and the frontend code for the input box in this article were completed with the help of ChatGPT. What I needed to do was <strong>break down tasks, describe them clearly, and verify ChatGPT’s responses</strong>.</p>
+<p><strong>While greatly improving efficiency, ChatGPT can also help learn new fields</strong>. For example, my understanding of deep learning was previously vague, but now that I’ve actually used BERT, I’ve continuously deepened my understanding of deep learning throughout the process. When learning a new field, ChatGPT can fully act as a teacher, and it’s the kind of teacher that can <strong>tailor its teaching to the individual and provide help at any time</strong>.</p>
+<p>Everyone deserves to have a ChatGPT and should get used to working with it as early as possible to maximize the effectiveness of AI.</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>This article has demonstrated how to train and deploy a text classification model using BERT, starting from scratch. We’ve covered the entire process from data collection to model deployment, including:</p>
+<ol>
+<li>Preparing a dataset of legal consultation texts and non-legal consultation texts.</li>
+<li>Training a BERT-based classification model using PyTorch.</li>
+<li>Deploying the trained model as a web service using Flask, Gunicorn, and Docker.</li>
+<li>Integrating the model into a real-world application with a simple web interface.</li>
+</ol>
+<p>Throughout this process, we’ve seen how AI tools like ChatGPT can significantly accelerate development and learning in new fields. The ability to quickly implement complex machine learning projects with minimal prior experience in the field is a testament to the power of modern AI assistants.</p>
+<p>However, we’ve also observed some limitations of the model, particularly in its tendency to misclassify certain types of non-legal texts. This highlights the importance of high-quality, diverse training data and the need for ongoing refinement of machine learning models.</p>
+<p>As AI continues to evolve, it’s becoming an increasingly valuable tool for developers and researchers across various fields. By embracing these technologies and learning to work effectively with them, we can tackle complex problems more efficiently and push the boundaries of what’s possible in software development and data science.</p>
+<p>Remember, while AI can greatly assist in the development process, it’s crucial to maintain a critical eye and validate the results. The combination of human expertise and AI capabilities can lead to powerful solutions, but it requires a thoughtful approach to harness its full potential.</p>
+</div><div class="article-footer-copyright"><p> Written in Chinese, LLM translated into English</p><p>Non-commercial reproduction is allowed with proper attribution to the author and source. </p><p>For commercial reproduction, please contact the <a href="mailto:xuezaigds@gmail.com">author</a></p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="Sponsor"></a><div class="donate_txt"> ↑<br>Good content, Sponsor it<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="WeChat Sponsor"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="Alipay Sponsor"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/Python/"><i class="fa fa-tag"></i>Python</a><a href="/tags/ChatGPT/"><i class="fa fa-tag"></i>ChatGPT</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/en/2023/12/06/bert_nlp_classify/';
+    this.page.identifier = 'en/2023/12/06/bert_nlp_classify/';
+    this.page.title = 'Training and Deploying a Text Classification Model with BERT from Scratch';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Categories</span></div><ul><li><a href="/en/categories/Programming/">Programming</a> (13)</li><li><a href="/en/categories/Artificial-Intelligence/">Artificial Intelligence</a> (7)</li><li><a href="/en/categories/Discovery/">Discovery</a> (1)</li><li><a href="/en/categories/Source-Code-Analysis/">Source Code Analysis</a> (6)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Tags</span></div><div class="tagcloud"><a href="/en/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/en/tags/Google/" style="font-size: 15.00px;">Google</a> <a href="/en/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/en/tags/ChatGPT/" style="font-size: 15.00px;">ChatGPT</a> <a href="/en/tags/Debug/" style="font-size: 15.00px;">Debug</a> <a href="/en/tags/eBPF/" style="font-size: 15.00px;">eBPF</a> <a href="/en/tags/Go/" style="font-size: 15.00px;">Go</a> <a href="/en/tags/Gemini/" style="font-size: 15.00px;">Gemini</a> <a href="/en/tags/SEO/" style="font-size: 15.00px;">SEO</a> <a href="/en/tags/Frontend/" style="font-size: 15.00px;">Frontend</a> <a href="/en/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/en/tags/Web/" style="font-size: 15.00px;">Web</a> <a href="/en/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = en/2023/12/06/bert_nlp_classify/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>Recent</span></div><ul><li><a href="/en/2024/08/14/leveldb_source_wal_log/" title="LevelDB Explained - How To Read and Write WAL Logs">LevelDB Explained - How To Read and Write WAL Logs</a></li><li><a href="/en/2024/08/13/leveldb_source_unstand_c++/" title="LevelDB Explained -  Understanding Advanced C++ Techniques">LevelDB Explained -  Understanding Advanced C++ Techniques</a></li><li><a href="/en/2024/08/08/leveldb_source_bloom_filter/" title="LevelDB Explained - Bloom Filter Implementation and Visualization">LevelDB Explained - Bloom Filter Implementation and Visualization</a></li><li><a href="/en/2024/08/06/leveldb_source_prepare/" title="LevelDB Explained - Preparing the Development Environment">LevelDB Explained - Preparing the Development Environment</a></li><li><a href="/en/2024/08/02/leveldb_source_env_posixfile/" title="LevelDB Explained - Posix File Operation Details">LevelDB Explained - Posix File Operation Details</a></li><li><a href="/en/2024/07/22/leveldb_source_nodestructor/" title="LevelDB Explained - Preventing C++ Object Destruction">LevelDB Explained - Preventing C++ Object Destruction</a></li><li><a href="/en/2024/06/22/claude35_artifacts/" title="Creating Games Using Free Claude3.5 with Artifacts">Creating Games Using Free Claude3.5 with Artifacts</a></li><li><a href="/en/2024/06/13/async_pool_block_problem/" title="How an Async Thread Pool Exception Caused Service Chaos">How an Async Thread Pool Exception Caused Service Chaos</a></li><li><a href="/en/2024/05/19/stream_sse_chunk/" title="Understand Web Stream Output Implementation with Examples">Understand Web Stream Output Implementation with Examples</a></li><li><a href="/en/2024/05/10/c++_object_model/" title="Dive into C++ Object Memory Layout with Examples">Dive into C++ Object Memory Layout with Examples</a></li></ul></div><!-- Debug: Current Language = en, Filtered Posts Count = 10 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"></i><span> Contents</span></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Online-Experience"><span class="toc-number">1.</span> <span class="toc-text">Online Experience</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dataset-Preparation"><span class="toc-number">2.</span> <span class="toc-text">Dataset Preparation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-Training"><span class="toc-number">3.</span> <span class="toc-text">Model Training</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-Deployment"><span class="toc-number">4.</span> <span class="toc-text">Model Deployment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Some-Shortcomings"><span class="toc-number">5.</span> <span class="toc-text">Some Shortcomings</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Changes-Brought-by-AI"><span class="toc-number">6.</span> <span class="toc-text">Changes Brought by AI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conclusion"><span class="toc-number">7.</span> <span class="toc-text">Conclusion</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>Total Site Visits:  <span id="busuanzi_value_site_pv"></span> Times，<span id="busuanzi_container_site_uv"></span>Unique Visitors:  <span id="busuanzi_value_site_uv"></span> People</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>

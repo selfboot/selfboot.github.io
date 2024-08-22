@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="This article provides an in-depth experience of Google's latest language model, Gemini Pro, by comparing it with ChatGPT. It comprehensively evaluates the gap between Gemini Pro and GPT-4 across multiple dimensions, including language understanding, text generation, and programming capabilities. The findings suggest that Gemini Pro's overall performance falls short of ChatGPT, with gaps in language comprehension, mathematics, programming abilities, and incomplete web search capabilities, indicating it still has some distance to go before replacing GPT-4."><title>Gemini Pro vs GPT-4, A Comprehensive Comparison Through Real-World Examples</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml,en/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Gemini Pro vs GPT-4, A Comprehensive Comparison Through Real-World Examples</h1><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN">中文</option><option value="en" selected="">English</option></select></div><p class="description">Know what it is, and know why it is so. The breadth of knowledge is a byproduct of its depth!</p></div><div id="nav-menu"><a href="/en/."><i class="fa fa-home"></i><span> Home</span></a><a href="/en/archives/"><i class="fa fa-archive"></i><span> Archive</span></a><a href="/en/aboutme.html"><i class="fa fa-user"></i><span> About</span></a><a href="/en/atom.xml"><i class="fa fa-rss"></i><span> RSS</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Gemini Pro vs GPT-4, A Comprehensive Comparison Through Real-World Examples</h1><div class="post-meta">2023/12/10<span> | </span><span class="category"><a href="/categories/Artificial-Intelligence/">Artificial Intelligence</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a class="disqus-comment-count" data-disqus-identifier="en/2023/12/10/google-gemini-bard-hands-on/" href="/en/2023/12/10/google-gemini-bard-hands-on/#disqus_thread"></a><div class="post-content"><p>It’s undeniable that 2023 has been a year of technological breakthroughs. The beginning of the year brought us the astounding ChatGPT, and as we approach the end, <a target="_blank" rel="noopener" href="https://deepmind.google/technologies/gemini/#introduction">Google Gemini</a> has sparked our imagination once again.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp" alt="Does Google Gemini's multimodal capability bring endless possibilities?" srcset="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp 2288w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_start.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2288" height="1354"></p>
+<p>According to Google’s official introduction, Gemini is <strong>the first model to surpass human experts in MMLU (Massive Multitask Language Understanding)</strong>. Its capabilities in reasoning, mathematics, and coding also surpass those of GPT-4. Moreover, it’s a multimodal model that can <strong>simultaneously process text, images, sound, and video</strong>, with evaluation scores higher than GPT-4V.</p>
+<span id="more"></span>
+
+<p>Judging from Google’s promotional video (the video below requires access to Youtube), Gemini’s performance is indeed impressive. A few days after its release, many people have voiced doubts about Gemini, as the released video was edited. To truly understand Gemini’s real-world performance, we need to try it ourselves. Currently, Google has only made Gemini Pro available for public use. In this article, we’ll use Bard to get a sense of what Gemini Pro is really like.</p>
+<div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+    <iframe src="https://www.youtube.com/embed/UIZAiXYceBI?si=KjDCRPIKnAYsby5J" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
+
+<h2 id="Experience-Conclusion"><a href="#Experience-Conclusion" class="headerlink" title="Experience Conclusion"></a>Experience Conclusion</h2><p>Gemini currently comes in three versions:</p>
+<ul>
+<li>Ultra: The most powerful and largest model, suitable for highly complex tasks. It outperforms GPT-4 in almost all metrics. The promotional video above features the Ultra model.</li>
+<li>Pro: The best model for scaling across various tasks. It’s currently available for experience, and evaluation results show it’s slightly inferior to GPT-4.</li>
+<li>Nano: A mobile task model suitable for mobile devices. Evaluation results show it performs worse than the previous two versions.</li>
+</ul>
+<p>Currently, <a target="_blank" rel="noopener" href="https://bard.google.com/updates">Bard has integrated Gemini Pro</a>. As of 2023.12.07, only text prompts have been made available, with other multimodal capabilities yet to be released. According to <a target="_blank" rel="noopener" href="https://storage.googleapis.com/deepmind-media/gemini/gemini_1_report.pdf">Google’s published report</a>, Gemini Pro’s capabilities are slightly inferior to GPT-4. Next, we’ll have a real experience with Gemini Pro on Bard to see how it truly performs. As of 12.10, only English can be used to experience Gemini Pro on Bard. For more details, refer to Google’s help document <a target="_blank" rel="noopener" href="https://support.google.com/bard/answer/14294096">Where Bard with Gemini Pro is available</a>.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp" alt="Experience Gemini Pro on Bard" srcset="https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp 2552w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231207_google_gemini_bard_hands_on_bard.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2552" height="1096"></p>
+<p>I previously wrote an article <a href="https://selfboot.cn/2023/07/20/claude_gpt4_compare/">Practical Comparison between Large Language Models Claude2 and ChatGPT</a>. In this article, we’ll continue to use similar testing methods to compare the performance of Gemini Pro and ChatGPT 4. Let’s start with the conclusion, as shown in the table below:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>ChatGPT 4</th>
+<th>Bard(Gemini Pro)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Usage Restrictions</td>
+<td>Regional restrictions, IP risk control, payment risk control</td>
+<td>Regional restrictions</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Paid</td>
+<td>Free</td>
+</tr>
+<tr>
+<td>Speed</td>
+<td>Very slow, though the latest GPT4-turbo is much faster</td>
+<td>Very fast</td>
+</tr>
+<tr>
+<td>Internet Connectivity</td>
+<td>All-Tools can connect to the internet</td>
+<td>Somewhat confusing, incomplete internet connectivity</td>
+</tr>
+<tr>
+<td>Language Ability</td>
+<td>Very strong</td>
+<td>Inferior to GPT4, Chinese ability not as strong as GPT4</td>
+</tr>
+<tr>
+<td>Mathematical Problems</td>
+<td>Average</td>
+<td>Inferior to GPT-4</td>
+</tr>
+<tr>
+<td>Programming Ability</td>
+<td>Very strong</td>
+<td>Inferior to GPT-4</td>
+</tr>
+<tr>
+<td>Bugs</td>
+<td>Rarely encountered, sometimes occurs with long conversations</td>
+<td>Easier to trigger, with noticeable anomalies in Q&amp;A</td>
+</tr>
+</tbody></table>
+<p>Personally, I feel that Gemini Pro’s capabilities still have a considerable gap compared to ChatGPT, and it’s even inferior to Claude2. In the short term, I won’t be replacing ChatGPT with Gemini Pro. Gemini Ultra should be better, but there’s currently no way to experience it. Who knows, GPT-5 might come out first, potentially leaving Gemini Ultra behind again.</p>
+<h2 id="Language-Ability"><a href="#Language-Ability" class="headerlink" title="Language Ability"></a>Language Ability</h2><p>Next, let’s use English prompts to see how Gemini Pro’s language abilities really stack up.</p>
+<h3 id="Reading-Comprehension"><a href="#Reading-Comprehension" class="headerlink" title="Reading Comprehension"></a>Reading Comprehension</h3><p>First, let’s look at reading comprehension ability. I’ve selected a few well-known English proverbs to see if Gemini Pro understands them correctly. The prompt is as follows:</p>
+<blockquote>
+<p>I have a few phrases, can you explain them to me one by one?</p>
+<ol>
+<li>A stitch in time saves nine.</li>
+<li>The early bird catches the worm.</li>
+<li>You can’t judge a book by its cover.</li>
+<li>When in Rome, do as the Romans do.</li>
+<li>All that glitters is not gold.</li>
+</ol>
+</blockquote>
+<p>Here are the responses from Gemini Pro and ChatGPT:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp" alt="Gemini Pro and ChatGPT's understanding of common phrases" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp 3218w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_explain.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3218" height="1598"></p>
+<p>Gemini Pro’s explanations are more comprehensive, explaining both the literal meaning of the proverbs and their figurative meanings. Gemini Pro is also very fast, which is something ChatGPT can’t match. These proverbs are quite common, and their meanings are quite definite. Next, I found some ambiguous sentences to see how the two models interpret them. The sentence “I saw the man with the telescope.” can be understood in two ways, as follows:</p>
+<ol>
+<li>It can be understood as “I used a telescope to see the man”, where “telescope” is the tool I used to see the person.</li>
+<li>It can also be understood as “I saw a man who had a telescope”, meaning the man possessed or was holding a telescope.</li>
+</ol>
+<p>Below are the explanations from Gemini Pro and ChatGPT:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp" alt="Gemini Pro and ChatGPT's understanding of ambiguous content" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp 3306w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_ambiguous.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3306" height="1712"></p>
+<p>Basically, they both start by saying the sentence is ambiguous, then give two interpretations, and explain that without context, it’s impossible to determine which specific meaning is intended. Gemini Pro goes on to provide some follow-up questions that could be used to clarify the meaning of this sentence. I tried some other ambiguous content as well, and overall, ChatGPT’s explanations tend to be more to the point, while Gemini Pro tends to be a bit wordier, sometimes prone to digression, and its understanding is slightly inferior.</p>
+<table>
+<thead>
+<tr>
+<th>Sentence</th>
+<th>Interpretation 1</th>
+<th>Interpretation 2</th>
+<th>Model Comparison</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>The chicken is ready to eat.</td>
+<td>The chicken has been cooked and is ready to be eaten</td>
+<td>The chicken is prepared to eat something</td>
+<td>Both models perform similarly</td>
+</tr>
+<tr>
+<td>Visiting relatives can be annoying.</td>
+<td>Going to visit relatives can be annoying</td>
+<td>Some visiting relatives can be annoying</td>
+<td>ChatGPT wins decisively, Gemini Pro is wordy and its explanation is not very clear</td>
+</tr>
+<tr>
+<td>He saw that gas can explode.</td>
+<td>He knew that gas can explode</td>
+<td>He saw that gas can (container) which can explode</td>
+<td>ChatGPT wins decisively, Gemini Pro misunderstands</td>
+</tr>
+<tr>
+<td>They’re hunting dogs.</td>
+<td>They are hunting for dogs</td>
+<td>Those are dogs used for hunting</td>
+<td>ChatGPT wins decisively, Gemini Pro misunderstands</td>
+</tr>
+</tbody></table>
+<p>Overall, for simple content, Gemini Pro and ChatGPT perform similarly. When encountering ambiguous content, ChatGPT performs consistently well with good understanding, while Gemini Pro sometimes fails to understand and becomes very verbose in its responses.</p>
+<h3 id="Text-Generation"><a href="#Text-Generation" class="headerlink" title="Text Generation"></a>Text Generation</h3><p>Next, let’s look at text generation capabilities. We know that even for the currently most powerful GPT4, it can’t write novels with consistent style, common-sense plot, and coherence. Here, we’ll find some simple text generation tasks to see how Gemini Pro performs. The initial prompt is as follows:</p>
+<blockquote>
+<p>You’re a biographer, help me write a piece of Musk’s life.</p>
+</blockquote>
+<p>The idea is to have AI play the role of a biographer and write about Elon Musk’s life. Gemini Pro will ask follow-up questions, asking for more details, such as which part to focus on, while ChatGPT writes a very good introduction covering key points like birth, education, entrepreneurial and investment experiences, SpaceX and Mars dreams, Tesla, etc. Then I modified the prompt:</p>
+<blockquote>
+<p>Do you know Elon Musk, the CEO of Tesla? Help me write a description of Musk’s life.</p>
+</blockquote>
+<p>Here are the outputs from the two models:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp" alt="Gemini Pro and ChatGPT generate Musk's biography" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp 3016w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_write.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3016" height="1536"></p>
+<p>Personally, I feel that the text provided by ChatGPT is clearer and more focused. However, Gemini Pro has a quite powerful feature: at the bottom of the answer, there’s a “Double-check response” option, which categorizes the answer into three scenarios:</p>
+<ol>
+<li>No highlighting: There’s not enough information to evaluate these answers, or they don’t intend to convey factual information. Currently, Bard doesn’t check content in tables and code.</li>
+<li>Highlighted in green: Google search engine has found similar content and provides web page links. Note that Google doesn’t necessarily use this content to generate the response.</li>
+<li>Highlighted in yellow: The content found by Google search engine may be different from the answer, in which case links are provided. Another situation is when no relevant content is found.</li>
+</ol>
+<p>For current generative AI, Double Check is still very necessary. Previously, when using ChatGPT, we had to manually search for confirmation. The current <code>Double-check response</code> provided by Google will be very helpful in many scenarios.</p>
+<h2 id="Mathematical-Problems"><a href="#Mathematical-Problems" class="headerlink" title="Mathematical Problems"></a>Mathematical Problems</h2><p>For current generative AI, mathematical problems are a challenge. Compared to humans, AI is still at an elementary school level in the field of mathematics. Let’s test Gemini Pro with the classic chicken and rabbit problem. The prompt is as follows:</p>
+<blockquote>
+<p>Suppose you have a cage that contains chickens and rabbits. You can hear the animals but cannot see them. You know the following:</p>
+<p>There are a total of 35 heads (since both chickens and rabbits each have one head).<br>There are a total of 94 legs (chickens have 2 legs each, and rabbits have 4 legs each).<br>The question is: How many chickens and how many rabbits are in the cage?</p>
+</blockquote>
+<p>Both Gemini Pro and ChatGPT answered correctly, as shown in the image below:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp" alt="Gemini Pro and ChatGPT answer the chicken and rabbit problem" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp 3138w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_math_cage.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3138" height="1604"></p>
+<p>Since ChatGPT got All-Tools, it generally uses Python code in a virtual environment for parts involving calculations. Gemini Pro currently doesn’t have a calculation environment, but it also gave the correct answer here.</p>
+<h2 id="Programming-Ability"><a href="#Programming-Ability" class="headerlink" title="Programming Ability"></a>Programming Ability</h2><p>As a programmer, what I use AI for most often is to help write code. Let’s see how Gemini Pro’s programming ability fares. I’ve previously tried using ChatGPT to solve LeetCode problems, including one article: <a href="https://selfboot.cn/2023/06/08/gpt4_leetcode_1318/">ChatGPT Solves LeetCode Problems: Bit Operations</a>. Let’s use this problem to test Gemini Pro.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp" alt="Gemini Pro solves programming problems" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp 1870w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_code.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1870" height="1588"></p>
+<p>Bard gives 3 answers for each question simultaneously. The answer in Draft A is incorrect. I looked at Draft B, and the code is correct and includes comments. However, compared to ChatGPT’s answer, it’s more complex and harder to understand, and the explanation isn’t as clear as ChatGPT’s.</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> {</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="type">int</span> <span class="title">minFlips</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b, <span class="type">int</span> c)</span> </span>{</span><br><span class="line">    <span class="comment">// Initialize the number of flips to 0.</span></span><br><span class="line">    <span class="type">int</span> flips = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// Loop until all bits are processed.</span></span><br><span class="line">    <span class="keyword">while</span> (a || b || c) {</span><br><span class="line">      <span class="comment">// Calculate the desired bit for the current position.</span></span><br><span class="line">      <span class="type">int</span> desiredBit = c &amp; <span class="number">1</span>;</span><br><span class="line">      <span class="comment">// Check if both a and b have the desired bit.</span></span><br><span class="line">      <span class="keyword">if</span> (desiredBit &amp;&amp; !((a &amp; <span class="number">1</span>) || (b &amp; <span class="number">1</span>))) {</span><br><span class="line">        <span class="comment">// Flip both a and b.</span></span><br><span class="line">        a ^= <span class="number">1</span>;</span><br><span class="line">        b ^= <span class="number">1</span>;</span><br><span class="line">        flips++;</span><br><span class="line">      } <span class="keyword">else</span> <span class="keyword">if</span> (!desiredBit) {</span><br><span class="line">        <span class="comment">// Flip a if it has the undesired bit.</span></span><br><span class="line">        <span class="keyword">if</span> (a &amp; <span class="number">1</span>) {</span><br><span class="line">          a ^= <span class="number">1</span>;</span><br><span class="line">          flips++;</span><br><span class="line">        }</span><br><span class="line">        <span class="comment">// Flip b if it has the undesired bit.</span></span><br><span class="line">        <span class="keyword">if</span> (b &amp; <span class="number">1</span>) {</span><br><span class="line">          b ^= <span class="number">1</span>;</span><br><span class="line">          flips++;</span><br><span class="line">        }</span><br><span class="line">      }</span><br><span class="line">      <span class="comment">// Shift all three numbers one bit to the right.</span></span><br><span class="line">      a &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">      b &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">      c &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> flips;</span><br><span class="line">  }</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
+
+<p>I also tried some other code problems, such as:</p>
+<ul>
+<li>How do I convert UTC time to Beijing time zone in Python, show me the code.</li>
+</ul>
+<p>In terms of code quality, ChatGPT’s is much better and includes some explanations, giving a sense of intelligence. Gemini Pro’s code is also acceptable, mostly okay, just slightly lower in quality.</p>
+<h3 id="Tool-Usage"><a href="#Tool-Usage" class="headerlink" title="Tool Usage"></a>Tool Usage</h3><p>Besides directly writing code, we often ask AI to help write some commands to solve problems. For example, I want to find the largest file in the current directory, but I’m not sure how to use sort. So I use the following prompt:</p>
+<blockquote>
+<p>du -ah –max-depth=1 /</p>
+<p>Here’s how to sort the display in reverse order of size</p>
+</blockquote>
+<p>ChatGPT’s response is intelligent, recognizing the -h output in du, and then explaining the correct usage of sort parameters. Gemini Pro’s answer is somewhat inferior, not considering the -h parameter here.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp" alt="Gemini Pro and ChatGPT writing tool commands" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp 3020w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_shell.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3020" height="1394"></p>
+<p>And another question:</p>
+<blockquote>
+<p>$ du -ah –max-depth=1 /var/lib/docker | sort -hr<br>16G	/var/lib/docker/overlay2<br>16G	/var/lib/docker<br>69M	/var/lib/docker/containers<br>27M	/var/lib/docker/image</p>
+<p>How do you clear up disk space?</p>
+</blockquote>
+<p>ChatGPT’s answer is well-organized, covering several aspects, each with detailed explanations:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Remove Unused Containers: ...</span><br><span class="line">Remove Unused Images: ...</span><br><span class="line">Remove Unused Networks: ...</span><br><span class="line">Remove Unused Volumes: ...</span><br><span class="line">System Clean-up: ...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>While Gemini Pro’s answer is a bit disorganized and verbose.</p>
+<h2 id="Strange-Bugs"><a href="#Strange-Bugs" class="headerlink" title="Strange Bugs"></a>Strange Bugs</h2><p>During use, Bard sometimes gives strange answers, as if it has hit some pre- or post-checks. For example, in one conversation, I first asked if it could connect to the internet. It answered yes, saying it could access publicly available websites and databases, and use this information to generate text, translate languages, etc. But then when I asked it to:</p>
+<blockquote>
+<p>Visit this web page, <a href="https://selfboot.cn/2023/07/20/claude_gpt4_compare/">https://selfboot.cn/2023/07/20/claude_gpt4_compare/</a>, and summarize the article.</p>
+</blockquote>
+<p>It replied: <strong>I’m a text-based AI, and that is outside of my capabilities.</strong> Then when I asked again if it could connect to the internet, it answered: <strong>I’m a language model and don’t have the capacity to help with that.</strong> This strange behavior doesn’t exist with ChatGPT’s All-Tools, which can directly use Bing to access web pages, retrieve content, and then summarize it. The image on the left below is ChatGPT, and the image on the right is Gemini Pro Bard’s response.</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp" alt="Strange responses in Bard conversation" srcset="https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp 3292w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20231210_google_gemini_bard_hands_on_bug_compare.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="3292" height="1592"></p>
+<h2 id="Gemini-Still-Needs-Improvement"><a href="#Gemini-Still-Needs-Improvement" class="headerlink" title="Gemini Still Needs Improvement"></a>Gemini Still Needs Improvement</h2><p>From the experience, Gemini Pro still has a lot of room for improvement, and its current capabilities are not enough to replace ChatGPT. However, it does have its own advantages:</p>
+<ol>
+<li>Fast speed. If the quality improves later and it can maintain this speed, that would be very good.</li>
+<li>Double Check. This capability gives me more confidence in the answers to a certain extent, and I also know the sources of some conclusions, which is convenient for further in-depth expansion.</li>
+</ol>
+<p>Of course, many features of Gemini Pro have not yet been released, such as multimodal capabilities. We’ll experience these features again when they’re released. Hopefully, Google will continue to work hard to improve Gemini and put some pressure on OpenAI.</p>
+</div><div class="article-footer-copyright"><p> Written in Chinese, LLM translated into English</p><p>Non-commercial reproduction is allowed with proper attribution to the author and source. </p><p>For commercial reproduction, please contact the <a href="mailto:xuezaigds@gmail.com">author</a></p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="Sponsor"></a><div class="donate_txt"> ↑<br>Good content, Sponsor it<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="WeChat Sponsor"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="Alipay Sponsor"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/Google/"><i class="fa fa-tag"></i>Google</a><a href="/tags/ChatGPT/"><i class="fa fa-tag"></i>ChatGPT</a><a href="/tags/Gemini/"><i class="fa fa-tag"></i>Gemini</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/en/2023/12/10/google-gemini-bard-hands-on/';
+    this.page.identifier = 'en/2023/12/10/google-gemini-bard-hands-on/';
+    this.page.title = 'Gemini Pro vs GPT-4, A Comprehensive Comparison Through Real-World Examples';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Categories</span></div><ul><li><a href="/en/categories/Programming/">Programming</a> (13)</li><li><a href="/en/categories/Artificial-Intelligence/">Artificial Intelligence</a> (7)</li><li><a href="/en/categories/Discovery/">Discovery</a> (1)</li><li><a href="/en/categories/Source-Code-Analysis/">Source Code Analysis</a> (6)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Tags</span></div><div class="tagcloud"><a href="/en/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/en/tags/Google/" style="font-size: 15.00px;">Google</a> <a href="/en/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/en/tags/ChatGPT/" style="font-size: 15.00px;">ChatGPT</a> <a href="/en/tags/Debug/" style="font-size: 15.00px;">Debug</a> <a href="/en/tags/eBPF/" style="font-size: 15.00px;">eBPF</a> <a href="/en/tags/Go/" style="font-size: 15.00px;">Go</a> <a href="/en/tags/Gemini/" style="font-size: 15.00px;">Gemini</a> <a href="/en/tags/SEO/" style="font-size: 15.00px;">SEO</a> <a href="/en/tags/Frontend/" style="font-size: 15.00px;">Frontend</a> <a href="/en/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/en/tags/Web/" style="font-size: 15.00px;">Web</a> <a href="/en/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = en/2023/12/10/google-gemini-bard-hands-on/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>Recent</span></div><ul><li><a href="/en/2024/08/14/leveldb_source_wal_log/" title="LevelDB Explained - How To Read and Write WAL Logs">LevelDB Explained - How To Read and Write WAL Logs</a></li><li><a href="/en/2024/08/13/leveldb_source_unstand_c++/" title="LevelDB Explained -  Understanding Advanced C++ Techniques">LevelDB Explained -  Understanding Advanced C++ Techniques</a></li><li><a href="/en/2024/08/08/leveldb_source_bloom_filter/" title="LevelDB Explained - Bloom Filter Implementation and Visualization">LevelDB Explained - Bloom Filter Implementation and Visualization</a></li><li><a href="/en/2024/08/06/leveldb_source_prepare/" title="LevelDB Explained - Preparing the Development Environment">LevelDB Explained - Preparing the Development Environment</a></li><li><a href="/en/2024/08/02/leveldb_source_env_posixfile/" title="LevelDB Explained - Posix File Operation Details">LevelDB Explained - Posix File Operation Details</a></li><li><a href="/en/2024/07/22/leveldb_source_nodestructor/" title="LevelDB Explained - Preventing C++ Object Destruction">LevelDB Explained - Preventing C++ Object Destruction</a></li><li><a href="/en/2024/06/22/claude35_artifacts/" title="Creating Games Using Free Claude3.5 with Artifacts">Creating Games Using Free Claude3.5 with Artifacts</a></li><li><a href="/en/2024/06/13/async_pool_block_problem/" title="How an Async Thread Pool Exception Caused Service Chaos">How an Async Thread Pool Exception Caused Service Chaos</a></li><li><a href="/en/2024/05/19/stream_sse_chunk/" title="Understand Web Stream Output Implementation with Examples">Understand Web Stream Output Implementation with Examples</a></li><li><a href="/en/2024/05/10/c++_object_model/" title="Dive into C++ Object Memory Layout with Examples">Dive into C++ Object Memory Layout with Examples</a></li></ul></div><!-- Debug: Current Language = en, Filtered Posts Count = 10 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"></i><span> Contents</span></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Experience-Conclusion"><span class="toc-number">1.</span> <span class="toc-text">Experience Conclusion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Language-Ability"><span class="toc-number">2.</span> <span class="toc-text">Language Ability</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Reading-Comprehension"><span class="toc-number">2.1.</span> <span class="toc-text">Reading Comprehension</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Text-Generation"><span class="toc-number">2.2.</span> <span class="toc-text">Text Generation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mathematical-Problems"><span class="toc-number">3.</span> <span class="toc-text">Mathematical Problems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Ability"><span class="toc-number">4.</span> <span class="toc-text">Programming Ability</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Tool-Usage"><span class="toc-number">4.1.</span> <span class="toc-text">Tool Usage</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Strange-Bugs"><span class="toc-number">5.</span> <span class="toc-text">Strange Bugs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gemini-Still-Needs-Improvement"><span class="toc-number">6.</span> <span class="toc-text">Gemini Still Needs Improvement</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>Total Site Visits:  <span id="busuanzi_value_site_pv"></span> Times，<span id="busuanzi_container_site_uv"></span>Unique Visitors:  <span id="busuanzi_value_site_uv"></span> People</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
