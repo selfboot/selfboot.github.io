@@ -80,7 +80,7 @@ class SkipList {
 
 SkipList 类的构造函数用于创建一个新的跳表对象，其中 cmp 是用于比较键的比较器，arena 是用于分配内存的 Arena 对象。SkipList 类通过 delete 禁用了拷贝构造函数和赋值运算符，避免了不小心复制整个跳表(**没有必要，成本也很高**)。
 
-SkipList 类公开的核心操作接口只有两个，分别是 Insert 和 Contains。Insert 用于插入新节点，Contains 用于查找节点是否存在。这里并没有提供删除节点的操作，因为 LevelDB 中 MemTable 的数据是**只会追加**的，不会去删除跳表中的数据。DB 中删除 key，在 MemTable 中只是增加一条删除类型的记录。
+SkipList 类公开的核心操作接口有两个，分别是 Insert 和 Contains。Insert 用于插入新节点，Contains 用于查找节点是否存在。这里并没有提供删除节点的操作，因为 LevelDB 中 MemTable 的数据是**只会追加**的，不会去删除跳表中的数据。DB 中删除 key，在 MemTable 中只是增加一条删除类型的记录。
 
 ```cpp
   // Insert key into the list.
@@ -91,12 +91,12 @@ SkipList 类公开的核心操作接口只有两个，分别是 Insert 和 Conta
   bool Contains(const Key& key) const;
 ```
 
-然后为了更好地支持节点的遍历操作，SkipList 类内部定义了 Node 类和迭代器 Iterator 类。Node 类定义了跳表中的节点结构，Iterator 类定义了一个迭代器对象，用于遍历跳表中的节点。这两个类都是 SkipList 的内部类，这样可以**提高跳表的封装性和可维护性**。
+为了实现跳表功能，SkipList 类内部定义了 Node 类，用于表示跳表中的节点。之所以定义为内部类，是因为这样可以**提高跳表的封装性和可维护性**。
 
 - 封装性：Node 类是 SkipList 的实现的核心部分，但对于使用 SkipList 的用户来说，通常不需要直接与节点对象交互。将 Node 类定义为私有内部类可以隐藏实现细节；
 - 可维护性：如果跳表的实现需要修改或扩展，相关改动将局限于 SkipList 类的内部，而不会影响到外部使用这些结构的代码，有助于代码的维护和调试。
 
-最后，SkipList 类还有一些私有的成员和方法，用来辅助实现跳表的 Insert 和 Contains 操作。比如：
+SkipList 类还有一些私有的成员和方法，用来辅助实现跳表的 Insert 和 Contains 操作。比如：
 
 ```cpp
   bool KeyIsAfterNode(const Key& key, Node* n) const;
@@ -105,7 +105,9 @@ SkipList 类公开的核心操作接口只有两个，分别是 Insert 和 Conta
   Node* FindLast() const;
 ```
 
-在看跳表的插入和查找以及私有方法前，我们先来看看 Node 和 Iterator 类的设计。
+此外，为了方便调用方遍历跳表，提供了一个公开的迭代器 Iterator 类。封装了常见迭代器的操作，比如 Next、Prev、Seek、SeekToFirst、SeekToLast 等。
+
+接下来我们先看 Node 类的设计，然后分析 SkipList 如何实现插入和查找操作。最后再来看看对外提供的迭代器类 Iterator 的实现。
 
 ### Node 节点类设计
 
@@ -151,25 +153,78 @@ struct SkipList<Key, Comparator>::Node {
 
 先来看成员变量 key，其类型为模板 Key，同时键是不可变的（const）。另外一个成员变量 next_ 在最后面，这里使用 `std::atomic<Node*> next_[1]`，来支持**动态地扩展数组**的大小。这就是[C++ 中的柔性数组](https://selfboot.cn/2024/08/13/leveldb_source_unstand_c++/#%E6%9F%94%E6%80%A7%E6%95%B0%E7%BB%84)，在分配 Node 对象时，会**根据节点的高度动态分配额外的内存来存储更多的 next 指针**。这个数组主要用来存储当前节点的后继节点，`next_[0]` 存储最底层的下一个节点指针，`next_[1]` 存储往上一层的，以此类推。同时这里的 next_ 数组使用了 std::atomic 类型，这是 C++11 中引入的**原子操作类型**，用来保证多线程并发访问时的**内存一致性**。
 
-Node 类还提供了 2 组方法来访问和更新 next_ 数组中的指针。Next 和 SetNext 方法是**带内存屏障的**，用于保证多线程并发访问时的**内存可见性**。
+Node 类还提供了 2 组方法来访问和更新 next_ 数组中的指针。Next 和 SetNext 方法是**带内存屏障的**，用于保证多线程并发访问时的**内存可见性**。其中分别用了 acquire 和 release 语义，这两个语义是 C++11 中引入的。
 
 - acquire 语义：Next 方法中 load 使用 std::memory_order_acquire，确保在**加载操作之后发生的读或写操作不会被重排序到加载操作之前**。
 - release 语义：SetNext 方法中 store 使用 std::memory_order_release，确保对这个节点的任何后续读取都将看到这个写操作状态。
 
-NoBarrier_Next 和 NoBarrier_SetNext 方法则是**不带内存屏障的**，这两个方法使用 std::memory_order_relaxed，编译器不会在这个操作和其他内存操作之间插入任何同步或屏障，因此不提供任何内存顺序保证，这样性能会更好些。在某些情况下，如果代码逻辑能确保访问顺序和数据一致性（例如，通过其他方式已经同步了线程），那么使用 memory_order_relaxed 内存顺序可以减少开销，从而提高程序的运行效率。在 SkipList 的实现中，只有 Insert 中会用到这里的 NoBarrier 版本，这里后面展开插入操作时再分析。
+NoBarrier_Next 和 NoBarrier_SetNext 方法则是**不带内存屏障的**，这两个方法使用 std::memory_order_relaxed，编译器不会在这个操作和其他内存操作之间插入任何同步或屏障，因此不提供任何内存顺序保证，这样**性能会更好些**。在某些情况下，如果代码逻辑能确保访问顺序和数据一致性（例如，通过其他方式已经做了线程同步），那么使用 memory_order_relaxed 内存顺序可以减少开销，从而提高程序的运行效率。在 SkipList 的实现中，只有 Insert 中会用到这里的 NoBarrier 版本，这里后面展开插入操作时再分析。
 
-### Iterator 迭代器类设计
-  
+Node 类是跳表中单个节点的表示，包含了节点的键值和后继节点指针。有了这个类，SkipList 类就可以构建整个跳表了。下面先来看看 SkipList 中如何实现插入和查找操作。
 
-### Insert 插入节点
+### 跳表查找节点
 
-LevelDB 中 skiplist 的实现代码很简练，这里以 Inert 插入函数为例，来分析其中的代码。插入节点的核心逻辑如下：
+跳表中最基础的一个操作就是查找，这里的查找是指查找大于等于给定 key 的节点，在 SkipList 中为 FindGreaterOrEqual 私有方法。跳表对外公开的检查是否存在某个 key 的 Contains 方法，就是通过它来实现的。在插入节点的，也会通过这个方法来找到需要插入的位置。在看 LevelDB 中具体实现代码前，可以先通过论文中的一张图来理解这里的查找过程。
 
-1. 首先定义一个类型为 `Node*`的数组 prev，长度为跳表最大层高 `kMaxHeight=12`。这个数组**存储要插入的新节点每一层的前驱节点**，在跳表中插入新节点时，可以通过这个 pre 数组找到新节点在每一层插入的位置。这里是通过 `FindGreaterOrEqual` 来填充 prev 数组，这个函数会从高到低层地遍历，找到大于等于当前插入 key 的位置。
-2. 通过随机算法，来**决定新节点的层高**。这里 LevelDB 初始层高为 1，然后每层以 **1/4** 的概率决定增加层高。如果新节点的高度超过了当前跳表的最大高度，需要更新最大高度，并将超出的部分的 prev 设置为头节点，因为新的层级是从头节点开始的。
-3. 创建一个新的节点，并插入在链表中。具体做法也很简单，遍历新节点的每一层，**使用 NoBarrier_SetNext 方法来设置新节点的下一节点，接着更新 prev 节点的下一节点为新节点，实现了新节点的插入**。NoBarrier_SetNext 说明在这个上下文中，不需要额外的**内存屏障来保证内存操作的可见性**。
+![跳表查找节点过程](https://slefboot-1251736664.file.myqcloud.com/20240829_leveldb_source_skiplist_searchpath.png)
 
-完整代码很简练如下，省掉了部份注释。
+查找过程从**跳表当前最高层开始往右、往下进行搜索**。跳表的头部节点是一个哑元节点，不存储具体数值，主要用来简化一些边界检查。首先初始化当前节点为头节点 head_，然后从**最高层开始往右搜索，如果同一层右边的节点的 key 小于目标 key，则继续向右搜索；如果大于等于目标 key，则向下一层搜索。循环这个查找过程，直到在最底层找到大于等于目标 key 的节点**。
+
+接下来看看 FindGreaterOrEqual 的具体实现代码，代码简洁，逻辑也很清晰。
+
+```cpp
+// Return the earliest node that comes at or after key.
+// Return nullptr if there is no such node.
+//
+// If prev is non-null, fills prev[level] with pointer to previous
+// node at "level" for every level in [0..max_height_-1].
+template <typename Key, class Comparator>
+typename SkipList<Key, Comparator>::Node*
+SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
+                                              Node** prev) const {
+  Node* x = head_;
+  int level = GetMaxHeight() - 1;
+  while (true) {
+    Node* next = x->Next(level);
+    if (KeyIsAfterNode(key, next)) {
+      // Keep searching in this list
+      x = next;
+    } else {
+      if (prev != nullptr) prev[level] = x;
+      if (level == 0) {
+        return next;
+      } else {
+        // Switch to next list
+        level--;
+      }
+    }
+  }
+}
+```
+
+这里值得一说的是 prev 指针数组，**用来记录每一层的前驱节点**。这个数组是为了支持插入操作，插入节点时，需要知道新节点在每一层的前驱节点，这样才能正确地插入新节点。这里的 pre 数组是通过参数传递进来的，如果调用者不需要记录搜索路径，可以传入 nullptr。
+
+有了这个方法，很容易就能实现 Contains 和 Insert 方法了。Contains 方法只需要调用 FindGreaterOrEqual，然后判断返回的节点是否等于目标 key 即可。这里不需要前驱节点，所以 prev 传入 nullptr 即可。
+
+```cpp
+template <typename Key, class Comparator>
+bool SkipList<Key, Comparator>::Contains(const Key& key) const {
+  Node* x = FindGreaterOrEqual(key, nullptr);
+  if (x != nullptr && Equal(key, x->key)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+```
+
+### 跳表插入操作
+
+插入节点相对复杂些，在看代码之前，还是来看论文中给出的图。上半部分是查找要插入位置的逻辑，下面是插入节点后的跳表。这里看到增加了一个新的节点，然后更新了指向新节点的指针，以及新节点指向后面节点的指针。
+
+![跳表插入节点过程](https://slefboot-1251736664.file.myqcloud.com/20240829_leveldb_source_skiplist_insert.png)
+
+那么新插入节点的高度是多少？插入相应位置后，前后节点的指针又是怎么更新的呢？来看看 LevelDB 中的实现代码。
 
 ```cpp
 template <typename Key, class Comparator>
@@ -195,6 +250,29 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
   }
 }
 ```
+
+上面代码省略掉了部分注释，然后分为 3 个功能块，下面是每一部分的解释：
+
+1. 首先定义一个类型为 `Node*`的数组 prev，长度为跳表的最大支持层高 `kMaxHeight=12`。这个数组**存储要插入的新节点每一层的前驱节点**，在跳表中插入新节点时，可以**通过这个 pre 数组找到新节点在每一层插入的位置**。
+2. 通过随机算法，来**决定新节点的层高 height**。这里 LevelDB 初始层高为 1，然后以 **1/4** 的概率决定是否增加一层。如果新节点的高度超过了当前跳表的最大高度，需要更新最大高度，并将超出的部分的 prev 设置为头节点，因为新的层级是从头节点开始的。
+3. 创建一个高度为 height 新的节点，并插入在链表中。具体做法也很简单，遍历新节点的每一层，**使用 NoBarrier_SetNext 方法来设置新节点的下一节点，接着更新 prev 节点的下一节点为新节点，实现了新节点的插入**。NoBarrier_SetNext 说明在这个上下文中，不需要额外的**内存屏障来保证内存操作的可见性**。
+
+下面来看看其中的部分细节。首先来看看 RandomHeight 方法，这个方法用来生成新节点的高度，核心代码如下：
+
+```cpp
+template <typename Key, class Comparator>
+int SkipList<Key, Comparator>::RandomHeight() {
+  // Increase height with probability 1 in kBranching
+  static const unsigned int kBranching = 4;
+  int height = 1;
+  while (height < kMaxHeight && rnd_.OneIn(kBranching)) {
+    height++;
+  }
+  return height;
+}
+```
+
+这里 rnd_ 是一个 [Random](https://github.com/google/leveldb/blob/main/util/random.h) 对象，是 LevelDB 自己的线性同余随机数生成器类，详细解释可以参考[LevelDB 源码阅读：utils 组件代码](/2024/03/21/leveldb-source-utils/#%E9%9A%8F%E6%9C%BA%E6%95%B0-Random-%E7%B1%BB)。RandomHeight 方法中，每次循环都会以 1/4 的概率增加一层，直到高度达到最大支持高度 `kMaxHeight=12` 或者不满足 1/4 的概率。这里总的层高 12 和概率值 1/4 是一个经验值，论文里面也提到了这个值，后面在性能分析部分再来讨论这两个值的选择。
 
 ### 查找插入位置
 
@@ -233,6 +311,48 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
   }
 }
 ```
+
+
+### Iterator 迭代器类设计
+
+接着来看下 Iterator 类的设计，这个类主要用于遍历跳表中的节点。我们先给出 Iterator 类定义的代码：
+
+```cpp
+// Iteration over the contents of a skip list
+  class Iterator {
+   public:
+    // Initialize an iterator over the specified list.
+    // The returned iterator is not valid.
+    explicit Iterator(const SkipList* list);
+
+    // Returns true iff the iterator is positioned at a valid node.
+    bool Valid() const;
+
+    // Returns the key at the current position.
+    const Key& key() const;
+
+    void Next();
+
+    void Prev();
+
+    // Advance to the first entry with a key >= target
+    void Seek(const Key& target);
+
+    // Position at the first entry in list.
+    // Final state of iterator is Valid() iff list is not empty.
+    void SeekToFirst();
+
+    // Position at the last entry in list.
+    // Final state of iterator is Valid() iff list is not empty.
+    void SeekToLast();
+
+   private:
+    const SkipList* list_;
+    Node* node_;
+    // Intentionally copyable
+  };
+```
+
 
 ## 跳表在线可视化
 
