@@ -30,7 +30,7 @@ description:
 
 ![二叉搜索树退化为链表](https://slefboot-1251736664.file.myqcloud.com/20240828_leveldb_source_skiplist_sequential.png)
 
-为了解决性能退化的问题，人们提出了很多平衡树，比如 AVL 树、红黑树等。这些平衡树的**实现比较复杂，为了维护树的平衡性，增加了一些复杂的操作。**
+顺便提下，可以在[这里的可视化页面](https://gallery.selfboot.cn/algorithms/binarysearchtree/)中更好理解这里的二叉搜索树。为了解决性能退化的问题，人们提出了很多平衡树，比如 AVL 树、红黑树等。这些平衡树的**实现比较复杂，为了维护树的平衡性，增加了一些复杂的操作。**
 
 ### 跳表的思想
 
@@ -111,7 +111,7 @@ SkipList 类还有一些私有的成员和方法，用来辅助实现跳表的 I
 
 ### Node 节点类设计
 
-Node 类的设计里面有不少细节值得学习，先给出完整的代码和注释，大家可以先品一品。
+Node 类是跳表中单个节点的表示，包含了节点的键值和多个层次的后继节点指针。有了这个类，SkipList 类就可以构建整个跳表了。先给出 Node 类的代码和注释，大家可以先品一品。
 
 ```cpp
 template <typename Key, class Comparator>
@@ -151,16 +151,26 @@ struct SkipList<Key, Comparator>::Node {
 };
 ```
 
-先来看成员变量 key，其类型为模板 Key，同时键是不可变的（const）。另外一个成员变量 next_ 在最后面，这里使用 `std::atomic<Node*> next_[1]`，来支持**动态地扩展数组**的大小。这就是[C++ 中的柔性数组](https://selfboot.cn/2024/08/13/leveldb_source_unstand_c++/#%E6%9F%94%E6%80%A7%E6%95%B0%E7%BB%84)，在分配 Node 对象时，会**根据节点的高度动态分配额外的内存来存储更多的 next 指针**。这个数组主要用来存储当前节点的后继节点，`next_[0]` 存储最底层的下一个节点指针，`next_[1]` 存储往上一层的，以此类推。同时这里的 next_ 数组使用了 std::atomic 类型，这是 C++11 中引入的**原子操作类型**，用来保证多线程并发访问时的**内存一致性**。
+首先是成员变量 key，其类型为模板 Key，同时键是不可变的（const）。另外一个成员变量 next_ 在最后面，这里使用 `std::atomic<Node*> next_[1]`，来支持**动态地扩展数组**的大小。这就是[C++ 中的柔性数组](https://selfboot.cn/2024/08/13/leveldb_source_unstand_c++/#%E6%9F%94%E6%80%A7%E6%95%B0%E7%BB%84)，next_ 数组用来存储当前节点的所有后继节点，`next_[0]` 存储最底层的下一个节点指针，`next_[1]` 存储往上一层的，以此类推。
 
-Node 类还提供了 2 组方法来访问和更新 next_ 数组中的指针。Next 和 SetNext 方法是**带内存屏障的**，用于保证多线程并发访问时的**内存可见性**。其中分别用了 acquire 和 release 语义，这两个语义是 C++11 中引入的。
+在新建 Node 对象时，会**根据节点的高度动态分配额外的内存来存储更多的 next 指针**。SkipList 中封装了一个 NewNode 方法，这里提前给出代码，这样大家更好理解这里柔性数组对象的创建。
 
-- acquire 语义：Next 方法中 load 使用 std::memory_order_acquire，确保在**加载操作之后发生的读或写操作不会被重排序到加载操作之前**。
-- release 语义：SetNext 方法中 store 使用 std::memory_order_release，确保对这个节点的任何后续读取都将看到这个写操作状态。
+```cpp
+template <typename Key, class Comparator>
+typename SkipList<Key, Comparator>::Node* SkipList<Key, Comparator>::NewNode(
+    const Key& key, int height) {
+  char* const node_memory = arena_->AllocateAligned(
+      sizeof(Node) + sizeof(std::atomic<Node*>) * (height - 1));
+  return new (node_memory) Node(key);
+}
+```
 
-NoBarrier_Next 和 NoBarrier_SetNext 方法则是**不带内存屏障的**，这两个方法使用 std::memory_order_relaxed，编译器不会在这个操作和其他内存操作之间插入任何同步或屏障，因此不提供任何内存顺序保证，这样**性能会更好些**。在某些情况下，如果代码逻辑能确保访问顺序和数据一致性（例如，通过其他方式已经做了线程同步），那么使用 memory_order_relaxed 内存顺序可以减少开销，从而提高程序的运行效率。在 SkipList 的实现中，只有 Insert 中会用到这里的 NoBarrier 版本，这里后面展开插入操作时再分析。
+这里的代码平常见的少些，值得展开聊聊。首先计算 Node 需要的内存大小，**Node 本身大小加上高度减 1 个 next 指针的大小**，然后调用 Arena 的 AllocateAligned 方法分配内存。Arena 是 LevelDB 自己实现的内存分配类，详细解释可以参考[LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码](https://selfboot.cn/2024/08/29/leveldb_source_utils/#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-Arena-%E7%B1%BB)。最后用 **placement new 构造 Node 对象**，这里主要是为了在 Arena 分配的内存上构造 Node 对象，而不是在堆上构造。
 
-Node 类是跳表中单个节点的表示，包含了节点的键值和后继节点指针。有了这个类，SkipList 类就可以构建整个跳表了。下面先来看看 SkipList 中如何实现插入和查找操作。
+
+此外，Node 类还提供了 4 个方法，分别是 Next、SetNext、NoBarrier_Next 和 NoBarrier_SetNext，用来读取和设置下一个节点的指针。这里功能上只是简单的读取和设置 next_ 数组的值，但是用到了 C++ 的原子类型和一些同步语义，会在本文[后面并发](#并发读问题)部分展开讨论。
+
+Node 类先到这里，下面来看看 SkipList 中如何实现插入和查找操作。
 
 ### 跳表查找节点
 
@@ -272,46 +282,7 @@ int SkipList<Key, Comparator>::RandomHeight() {
 }
 ```
 
-这里 rnd_ 是一个 [Random](https://github.com/google/leveldb/blob/main/util/random.h) 对象，是 LevelDB 自己的线性同余随机数生成器类，详细解释可以参考[LevelDB 源码阅读：utils 组件代码](/2024/03/21/leveldb-source-utils/#%E9%9A%8F%E6%9C%BA%E6%95%B0-Random-%E7%B1%BB)。RandomHeight 方法中，每次循环都会以 1/4 的概率增加一层，直到高度达到最大支持高度 `kMaxHeight=12` 或者不满足 1/4 的概率。这里总的层高 12 和概率值 1/4 是一个经验值，论文里面也提到了这个值，后面在性能分析部分再来讨论这两个值的选择。
-
-### 查找插入位置
-
-这个函数可以查找并返回大于等于 key 的节点 n，查找过程中会填充 prev 数组，保留节点 n 每一层的**前驱节点**。
-
-首先初始化当前节点 x 为头节点 head_。在跳表中，头节点通常是一个哑元节点，其值小于跳表中所有其他节点的值。然后从**最高层开始往右、往下进行搜索**，跳表的层级从 0 开始，所以最高层是 `GetMaxHeight() - 1`。接下来是一个循环搜索过程，直到最下一层才结束。每一轮都是在当前层级 level 上，首先获取节点 x 的下一个节点 next，然后进行比较。
-
-1. 如果 key 位于 next 之后，则继续在当前层级上向右搜索。
-2. 如果 key 比 next 节点的值小（或者 next 节点是尽头 nullptr），则 x 就是当前层的前驱节点。如果 prev 非空（即调用者需要记录搜索路径），则在 prev 数组的 level 记录当前节点 x。
-   - 如果当前 level 是最底层，则返回 next 节点即可；
-   - level 是中间层，还要继续向下找(level--)；
-
-完整的代码如下：
-
-```cpp
-template <typename Key, class Comparator>
-typename SkipList<Key, Comparator>::Node*
-SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
-                                              Node** prev) const {
-  Node* x = head_;
-  int level = GetMaxHeight() - 1;
-  while (true) {
-    Node* next = x->Next(level);
-    if (KeyIsAfterNode(key, next)) {
-      // Keep searching in this list
-      x = next;
-    } else {
-      if (prev != nullptr) prev[level] = x;
-      if (level == 0) {
-        return next;
-      } else {
-        // Switch to next list
-        level--;
-      }
-    }
-  }
-}
-```
-
+这里 rnd_ 是一个 [Random](https://github.com/google/leveldb/blob/main/util/random.h) 对象，是 LevelDB 自己的线性同余随机数生成器类，详细解释可以参考[LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码](https://selfboot.cn/2024/08/29/leveldb_source_utils/#%E9%9A%8F%E6%9C%BA%E6%95%B0-Random-%E7%B1%BB)。RandomHeight 方法中，每次循环都会以 1/4 的概率增加一层，直到高度达到最大支持高度 `kMaxHeight=12` 或者不满足 1/4 的概率。这里总的层高 12 和概率值 1/4 是一个经验值，论文里面也提到了这个值，后面在性能分析部分再来讨论这两个值的选择。
 
 ### Iterator 迭代器类设计
 
@@ -354,6 +325,43 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
 ```
 
 
+## 并发读问题
+
+上面分析跳表实现的时候，我有意忽略了多线程问题。我们知道 LevelDB 虽然只支持单个进程使用，但是支持多线程。更准确的说，插入 memtable 的时候，由**外部锁保证同一时间只有一个线程可以执行跳表的 Insert 操作**。但是允许有多个线程并发读取 SkipList 中的数据，这里就涉及到了**多线程并发读的问题**。这里 LevelDB 是怎么支持**一写多读**的呢？
+
+在上面的 Node 类实现中，next_ 数组使用了 std::atomic 类型，这是 C++11 中引入的**原子操作类型**。Node 类还提供了 2 组方法来访问和更新 next_ 数组中的指针。Next 和 SetNext 方法是**带内存屏障的**，用于保证多线程并发访问时的**内存可见性**。其中分别用了 acquire 和 release 语义，这两个语义是 C++11 中引入的。
+
+- acquire 语义：Next 方法中 load 使用 std::memory_order_acquire，确保在**加载操作之后发生的读或写操作不会被重排序到加载操作之前**。
+- release 语义：SetNext 方法中 store 使用 std::memory_order_release，确保对这个节点的任何后续读取都将看到这个写操作状态。
+
+NoBarrier_Next 和 NoBarrier_SetNext 方法则是**不带内存屏障的**，这两个方法使用 std::memory_order_relaxed，编译器不会在这个操作和其他内存操作之间插入任何同步或屏障，因此不提供任何内存顺序保证，这样**性能会更好些**。在某些情况下，如果代码逻辑能确保访问顺序和数据一致性（例如，通过其他方式已经做了线程同步），那么使用 memory_order_relaxed 内存顺序可以减少开销，从而提高程序的运行效率。在 SkipList 的实现中，只有 Insert 中会用到这里的 NoBarrier 版本，接下来看看 Insert 操作。
+
+先来看 `std::atomic<int> max_height_;`，这个成员变量记录当前跳表的最大高度。在插入新节点时，如果新节点的高度超过了当前跳表的最大高度，需要更新最大高度。相关代码如下：
+
+```cpp
+inline int GetMaxHeight() const {
+  return max_height_.load(std::memory_order_relaxed);
+}
+
+template <typename Key, class Comparator>
+void SkipList<Key, Comparator>::Insert(const Key& key) {
+  // ...
+  if (height > GetMaxHeight()) {
+    for (int i = GetMaxHeight(); i < height; i++) {
+      prev[i] = head_;
+    }
+    max_height_.store(height, std::memory_order_relaxed);
+  }
+  // ...
+```
+
+我们知道，**编译器和处理器可能会对指令进行重排，只要这种重排不违反单个线程的执行逻辑就好**。上面 Insert 操作中，设置新高度和后面的更新节点指针顺序可能会被打乱。
+
+1. 其他线程读到了一个新的高度值，这时候新节点相关的指针也有两种可能。如果新节点指针还没更新，
+
+2. 但是还没有更新到新节点的指针，这时候如果其他线程读到了老的高度值，更不会有问题。因为它们不会访问新添加的更高层级，所有关键的数据操作（查找、插入、删除）仍然可以在现有的层级中正确完成。
+
+
 ## 跳表在线可视化
 
 为了直观看看跳表构建的过程，我用 Claude3.5 做了一个[跳表可视化页面](https://gallery.selfboot.cn/en/algorithms/skiplist)。可以指定跳表的最大层高，以及调整递增层高的概率，然后可以随机初始化跳表，或者插入、删除、查找节点，观察跳表结构的变化。 
@@ -361,7 +369,6 @@ SkipList<Key, Comparator>::FindGreaterOrEqual(const Key& key,
 ![跳表在线可视化](https://slefboot-1251736664.file.myqcloud.com/20240815_leveldb_source_skiplist_visualization.png)
 
 在最高 12 层，递增概率为 1/4 的情况下，可以看到跳表平均层高还是挺低的。这里也可以调整概率为 1/2，看看跳表的变化。
-
 
 ## 跳表性能分析
 
