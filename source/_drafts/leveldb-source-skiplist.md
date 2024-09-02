@@ -12,7 +12,7 @@ description:
 
 ![跳表实现的启发思路](https://slefboot-1251736664.file.myqcloud.com/20240321_leveldb_source_skiplist.png)
 
-那么跳表的原理是什么？ LevelDB 中跳表又是怎么实现的呢？本文将从跳表的原理、实现、测试等方面来深入探讨。最后还提供了**一个可视化页面，可以直观看到跳表的构建以及整体结构**。
+那么跳表的原理是什么？ LevelDB 中跳表又是怎么实现的呢？如何支持在写的时候，能并发读跳表呢？又是怎么测试跳表的正确性？本文将从跳表的原理、实现、测试等方面来深入探讨。最后还提供了**一个可视化页面，可以直观看到跳表的构建以及整体结构**。
 
 <!-- more -->
 
@@ -265,7 +265,7 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 
 1. 首先定义一个类型为 `Node*`的数组 prev，长度为跳表的最大支持层高 `kMaxHeight=12`。这个数组**存储要插入的新节点每一层的前驱节点**，在跳表中插入新节点时，可以**通过这个 pre 数组找到新节点在每一层插入的位置**。
 2. 通过随机算法，来**决定新节点的层高 height**。这里 LevelDB 初始层高为 1，然后以 **1/4** 的概率决定是否增加一层。如果新节点的高度超过了当前跳表的最大高度，需要更新最大高度，并将超出的部分的 prev 设置为头节点，因为新的层级是从头节点开始的。
-3. 创建一个高度为 height 新的节点，并插入在链表中。具体做法也很简单，遍历新节点的每一层，**使用 NoBarrier_SetNext 方法来设置新节点的下一节点，接着更新 prev 节点的下一节点为新节点，实现了新节点的插入**。NoBarrier_SetNext 说明在这个上下文中，不需要额外的**内存屏障来保证内存操作的可见性**。
+3. 创建一个高度为 height 新的节点，并插入在链表中。具体做法也很简单，遍历新节点的每一层，**使用 NoBarrier_SetNext 方法来设置新节点的下一节点，接着更新 prev 节点的下一节点为新节点，实现了新节点的插入**。NoBarrier_SetNext 说明在这个上下文中，不需要额外的**内存屏障来保证内存操作的可见性**。新节点插入和一般链表的插入操作区别不大，这里有个[不错的可视化](https://gallery.selfboot.cn/zh/algorithms/linkedlist/)，可以加深对链表的插入理解。
 
 下面来看看其中的部分细节。首先来看看 RandomHeight 方法，这个方法用来生成新节点的高度，核心代码如下：
 
@@ -284,9 +284,33 @@ int SkipList<Key, Comparator>::RandomHeight() {
 
 这里 rnd_ 是一个 [Random](https://github.com/google/leveldb/blob/main/util/random.h) 对象，是 LevelDB 自己的线性同余随机数生成器类，详细解释可以参考[LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码](https://selfboot.cn/2024/08/29/leveldb_source_utils/#%E9%9A%8F%E6%9C%BA%E6%95%B0-Random-%E7%B1%BB)。RandomHeight 方法中，每次循环都会以 1/4 的概率增加一层，直到高度达到最大支持高度 `kMaxHeight=12` 或者不满足 1/4 的概率。这里总的层高 12 和概率值 1/4 是一个经验值，论文里面也提到了这个值，后面在性能分析部分再来讨论这两个值的选择。
 
-### Iterator 迭代器类设计
+这里插入链表其实需要考虑并发读问题，不过在这里先不展开，后面会专门讨论。接下来先看看 SkipList 中的迭代器类 Iterator 的设计。
 
-接着来看下 Iterator 类的设计，这个类主要用于遍历跳表中的节点。我们先给出 Iterator 类定义的代码：
+### Iterator 迭代器
+
+Iterator 迭代器类主要用于遍历跳表中的节点。这里迭代器的设计和用法也比较有意思，LevelDB 在 [include/leveldb/iterator.h](https://github.com/google/leveldb/blob/main/include/leveldb/iterator.h) 中，定义了一个抽象基类 leveldb::Iterator ，里面有通用的迭代器接口，可以用于不同的数据结构。
+
+而这里 SkipList<Key, Comparator>::Iterator 是 SkipList 的内部类，定义在 [db/skiplist.h](https://github.com/google/leveldb/blob/main/db/skiplist.h#L61) 中，只能用于 SkipList 数据结构。跳表的 Iterator 并没有继承 leveldb::Iterator 抽象基类，而是作为 MemTableIterator 对象的成员被**组合使用**。具体是用在 [db/memtable.cc](https://github.com/google/leveldb/blob/main/db/memtable.cc#L46) 中，这里定义了 MemTableIterator 类，继承自 Iterator，然后用跳表的 Iterator 重写了其中的方法。
+
+```cpp
+class MemTableIterator : public Iterator {
+ public:
+
+  void SeekToLast() override { iter_.SeekToLast(); }
+  void Next() override { iter_.Next(); }
+  void Prev() override { iter_.Prev(); }
+  // ...
+  Status status() const override { return Status::OK(); }
+
+ private:
+  MemTable::Table::Iterator iter_;
+  std::string tmp_;  // For passing to EncodeKey
+};
+```
+
+这里 MemTableIterator 充当了适配器的角色，将 SkipList::Iterator 的功能适配为符合 LevelDB 外部 Iterator 接口的形式，确保了 LevelDB 各部分间接口的一致性。如果未来需要替换 memtable 中的跳表实现或迭代器行为，可以局部修改 MemTableIterator 而不影响其他使用 Iterator 接口的代码。
+
+那么 SkipList::Iterator 类具体怎么实现的呢？如下：
 
 ```cpp
 // Iteration over the contents of a skip list
@@ -303,7 +327,6 @@ int SkipList<Key, Comparator>::RandomHeight() {
     const Key& key() const;
 
     void Next();
-
     void Prev();
 
     // Advance to the first entry with a key >= target
@@ -324,19 +347,54 @@ int SkipList<Key, Comparator>::RandomHeight() {
   };
 ```
 
+通过传入 SkipList 指针对象，就可以遍历跳表了。类中定义了 Node* node_ 成员变量，用来记录当前遍历到的节点。大部分方法实现起来都不难，稍微封装下前面介绍过的跳表中的方法就行。有两个方法比较特殊，需要在跳表中增加新的方法：
+
+```cpp
+template <typename Key, class Comparator>
+inline void SkipList<Key, Comparator>::Iterator::Prev() {
+  // Instead of using explicit "prev" links, we just search for the
+  // last node that falls before key.
+  assert(Valid());
+  node_ = list_->FindLessThan(node_->key);
+  if (node_ == list_->head_) {
+    node_ = nullptr;
+  }
+}
+
+template <typename Key, class Comparator>
+inline void SkipList<Key, Comparator>::Iterator::SeekToLast() {
+  node_ = list_->FindLast();
+  if (node_ == list_->head_) {
+    node_ = nullptr;
+  }
+}
+```
+
+这里分别调用跳表的 [FindLessThan](https://github.com/google/leveldb/blob/main/db/skiplist.h#L281) 和 [FindLast](https://github.com/google/leveldb/blob/main/db/skiplist.h#L302) 方法，来实现 Prev 和 SeekToLast 方法。其中 FindLessThan 查找小于给定键 key 的最大节点，FindLast 查找跳表中的最后一个节点（即最大的节点）。这两个方法本身很相似，和 FindGreaterOrEqual 方法也很类似，如下图列出这两个方法的区别。
+
+![跳表查找方法FindLessThan和FindLast区别](https://slefboot-1251736664.file.myqcloud.com/20240902_leveldb_source_skiplist_find_diff.png)
+
+基本思路就是从跳表的头节点开始，逐层向右、向下查找。在每一层，检查当前节点的下一个节点是否存在。如果下一个节点不存在，则切换到下一层继续查找。存在的话，则需要根据情况判断是否向右查找。最后都是到达最底层（第0层），返回某个节点。
+
+至此，跳表的核心功能实现已经全部梳理清楚了。不过还有一个问题需要回答，在多线程情况下，这里跳表的操作是线程安全的吗？上面分析跳表实现的时候，有意忽略了多线程问题，接下来详细看看。
 
 ## 并发读问题
 
-上面分析跳表实现的时候，我有意忽略了多线程问题。我们知道 LevelDB 虽然只支持单个进程使用，但是支持多线程。更准确的说，插入 memtable 的时候，由**外部锁保证同一时间只有一个线程可以执行跳表的 Insert 操作**。但是允许有多个线程并发读取 SkipList 中的数据，这里就涉及到了**多线程并发读的问题**。这里 LevelDB 是怎么支持**一写多读**的呢？
+我们知道 LevelDB 虽然只支持单个进程使用，但是支持多线程。更准确的说，在插入 memtable 的时候，**LevelDB 会用锁保证同一时间只有一个线程可以执行跳表的 Insert 操作**。但是允许有多个线程并发读取 SkipList 中的数据，这里就涉及到了**多线程并发读的问题**。这里 LevelDB 是怎么支持**一写多读**的呢？
 
-在上面的 Node 类实现中，next_ 数组使用了 std::atomic 类型，这是 C++11 中引入的**原子操作类型**。Node 类还提供了 2 组方法来访问和更新 next_ 数组中的指针。Next 和 SetNext 方法是**带内存屏障的**，用于保证多线程并发访问时的**内存可见性**。其中分别用了 acquire 和 release 语义，这两个语义是 C++11 中引入的。
+在 Insert 操作的时候，改动的数据有两个，一个是整个链表当前的最大高度 max_height_，另一个是插入新节点后导致的节点指针更新。
+
+先来看 Insert 节点时的操作。在插入新节点时，如果新节点的高度超过了当前跳表的最大高度，需要更新最大高度。
+
+
+在上面的 [Node 类](#Node-节点类设计)实现中，next_ 数组使用了 std::atomic 类型，这是 C++11 中引入的**原子操作类型**。Node 类还提供了 2 组方法来访问和更新 next_ 数组中的指针。Next 和 SetNext 方法是**带内存屏障的**，用于保证多线程并发访问时的**内存可见性**。其中分别用了 acquire 和 release 语义，这两个语义是 C++11 中引入的。
 
 - acquire 语义：Next 方法中 load 使用 std::memory_order_acquire，确保在**加载操作之后发生的读或写操作不会被重排序到加载操作之前**。
 - release 语义：SetNext 方法中 store 使用 std::memory_order_release，确保对这个节点的任何后续读取都将看到这个写操作状态。
 
-NoBarrier_Next 和 NoBarrier_SetNext 方法则是**不带内存屏障的**，这两个方法使用 std::memory_order_relaxed，编译器不会在这个操作和其他内存操作之间插入任何同步或屏障，因此不提供任何内存顺序保证，这样**性能会更好些**。在某些情况下，如果代码逻辑能确保访问顺序和数据一致性（例如，通过其他方式已经做了线程同步），那么使用 memory_order_relaxed 内存顺序可以减少开销，从而提高程序的运行效率。在 SkipList 的实现中，只有 Insert 中会用到这里的 NoBarrier 版本，接下来看看 Insert 操作。
+NoBarrier_Next 和 NoBarrier_SetNext 方法则是**不带内存屏障的**，这两个方法使用 std::memory_order_relaxed，编译器不会在这个操作和其他内存操作之间插入任何同步或屏障，因此不提供任何内存顺序保证，这样**性能会更好些**。在 SkipList 的实现中，只有 Insert 中会用到这里的 NoBarrier 版本。
 
-先来看 `std::atomic<int> max_height_;`，这个成员变量记录当前跳表的最大高度。在插入新节点时，如果新节点的高度超过了当前跳表的最大高度，需要更新最大高度。相关代码如下：
+先来看 `std::atomic<int> max_height_;`，这个成员变量记录当前跳表的最大高度。相关代码如下：
 
 ```cpp
 inline int GetMaxHeight() const {
@@ -361,10 +419,15 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 
 2. 但是还没有更新到新节点的指针，这时候如果其他线程读到了老的高度值，更不会有问题。因为它们不会访问新添加的更高层级，所有关键的数据操作（查找、插入、删除）仍然可以在现有的层级中正确完成。
 
+## 跳表功能测试
+
+上面分析了跳表的实现，那么这里的实现是否正确呢？如果要写测试用例，应该怎么写？需要从哪些方面来测试跳表的正确性？
+
+
 
 ## 跳表在线可视化
 
-为了直观看看跳表构建的过程，我用 Claude3.5 做了一个[跳表可视化页面](https://gallery.selfboot.cn/en/algorithms/skiplist)。可以指定跳表的最大层高，以及调整递增层高的概率，然后可以随机初始化跳表，或者插入、删除、查找节点，观察跳表结构的变化。 
+为了直观看看跳表构建的过程，我用 Claude3.5 做了一个[跳表可视化页面](https://gallery.selfboot.cn/zh/algorithms/skiplist)。可以指定跳表的最大层高，以及调整递增层高的概率，然后可以随机初始化跳表，或者插入、删除、查找节点，观察跳表结构的变化。 
 
 ![跳表在线可视化](https://slefboot-1251736664.file.myqcloud.com/20240815_leveldb_source_skiplist_visualization.png)
 
@@ -372,9 +435,11 @@ void SkipList<Key, Comparator>::Insert(const Key& key) {
 
 ## 跳表性能分析
 
+通过上面的原理、实现和可视化工具，我们可以推测出来，在极端情况下，可能每个节点的高度都是 1，那么跳表的查找、插入、删除操作的时间复杂度都会退化到 O(n)。在这种情况下，性能比平衡树差了不少。当然，因为有随机性在里面，所以**没有输入序列能始终导致性能最差**。
 
-跳表在极端情况下，性能会比平衡树要差。但是因为有随机性在里面，所以没有输入序列能始终导致性能最差。
+跳表的平均性能如何呢？前面给出过结论，和平衡树的平均性能差不多。引入一个简单的随机高度，就能保证跳表的平均性能和平衡树差不多。这背后有没有什么分析方法，能够分析跳表的性能呢？
 
+还是看论文，论文中给出了一个不错的分析方法，这里可以一起看看。
 
 ## 总结
 
