@@ -15,14 +15,14 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Wed, 18 Sep 2024 13:11:51 GMT</pubDate>
+    <pubDate>Wed, 18 Sep 2024 13:20:10 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
     <item>
       <title>LevelDB Explained - How to Test Parallel Read and Write of SkipLists?</title>
-      <link>https://selfboot.cn/2024/09/18/leveldb-source-skiplist-test-en/</link>
-      <guid>https://selfboot.cn/2024/09/18/leveldb-source-skiplist-test-en/</guid>
+      <link>https://selfboot.cn/en/2024/09/18/leveldb_source_skiplist_test/</link>
+      <guid>https://selfboot.cn/en/2024/09/18/leveldb_source_skiplist_test/</guid>
       <pubDate>Wed, 18 Sep 2024 21:00:00 GMT</pubDate>
       
       <description>This article delves into the testing methods of LevelDB&#39;s skip list implementation, focusing on verifying correctness in parallel read and write scenarios. It details the clever design of test Keys, the implementation of write and read thread operations, and specific methods for single-threaded and multi-threaded testing. The article also discusses the limitations of parallel testing and introduces the ThreadSanitizer tool for deeper data race detection.</description>
@@ -40,7 +40,7 @@
       <category domain="https://selfboot.cn/tags/LevelDB/">LevelDB</category>
       
       
-      <comments>https://selfboot.cn/2024/09/18/leveldb-source-skiplist-test-en/#disqus_thread</comments>
+      <comments>https://selfboot.cn/en/2024/09/18/leveldb_source_skiplist_test/#disqus_thread</comments>
       
     </item>
     

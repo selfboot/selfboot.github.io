@@ -74,7 +74,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2024/08/06/leveldb_source_prepare/</loc>
+    <loc>https://selfboot.cn/en/2024/08/08/leveldb_source_bloom_filter/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -83,7 +83,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/en/2024/08/08/leveldb_source_bloom_filter/</loc>
+    <loc>https://selfboot.cn/2024/08/06/leveldb_source_prepare/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -209,7 +209,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2024/09/18/leveldb-source-skiplist-test-en/</loc>
+    <loc>https://selfboot.cn/en/2024/09/18/leveldb_source_skiplist_test/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -218,7 +218,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2024/09/18/leveldb-source-skiplist-test/</loc>
+    <loc>https://selfboot.cn/2024/09/18/leveldb_source_skiplist_test/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -263,15 +263,6 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/en/2023/11/15/how_to_crack_GPTs/</loc>
-    
-    <lastmod>2024-09-18</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://selfboot.cn/2023/11/15/how_to_crack_GPTs/</loc>
     
     <lastmod>2024-09-18</lastmod>
@@ -299,7 +290,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/en/2023/12/06/bert_nlp_classify/</loc>
+    <loc>https://selfboot.cn/2023/12/06/bert_nlp_classify/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -308,7 +299,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/12/06/bert_nlp_classify/</loc>
+    <loc>https://selfboot.cn/en/2023/12/06/bert_nlp_classify/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -579,15 +570,6 @@
   
   <url>
     <loc>https://selfboot.cn/2024/06/13/async_pool_block_problem/</loc>
-    
-    <lastmod>2024-09-18</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://selfboot.cn/2023/08/05/divorce_legal_longtime/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -902,6 +884,15 @@
   </url>
   
   <url>
+    <loc>https://selfboot.cn/en/2023/11/15/how_to_crack_GPTs/</loc>
+    
+    <lastmod>2024-09-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://selfboot.cn/2023/05/24/gpt4_teach_option/</loc>
     
     <lastmod>2024-09-18</lastmod>
@@ -1100,7 +1091,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/07/07/gpt4_worker_copilot/</loc>
+    <loc>https://selfboot.cn/2023/06/30/ebpf_func_time/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -1109,7 +1100,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2023/06/30/ebpf_func_time/</loc>
+    <loc>https://selfboot.cn/2023/07/07/gpt4_worker_copilot/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -1236,6 +1227,15 @@
   
   <url>
     <loc>https://selfboot.cn/2023/08/02/redis_python_bug/</loc>
+    
+    <lastmod>2024-09-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://selfboot.cn/2023/08/05/divorce_legal_longtime/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -1550,7 +1550,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2016/09/01/lost_partition/</loc>
+    <loc>https://selfboot.cn/2016/08/26/threadlocal_implement/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -1559,7 +1559,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2016/08/26/threadlocal_implement/</loc>
+    <loc>https://selfboot.cn/2016/09/01/lost_partition/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -1577,7 +1577,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2016/10/30/forum_design_flask/</loc>
+    <loc>https://selfboot.cn/2016/09/18/c++_undefined_behaviours/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -1586,7 +1586,7 @@
   </url>
   
   <url>
-    <loc>https://selfboot.cn/2016/09/18/c++_undefined_behaviours/</loc>
+    <loc>https://selfboot.cn/2016/10/30/forum_design_flask/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
