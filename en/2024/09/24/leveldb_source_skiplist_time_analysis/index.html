@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="This article provides a detailed analysis of the time complexity of skip lists. By breaking down the search problem, reversing the entire search process, and finding an appropriate L level, it ultimately derives the time complexity of skip lists. Based on the understanding of time complexity, it further deduces how to choose the probability p, and the reasons for choosing the maximum height in Redis and LevelDB skip lists. Finally, it tests the performance of skip lists through a simple benchmark and compares it with unordered_map."><title>LevelDB Explained - How to Analyze the Time Complexity of SkipLists?</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml,en/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script>
+<script defer="" src="https://cloud.umami.is/script.js" data-website-id="3578d9f2-9ea0-49d4-8781-e8d1217ab924"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN">中文</option><option value="en" selected="">English</option></select></div><p class="description">Know what it is, and know why it is so. The breadth of knowledge is a byproduct of its depth!</p></div><div id="nav-menu"><a href="/en/."><i class="fa fa-home"></i><span> Home</span></a><a href="/en/archives/"><i class="fa fa-archive"></i><span> Archive</span></a><a href="/en/aboutme.html"><i class="fa fa-user"></i><span> About</span></a><a href="/en/atom.xml"><i class="fa fa-rss"></i><span> RSS</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LevelDB Explained - How to Analyze the Time Complexity of SkipLists?</h1><div class="post-meta">2024/09/24<span> | </span><span class="category"><a href="/categories/Source-Code-Analysis/">Source Code Analysis</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a class="disqus-comment-count" data-disqus-identifier="en/2024/09/24/leveldb_source_skiplist_time_analysis/" href="/en/2024/09/24/leveldb_source_skiplist_time_analysis/#disqus_thread"></a><div class="post-content"><p>In the previous article <a href="https://selfboot.cn/en/2024/09/09/leveldb_source_skiplist/">LevelDB Explained - How to implement SkipList</a>, we analyzed in detail the implementation of skip lists in LevelDB. Then in <a href="https://selfboot.cn/en/2024/09/18/leveldb_source_skiplist_test/">LevelDB Explained - How to Test Parallel Read and Write of SkipLists?</a>, we analyzed the test code for LevelDB skip lists. One question remains: how do we analyze the time complexity of skip lists?</p>
+<p>After analyzing the time complexity of skip lists, we can understand <strong>the choice of probability value and maximum height</strong> in LevelDB, as well as why Redis chooses a different maximum height. Finally, this article will also provide a simple benchmark code to examine the performance of skip lists.</p>
+<p>This article will not involve very advanced mathematical knowledge, only simple probability theory, so you can read on without worry. The performance analysis of skip lists has several approaches worth learning from. I hope this article can serve as a starting point and bring some inspiration to everyone.</p>
+<h2 id="Breaking-Down-Skip-List-Performance-Analysis"><a href="#Breaking-Down-Skip-List-Performance-Analysis" class="headerlink" title="Breaking Down Skip List Performance Analysis"></a>Breaking Down Skip List Performance Analysis</h2><p>Knowing the principles and implementation of LevelDB, we can deduce that in extreme cases, where the height of each node is 1, the time complexity of search, insertion, and deletion operations of the skip list will degrade to O(n). In this case, the performance is considerably worse than balanced trees. Of course, due to the randomness involved, <strong>no input sequence can consistently lead to the worst performance</strong>.</p>
+<p>So, how about the average performance of skip lists? We’ve previously stated the conclusion that it’s similar to the average performance of balanced trees. Introducing a simple random height can ensure that the average performance of skip lists is comparable to balanced trees. <strong>Is there any analysis method behind this that can analyze the performance of skip lists?</strong></p>
+<span id="more"></span>
+
+<p>We need to look at the paper again. The paper provides a good analysis method, but the approach here is actually a bit difficult to come up with, and understanding it is also a bit challenging. I will try to break down the problem as much as possible, then derive the entire process step by step, and try to provide the mathematical derivation involved in each step. Haha, <strong>isn’t this the chain of thought? Breaking down problems and reasoning step by step is an essential skill for both humans and AI to solve complex problems</strong>. The derivation here can be divided into several small problems:</p>
+<ol>
+<li>Among the search, insertion, and deletion operations of skip lists, which part of the operation most affects the time consumption?</li>
+<li>For the search operation, assuming we start searching downwards from any level k, what is the average complexity here (how many traversals)?</li>
+<li>Is there a way to <strong>find a certain level</strong> in the linked list, from which starting the search is most efficient, and the number of traversals can represent the average performance?</li>
+<li>Can we find a formula to calculate the total time complexity and calculate the upper limit of the average complexity here?</li>
+</ol>
+<p>Alright, let’s analyze these problems one by one.</p>
+<h2 id="Bottleneck-of-Skip-List-Operations"><a href="#Bottleneck-of-Skip-List-Operations" class="headerlink" title="Bottleneck of Skip List Operations"></a>Bottleneck of Skip List Operations</h2><p>The first small problem is relatively simple. In the previous discussion of the principles and implementation of skip lists, we know that for insertion and deletion operations, we also need to first find the corresponding position through the search operation. After that, it’s just a few pointer operations, the cost of which is constant time and can be ignored. Therefore, <strong>the time complexity of skip list operations is determined by the complexity of the search operation</strong>.</p>
+<p>The process of the search operation is to search right and down in the skip list until the target element is found. If we can know the average complexity of this search, then we can know the average complexity of skip list operations. Directly analyzing the average complexity of the search operation is a bit difficult to start. According to the implementation in LevelDB, each time it starts searching from <strong>the highest level of the current node in the skip list</strong>. But the node height is random, and the highest level is also random, so it seems impossible to analyze the average complexity of the search operation starting from a random height.</p>
+<h2 id="Expected-Number-of-Steps-to-Skip-k-Levels"><a href="#Expected-Number-of-Steps-to-Skip-k-Levels" class="headerlink" title="Expected Number of Steps to Skip k Levels"></a>Expected Number of Steps to Skip k Levels</h2><p>Let’s give up on direct analysis for now and try to answer the second question from earlier. <strong>Assuming we start searching downwards from any level k, how many times on average does it take to find the target position?</strong> The analysis approach here is quite jumpy. We’ll <strong>analyze in reverse from the target position, searching up and left, how many steps on average does it take to search up k levels. And we assume that the height of nodes in the linked list is randomly decided based on probability p during the reverse search process</strong>.</p>
+<p>Is this assumption and analysis process equivalent to the average number of searches in the real search situation? We know that when executing the search to the right and down, the heights of the nodes are already decided. But considering that the height of nodes is randomly decided in the first place, <strong>assuming that the height is decided during the reverse search and reversing the entire search process is not statistically different</strong>.</p>
+<p>Next, let’s assume that <strong>we are currently at any level i of node x (situation a in the figure below), and it takes $ C(k) $ steps to search up k levels from this position</strong>. We don’t know if there are any more levels above node x, nor do we know if there are any nodes to the left of node x (the <strong>shaded question marks in the figure below</strong> represent this uncertainty). Let’s further assume that x is not the header node, and there are nodes to its left (in fact, for this analysis, we can assume there are infinitely many nodes to the left).</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp" alt="LevelDB time complexity analysis of search complexity from K levels (image from the paper)" srcset="https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp 1424w, https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1424" height="772"></p>
+<p>Then there are two possible situations for the entire linked list, as shown in the figure above:</p>
+<ul>
+<li>Situation b: Node x has a total of i levels, there are nodes to the left, and when searching, we need to horizontally jump from the i-th level of the left node to the i-th level of x. In reverse analysis, because we decide whether to have a higher level based on probability $ p $, the probability of being in situation b is $ 1 - p $. Then <strong>the left node and x are on the same level, and it still takes $ C(k) $ steps to search up k levels</strong>. Therefore, the expected number of search steps in this situation is: $ (1 - p) * (C(k) + 1) $.</li>
+<li>Situation c: The height of node x is greater than i, so when searching, we need to jump down from the i+1-th level of x to the i-th level. In reverse analysis, because we decide whether to have a higher level based on probability $ p $, the probability of being in situation c is $ p $. Then <strong>searching up k levels from the i+1-th level is equivalent to searching up k-1 levels from the i-th level, which takes $ C(k-1) $ steps</strong>. Therefore, the expected number of search steps is: $ p * (C(k-1) + 1) $.</li>
+</ul>
+<p>That is to say, for searching starting from any level i, the expected number of steps to jump up $ k $ levels is:</p>
+<p>$$ \begin{align}<br>C(k) &amp;= (1 - p) * (C(k) + 1) + p * (C(k-1) + 1)<br>\end{align} $$</p>
+<p>Simplifying this equation gives the following result:</p>
+<p>$$<br>\begin{align}<br>C(k) &amp;= 1/p + C(k-1)<br>\\<br>C(k) &amp;= k/p<br>\end{align}<br>$$</p>
+<p>The expected number of steps $ k/p $ to jump up k levels starting from any level i here is also equivalent to the expected number of steps needed to search from level k to the target position at the bottom level in the normal search procedure. This formula is very important. As long as you <strong>understand the reverse analysis steps here, the final formula is also relatively easy to derive</strong>. However, we still can’t directly analyze the average performance of skip lists with this formula. Something is missing in between.</p>
+<h2 id="From-Which-Level-to-Start-Searching"><a href="#From-Which-Level-to-Start-Searching" class="headerlink" title="From Which Level to Start Searching?"></a>From Which Level to Start Searching?</h2><p>From the above analysis, we can see that the time complexity of searching from the K-th level to the bottom level is $ k/p $. So when actually searching the skip list, which level is better to start searching from? From <a href="https://selfboot.cn/2024/09/09/leveldb_source_skiplist/">LevelDB Source Code Reading: Principles, Implementation, and Visualization of Skip Lists</a>, we know that the level height of nodes in the skip list is random, <strong>for a certain level, there may be multiple nodes, and the higher the level, the fewer the nodes</strong>.</p>
+<p>In LevelDB’s implementation, it <strong>starts searching from the highest level of the skip list</strong>. But in fact, if you start searching from the highest level, you might be doing a lot of unnecessary work. For example, in the skip list below, the level corresponding to 79 is very high. Starting the search from this level requires going down many steps, which are all ineffective searches. If we start searching from the level height corresponding to 5, we save a lot of search steps. The following image is from the <a target="_blank" rel="noopener" href="https://gallery.selfboot.cn/en/algorithms/skiplist">skip list visualization page</a>:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp" alt="LevelDB skip list search starting level analysis" srcset="https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp 2552w, https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2552" height="1054"></p>
+<p>Ideally, we want to start searching from an “<strong>appropriate</strong>“ level. The paper defines the appropriate level as: <strong>the level where we expect to see $1/p$ nodes</strong>. Since we usually choose values like 1/2, 1/4 for p, we generally start searching from a level with 2 or 4 nodes. Starting the search from this level avoids doing unnecessary work and also avoids losing the advantages of skip lists by starting from too low a level. Next, we only need to know <strong>how high such a level is on average</strong>, and then combine it with the previous $ k/p $ to know the overall search complexity.</p>
+<h3 id="Level-Height-Calculation"><a href="#Level-Height-Calculation" class="headerlink" title="Level Height Calculation"></a>Level Height Calculation</h3><p>Now let’s look at the specific calculation steps. Assume there are $ n $ nodes in total, and there are $ 1/p $ nodes at the $ L $-th level. Since we decide whether to jump to the upper level with probability $ p $ each time, we have:</p>
+<p>$$ n * p^{L-1} = 1/p $$</p>
+<p>Note that jumping L levels means jumping L-1 times, so $ p^{L-1} $ here is to the power of L-1. Multiplying both sides of the equation by p:</p>
+<p>$$<br>\begin{align}<br>(n \cdot p^{L-1}) \cdot p &amp;= \frac{1}{p} \cdot p \\<br>n \cdot p^{L} &amp;= 1<br>\end{align}<br>$$</p>
+<p>Then take the logarithm $ log_{1/p} $ on both sides, as follows. Here we use the multiplication rule and power rule of logarithms:</p>
+<p>$$<br>\begin{align}<br>\log_{1/p} (n \cdot p^{L}) &amp;= \log_{1/p} 1<br>\\<br>\log_{1/p} n + L \cdot \log_{1/p} p &amp;= 0<br>\end{align}<br>$$</p>
+<p>Then simplify:</p>
+<p>$$<br>\begin{align}<br>log_{1/p} p &amp;= -1<br>\\<br>log_{1/p} n + L * (-1) &amp;= 0<br>\end{align}<br>$$</p>
+<p>So we get:</p>
+<p>$$<br>L = log_{1/p} n<br>$$</p>
+<p>That is, at level $ L = log_{1/p} n$, we expect to have $ 1/p $ nodes. Here’s a supplement to the logarithm rules used in the above derivation:</p>
+<p>$$<br>\begin{align}<br>\log(xy) &amp;= \log(x) + \log(y)  &amp;\text{Multiplication rule of logarithms}<br>\\<br>\log(x^n) &amp;= n \cdot \log(x) &amp;\text{Power rule of logarithms}<br>\end{align}<br>$$</p>
+<h2 id="Total-Time-Complexity"><a href="#Total-Time-Complexity" class="headerlink" title="Total Time Complexity"></a>Total Time Complexity</h2><p>Alright, the key parts have been analyzed. Now let’s look at the total time complexity by combining the above conclusions. For a skip list with $n$ nodes, we can divide the search process into two parts: one is from the $L$-th level to the bottom level, and the other is from the top to the $L$-th level.</p>
+<p>From the $L$-th level to the bottom level, according to the equivalent reverse analysis earlier, it’s equivalent to climbing up $L$ levels from the bottom level. The cost of this climb is:</p>
+<p>$$<br>\begin{align}<br>O(n) &amp;= \frac{L}{p}<br>\\<br>O(n) &amp;= \frac{log_{1/p} n}{p}<br>\end{align}<br>$$</p>
+<p>Then from the top to the $L$-th level, this part is also divided into left and up. The number of steps to the left is at most the number of nodes at the $L$-th level, which is $\frac{1}{p}$. As for going up, in LevelDB’s implementation, the highest level is limited to 12 levels, so the number of steps up is also a constant. In fact, even if we don’t limit the height of the entire skip list, its expected maximum height can be calculated (the calculation process is omitted here, it’s not very important):</p>
+<p>$$ H ≤ L + \frac{1}{1-p}$$</p>
+<p>So in the case of unlimited height, the overall upper limit of time complexity here is:</p>
+<p>$$ O(n) = \frac{log_{1/p} n}{p} + \frac{1}{1-p} + \frac{1}{p} $$</p>
+<p>The time complexity above is actually $ O(log n) $. Finally, one more thing to say, although it’s better to start searching from the L-th level, there’s no need to do so in actual implementation. Like LevelDB, after limiting the overall skip list height, starting the search from the current maximum height of the skip list won’t perform much worse. Because the cost of searching upwards from the L-th level is constant, so there’s no significant impact. Moreover, in the actual implementation, the maximum number of layers is also calculated based on p and n to a value close to the L layer.</p>
+<h2 id="Choice-of-P-Value"><a href="#Choice-of-P-Value" class="headerlink" title="Choice of P Value"></a>Choice of P Value</h2><p>The paper also analyzes the impact of p value choice on performance and space occupation, which is worth mentioning here. Obviously, the smaller the p value, the higher the space efficiency (fewer pointers per node), but the search time usually increases. The overall situation is as follows:</p>
+<table>
+<thead>
+<tr>
+<th>p</th>
+<th>Normalized search times (i.e., normalized L(n)/p)</th>
+<th>Avg. # of pointers per node (i.e., 1/(1-p))</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1/2</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1/e</td>
+<td>0.94…</td>
+<td>1.58…</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>1</td>
+<td>1.33…</td>
+</tr>
+<tr>
+<td>1/8</td>
+<td>1.33…</td>
+<td>1.14…</td>
+</tr>
+<tr>
+<td>1/16</td>
+<td>2</td>
+<td>1.07…</td>
+</tr>
+</tbody></table>
+<p>The paper recommends choosing a p value of 1/4, which has good time constants and relatively little average space per node. The implementation in LevelDB chose p = 1/4, and Redis’s <a target="_blank" rel="noopener" href="https://github.com/redis/redis/blob/438cfed70a203c8b708e6df200d1ad82c87f2901/src/t_zset.c#L126">zset implementation</a> also chose <a target="_blank" rel="noopener" href="https://github.com/redis/redis/blob/unstable/src/server.h#L516">ZSKIPLIST_P</a>=1/4.</p>
+<p>In addition, regarding the choice of the highest level, <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/db/skiplist.h#L100">LevelDB</a> implementation chose 12 levels, while <a target="_blank" rel="noopener" href="https://github.com/redis/redis/blob/438cfed70a203c8b708e6df200d1ad82c87f2901/src/t_zset.c#L515C1-L515C71">Redis</a> chose 32 levels. What considerations are these based on?</p>
+<p>Going back to the previous analysis, we know that starting the search from an appropriate level is most efficient, where the appropriate level is $ log_{1/p} n $. Now that p is determined to be 1/4, as long as we can estimate the maximum number of nodes N in the skiplist, we can know what the appropriate level is. Then setting the maximum number of levels to this value can ensure the average performance of the skip list. Below is the appropriate number of levels for different numbers of nodes when p=1/4:</p>
+<table>
+<thead>
+<tr>
+<th>Probability p</th>
+<th>Number of nodes n</th>
+<th>Appropriate level (max level)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1/4</td>
+<td>$2^{16}$</td>
+<td>8</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{20}$</td>
+<td>10</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{24}$</td>
+<td>12</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{32}$</td>
+<td>16</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{64}$</td>
+<td>32</td>
+</tr>
+</tbody></table>
+<p>Redis chose 32 levels because it needs to support up to 2^64 elements. In LevelDB, skip lists are used to store keys in Memtable and SSTable, where the number of keys won’t be very large, so 12 levels were chosen, which can support a maximum of 2^24 elements.</p>
+<h2 id="Performance-Test-Benchmark"><a href="#Performance-Test-Benchmark" class="headerlink" title="Performance Test Benchmark"></a>Performance Test Benchmark</h2><p>LevelDB doesn’t test the performance of skip lists, so let’s write a simple one ourselves. Here we use Google’s benchmark library to test the insertion and search performance of skip lists. For easy comparison, we’ve also added a test for unordered_map to see the performance difference between the two. The core code for testing skip list insertion is as follows:</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">BM_SkipListInsertSingle</span><span class="params">(benchmark::State&amp; state)</span> </span>{</span><br><span class="line">  TestContext context;</span><br><span class="line">  <span class="built_in">SetUp</span>(state, &amp;context);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> _ : state) {</span><br><span class="line">    context.skiplist-&gt;<span class="built_in">Insert</span>(context.key_to_insert);</span><br><span class="line">    benchmark::<span class="built_in">DoNotOptimize</span>(context.skiplist);</span><br><span class="line">    state.<span class="built_in">PauseTiming</span>();</span><br><span class="line">    <span class="built_in">SetUp</span>(state, &amp;context);</span><br><span class="line">    state.<span class="built_in">ResumeTiming</span>();</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  state.<span class="built_in">SetLabel</span>(<span class="string">"SkipList Single Insert"</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>This performs random number insertion and search for different skip list and unordered_map table lengths, then calculates the average time consumption. The complete code is in <a target="_blank" rel="noopener" href="https://gist.github.com/selfboot/9e236b4811aaf94b38762bcc88995540">skiplist_benchmark</a>. Note that benchmark will automatically decide the number of Iterations, but skip list insertion takes a bit long to initialize each time, so we manually specified Iterations to be 1000 here.</p>
+<blockquote>
+<p>./skiplist_benchmark  –benchmark_min_time=1000x</p>
+</blockquote>
+<p>The running results are as follows:</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp" alt="LevelDB skip list insertion and search performance test" srcset="https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp 2126w, https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2126" height="1100"></p>
+<p>Although this is a Debug version compilation without optimization, we can see from the test results that even as the skip list length increases, the insertion time doesn’t increase significantly. The search performance, compared to unordered_map, isn’t very different either.</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>This is the last article on LevelDB skip lists, providing a detailed analysis of the time complexity of skip lists. Through breaking down the search problem, reversing the entire search process, and finding an appropriate L level, we finally derived the time complexity of skip lists. Based on the understanding of time complexity, we further deduced how to choose the probability p, and the reasons for choosing the maximum height in Redis and LevelDB skip lists. Finally, we tested the performance of skip lists through a simple benchmark and compared it with unordered_map.</p>
+<p>The other two articles in this series:</p>
+<ul>
+<li><a href="https://selfboot.cn/en/2024/09/18/leveldb_source_skiplist_test/">LevelDB Explained - How to Test Parallel Read and Write of SkipLists?</a></li>
+<li><a href="https://selfboot.cn/en/2024/09/09/leveldb_source_skiplist/">LevelDB Explained - How to implement SkipList</a></li>
+</ul>
+</div><div class="article-footer-copyright"><p> Written in Chinese, LLM translated into English</p><p>Non-commercial reproduction is allowed with proper attribution to the author and source. </p><p>For commercial reproduction, please contact the <a href="mailto:xuezaigds@gmail.com">author</a></p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="Sponsor"></a><div class="donate_txt"> ↑<br>Good content, Sponsor it<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="WeChat Sponsor"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="Alipay Sponsor"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/C/"><i class="fa fa-tag"></i>C++</a><a href="/tags/LevelDB/"><i class="fa fa-tag"></i>LevelDB</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/en/2024/09/24/leveldb_source_skiplist_time_analysis/';
+    this.page.identifier = 'en/2024/09/24/leveldb_source_skiplist_time_analysis/';
+    this.page.title = 'LevelDB Explained - How to Analyze the Time Complexity of SkipLists?';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Categories</span></div><ul><li><a href="/en/categories/Programming/">Programming</a> (18)</li><li><a href="/en/categories/Source-Code-Analysis/">Source Code Analysis</a> (13)</li><li><a href="/en/categories/Artificial-Intelligence/">Artificial Intelligence</a> (13)</li><li><a href="/en/categories/Discovery/">Discovery</a> (1)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>Tags</span></div><div class="tagcloud"><a href="/en/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/en/tags/Google/" style="font-size: 15.00px;">Google</a> <a href="/en/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/en/tags/ChatGPT/" style="font-size: 15.00px;">ChatGPT</a> <a href="/en/tags/Prompt/" style="font-size: 15.00px;">Prompt</a> <a href="/en/tags/Redis/" style="font-size: 15.00px;">Redis</a> <a href="/en/tags/Debug/" style="font-size: 15.00px;">Debug</a> <a href="/en/tags/eBPF/" style="font-size: 15.00px;">eBPF</a> <a href="/en/tags/Go/" style="font-size: 15.00px;">Go</a> <a href="/en/tags/Frontend/" style="font-size: 15.00px;">Frontend</a> <a href="/en/tags/Gemini/" style="font-size: 15.00px;">Gemini</a> <a href="/en/tags/SEO/" style="font-size: 15.00px;">SEO</a> <a href="/en/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/en/tags/Web/" style="font-size: 15.00px;">Web</a> <a href="/en/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = en/2024/09/24/leveldb_source_skiplist_time_analysis/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>Recent</span></div><ul><li><a href="/en/2024/09/24/leveldb_source_skiplist_time_analysis/" title="LevelDB Explained - How to Analyze the Time Complexity of SkipLists?">LevelDB Explained - How to Analyze the Time Complexity of SkipLists?</a></li><li><a href="/en/2024/09/18/leveldb_source_skiplist_test/" title="LevelDB Explained - How to Test Parallel Read and Write of SkipLists?">LevelDB Explained - How to Test Parallel Read and Write of SkipLists?</a></li><li><a href="/en/2024/09/13/gpto1_hands_on/" title="Hands-on with OpenAI's o1-preview - Not Better Enough?">Hands-on with OpenAI's o1-preview - Not Better Enough?</a></li><li><a href="/en/2024/09/09/leveldb_source_skiplist/" title="LevelDB Explained - How to implement SkipList">LevelDB Explained - How to implement SkipList</a></li><li><a href="/en/2024/09/05/claude35_prompt/" title="Claude3.5's System Prompts - No Apologies, Face Blind, Hallucinate...">Claude3.5's System Prompts - No Apologies, Face Blind, Hallucinate...</a></li><li><a href="/en/2024/08/29/leveldb_source_utils/" title="LevelDB Explained - Arena, Random, CRC32, and More.">LevelDB Explained - Arena, Random, CRC32, and More.</a></li><li><a href="/en/2024/08/14/leveldb_source_wal_log/" title="LevelDB Explained - How To Read and Write WAL Logs">LevelDB Explained - How To Read and Write WAL Logs</a></li><li><a href="/en/2024/08/13/leveldb_source_unstand_c++/" title="LevelDB Explained -  Understanding Advanced C++ Techniques">LevelDB Explained -  Understanding Advanced C++ Techniques</a></li><li><a href="/en/2024/08/08/leveldb_source_bloom_filter/" title="LevelDB Explained - Bloom Filter Implementation and Visualization">LevelDB Explained - Bloom Filter Implementation and Visualization</a></li><li><a href="/en/2024/08/06/leveldb_source_prepare/" title="LevelDB Explained - Preparing the Development Environment">LevelDB Explained - Preparing the Development Environment</a></li></ul></div><!-- Debug: Current Language = en, Filtered Posts Count = 10 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"></i><span> Contents</span></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Breaking-Down-Skip-List-Performance-Analysis"><span class="toc-number">1.</span> <span class="toc-text">Breaking Down Skip List Performance Analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bottleneck-of-Skip-List-Operations"><span class="toc-number">2.</span> <span class="toc-text">Bottleneck of Skip List Operations</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Expected-Number-of-Steps-to-Skip-k-Levels"><span class="toc-number">3.</span> <span class="toc-text">Expected Number of Steps to Skip k Levels</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#From-Which-Level-to-Start-Searching"><span class="toc-number">4.</span> <span class="toc-text">From Which Level to Start Searching?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Level-Height-Calculation"><span class="toc-number">4.1.</span> <span class="toc-text">Level Height Calculation</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Total-Time-Complexity"><span class="toc-number">5.</span> <span class="toc-text">Total Time Complexity</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Choice-of-P-Value"><span class="toc-number">6.</span> <span class="toc-text">Choice of P Value</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Performance-Test-Benchmark"><span class="toc-number">7.</span> <span class="toc-text">Performance Test Benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Summary"><span class="toc-number">8.</span> <span class="toc-text">Summary</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>Total Site Visits:  <span id="busuanzi_value_site_pv"></span> Times，<span id="busuanzi_container_site_uv"></span>Unique Visitors:  <span id="busuanzi_value_site_uv"></span> People</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML" async=""></script><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>

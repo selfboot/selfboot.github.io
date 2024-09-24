@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-WUJTOV7jES"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="本文详细分析了跳表的时间复杂度。通过拆解查找问题，逆向整个查找过程，以及找到合适的 L 层，最后推导出跳表的时间复杂度。在知道时间复杂度的基础上，进而推导如何选择概率 p，以及 redis 和 LevelDB 中跳表的最大高度选择原因。最后通过简单的 benchmark 测试了跳表的性能，并与 unordered_map 进行了对比。"><title>LevelDB 源码阅读：如何分析跳表的时间复杂度？</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml,en/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script>
+<script defer="" src="https://cloud.umami.is/script.js" data-website-id="3578d9f2-9ea0-49d4-8781-e8d1217ab924"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN" selected="">中文</option><option value="en">English</option></select></div><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"></i><span> 首页</span></a><a href="/archives/"><i class="fa fa-archive"></i><span> 归档</span></a><a href="/aboutme.html"><i class="fa fa-user"></i><span> 关于</span></a><a href="/links.html"><i class="fa fa-user-graduate"></i><span> 小盛律师</span></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"></i><span> 法律普及</span></a><a href="/atom.xml"><i class="fa fa-rss"></i><span> 订阅</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LevelDB 源码阅读：如何分析跳表的时间复杂度？</h1><div class="post-meta">2024/09/24<span> | </span><span class="category"><a href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2024/09/24/leveldb_source_skiplist_time_analysis/" href="/2024/09/24/leveldb_source_skiplist_time_analysis/#disqus_thread"></a><div class="post-content"><p>在上篇 <a href="https://selfboot.cn/2024/09/09/leveldb_source_skiplist/">LevelDB 源码阅读：跳表的原理、实现以及可视化</a>中，详细分析了 LevelDB 中跳表的实现。然后在 <a href="https://selfboot.cn/2024/09/18/leveldb_source_skiplist_test/">LevelDB 源码阅读：如何正确测试跳表的并行读写？</a> 中，分析了 LevelDB 跳表的测试代码，最后还剩下一个问题，怎么分析跳表的时间复杂度呢？</p>
+<p>在分析完跳表的时间复杂度之后，就能明白 LevelDB 中<strong>概率值和最大高度的选择</strong>，以及 Redis 为什么选择不同的最大高度。最后本文也会提供一个简单的压测代码，来看看跳表的性能如何。</p>
+<p>本文不会有很高深的数学知识，只涉及简单的概率论，可以放心往下看。跳表的性能分析有不少思路很值得借鉴，希望本文能抛砖引玉，给大家带来一些启发。</p>
+<h2 id="跳表性能分析拆解"><a href="#跳表性能分析拆解" class="headerlink" title="跳表性能分析拆解"></a>跳表性能分析拆解</h2><p>在知道 LevelDB 的原理和实现后，我们可以推测出来，在极端情况下，每个节点的高度都是 1，那么跳表的查找、插入、删除操作的时间复杂度都会退化到 O(n)。在这种情况下，性能比平衡树差了不少。当然，因为有随机性在里面，所以<strong>没有输入序列能始终导致性能最差</strong>。</p>
+<p>那么跳表的平均性能如何呢？前面给出过结论，和平衡树的平均性能差不多。引入一个简单的随机高度，就能保证跳表的平均性能和平衡树差不多。<strong>这背后有没有什么分析方法，能够分析跳表的性能呢</strong>？</p>
+<span id="more"></span>
+
+<p>还得看论文，论文中给出了一个不错的分析方法，不过这里的思路其实有点难想到，理解起来也有点费劲。我会把问题尽量拆分，然后一步步来推导整个过程，每一步涉及到的数学推导也尽量给出来。哈哈，<strong>这不就是思维链嘛，拆解问题并逐步推理，是人和 AI 解决复杂问题的必备技能啊</strong>。这里的推导可以分为几个小问题：</p>
+<ol>
+<li>跳表的查找、插入和删除操作，哪部分操作最影响耗时？</li>
+<li>对于查找操作，假设从任意层 k 开始往下找，这里的平均复杂度是多少(遍历多少次)？ </li>
+<li>有没有什么办法，可以在链表中<strong>找到某个层数</strong>，从这层开始查找效率最高，并且遍历次数能代表平均性能？</li>
+<li>能不能找到一个公式，来计算总的时间复杂度，并算出这里的平均复杂度上限？</li>
+</ol>
+<p>好了，下面我们逐个问题分析。</p>
+<h2 id="跳表操作瓶颈"><a href="#跳表操作瓶颈" class="headerlink" title="跳表操作瓶颈"></a>跳表操作瓶颈</h2><p>第一个小问题比较简单。在前文讲跳表的原理和实现中，我们知道，对于插入和删除操作，也需要先通过查找操作找到对应的位置。之后就是几个指针操作，代价都是常量时间，可以忽略。所以，<strong>跳表操作的时间复杂度就是看查找操作的复杂度</strong>。</p>
+<p>查找操作的过程就是往右，往下搜索跳表，直到找到目标元素。如果我们能知道这里搜索的平均复杂度，那么就可以知道跳表操作的平均复杂度。直接分析查找操作的平均复杂度，有点无从下手。按照 LevelDB 里面的实现，每次是从<strong>当前跳表中节点的最高层数</strong>开始找。但是节点高度是随机的，最高层数也是随机的，似乎没法分析从随机高度开始的查找操作的平均复杂度。</p>
+<h2 id="跳-k-层的期望步数"><a href="#跳-k-层的期望步数" class="headerlink" title="跳 k 层的期望步数"></a>跳 k 层的期望步数</h2><p>先放弃直接分析，来尝试回答前面第二个问题。<strong>假设从任意层 k 开始往下找，平均要多少次才能找到目标位置</strong>呢？这里的分析思路比较跳跃，我们<strong>反过来分析从目标位置，往上往左查找，平均要多少步才能往上查 k 层。并且假设链表中节点高度是在反向查找过程中，根据概率 p 来随机决定的</strong>。</p>
+<p>这种假设和分析过程得到的平均查找次数和<strong>真实查找情况等价</strong>吗？我们知道往右往下执行查找的时候，节点的高度都是已经决定的了。但是考虑到节点的高度本来就是随机决定的，<strong>假设反向查找时候来决定高度，并且逆向整个搜索过程，在统计上没有什么不同</strong>。</p>
+<p>接下来我们假设<strong>当前处在节点 x 的任意一层 i (下图中的情形 a)，从这个位置往上查 k 层置需要 $ C(k) $ 步</strong>。我们不知道节点 x 上面还有没有层，也不知道节点 x 的左边还有没有节点(下图中<strong>用阴影问号</strong>表示这种未知)。再假设 x 不是 header 节点，左边还有节点（其实这里分析的话可以假设左边有无穷多节点）。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp" alt="LevelDB 时间复杂度分析从 K 层查找复杂度(图片来自论文)" srcset="https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp 1424w, https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240914_leveldb_source_skiplist_more.png/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1424" height="772"></p>
+<p>那么整个链表的节点情况有两种可能，整体如上图：</p>
+<ul>
+<li>情形 b: 节点 x 一共就是 i 层，在左边有节点，查找的时候需要从左边节点的第 i 层水平跳到 x 的第 i 层。逆向分析的话，因为按照 $ p $ 的概率决定是否有更高层，所以这里处于情形 b 的概率是 $ 1 - p $。然后<strong>左边节点和 x 在同一层，往上查 k 层仍然需要 $ C(k) $ 步</strong>。因此这种情况下期望的查找步数是: $ (1 - p) * (C(k) + 1) $。</li>
+<li>情形 c: 节点 x 层高大于 i，那么查找的时候需要从 x 的第 i+1 层往下跳到第 i 层。逆向分析的话，因为按照 $ p $ 的概率决定是否有更高层，所以这里处于情形 c 的概率是 $ p $。然后<strong>从 i+1 层往上查 k 层，等价于从第 i 层往上查找 k-1 层，需要 $ C(k-1) $ 步</strong>。因此期望的查找步数是: $ p * (C(k-1) + 1) $。</li>
+</ul>
+<p>也就是说，对于从任意层 i 开始查找，往上跳 $ k $ 层需要的期望步数为：</p>
+<p>$$ \begin{align}<br>C(k) &amp;= (1 - p) * (C(k) + 1) + p * (C(k-1) + 1)<br>\end{align} $$</p>
+<p>化简这个方程得到下面结果：</p>
+<p>$$<br>\begin{align}<br>C(k) &amp;= 1/p + C(k-1)<br>\\<br>C(k) &amp;= k/p<br>\end{align}<br>$$</p>
+<p>这里从任意层 i 开始查找往上跳 k 层需要的期望步数 $ k/p $ ，也等价于从第 k 层开始正常步骤查找，到最底层目标位置需要的期望步数。这个公式很重要，只要<strong>理解了这里的逆向分析步骤，最后公式也比较好推导出来</strong>。但是用这个公式还是没法直接分析出跳表的平均性能，中间缺少了点什么。</p>
+<h2 id="从哪层开始搜索？"><a href="#从哪层开始搜索？" class="headerlink" title="从哪层开始搜索？"></a>从哪层开始搜索？</h2><p>从上面分析可以看到从第 K 层查找到底层的时间复杂度是 $ k/p $，那么实际跳表查找的时候，从哪层开始搜索比较好呢？在<a href="https://selfboot.cn/2024/09/09/leveldb_source_skiplist/">LevelDB 源码阅读：跳表的原理、实现以及可视化</a>可以知道跳表中节点的层高是随机的，<strong>对于其中某层，可能有多个节点，越往上层，节点数越少</strong>。</p>
+<p>LevelDB 的实现中，是<strong>从跳表的最高层开始查找</strong>的。但其实如果从最高层开始搜索，可能会做很多无用功。比如下面的跳表中，其中 79 对应的层非常高，从这层开始搜索，需要往下走很多步，都是无效搜索。如果从 5 对应的层高开始搜索，则节省了不少搜索步骤。下图来自<a target="_blank" rel="noopener" href="https://gallery.selfboot.cn/zh/algorithms/skiplist">跳表的可视化页面</a>：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp" alt="LevelDB 跳表查找的开始层分析" srcset="https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp 2552w, https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240920_leveldb_source_skiplist_more_search_start.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2552" height="1054"></p>
+<p>理想情况下，我们希望从一个”<strong>合适</strong>“的层级开始搜索。论文中是这样定义合适的层：<strong>在该层期望看到 $1/p$ 个节点</strong>。因为我们的 p 一般取值 1/2，1/4 这样的值，所以这里一般从有 2 或者 4 个节点的层开始搜索。从这个层开始搜索，不至于做无用功，也不至于从太低层开始的话，失去跳表的优势。接下来只需要知道<strong>这样的层，平均有多高</strong>，然后结合前面的 $ k/p $ 就可以知道整体的搜索复杂度了。</p>
+<h3 id="层高推算"><a href="#层高推算" class="headerlink" title="层高推算"></a>层高推算</h3><p>现在来看看具体的推算步骤。假设一共有 $ n $ 个节点，然后在第 $ L $ 层有 $ 1/p $ 个节点。因为每次以 $ p $ 的概率决定是否向上层跳，所以有：</p>
+<p>$$ n * p^{L-1} = 1/p $$</p>
+<p>注意 L 层跳 $L-1$ 次，所以这里的 $ p^{L-1} $ 是 L-1 次幂。将等式两边同时乘以 p：</p>
+<p>$$<br>\begin{align}<br>(n \cdot p^{L-1}) \cdot p &amp;= \frac{1}{p} \cdot p \\<br>n \cdot p^{L} &amp;= 1<br>\end{align}<br>$$</p>
+<p>然后两边取对数 $ log_{1/p} $，如下，这里用到了对数的乘法法则和幂法则：</p>
+<p>$$<br>\begin{align}<br>\log_{1/p} (n \cdot p^{L}) &amp;= \log_{1/p} 1<br>\\<br>\log_{1/p} n + L \cdot \log_{1/p} p &amp;= 0<br>\end{align}<br>$$</p>
+<p>接着进行简化：</p>
+<p>$$<br>\begin{align}<br>log_{1/p} p &amp;= -1<br>\\<br>log_{1/p} n + L * (-1) &amp;= 0<br>\end{align}<br>$$</p>
+<p>所以我们得到：</p>
+<p>$$<br>L = log_{1/p} n<br>$$</p>
+<p>也就是说，在 $ L = log_{1/p} n$ 层，期望有 $ 1/p $ 个节点。这里再补充下上面的推导过程用到的对数的法则：</p>
+<p>$$<br>\begin{align}<br>\log(xy) &amp;= \log(x) + \log(y)  &amp;\text{对数的乘法法则}<br>\\<br>\log(x^n) &amp;= n \cdot \log(x) &amp;\text{对数的幂法则}<br>\end{align}<br>$$</p>
+<h2 id="总时间复杂度"><a href="#总时间复杂度" class="headerlink" title="总时间复杂度"></a>总时间复杂度</h2><p>好了，到此关键部分已经分析完了，下面综合上面的结论来看看总的时间复杂度。对于有 $n$ 个节点的跳表，可以将查找过程分为两部分，一个是从第 $L$ 层到最底层，另一个是从顶部到第 $L$ 层。</p>
+<p>从第 $L$ 层到最底层，按照前面的等价逆向分享，相当于从底层往上爬 $L$ 层，这里爬升的成本是：</p>
+<p>$$<br>\begin{align}<br>O(n) &amp;= \frac{L}{p}<br>\\<br>O(n) &amp;= \frac{log_{1/p} n}{p}<br>\end{align}<br>$$</p>
+<p>接着是从顶部到第 $L$ 层，这部分也是分为向左和向上。向左的步数最多也就是 $L$ 层的节点数 $\frac{1}{p}$。向上的话，从 LevelDB 的实现中，最高层次限制了 12 层，所以向上的步数也是一个常量。其实就算不限制整个跳表的高度，它的最大高度期望也可以计算出来(这里忽略计算过程，不是很重要)：</p>
+<p>$$ H ≤ L + \frac{1}{1-p}$$</p>
+<p>所以不限制高度的情况下，这里的整体时间复杂度上限是:</p>
+<p>$$ O(n) = \frac{log_{1/p} n}{p} + \frac{1}{1-p} + \frac{1}{p} $$</p>
+<p>上面的时间复杂度其实也就是 $ O(log n) $。最后再多说一点，虽然从第 L 层开始搜索比较好，但是实际实现中也没必要这样。像 LevelDB 一样，限制了整体跳表高度后，从当前跳表的最大高度开始查找，性能也不会差多少的。因为从第 L 层开始往上的搜索代价是常数级别的，所以没有大影响。此外，其实实现中最大层数也是根据 p 和 n 推算的一个接近 L 层的值。</p>
+<h2 id="P-值选择"><a href="#P-值选择" class="headerlink" title="P 值选择"></a>P 值选择</h2><p>论文中还分析了 p 值选择对性能和空间占用的影响，这里也顺便提下。显而易见，p 值越小，空间效率越高（每个节点的指针更少），但搜索时间通常会增加。整体如下表：</p>
+<table>
+<thead>
+<tr>
+<th>p</th>
+<th>Normalized search times (i.e., normalized L(n)/p)</th>
+<th>Avg. # of pointers per node (i.e., 1/(1-p))</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1/2</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1/e</td>
+<td>0.94…</td>
+<td>1.58…</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>1</td>
+<td>1.33…</td>
+</tr>
+<tr>
+<td>1/8</td>
+<td>1.33…</td>
+<td>1.14…</td>
+</tr>
+<tr>
+<td>1/16</td>
+<td>2</td>
+<td>1.07…</td>
+</tr>
+</tbody></table>
+<p>论文推荐这里的 p 值选择 1/4，既有不错的时间常数，每个节点平均空间也比较少。LevelDB 中实现选择了 p = 1/4，Redis 的 <a target="_blank" rel="noopener" href="https://github.com/redis/redis/blob/438cfed70a203c8b708e6df200d1ad82c87f2901/src/t_zset.c#L126">zset 实现中</a>也是选择了 <a target="_blank" rel="noopener" href="https://github.com/redis/redis/blob/unstable/src/server.h#L516">ZSKIPLIST_P</a>=1/4。</p>
+<p>此外关于最高层数选择，<a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/db/skiplist.h#L100">LevelDB 中</a>实现选择了 12 层，<a target="_blank" rel="noopener" href="https://github.com/redis/redis/blob/438cfed70a203c8b708e6df200d1ad82c87f2901/src/t_zset.c#L515C1-L515C71">Redis 中</a>选择了 32 层。这里是基于什么考虑呢？</p>
+<p>回到前面的分析中，我们知道从一个合适的层开始搜索效率最高，这里合适的层是 $ log_{1/p} n $。现在 p 已经确定是 1/4，只要能预估跳表的最大节点数 N，那么就能知道合适的层是多少。然后设置最大层数为这个值，就能保证跳表的平均性能。下面是 p=1/4 时，不同节点数对应的合适层数：</p>
+<table>
+<thead>
+<tr>
+<th>概率值 p</th>
+<th>节点数 n</th>
+<th>合适的层数(最大层)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1/4</td>
+<td>$2^{16}$</td>
+<td>8</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{20}$</td>
+<td>10</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{24}$</td>
+<td>12</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{32}$</td>
+<td>16</td>
+</tr>
+<tr>
+<td>1/4</td>
+<td>$2^{64}$</td>
+<td>32</td>
+</tr>
+</tbody></table>
+<p>Redis 中选择了 32 层，因为要支持最多 2^64 个元素。LevelDB 中在 Memtable 和 SSTable 中用跳表存储 key，里面 key 的数量不会很多，因此选择了 12 层，可以最大支持 2^24 个元素。</p>
+<h2 id="性能测试-benchmark"><a href="#性能测试-benchmark" class="headerlink" title="性能测试 benchmark"></a>性能测试 benchmark</h2><p>LevelDB 中没有对跳表的性能进行测试，我们自己来简单写一个。这里用 Google 的 benchmark 库，来测试跳表的插入和查找性能。为了方便对比，这里也加了一个对 unordered_map 的测试，看看这两个的性能差异。跳表插入的测试核心代码如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">BM_SkipListInsertSingle</span><span class="params">(benchmark::State&amp; state)</span> </span>{</span><br><span class="line">  TestContext context;</span><br><span class="line">  <span class="built_in">SetUp</span>(state, &amp;context);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> _ : state) {</span><br><span class="line">    context.skiplist-&gt;<span class="built_in">Insert</span>(context.key_to_insert);</span><br><span class="line">    benchmark::<span class="built_in">DoNotOptimize</span>(context.skiplist);</span><br><span class="line">    state.<span class="built_in">PauseTiming</span>();</span><br><span class="line">    <span class="built_in">SetUp</span>(state, &amp;context);</span><br><span class="line">    state.<span class="built_in">ResumeTiming</span>();</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  state.<span class="built_in">SetLabel</span>(<span class="string">"SkipList Single Insert"</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里针对不同跳表和 unordered_map 表的长度，执行随机数字插入和查找，然后计算平均耗时。完整的代码在 <a target="_blank" rel="noopener" href="https://gist.github.com/selfboot/9e236b4811aaf94b38762bcc88995540">skiplist_benchmark</a>。注意这里 benchmark 会自动决定 Iterations 的次数，跳表插入每次初始化有点久，所以这里手动指定了 Iterations 为 1000。</p>
+<blockquote>
+<p>./skiplist_benchmark  –benchmark_min_time=1000x</p>
+</blockquote>
+<p>运行结果如下：</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp" alt="LevelDB 跳表插入、查找性能测试" srcset="https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp 2126w, https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp800 800w, https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png/webp1600 1600w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="2126" height="1100"></p>
+<p>虽然这里是编译的 Debug 版本，没有优化。但是根据这里的测试结果可以看到，虽然跳表长度增加，但是插入耗时并没有显著增加。查找性能和 unordered_map 相比，差别也不是很大。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文是 LevelDB 跳表的最后一篇了，详细分析了跳表的时间复杂度。通过拆解查找问题，逆向整个查找过程，以及找到合适的 L 层，最后推导出跳表的时间复杂度。在知道时间复杂度的基础上，进而推导如何选择概率 p，以及 redis 和 LevelDB 中跳表的最大高度选择原因。最后通过简单的 benchmark 测试了跳表的性能，并与 unordered_map 进行了对比。</p>
+<p>本系列其他两篇文章：</p>
+<ul>
+<li><a href="https://selfboot.cn/2024/09/18/leveldb_source_skiplist_test/">LevelDB 源码阅读：如何正确测试跳表的并行读写？</a></li>
+<li><a href="https://selfboot.cn/2024/09/09/leveldb_source_skiplist/">LevelDB 源码阅读：跳表的原理、实现以及可视化</a></li>
+</ul>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target="_blank">个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>本文章已自动同步在<b style="color:red">个人公众号</b>，欢迎去 <a href="https://selfboot.cn/aboutme.html" target="_blank">个人主页 </a> 扫码关注</p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：LevelDB 源码阅读：如何分析跳表的时间复杂度？</p><p>本文链接为：https://selfboot.cn/2024/09/24/leveldb_source_skiplist_time_analysis/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="赞助"></a><div class="donate_txt"> ↑<br>内容不错，赞助一下<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/C/"><i class="fa fa-tag"></i>C++</a><a href="/tags/LevelDB/"><i class="fa fa-tag"></i>LevelDB</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2024/09/24/leveldb_source_skiplist_time_analysis/';
+    this.page.identifier = '2024/09/24/leveldb_source_skiplist_time_analysis/';
+    this.page.title = 'LevelDB 源码阅读：如何分析跳表的时间复杂度？';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>分类</span></div><ul><li><a href="/categories/程序设计/">程序设计</a> (23)</li><li><a href="/categories/工具介绍/">工具介绍</a> (13)</li><li><a href="/categories/数据结构与算法/">数据结构与算法</a> (13)</li><li><a href="/categories/计算机基础/">计算机基础</a> (8)</li><li><a href="/categories/社会百态/">社会百态</a> (11)</li><li><a href="/categories/计算机网络/">计算机网络</a> (4)</li><li><a href="/categories/项目实践/">项目实践</a> (10)</li><li><a href="/categories/源码剖析/">源码剖析</a> (15)</li><li><a href="/categories/法律普及/">法律普及</a> (26)</li><li><a href="/categories/金融/">金融</a> (1)</li><li><a href="/categories/人工智能/">人工智能</a> (31)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>标签</span></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/tags/教程/" style="font-size: 15.00px;">教程</a> <a href="/tags/总结/" style="font-size: 15.00px;">总结</a> <a href="/tags/方法/" style="font-size: 15.00px;">方法</a> <a href="/tags/Google/" style="font-size: 15.00px;">Google</a> <a href="/tags/思考/" style="font-size: 15.00px;">思考</a> <a href="/tags/前端/" style="font-size: 15.00px;">前端</a> <a href="/tags/Django/" style="font-size: 15.00px;">Django</a> <a href="/tags/DNS/" style="font-size: 15.00px;">DNS</a> <a href="/tags/见闻/" style="font-size: 15.00px;">见闻</a> <a href="/tags/Protocol/" style="font-size: 15.00px;">Protocol</a> <a href="/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/tags/Flask/" style="font-size: 15.00px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15.00px;">Thread</a> <a href="/tags/法律/" style="font-size: 15.00px;">法律</a> <a href="/tags/ChatGPT/" style="font-size: 15.00px;">ChatGPT</a> <a href="/tags/Prompt/" style="font-size: 15.00px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15.00px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15.00px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15.00px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15.00px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15.00px;">Issue</a> <a href="/tags/eBPF/" style="font-size: 15.00px;">eBPF</a> <a href="/tags/婚姻家庭/" style="font-size: 15.00px;">婚姻家庭</a> <a href="/tags/Go/" style="font-size: 15.00px;">Go</a> <a href="/tags/刑事/" style="font-size: 15.00px;">刑事</a> <a href="/tags/劳动纠纷/" style="font-size: 15.00px;">劳动纠纷</a> <a href="/tags/数学/" style="font-size: 15.00px;">数学</a> <a href="/tags/Gemini/" style="font-size: 15.00px;">Gemini</a> <a href="/tags/google/" style="font-size: 15.00px;">google</a> <a href="/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = 2024/09/24/leveldb_source_skiplist_time_analysis/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>最近文章</span></div><ul><li><a href="/2024/09/24/leveldb_source_skiplist_time_analysis/" title="LevelDB 源码阅读：如何分析跳表的时间复杂度？">LevelDB 源码阅读：如何分析跳表的时间复杂度？</a></li><li><a href="/2024/09/18/leveldb_source_skiplist_test/" title="LevelDB 源码阅读：如何正确测试跳表的并行读写？">LevelDB 源码阅读：如何正确测试跳表的并行读写？</a></li><li><a href="/2024/09/13/gpto1_hands_on/" title="实际例子上手体验 OpenAI o1-preview，比预期差一点？">实际例子上手体验 OpenAI o1-preview，比预期差一点？</a></li><li><a href="/2024/09/09/leveldb_source_skiplist/" title="LevelDB 源码阅读：跳表的原理、实现以及可视化">LevelDB 源码阅读：跳表的原理、实现以及可视化</a></li><li><a href="/2024/09/05/claude35_prompt/" title="Claude3.5 系统提示词解密：不道歉、脸盲、幻觉...">Claude3.5 系统提示词解密：不道歉、脸盲、幻觉...</a></li><li><a href="/2024/08/29/leveldb_source_utils/" title="LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码">LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码</a></li><li><a href="/2024/08/14/leveldb_source_wal_log/" title="LevelDB 源码阅读：读写 WAL 日志保证持久性">LevelDB 源码阅读：读写 WAL 日志保证持久性</a></li><li><a href="/2024/08/13/leveldb_source_unstand_c++/" title="LevelDB 源码阅读：理解其中的 C++ 高级技巧">LevelDB 源码阅读：理解其中的 C++ 高级技巧</a></li><li><a href="/2024/08/08/leveldb_source_bloom_filter/" title="LevelDB 源码阅读：布隆过滤器原理、实现、测试与可视化">LevelDB 源码阅读：布隆过滤器原理、实现、测试与可视化</a></li><li><a href="/2024/08/06/leveldb_source_prepare/" title="LevelDB 源码阅读：准备开发环境">LevelDB 源码阅读：准备开发环境</a></li></ul></div><!-- Debug: Current Language = zh-CN, Filtered Posts Count = 10 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"></i><span> 文章目录</span></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E6%8B%86%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">跳表性能分析拆解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8%E6%93%8D%E4%BD%9C%E7%93%B6%E9%A2%88"><span class="toc-number">2.</span> <span class="toc-text">跳表操作瓶颈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3-k-%E5%B1%82%E7%9A%84%E6%9C%9F%E6%9C%9B%E6%AD%A5%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">跳 k 层的期望步数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E5%93%AA%E5%B1%82%E5%BC%80%E5%A7%8B%E6%90%9C%E7%B4%A2%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">从哪层开始搜索？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%82%E9%AB%98%E6%8E%A8%E7%AE%97"><span class="toc-number">4.1.</span> <span class="toc-text">层高推算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">5.</span> <span class="toc-text">总时间复杂度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#P-%E5%80%BC%E9%80%89%E6%8B%A9"><span class="toc-number">6.</span> <span class="toc-text">P 值选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95-benchmark"><span class="toc-number">7.</span> <span class="toc-text">性能测试 benchmark</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次，<span id="busuanzi_container_site_uv"></span>本站访客数: <span id="busuanzi_value_site_uv"></span> 人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML" async=""></script><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
