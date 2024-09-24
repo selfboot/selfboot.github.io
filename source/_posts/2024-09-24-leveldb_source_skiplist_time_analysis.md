@@ -1,14 +1,18 @@
 ---
 title: LevelDB 源码阅读：如何分析跳表的时间复杂度？
-tags: [C++]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-date: 2024-09-15 21:00:00
+date: 2024-09-24 21:00:00
 mathjax: true
-description: 
+description: 本文详细分析了跳表的时间复杂度。通过拆解查找问题，逆向整个查找过程，以及找到合适的 L 层，最后推导出跳表的时间复杂度。在知道时间复杂度的基础上，进而推导如何选择概率 p，以及 redis 和 LevelDB 中跳表的最大高度选择原因。最后通过简单的 benchmark 测试了跳表的性能，并与 unordered_map 进行了对比。
 ---
 
 在上篇 [LevelDB 源码阅读：跳表的原理、实现以及可视化](https://selfboot.cn/2024/09/09/leveldb_source_skiplist/)中，详细分析了 LevelDB 中跳表的实现。然后在 [LevelDB 源码阅读：如何正确测试跳表的并行读写？](https://selfboot.cn/2024/09/18/leveldb_source_skiplist_test/) 中，分析了 LevelDB 跳表的测试代码，最后还剩下一个问题，怎么分析跳表的时间复杂度呢？
+
+在分析完跳表的时间复杂度之后，就能明白 LevelDB 中**概率值和最大高度的选择**，以及 Redis 为什么选择不同的最大高度。最后本文也会提供一个简单的压测代码，来看看跳表的性能如何。
 
 本文不会有很高深的数学知识，只涉及简单的概率论，可以放心往下看。跳表的性能分析有不少思路很值得借鉴，希望本文能抛砖引玉，给大家带来一些启发。
 
@@ -82,14 +86,14 @@ LevelDB 的实现中，是**从跳表的最高层开始查找**的。但其实�
 
 现在来看看具体的推算步骤。假设一共有 $ n $ 个节点，然后在第 $ L $ 层有 $ 1/p $ 个节点。因为每次以 $ p $ 的概率决定是否向上层跳，所以有：
 
-$$ n * p^L = 1/p $$
+$$ n * p^{L-1} = 1/p $$
 
-将等式两边同时乘以 p：
+注意 L 层跳 $L-1$ 次，所以这里的 $ p^{L-1} $ 是 L-1 次幂。将等式两边同时乘以 p：
 
 $$
 \begin{align}
-(n \cdot p^L) \cdot p &= \frac{1}{p} \cdot p \\\\
-n \cdot p^{(L+1)} &= 1
+(n \cdot p^{L-1}) \cdot p &= \frac{1}{p} \cdot p \\\\
+n \cdot p^{L} &= 1
 \end{align}
 $$
 
@@ -97,9 +101,9 @@ $$
 
 $$
 \begin{align}
-\log_{1/p} (n \cdot p^{(L+1)}) &= \log_{1/p} 1
+\log_{1/p} (n \cdot p^{L}) &= \log_{1/p} 1
 \\\\
-\log_{1/p} n + (L+1) \cdot \log_{1/p} p &= 0
+\log_{1/p} n + L \cdot \log_{1/p} p &= 0
 \end{align}
 $$
 
@@ -109,17 +113,17 @@ $$
 \begin{align}
 log_{1/p} p &= -1
 \\\\
-log_{1/p} n + (L+1) * (-1) &= 0
+log_{1/p} n + L * (-1) &= 0
 \end{align}
 $$
 
 所以我们得到：
 
 $$
-L = log_{1/p} n - 1
+L = log_{1/p} n
 $$
 
-也就是说，在 $ L = log_{1/p} n - 1$ 层，期望有 $ 1/p $ 个节点。这里再补充下上面的推导过程用到的对数的法则：
+也就是说，在 $ L = log_{1/p} n$ 层，期望有 $ 1/p $ 个节点。这里再补充下上面的推导过程用到的对数的法则：
 
 $$
 \begin{align}
@@ -139,7 +143,7 @@ $$
 \begin{align}
 O(n) &= \frac{L}{p}
 \\\\
-O(n) &= \frac{log_{1/p} n - 1}{p}
+O(n) &= \frac{log_{1/p} n}{p}
 \end{align}
 $$
 
@@ -149,12 +153,74 @@ $$ H ≤ L + \frac{1}{1-p}$$
 
 所以不限制高度的情况下，这里的整体时间复杂度上限是:
 
-$$ O(n) = \frac{log_{1/p} n - 1}{p} + \frac{1}{1-p} + \frac{1}{p} $$
+$$ O(n) = \frac{log_{1/p} n}{p} + \frac{1}{1-p} + \frac{1}{p} $$
 
-上面的时间复杂度其实也就是 $ O(log n) $。最后再多说一点，虽然从第 L 层开始搜索比较好，但是实际实现中也没必要这样。像 LevelDB 一样，限制了整体跳表高度后，从当前跳表的最大高度开始查找，性能也不会差多少的。因为从第 L 层开始往上的搜索代价是常数级别的，所以没有大影响。
+上面的时间复杂度其实也就是 $ O(log n) $。最后再多说一点，虽然从第 L 层开始搜索比较好，但是实际实现中也没必要这样。像 LevelDB 一样，限制了整体跳表高度后，从当前跳表的最大高度开始查找，性能也不会差多少的。因为从第 L 层开始往上的搜索代价是常数级别的，所以没有大影响。此外，其实实现中最大层数也是根据 p 和 n 推算的一个接近 L 层的值。
 
 ## P 值选择
 
-论文中还分析了 p 值选择对性能和空间占用的影响，这里也顺便提下。显而易见，p 值越小，空间效率越高（每个节点的指针更少），但搜索时间通常会增加。
+论文中还分析了 p 值选择对性能和空间占用的影响，这里也顺便提下。显而易见，p 值越小，空间效率越高（每个节点的指针更少），但搜索时间通常会增加。整体如下表：
+
+| p | Normalized search times (i.e., normalized L(n)/p) | Avg. # of pointers per node (i.e., 1/(1-p)) |
+|---|---|---|
+| 1/2 | 1 | 2 |
+| 1/e | 0.94... | 1.58... |
+| 1/4 | 1 | 1.33... |
+| 1/8 | 1.33... | 1.14... |
+| 1/16 | 2 | 1.07... |
+
+论文推荐这里的 p 值选择 1/4，既有不错的时间常数，每个节点平均空间也比较少。LevelDB 中实现选择了 p = 1/4，Redis 的 [zset 实现中](https://github.com/redis/redis/blob/438cfed70a203c8b708e6df200d1ad82c87f2901/src/t_zset.c#L126)也是选择了 [ZSKIPLIST_P](https://github.com/redis/redis/blob/unstable/src/server.h#L516)=1/4。
+
+此外关于最高层数选择，[LevelDB 中](https://github.com/google/leveldb/blob/main/db/skiplist.h#L100)实现选择了 12 层，[Redis 中](https://github.com/redis/redis/blob/438cfed70a203c8b708e6df200d1ad82c87f2901/src/t_zset.c#L515C1-L515C71)选择了 32 层。这里是基于什么考虑呢？
+
+回到前面的分析中，我们知道从一个合适的层开始搜索效率最高，这里合适的层是 $ log_{1/p} n $。现在 p 已经确定是 1/4，只要能预估跳表的最大节点数 N，那么就能知道合适的层是多少。然后设置最大层数为这个值，就能保证跳表的平均性能。下面是 p=1/4 时，不同节点数对应的合适层数：
+
+| 概率值 p | 节点数 n | 合适的层数(最大层) |
+|---|---|---|
+| 1/4 | $2^{16}$ | 8 |
+| 1/4 | $2^{20}$ | 10 |
+| 1/4 | $2^{24}$ | 12 |
+| 1/4 | $2^{32}$ | 16 |
+| 1/4 | $2^{64}$ | 32 |
+
+Redis 中选择了 32 层，因为要支持最多 2^64 个元素。LevelDB 中在 Memtable 和 SSTable 中用跳表存储 key，里面 key 的数量不会很多，因此选择了 12 层，可以最大支持 2^24 个元素。
+
+## 性能测试 benchmark
+
+LevelDB 中没有对跳表的性能进行测试，我们自己来简单写一个。这里用 Google 的 benchmark 库，来测试跳表的插入和查找性能。为了方便对比，这里也加了一个对 unordered_map 的测试，看看这两个的性能差异。跳表插入的测试核心代码如下：
+
+```cpp
+static void BM_SkipListInsertSingle(benchmark::State& state) {
+  TestContext context;
+  SetUp(state, &context);
+
+  for (auto _ : state) {
+    context.skiplist->Insert(context.key_to_insert);
+    benchmark::DoNotOptimize(context.skiplist);
+    state.PauseTiming();
+    SetUp(state, &context);
+    state.ResumeTiming();
+  }
+
+  state.SetLabel("SkipList Single Insert");
+}
+```
+
+这里针对不同跳表和 unordered_map 表的长度，执行随机数字插入和查找，然后计算平均耗时。完整的代码在 [skiplist_benchmark](https://gist.github.com/selfboot/9e236b4811aaf94b38762bcc88995540)。注意这里 benchmark 会自动决定 Iterations 的次数，跳表插入每次初始化有点久，所以这里手动指定了 Iterations 为 1000。
+
+> ./skiplist_benchmark  --benchmark_min_time=1000x
+
+运行结果如下：
+
+![LevelDB 跳表插入、查找性能测试](https://slefboot-1251736664.file.myqcloud.com/20240924_leveldb_source_skiplist_more_benchmark.png)
+
+虽然这里是编译的 Debug 版本，没有优化。但是根据这里的测试结果可以看到，虽然跳表长度增加，但是插入耗时并没有显著增加。查找性能和 unordered_map 相比，差别也不是很大。
 
 ## 总结
+
+本文是 LevelDB 跳表的最后一篇了，详细分析了跳表的时间复杂度。通过拆解查找问题，逆向整个查找过程，以及找到合适的 L 层，最后推导出跳表的时间复杂度。在知道时间复杂度的基础上，进而推导如何选择概率 p，以及 redis 和 LevelDB 中跳表的最大高度选择原因。最后通过简单的 benchmark 测试了跳表的性能，并与 unordered_map 进行了对比。
+
+本系列其他两篇文章：
+
+- [LevelDB 源码阅读：如何正确测试跳表的并行读写？](https://selfboot.cn/2024/09/18/leveldb_source_skiplist_test/)
+- [LevelDB 源码阅读：跳表的原理、实现以及可视化](https://selfboot.cn/2024/09/09/leveldb_source_skiplist/)
