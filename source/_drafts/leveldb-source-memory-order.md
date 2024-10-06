@@ -25,3 +25,8 @@ mathjax: true
 这里丢失了最大高度 7 的信息，导致了错误的结果。所以这里最大高度一定要原子操作，保证线程安全。**其实更理想的情况下，最大高度更新和插入节点后各层指针的更新应该放到一起，作为一个原子操作，不被其他线程打断**。但是 LevelDB 这里并没有加锁来保证高度更新和插入节点的原子性，为了性能最优化，只是用了最宽松的 std::memory_order_relaxed 语义。
 
 下面来分析下这样做会不会有线程同步问题。我们知道，**编译器和处理器可能会对指令进行重排，只要这种重排不违反单个线程的执行逻辑就好**。上面 Insert 操作中，设置新高度和后面的更新节点指针顺序可能会被打乱。导致出现下面的情况：
+
+
+[Memory Model and Synchronization Primitive - Part 1: Memory Barrier](https://www.alibabacloud.com/blog/597460)
+
+[Memory Model and Synchronization Primitive - Part 2: Memory Model](https://www.alibabacloud.com/blog/memory-model-and-synchronization-primitive---part-2-memory-model_597461)
