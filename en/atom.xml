@@ -15,8 +15,10 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Thu, 10 Oct 2024 09:29:24 GMT</pubDate>
+    <pubDate>Thu, 10 Oct 2024 10:09:58 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    
     
     
     <item>
@@ -43,8 +45,6 @@
       <comments>https://selfboot.cn/en/2024/09/24/leveldb_source_skiplist_time_analysis/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -77,6 +77,8 @@
     
     
     
+    
+    
     <item>
       <title>Hands-on with OpenAI&#39;s o1-preview - Not Better Enough?</title>
       <link>https://selfboot.cn/en/2024/09/13/gpto1_hands_on/</link>
@@ -101,8 +103,6 @@
       <comments>https://selfboot.cn/en/2024/09/13/gpto1_hands_on/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -135,6 +135,8 @@
     
     
     
+    
+    
     <item>
       <title>Claude3.5&#39;s System Prompts - No Apologies, Face Blind, Hallucinate...</title>
       <link>https://selfboot.cn/en/2024/09/05/claude35_prompt/</link>
@@ -157,8 +159,6 @@
       <comments>https://selfboot.cn/en/2024/09/05/claude35_prompt/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -191,6 +191,8 @@
     
     
     
+    
+    
     <item>
       <title>LevelDB Explained - How To Read and Write WAL Logs</title>
       <link>https://selfboot.cn/en/2024/08/14/leveldb_source_wal_log/</link>
@@ -215,8 +217,6 @@
       <comments>https://selfboot.cn/en/2024/08/14/leveldb_source_wal_log/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
