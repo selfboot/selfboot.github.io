@@ -14,6 +14,8 @@ date: 2023-09-04 11:59:36
 
 ![Python docxtpl 批量制作 word 文件](https://slefboot-1251736664.file.myqcloud.com/20230904_batch_docx_replace_summary.png)
 
+**Update: 用 python 来做对于小白有点难。于是写了个在线工具，支持批量从模板和数据生成 word 文件。[在线批量生成 Word 工具地址](https://gallery.selfboot.cn/zh/tools/gendocx)**
+
 <!-- more -->
 
 事情的起因是这样的，[小盛律师](https://selfboot.cn/links) 有一批案件，每个当事人的案情都是差不多的，只是当事人的姓名、身份证号、地址等信息不同。小盛律师需要为每个当事人准备 Word 文件，Word 里面除了当事人的个人信息外，其他都是一样的内容。

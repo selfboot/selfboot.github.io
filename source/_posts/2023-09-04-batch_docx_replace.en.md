@@ -14,6 +14,8 @@ In work, repetitive labor is often tedious. Leveraging the power of Python to op
 
 ![Python docxtpl batch creation of Word files](https://slefboot-1251736664.file.myqcloud.com/20230904_batch_docx_replace_summary.png)
 
+**Update: It's a bit difficult for beginners to do it with Python. So I wrote an online tool that supports batch generation of Word documents from templates and data. [Online Batch Generate Word Tool Address](https://gallery.selfboot.cn/en/tools/gendocx)**
+
 <!-- more -->
 
 The story begins like this: [Lawyer Xiao Sheng](https://selfboot.cn/links) has a batch of cases where the case details for each client are similar, with only differences in the client's name, ID number, address, and other information. Lawyer Xiao Sheng needs to prepare Word files for each client, where everything in the Word document is the same except for the client's personal information.

@@ -1,5 +1,5 @@
 ---
-title: LevelDB 源码阅读：线程安全与内存序
+title: LevelDB 源码阅读：C++ 原子类型与内存序
 tags:
   - C++
   - LevelDB
@@ -8,15 +8,22 @@ toc: true
 mathjax: true
 ---
 
+在 LevelDB 源码中，有不少需要处理并发的地方，会用到 C++11 的 `std::atomic` 原子类型，还会用到 `std::memory_order_relaxed` 等内存序原语。比如 [LevelDB 源码阅读：跳表的原理、实现以及可视化](https://selfboot.cn/2024/09/09/leveldb_source_skiplist/#Node-内存屏障) 中提到的 Node 内存屏障等。
 
-C++11 引入了std::atomic类型，用于实现无锁编程，原子操作保证在多线程环境下的数据一致性。C++11 定义了6种内存序,用于控制原子操作的同步行为:
+C++11 就引入了 std::atomic 原子类型，还定义了6种内存序([memory order](https://en.cppreference.com/w/cpp/atomic/memory_order))，用于控制原子操作的同步行为：
 
-- memory_order_relaxed: 最宽松的内存序,只保证当前操作原子性。
+- memory_order_relaxed: 最宽松的内存序，只保证当前操作原子性。
 - memory_order_consume: 确保后续依赖于当前读取的操作不会被重排到当前读取之前。
 - memory_order_acquire: 确保当前读取操作之后的所有读写操作不会被重排到当前操作之前。
 - memory_order_release: 确保当前写入操作之前的所有读写操作不会被重排到当前操作之后。
 - memory_order_acq_rel: 结合了acquire和release语义。
 - memory_order_seq_cst: 最严格的内存序，提供全局的顺序一致性。
+
+只这样描述还是有点抽象，官方文档读起来也不是那么好懂。如果能结合一些实际的代码来理解会好很多，不过这里涉及编译器或者 CPU 指令重排，很难稳定复现一些内存序问题。本文接下来会尽量通过一些技巧，用实际代码示例，方便大家理解并发情况下不同同步原语的差异。
+
+<!-- more -->
+
+## 先理解原子操作
 
 
 这里用了 atomic 原子类型，保证了读写这个值的操作是原子的，不会被其他线程打断。如果不用原子操作，会出现下面这种竞争情况：
