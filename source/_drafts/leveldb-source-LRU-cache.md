@@ -1,9 +1,10 @@
 ---
-title: LevelDB 源码阅读：LRU Cache 的实现艺术
+title: LevelDB 源码阅读：LRU Cache 高性能缓存实现细节
 tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
+
 ---
 
 LRU(Least Recently Used) 是一种经典的缓存淘汰策略，它的核心思想是：**当缓存满了的时候，淘汰掉最近最少使用的数据**。这里基于的一个经验假设就是“**如果数据最近被访问过，那么将来被访问的几率也更高**”。所以，LRU 缓存可以保证缓存中的数据是最近使用过的，提高缓存命中率。
