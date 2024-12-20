@@ -15,10 +15,8 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Tue, 17 Dec 2024 13:27:28 GMT</pubDate>
+    <pubDate>Fri, 20 Dec 2024 11:40:50 GMT</pubDate>
     <generator>http://hexo.io/</generator>
-    
-    
     
     
     <item>
@@ -77,6 +75,8 @@
     
     
     
+    
+    
     <item>
       <title>Hands-on with OpenAI&#39;s o1-preview - Not Better Enough?</title>
       <link>https://selfboot.cn/en/2024/09/13/gpto1_hands_on/</link>
@@ -101,8 +101,6 @@
       <comments>https://selfboot.cn/en/2024/09/13/gpto1_hands_on/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -135,6 +133,8 @@
     
     
     
+    
+    
     <item>
       <title>Claude3.5&#39;s System Prompts - No Apologies, Face Blind, Hallucinate...</title>
       <link>https://selfboot.cn/en/2024/09/05/claude35_prompt/</link>
@@ -157,8 +157,6 @@
       <comments>https://selfboot.cn/en/2024/09/05/claude35_prompt/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -249,6 +247,8 @@
     
     
     
+    
+    
     <item>
       <title>LevelDB Explained - Bloom Filter Implementation and Visualization</title>
       <link>https://selfboot.cn/en/2024/08/08/leveldb_source_bloom_filter/</link>
@@ -278,8 +278,6 @@
     
     
     
-    
-    
     <item>
       <title>LevelDB Explained - Preparing the Development Environment</title>
       <link>https://selfboot.cn/en/2024/08/06/leveldb_source_prepare/</link>
@@ -304,6 +302,8 @@
       <comments>https://selfboot.cn/en/2024/08/06/leveldb_source_prepare/#disqus_thread</comments>
       
     </item>
+    
+    
     
     
   </channel>
