@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-NxrUEx2EFN"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="以 LevelDB 的哈希表实现为例，分析了如何设计一个高性能的哈希表。通过二级指针，实现了链表的插入、删除和查找操作，并且通过头插法优化了链表插入操作，并分析了链表扩容的实现。最后，通过一个例子详细介绍了 C++ 中的二级指针。"><title>LevelDB 源码阅读：如何设计一个高性能哈希表</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml,en/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script>
+<script defer="" src="https://cloud.umami.is/script.js" data-website-id="3578d9f2-9ea0-49d4-8781-e8d1217ab924"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN" selected="">中文</option><option value="en">English</option></select></div><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"></i><span> 首页</span></a><a href="/archives/"><i class="fa fa-archive"></i><span> 归档</span></a><a href="/aboutme.html"><i class="fa fa-user"></i><span> 关于</span></a><a href="/links.html"><i class="fa fa-user-graduate"></i><span> 小盛律师</span></a><a href="/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/"><i class="fa fa-scale-balanced"></i><span> 法律普及</span></a><a href="/atom.xml"><i class="fa fa-rss"></i><span> 订阅</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LevelDB 源码阅读：如何设计一个高性能哈希表</h1><div class="post-meta">2024/12/25<span> | </span><span class="category"><a href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2024/12/25/leveldb_source_hashtable/" href="/2024/12/25/leveldb_source_hashtable/#disqus_thread"></a><div class="post-content"><p>哈希表(HashTable) 是一个经典的数据结构，只要写点过代码，应该都有用过哈希表。每种语言都有自己的哈希表实现，基本都是开箱即用。以至于虽然用过哈希表的人很多，但自己动手写过哈希表的人估计没多少吧。</p>
+<p>要设计一个高性能的哈希表，其实还是有不少细节需要考虑的。比如如何处理哈希冲突，如何处理哈希表扩容等。一些成熟的哈希表实现，比如 C++ 标准库中的哈希表，<a target="_blank" rel="noopener" href="https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/include/tr1/hashtable.h">代码量</a>比较大，也比较难理解。</p>
+<p>好在 LevelDB 在实现 LRU Cache 的时候，顺便实现了一个<a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/util/cache.cc#L70">简单高效的哈希表</a>，整体代码写的很精简，麻雀虽小五脏俱全，非常值得学习。本文以 LevelDB 的哈希表实现为例，分析下如何设计一个高性能的哈希表。</p>
+<span id="more"></span>
+
+<h2 id="LevelDB-实现哈希表的原因"><a href="#LevelDB-实现哈希表的原因" class="headerlink" title="LevelDB 实现哈希表的原因"></a>LevelDB 实现哈希表的原因</h2><p>C++ 标准库已经有了哈希表实现，为什么 LevelDB 还要实现一个自己的哈希表呢？官方是这样说的：</p>
+<blockquote>
+<p>We provide our own simple hash table since it removes a whole bunch<br>of porting hacks and is also faster than some of the built-in hash<br>table implementations in some of the compiler/runtime combinations<br>we have tested.  E.g., readrandom speeds up by ~5% over the g++<br>4.4.3’s builtin hashtable.</p>
+</blockquote>
+<p>这里简单总结就是，其他实现有些冗杂，这里自己实现不依赖第三方库，代码精简的同时，也能保证实现的性能。</p>
+<h2 id="LevelDB-哈希表实现原理"><a href="#LevelDB-哈希表实现原理" class="headerlink" title="LevelDB 哈希表实现原理"></a>LevelDB 哈希表实现原理</h2><p>这里 HashTable 实现的思想其实和 C++ 标准库中的哈希表实现差不多，用数组来存储哈希桶。<strong>插入、查找、删除操作的平均时间复杂度都是 O(1)，首先根据 key 的 hash 值定位到具体某个哈希桶，然后在冲突链表上执行相应的操作</strong>。同时，如果插入的时候发现哈希表的负载因子过高，则进行扩容。</p>
+<p>这里补充一点，因为 LevelDB 的哈希表是用来实现 LRU Cache 的，所以这里哈希表的元素类型是 <code>LRUHandle</code>，除了有 key 和 value 两个字段外，还有一个 next_hash 指针，用链地址法来处理哈希冲突。另外，这里也存储了 hash 值，一般是调用方生成后保存下来。这样在后续的查找、插入和删除操作中，可以直接使用这个 hash 值来定位到具体的哈希桶。LRUHandle 的其他字段主要是在 LRU Cache 中使用，这里就不展开了。</p>
+<h3 id="FindPointer-查找位置"><a href="#FindPointer-查找位置" class="headerlink" title="FindPointer 查找位置"></a>FindPointer 查找位置</h3><p>接着我们先看看查找指定 key 的操作，LevelDB 封装了一个基础的 <code>FindPointer()</code> 方法，返回了一个指向 key 的二级指针。<a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/util/cache.cc#L115">具体实现</a>如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Return a pointer to slot that points to a cache entry that</span></span><br><span class="line"><span class="comment">// matches key/hash.  If there is no such cache entry, return a</span></span><br><span class="line"><span class="comment">// pointer to the trailing slot in the corresponding linked list.</span></span><br><span class="line"><span class="function">LRUHandle** <span class="title">FindPointer</span><span class="params">(<span class="type">const</span> Slice&amp; key, <span class="type">uint32_t</span> hash)</span> </span>{</span><br><span class="line">  LRUHandle** ptr = &amp;list_[hash &amp; (length_ - <span class="number">1</span>)];</span><br><span class="line">  <span class="keyword">while</span> (*ptr != <span class="literal">nullptr</span> &amp;&amp; ((*ptr)-&gt;hash != hash || key != (*ptr)-&gt;<span class="built_in">key</span>())) {</span><br><span class="line">    ptr = &amp;(*ptr)-&gt;next_hash;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> ptr;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里根据 key 的 hash 值定位到具体的哈希桶，如果桶为空，则直接返回指向桶头指针 nullptr 的地址。如果桶不为空，<strong>则用经典的链地址法处理哈希冲突</strong>。遍历哈希桶上的冲突链表，如果找到对应的 key，则返回指向该节点的二级指针。如果遍历完链表都没有找到，则返回链表的尾指针地址。</p>
+<p>这里比较巧妙的是<strong>返回了一个二级指针，这样就能在查找、插入和删除操作中都复用该方法</strong>。在查找时，直接解引用返回的指针就能获得目标节点。在插入时，通过这个指针可以既能检查是否存在相同key的节点，又能直接在正确的位置插入新节点。在删除时，可以直接通过修改这个指针指向的值来完成节点的移除，而不需要额外记录前驱节点。</p>
+<h3 id="Remove-删除节点"><a href="#Remove-删除节点" class="headerlink" title="Remove 删除节点"></a>Remove 删除节点</h3><p>查找节点就是直接调前面的 <code>FindPointer</code> 方法，然后解引用即可，这里不再赘述。我们来看看删除 key 的 <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/util/cache.cc#L95">Remove 方法</a>，代码如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LRUHandle* <span class="title">Remove</span><span class="params">(<span class="type">const</span> Slice&amp; key, <span class="type">uint32_t</span> hash)</span> </span>{</span><br><span class="line">  LRUHandle** ptr = <span class="built_in">FindPointer</span>(key, hash);</span><br><span class="line">  LRUHandle* result = *ptr;</span><br><span class="line">  <span class="keyword">if</span> (result != <span class="literal">nullptr</span>) {</span><br><span class="line">    *ptr = result-&gt;next_hash;</span><br><span class="line">    --elems_;</span><br><span class="line">  }</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>很简单吧！为了在一个链表中删除指定节点，这里先用 FindPointer 找到指向链表节点指针的地址，然后<strong>将要删除节点的下一个节点地址(result-&gt;next_hash)赋值给原指针位置</strong>，就完成了删除操作。本方法返回了被删除的节点指针，方便调用者进行后续处理（如内存释放等）。这里的实现方式，<strong>不需要额外记录前驱节点，操作简单高效，也能够正确处理链表头节点的删除情况</strong>。</p>
+<p>这里的删除方法可以优雅下面的所有情况：</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>描述</th>
+<th>初始状态</th>
+<th>删除后状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>删除链表第一个节点 A</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; [C] –&gt; nullptr</td>
+<td>list_[i] –&gt; [B] –&gt; [C] –&gt; nullptr</td>
+</tr>
+<tr>
+<td>2</td>
+<td>删除链表中间节点 B</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; [C] –&gt; nullptr</td>
+<td>list_[i] –&gt; [A] –&gt; [C] –&gt; nullptr</td>
+</tr>
+<tr>
+<td>3</td>
+<td>删除链表最后节点 C</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; [C] –&gt; nullptr</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; nullptr</td>
+</tr>
+<tr>
+<td>4</td>
+<td>删除链表唯一节点 A</td>
+<td>list_[i] –&gt; [A] –&gt; nullptr</td>
+<td>list_[i] –&gt; nullptr</td>
+</tr>
+<tr>
+<td>5</td>
+<td>要删除的key不存在</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; nullptr</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; nullptr</td>
+</tr>
+<tr>
+<td>6</td>
+<td>hash桶为空</td>
+<td>list_[i] –&gt; nullptr</td>
+<td>list_[i] –&gt; nullptr</td>
+</tr>
+</tbody></table>
+<h3 id="Insert-插入节点"><a href="#Insert-插入节点" class="headerlink" title="Insert 插入节点"></a>Insert 插入节点</h3><p>插入节点的方法 <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/util/cache.cc#L79">Insert</a> 和删除节点有点类似，也是先找到插入位置，然后进行插入操作。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LRUHandle* <span class="title">Insert</span><span class="params">(LRUHandle* h)</span> </span>{</span><br><span class="line">  LRUHandle** ptr = <span class="built_in">FindPointer</span>(h-&gt;<span class="built_in">key</span>(), h-&gt;hash);</span><br><span class="line">  LRUHandle* old = *ptr;</span><br><span class="line">  h-&gt;next_hash = (old == <span class="literal">nullptr</span> ? <span class="literal">nullptr</span> : old-&gt;next_hash);</span><br><span class="line">  *ptr = h;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="keyword">return</span> old;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里第 4 行，用二级指针一次性处理了下面所有情况，文章后面会再详细介绍这里的二级指针。</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>描述</th>
+<th>初始状态</th>
+<th>插入后状态</th>
+<th>返回值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>插入到空桶</td>
+<td>list_[i] –&gt; nullptr</td>
+<td>list_[i] –&gt; [H] –&gt; nullptr</td>
+<td>nullptr</td>
+</tr>
+<tr>
+<td>2</td>
+<td>插入时key已存在(第一个节点)</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; nullptr</td>
+<td>list_[i] –&gt; [H] –&gt; [B] –&gt; nullptr</td>
+<td>A</td>
+</tr>
+<tr>
+<td>3</td>
+<td>插入时key已存在(中间节点)</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; [C] –&gt; nullptr</td>
+<td>list_[i] –&gt; [A] –&gt; [H] –&gt; [C] –&gt; nullptr</td>
+<td>B</td>
+</tr>
+<tr>
+<td>4</td>
+<td>插入时key已存在(最后节点)</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; nullptr</td>
+<td>list_[i] –&gt; [A] –&gt; [H] –&gt; nullptr</td>
+<td>B</td>
+</tr>
+<tr>
+<td>5</td>
+<td>插入新key(非空桶)</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; nullptr</td>
+<td>list_[i] –&gt; [A] –&gt; [B] –&gt; [H] –&gt; nullptr</td>
+<td>nullptr</td>
+</tr>
+</tbody></table>
+<p>这里插入后，还会根据 old 判断是否是新增节点，如果是新增节点，则更新哈希表的元素数量，并且要判断是否需要动态扩容，接下来看看这里扩容逻辑。</p>
+<h2 id="高负载因子动态扩容"><a href="#高负载因子动态扩容" class="headerlink" title="高负载因子动态扩容"></a>高负载因子动态扩容</h2><p>对于某个固定桶数量的哈希表，<strong>随着插入元素的变多，哈希冲突的概率会变大</strong>。极端情况下，可能每个 key 都有很长的冲突链表，导致 hashtable 的查找和删除性能退化。为了<strong>衡量这里哈希冲突的严重程度</strong>，我们可以定义<strong>负载因子 = 哈希表的元素数量 / 哈希桶数量</strong>，一旦这个值超过某个阈值，则需要进行扩容。</p>
+<p>前面 Insert 方法在插入元素的时候，会统计当前 hashtable 的元素数量。一旦负载因子超过阈值 1，则调用 <code>Resize()</code> 进行扩容。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (old == <span class="literal">nullptr</span>) {</span><br><span class="line">    ++elems_;</span><br><span class="line">    <span class="keyword">if</span> (elems_ &gt; length_) {</span><br><span class="line">    <span class="comment">// Since each cache entry is fairly large, we aim for a small</span></span><br><span class="line">    <span class="comment">// average linked list length (&lt;= 1).</span></span><br><span class="line">    <span class="built_in">Resize</span>();</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里<strong>扩容第一个要解决的问题就是决定新的哈希桶数量</strong>。LevelDB 的实现如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Resize</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="type">uint32_t</span> new_length = <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">while</span> (new_length &lt; elems_) {</span><br><span class="line">      new_length *= <span class="number">2</span>;</span><br><span class="line">    }</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>其实在标准库的 vector 扩容时候，也是选择按照 2 的整数倍进行扩容。这里<strong>扩容系数如果选择的太大，可能浪费比较多空间，选择倍数太小，可能导致频繁扩容</strong>。工程实践中，一般会选择 2 作为扩容倍数。</p>
+<p>决定好新的桶大小后，就先创建这个更大容量的哈希桶，然后<strong>遍历所有旧的哈希桶，对于每个桶，还要遍历冲突链表上的每个 key，然后将每个 key 插入到新的链表上</strong>。核心的实现如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Resize</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    LRUHandle** new_list = <span class="keyword">new</span> LRUHandle*[new_length];</span><br><span class="line">    <span class="built_in">memset</span>(new_list, <span class="number">0</span>, <span class="built_in">sizeof</span>(new_list[<span class="number">0</span>]) * new_length);</span><br><span class="line">    <span class="type">uint32_t</span> count = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">uint32_t</span> i = <span class="number">0</span>; i &lt; length_; i++) {</span><br><span class="line">      LRUHandle* h = list_[i];</span><br><span class="line">      <span class="keyword">while</span> (h != <span class="literal">nullptr</span>) {</span><br><span class="line">        LRUHandle* next = h-&gt;next_hash;</span><br><span class="line">        <span class="comment">// 头插法插入到新哈希表</span></span><br><span class="line">        h = next;</span><br><span class="line">        count++;</span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">    <span class="built_in">assert</span>(elems_ == count);</span><br><span class="line">    <span class="keyword">delete</span>[] list_;</span><br><span class="line">    list_ = new_list;</span><br><span class="line">    length_ = new_length;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里在 Resize 的时候，每次成功一个 key 到新的哈希表中，都会更新哈希表的元素数量。之后会用 assert 断言来检查扩容后，哈希表的元素数量是否正确。所有 key 都插入到新哈希表后，就可以回收旧哈希表的内存，然后替换 list_ 为新哈希表，并更新哈希表容量。</p>
+<p>前面省略了关键的插入部分逻辑，这里<strong>在 while 循环中会遍历旧哈希表冲突链表中的每个 key，然后用头插法插入到新哈希表中</strong>，下面看看头插法的详细实现。</p>
+<h2 id="头插法优化链表插入"><a href="#头插法优化链表插入" class="headerlink" title="头插法优化链表插入"></a>头插法优化链表插入</h2><p>这里前面 Resize 省略的头插法的核心代码如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="type">void</span> <span class="title">Resize</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">uint32_t</span> i = <span class="number">0</span>; i &lt; length_; i++) {</span><br><span class="line">      LRUHandle* h = list_[i];</span><br><span class="line">      <span class="keyword">while</span> (h != <span class="literal">nullptr</span>) {</span><br><span class="line">        <span class="comment">// ... </span></span><br><span class="line">        <span class="type">uint32_t</span> hash = h-&gt;hash;</span><br><span class="line">        LRUHandle** ptr = &amp;new_list[hash &amp; (new_length - <span class="number">1</span>)];</span><br><span class="line">        h-&gt;next_hash = *ptr;</span><br><span class="line">        *ptr = h;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  }</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
+
+<p>头插法的核心思想是：<strong>将新节点插入到链表的头部</strong>。假设原始链表中如下：</p>
+<figure class="highlight brainfuck"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">list_</span><span class="title">[</span><span class="comment">i</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="title">[</span><span class="comment">A</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="title">[</span><span class="comment">B</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="title">[</span><span class="comment">C</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="comment">nullptr</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><strong>重哈希过程会依次处理 A、B、C 三个节点，将其插入到新哈希表中</strong>。如果在新的哈希表中，A、B 个节点依旧在同一个桶中，则重哈希后的链表状态如下：</p>
+<figure class="highlight brainfuck"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">new_list</span><span class="title">[</span><span class="comment">hash_a</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="title">[</span><span class="comment">B</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="title">[</span><span class="comment">A</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="comment">nullptr</span></span><br><span class="line"><span class="comment">new_list</span><span class="title">[</span><span class="comment">hash_c</span><span class="title">]</span> <span class="literal">--</span>&gt; <span class="title">[</span><span class="comment">C</span><span class="title">]</span> <span class="literal">--</span>&gt;<span class="comment">nullptr</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里 A 和 B 在新的链表中依旧在同一个桶中，但是 A 和 B 的顺序反过来了。相比传统的遍历到链表尾部进行插入，<strong>头插法的实现比较简单，只用在头部插入，不需要遍历到链表尾部，所以操作时间复杂度是O(1)<strong>。并且使用头插法也不需要维护尾指针，</strong>空间效率更高</strong>。此外，<strong>头插法还有缓存局部性，最近插入的节点在链表头部，对于某些访问模式下查找效率更高</strong>。   </p>
+<h2 id="C-二级指针详解"><a href="#C-二级指针详解" class="headerlink" title="C++ 二级指针详解"></a>C++ 二级指针详解</h2><p>前面链表的操作代码十分简介，没有各种复杂的条件判断，正是因为用好了二级指针，那么要怎么理解 C++ 中的二级指针呢？<strong>C++ 中的对象有值和对应内存地址，指针存储的是对象的内存地址，而二级指针存储的是指针的地址</strong>。</p>
+<p>举个例子来看更清晰些，比如某个 bucket 上有 <code>bucket-&gt;A-&gt;B-&gt;nullptr</code> 这样一个冲突链表，对应可以用下面 C++ 代码表示：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LRUHandle *node_a;    <span class="comment">// 地址：0x100，数据：{value: "A", next_hash: 0x200}</span></span><br><span class="line">LRUHandle *node_b;    <span class="comment">// 地址：0x200，数据：{value: "B", next_hash: nullptr}</span></span><br><span class="line">node_a-&gt;next_hash = node_b;</span><br><span class="line">LRUHandle* bucket = node_a;   <span class="comment">// 地址：0x300，数据：0x100</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>当然这里内存地址的具体值只是为了方便理解，实际运行的内存地址位置会不一样。现在有一个新的节点 node_h，地址是 0x500，如果要在上面链表中用头插法插入该节点，核心代码只有 3 行，如下：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LRUHandle** ptr = &amp;new_list[hash &amp; (new_length - <span class="number">1</span>)];</span><br><span class="line">h-&gt;next_hash = *ptr;    </span><br><span class="line">*ptr = h;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>我们来看这里每一行带来的变化。第一行执行完，这里整体内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>内存地址</th>
+<th>存储的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ptr</td>
+<td>0x400</td>
+<td>0x300</td>
+</tr>
+<tr>
+<td>bucket</td>
+<td>0x300</td>
+<td>0x100</td>
+</tr>
+<tr>
+<td>node_a</td>
+<td>0x100</td>
+<td>{value: “A”, next_hash: 0x200}</td>
+</tr>
+<tr>
+<td>node_b</td>
+<td>0x200</td>
+<td>{value: “B”, next_hash: nullptr}</td>
+</tr>
+</tbody></table>
+<p>接着执行 <code>h-&gt;next_hash = *ptr</code> 把 node_h 的 next_hash 指向 *ptr，这里 *ptr 拿到的就是 A 的地址，整体内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>内存地址</th>
+<th>存储的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ptr</td>
+<td>0x400</td>
+<td>0x300</td>
+</tr>
+<tr>
+<td>bucket</td>
+<td>0x300</td>
+<td>0x100 (*ptr)</td>
+</tr>
+<tr>
+<td>node_h</td>
+<td>0x500</td>
+<td>{value: “H”, next_hash: <strong>0x100</strong>}</td>
+</tr>
+<tr>
+<td>node_a</td>
+<td><strong>0x100</strong></td>
+<td>{value: “A”, next_hash: <strong>0x200</strong>}</td>
+</tr>
+<tr>
+<td>node_b</td>
+<td><strong>0x200</strong></td>
+<td>{value: “B”, next_hash: nullptr}</td>
+</tr>
+</tbody></table>
+<p>这时候我们已经建好了 <strong>H-&gt;A-&gt;B-&gt;nullptr</strong> 链。只是 bucket 还是指向了 A，所以要接着执行 <code>*ptr = h</code> 让 bucket 指向 node_h 的地址，这一步完成后整体内存布局如下：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>内存地址</th>
+<th>存储的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ptr</td>
+<td>0x400</td>
+<td>0x300</td>
+</tr>
+<tr>
+<td>bucket</td>
+<td>0x300</td>
+<td><strong>0x500</strong></td>
+</tr>
+<tr>
+<td>node_h</td>
+<td><strong>0x500</strong></td>
+<td>{value: “H”, next_hash: <strong>0x100</strong>}</td>
+</tr>
+<tr>
+<td>node_a</td>
+<td><strong>0x100</strong></td>
+<td>{value: “A”, next_hash: <strong>0x200</strong>}</td>
+</tr>
+<tr>
+<td>node_b</td>
+<td><strong>0x200</strong></td>
+<td>{value: “B”, next_hash: nullptr}</td>
+</tr>
+</tbody></table>
+<p>至此，我们就完成了 <code>p-&gt;bucket-&gt;H-&gt;A-&gt;B-&gt;nullptr</code> 的构建。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们详细分析了 LevelDB 的哈希表实现，看完应该能设计一个高性能的哈希表了吧，哈哈。最后总结下 LevelDB 哈希表实现的关键点：</p>
+<ol>
+<li><strong>巧妙运用二级指针</strong>：通过返回指向节点指针的指针，使得 FindPointer 方法能够在查找、插入和删除操作中复用，大大简化了链表操作的代码实现。</li>
+<li><strong>高效的冲突处理</strong>：采用链地址法处理哈希冲突，并通过头插法优化链表插入操作，避免了遍历到链表尾部的开销。</li>
+<li><strong>动态扩容机制</strong>：通过监控负载因子，在合适的时机进行 2 倍扩容，在空间利用和性能之间取得平衡。</li>
+<li><strong>简洁优雅的实现</strong>：整个实现代码量很小，但包含了哈希表的所有核心功能，是一个非常好的学习范例。</li>
+</ol>
+<p>虽然这里哈希表主要用于 LevelDB 的 LRU Cache，但其中的很多设计思想对于实现其他高性能数据结构都很有参考价值。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target="_blank">个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>本文章已自动同步在<b style="color:red">个人公众号</b>，欢迎去 <a href="https://selfboot.cn/aboutme.html" target="_blank">个人主页 </a> 扫码关注</p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文标题为：LevelDB 源码阅读：如何设计一个高性能哈希表</p><p>本文链接为：https://selfboot.cn/2024/12/25/leveldb_source_hashtable/</p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="赞助"></a><div class="donate_txt"> ↑<br>内容不错，赞助一下<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/C/"><i class="fa fa-tag"></i>C++</a><a href="/tags/LevelDB/"><i class="fa fa-tag"></i>LevelDB</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2024/12/25/leveldb_source_hashtable/';
+    this.page.identifier = '2024/12/25/leveldb_source_hashtable/';
+    this.page.title = 'LevelDB 源码阅读：如何设计一个高性能哈希表';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>分类</span></div><ul><li><a href="/categories/程序设计/">程序设计</a> (23)</li><li><a href="/categories/工具介绍/">工具介绍</a> (13)</li><li><a href="/categories/数据结构与算法/">数据结构与算法</a> (13)</li><li><a href="/categories/计算机基础/">计算机基础</a> (8)</li><li><a href="/categories/社会百态/">社会百态</a> (11)</li><li><a href="/categories/计算机网络/">计算机网络</a> (4)</li><li><a href="/categories/项目实践/">项目实践</a> (10)</li><li><a href="/categories/源码剖析/">源码剖析</a> (16)</li><li><a href="/categories/法律普及/">法律普及</a> (26)</li><li><a href="/categories/金融/">金融</a> (1)</li><li><a href="/categories/人工智能/">人工智能</a> (31)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>标签</span></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/tags/教程/" style="font-size: 15.00px;">教程</a> <a href="/tags/总结/" style="font-size: 15.00px;">总结</a> <a href="/tags/方法/" style="font-size: 15.00px;">方法</a> <a href="/tags/Google/" style="font-size: 15.00px;">Google</a> <a href="/tags/思考/" style="font-size: 15.00px;">思考</a> <a href="/tags/前端/" style="font-size: 15.00px;">前端</a> <a href="/tags/Django/" style="font-size: 15.00px;">Django</a> <a href="/tags/DNS/" style="font-size: 15.00px;">DNS</a> <a href="/tags/见闻/" style="font-size: 15.00px;">见闻</a> <a href="/tags/Protocol/" style="font-size: 15.00px;">Protocol</a> <a href="/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/tags/Flask/" style="font-size: 15.00px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15.00px;">Thread</a> <a href="/tags/法律/" style="font-size: 15.00px;">法律</a> <a href="/tags/ChatGPT/" style="font-size: 15.00px;">ChatGPT</a> <a href="/tags/Prompt/" style="font-size: 15.00px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15.00px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15.00px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15.00px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15.00px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15.00px;">Issue</a> <a href="/tags/eBPF/" style="font-size: 15.00px;">eBPF</a> <a href="/tags/婚姻家庭/" style="font-size: 15.00px;">婚姻家庭</a> <a href="/tags/Go/" style="font-size: 15.00px;">Go</a> <a href="/tags/刑事/" style="font-size: 15.00px;">刑事</a> <a href="/tags/劳动纠纷/" style="font-size: 15.00px;">劳动纠纷</a> <a href="/tags/数学/" style="font-size: 15.00px;">数学</a> <a href="/tags/Gemini/" style="font-size: 15.00px;">Gemini</a> <a href="/tags/google/" style="font-size: 15.00px;">google</a> <a href="/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = 2024/12/25/leveldb_source_hashtable/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>最近文章</span></div><ul><li><a href="/2024/12/25/leveldb_source_hashtable/" title="LevelDB 源码阅读：如何设计一个高性能哈希表">LevelDB 源码阅读：如何设计一个高性能哈希表</a></li><li><a href="/2024/09/24/leveldb_source_skiplist_time_analysis/" title="LevelDB 源码阅读：如何分析跳表的时间复杂度？">LevelDB 源码阅读：如何分析跳表的时间复杂度？</a></li><li><a href="/2024/09/18/leveldb_source_skiplist_test/" title="LevelDB 源码阅读：如何正确测试跳表的并行读写？">LevelDB 源码阅读：如何正确测试跳表的并行读写？</a></li><li><a href="/2024/09/13/gpto1_hands_on/" title="实际例子上手体验 OpenAI o1-preview，比预期差一点？">实际例子上手体验 OpenAI o1-preview，比预期差一点？</a></li><li><a href="/2024/09/09/leveldb_source_skiplist/" title="LevelDB 源码阅读：跳表的原理、实现以及可视化">LevelDB 源码阅读：跳表的原理、实现以及可视化</a></li><li><a href="/2024/09/05/claude35_prompt/" title="Claude3.5 系统提示词解密：不道歉、脸盲、幻觉...">Claude3.5 系统提示词解密：不道歉、脸盲、幻觉...</a></li><li><a href="/2024/08/29/leveldb_source_utils/" title="LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码">LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码</a></li><li><a href="/2024/08/14/leveldb_source_wal_log/" title="LevelDB 源码阅读：读写 WAL 日志保证持久性">LevelDB 源码阅读：读写 WAL 日志保证持久性</a></li><li><a href="/2024/08/13/leveldb_source_unstand_c++/" title="LevelDB 源码阅读：理解其中的 C++ 高级技巧">LevelDB 源码阅读：理解其中的 C++ 高级技巧</a></li><li><a href="/2024/08/08/leveldb_source_bloom_filter/" title="LevelDB 源码阅读：布隆过滤器原理、实现、测试与可视化">LevelDB 源码阅读：布隆过滤器原理、实现、测试与可视化</a></li></ul></div><!-- Debug: Current Language = zh-CN, Filtered Posts Count = 10 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"></i><span> 文章目录</span></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#LevelDB-%E5%AE%9E%E7%8E%B0%E5%93%88%E5%B8%8C%E8%A1%A8%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.</span> <span class="toc-text">LevelDB 实现哈希表的原因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LevelDB-%E5%93%88%E5%B8%8C%E8%A1%A8%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">LevelDB 哈希表实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FindPointer-%E6%9F%A5%E6%89%BE%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.1.</span> <span class="toc-text">FindPointer 查找位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Remove-%E5%88%A0%E9%99%A4%E8%8A%82%E7%82%B9"><span class="toc-number">2.2.</span> <span class="toc-text">Remove 删除节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Insert-%E6%8F%92%E5%85%A5%E8%8A%82%E7%82%B9"><span class="toc-number">2.3.</span> <span class="toc-text">Insert 插入节点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AB%98%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90%E5%8A%A8%E6%80%81%E6%89%A9%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">高负载因子动态扩容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%B4%E6%8F%92%E6%B3%95%E4%BC%98%E5%8C%96%E9%93%BE%E8%A1%A8%E6%8F%92%E5%85%A5"><span class="toc-number">4.</span> <span class="toc-text">头插法优化链表插入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C-%E4%BA%8C%E7%BA%A7%E6%8C%87%E9%92%88%E8%AF%A6%E8%A7%A3"><span class="toc-number">5.</span> <span class="toc-text">C++ 二级指针详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次，<span id="busuanzi_container_site_uv"></span>本站访客数: <span id="busuanzi_value_site_uv"></span> 人次</p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
