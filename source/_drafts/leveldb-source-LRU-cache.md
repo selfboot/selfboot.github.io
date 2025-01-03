@@ -4,7 +4,7 @@ tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
-date: 2024-12-17 21:00:00
+date: 2025-01-03 21:00:00
 ---
 
 LRU(Least Recently Used) 是一种经典的缓存淘汰策略，它的核心思想是：**当缓存满了的时候，淘汰掉最近最少使用的数据**。这里基于的一个经验假设就是“**如果数据最近被访问过，那么将来被访问的几率也更高**”。只要这个假设成立，那么 LRU 就可以显著提高缓存命中率。
@@ -42,7 +42,7 @@ public:
 
 ## LevelDB Cache 接口：依赖倒置
 
-在开始看 LevelDB 的 LRU Cache 实现之前，先看下如何使用这里的缓存。比如在 [db/table_cache.cc](https://github.com/google/leveldb/blob/main/db/table_cache.cc) 中，为了缓存 SST table 的元数据信息，TableCache 类定义了一个 Cache 类型的成员变量，然后通过该成员来对缓存进行各种操作。
+在开始看 LevelDB 的 LRU Cache 实现之前，先看下 LevelDB 中如何使用这里的缓存。比如在 [db/table_cache.cc](https://github.com/google/leveldb/blob/main/db/table_cache.cc) 中，为了缓存 SST table 的元数据信息，TableCache 类定义了一个 Cache 类型的成员变量，然后通过该成员来对缓存进行各种操作。
 
 ```cpp
 Cache* cache_(NewLRUCache(entries));
@@ -54,9 +54,9 @@ cache_->Erase(Slice(buf, sizeof(buf)));
 // ...
 ```
 
-这里 Cache 是一个抽象类，定义了缓存操作需要的各种接口，具体定义在 [include/leveldb/cache.h](https://github.com/google/leveldb/blob/main/include/leveldb/cache.h) 中。它定义了缓存应该具有的基本操作，如 Insert、Lookup、Release、Erase 等。
+这里 Cache 是一个抽象类，定义了缓存操作的各种接口，具体定义在 [include/leveldb/cache.h](https://github.com/google/leveldb/blob/main/include/leveldb/cache.h) 中。它定义了缓存应该具有的基本操作，如 Insert、Lookup、Release、Erase 等。
 
-这样的设计允许在**不修改缓存使用方的代码的情况下，轻松替换不同的缓存实现**。哈哈，这不就是八股文经常说的，面向对象编程 SOLID 中的依赖倒置嘛，应用层依赖于抽象接口(Cache)而不是具体实现(LRUCache)。这样可以降低代码耦合度，提高系统的可扩展性和可维护性。
+这样的设计允许在**不修改缓存使用方的代码的情况下，轻松替换不同的缓存实现**。哈哈，这不就是八股文经常说的，**面向对象编程 SOLID 中的依赖倒置**嘛，应用层依赖于抽象接口(Cache)而不是具体实现(LRUCache)。这样可以降低代码耦合度，提高系统的可扩展性和可维护性。
 
 使用的时候，通过这里的工厂函数来创建具体的缓存实现 [ShardedLRUCache](https://github.com/google/leveldb/blob/main/util/cache.cc#L339)：
 
@@ -71,7 +71,7 @@ ShardedLRUCache 才是具体的缓存实现，它继承自 Cache 抽象类，并
 
 ## LevelDB LRUCache 实现细节 
 
-我们先来看看 LRUCache 的实现细节吧。
+核心的缓存逻辑实现在 [LRUCache](https://github.com/google/leveldb/blob/main/util/cache.cc#L151) 类中。我们来看看它的实现细节吧。
 
 
 LRUCache 是一个 LRU 缓存分片的实现，包含了缓存的核心逻辑，如插入、查找、删除等操作。这个类管理着两个主要的列表：一个是使用中的条目列表（**in_use_**），另一个是最近最少使用的条目列表（**lru_**）。当缓存容量达到上限时，可以根据缓存项在LRU列表中的位置（即它们被访问的历史）来决定哪些缓存项被淘汰。
@@ -112,5 +112,7 @@ Ref 函数的目的是增加给定缓存项 e 的引用计数。当缓存项的�
 
 
 ### ShardedLRUCache
+
+因为前面 LRUCache 的实现中，所有的操作都是通过一个锁来保护的，所以性能瓶颈在于锁竞争。为了提高性能，ShardedLRUCache 将缓存分片，每个分片都有自己的锁，这样就可以减少锁竞争。
 
 通过将缓存分成多个分片来减少锁的竞争，从而提高性能。它使用 Shard()函数根据键的哈希值来决定条目属于哪个分片。
