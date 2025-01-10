@@ -1,5 +1,5 @@
 ---
-title: 5 个来自真实业务场景下导致 C++ 进程 Crash 的案例
+title: 5 个导致 C++ 进程 Crash 的真实业务案例
 tags: [C++]
 category: 计算机基础
 toc: true
