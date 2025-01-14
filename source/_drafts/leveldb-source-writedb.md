@@ -4,7 +4,26 @@ tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
+date: 2025-01-13
 ---
+
+读、写是 key-value 数据库中最重要的两个操作，LevelDB 中提供了一个 Put 接口，用于写入 key-value 数据。使用很简单：
+
+```cpp
+leveldb::Status status = leveldb::DB::Open(options, "./db", &db);
+status = db->Put(leveldb::WriteOptions(), key, value);
+```
+
+这里 Put 接口具体做了什么？数据的写入又是如何进行的？LevelDB 又有哪些优化？本文一起来看看。
+
+<!-- more -->
+
+如果一次只写入一个键值对，LevelDB 内部也是通过 WriteBatch 来处理。如果 在高并发情况下，可能会在内部合并多个写操作，然后将这批键值对写入 WAL 并更新到 memtable。
+
+如果想利用批量写入的性能优势，则需要在**应用层聚合这些写入操作**。例如，我们可以设计一个缓冲机制，收集一定时间内的写入请求，然后将它们打包在一个 WriteBatch 中提交。这种方式可以减少对磁盘的写入次数和上下文切换，从而提高性能。
+
+
+## 
 
 
 当存在未完成的压缩任务或 Level 0 文件过多时，写操作会通过调用 background_work_finished_signal_.Wait() 进入等待状态。这里的等待是为了防止新的写入操作进一步加剧存储压力
