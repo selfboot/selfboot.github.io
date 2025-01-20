@@ -1,22 +1,36 @@
 ---
-title: LevelDB 源码阅读：写操作的详细流程
+title: LevelDB 源码阅读：写入操作到底做了什么？
 tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
-date: 2025-01-13
+date: 2025-01-20
 ---
 
-读、写是 key-value 数据库中最重要的两个操作，LevelDB 中提供了一个 Put 接口，用于写入 key-value 数据。使用很简单：
+读、写键值是 KV 数据库中最重要的两个操作，LevelDB 中提供了一个 Put 接口，用于写入键值对。使用方法很简单：
 
 ```cpp
 leveldb::Status status = leveldb::DB::Open(options, "./db", &db);
 status = db->Put(leveldb::WriteOptions(), key, value);
 ```
 
+LevelDB 最大的优点就是写入速度非常快，支持的并发特别高。官方给过一个[写入压力测试结果](https://github.com/google/leveldb/tree/main?tab=readme-ov-file#write-performance)：
+
+```shell
+fillseq      :       1.765 micros/op;   62.7 MB/s
+fillsync     :     268.409 micros/op;    0.4 MB/s (10000 ops)
+fillrandom   :       2.460 micros/op;   45.0 MB/s
+overwrite    :       2.380 micros/op;   46.5 MB/s
+```
+
+可以看到这里不强制要求刷磁盘的话，随机写入的速度达到 45.0 MB/s，每秒支持写入 40 万次。如果强制要求刷磁盘，写入速度会下降不少，也能够到 0.4 MB/s, 每秒支持写入 3700 次左右。
+
 这里 Put 接口具体做了什么？数据的写入又是如何进行的？LevelDB 又有哪些优化？本文一起来看看。
 
 <!-- more -->
+
+## LevelDB 写入流程
+
 
 如果一次只写入一个键值对，LevelDB 内部也是通过 WriteBatch 来处理。如果 在高并发情况下，可能会在内部合并多个写操作，然后将这批键值对写入 WAL 并更新到 memtable。
 
