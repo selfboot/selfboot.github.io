@@ -15,7 +15,7 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Tue, 14 Jan 2025 13:27:11 GMT</pubDate>
+    <pubDate>Mon, 20 Jan 2025 13:35:02 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
@@ -99,6 +99,8 @@
       <comments>https://selfboot.cn/en/2025/01/02/leveldb_source_thread_anno/#disqus_thread</comments>
       
     </item>
+    
+    
     
     
     
@@ -189,8 +191,6 @@
     
     
     
-    
-    
     <item>
       <title>Hands-on with OpenAI&#39;s o1-preview - Not Better Enough?</title>
       <link>https://selfboot.cn/en/2024/09/13/gpto1_hands_on/</link>
@@ -249,6 +249,8 @@
     
     
     
+    
+    
     <item>
       <title>Claude3.5&#39;s System Prompts - No Apologies, Face Blind, Hallucinate...</title>
       <link>https://selfboot.cn/en/2024/09/05/claude35_prompt/</link>
@@ -271,8 +273,6 @@
       <comments>https://selfboot.cn/en/2024/09/05/claude35_prompt/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
