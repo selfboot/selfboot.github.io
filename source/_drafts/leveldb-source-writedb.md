@@ -47,7 +47,7 @@ Status DB::Put(const WriteOptions& opt, const Slice& key, const Slice& value) {
 
 这里整体写入还是比较复杂的，本篇文章只先关注写入到 WAL 和 memtable 的过程。
 
-## LevelDB 写入步骤
+## LevelDB 写入详细步骤
 
 完整的写入部分代码在 [leveldb/db/db_impl.cc 的 DBImpl::Write](https://github.com/google/leveldb/blob/main/db/db_impl.cc#L1205) 方法中，咱们一点点拆开看吧。
 
@@ -109,7 +109,85 @@ struct DBImpl::Writer {
 
 如果当前写入请求在队首，那么就需要执行实际的写入操作了，这里具体写入流程是什么样呢？
 
-### 写入过程详细分析
+### 合并写入任务
+
+接下来处理流程中会先判断 updates 是否为空，如果为空，这里会调用 MakeRoomForWrite 方法，来确保有足够的空间来写入数据。这里 updates 为空的场景，对应内部的一些操作，比如 Compaction，不是用户的写入请求。这里我们先忽略这种场景，放到后续其他文章来详细分析 MakeRoomForWrite 部分逻辑。
+
+```cpp
+  //...
+  // May temporarily unlock and wait.
+  Status status = MakeRoomForWrite(updates == nullptr);
+  uint64_t last_sequence = versions_->LastSequence();
+  Writer* last_writer = &w;
+  if (status.ok() && updates != nullptr) {  // nullptr batch is for compactions
+    // ...
+  }
+  // ...
+```
+
+接着是合并写入的逻辑，[核心代码](https://github.com/google/leveldb/blob/main/db/db_impl.cc#L1224)如下：
+
+```cpp
+  uint64_t last_sequence = versions_->LastSequence();
+  Writer* last_writer = &w;
+  if (status.ok() && updates != nullptr) {  // nullptr batch is for compactions
+    WriteBatch* write_batch = BuildBatchGroup(&last_writer);
+    WriteBatchInternal::SetSequence(write_batch, last_sequence + 1);
+    last_sequence += WriteBatchInternal::Count(write_batch);
+
+    {
+     // ... 具体写入到 WAL 和 memtable 
+    }
+    if (write_batch == tmp_batch_) tmp_batch_->Clear();
+
+    versions_->SetLastSequence(last_sequence);
+  }
+```
+
+首先是获取当前全局的 sequence 值，这里 **sequence 用来记录写入键值对的版本号，全局单调递增**。每个写入请求都会被分配一个唯一的 sequence 值，通过版本号机制来实现 MVCC 等特性。在写入当前批次键值对的时候，会先设置 sequence 值，写入成功后，还会更新 last_sequence 值。
+
+为了**提高写入并发性能，每次写入的时候，不止需要写队首的任务，还会尝试合并队列中后续的写入任务**。这里合并的逻辑放在 [BuildBatchGroup](https://github.com/google/leveldb/blob/main/db/db_impl.cc#L1280) 中，主要是遍历整个写入队列，**在控制整体批次的大小，以及保证刷磁盘的级别情况下，不断把队列后面的写入任务扩到队首的写入任务**中。整体构建好的写入批次，会放到一个临时的对象 tmp_batch_ 中，在完整的写入操作完成后，会清空 tmp_batch_ 对象。
+
+我们提到的每个写入任务其实封装为了一个 WriteBatch 对象，该类的实现支持了不同写入任务合并，以及获取任务的大小等。相关细节实现可以参考我前面的文章 [LevelDB 源码阅读：如何优雅地合并写入和删除操作](https://selfboot.cn/2025/01/13/leveldb_source_write_batch/)。
+
+上面代码其实忽略了核心的写入到 WAL 和 memtable 的逻辑，下面来看看这部分的实现。
+
+### 写入到 WAL 和 memtable
+
+LevelDB 中写入键值对，会先写 WAL 日志，然后写入到 memtable 中。WAL 日志是 LevelDB 中实现数据恢复的关键，memtable 则是 LevelDB 中实现内存缓存和快速查询的关键。写入关键代码如下：
+
+```cpp
+    // Add to log and apply to memtable.  We can release the lock
+    // during this phase since &w is currently responsible for logging
+    // and protects against concurrent loggers and concurrent writes
+    // into mem_.
+    {
+      mutex_.Unlock();
+      status = log_->AddRecord(WriteBatchInternal::Contents(write_batch));
+      bool sync_error = false;
+      if (status.ok() && options.sync) {
+        status = logfile_->Sync();
+        if (!status.ok()) {
+          sync_error = true;
+        }
+      }
+      if (status.ok()) {
+        status = WriteBatchInternal::InsertInto(write_batch, mem_);
+      }
+      mutex_.Lock();
+      if (sync_error) {
+        // The state of the log file is indeterminate: the log record we
+        // just added may or may not show up when the DB is re-opened.
+        // So we force the DB into a mode where all future writes fail.
+        RecordBackgroundError(status);
+      }
+    }
+```
+
+这里**在写入到 WAL 和 memtable 的时候，会先释放 mutex_ 互斥锁，写入完成后，再重新加锁**。注释也专门解释了下，因为当前队首 `&w` 正在负责写入 WAL 和 memtable，后续的写入调用，可以拿到 mutex_ 互斥锁，因此可以完成入队操作。但是因为不是队首，需要等在条件变量上，只有当前任务处理完成，才有机会执行。所以**写入 WAL 和 memtable 的过程，虽然释放了锁，但整体还是串行化写入的**。WAL 和 memtable 本身也不需要保证线程安全。
+
+不过因为写 WAL 和 memtable 相对耗时，释放锁之后，其他需要用到 mutex_ 的地方，都可以拿到锁继续执行了，整体提高了系统的并发。
+
 
 ## 其他实现细节问题
 
@@ -155,7 +233,7 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
   }
 ```
 
-不过如果队首是 sync=true 的写入任务，那么合并的时候，就不需要考虑被合并的写入任务的 sync 设置。因为整个合并后的批次，都会被强制刷磁盘。
+不过如果队首是 sync=true 的写入任务，那么合并的时候，就不需要考虑被合并的写入任务的 sync 设置。因为整个合并后的批次，都会被强制刷磁盘。这样就**可以保证不会降低写入的持久化保证级别，但是可以适当提升写入的持久化保证级别**。当然这里提升写入的持久化级别保证，其实也并不会导致整体耗时上涨，因为这里队首一定要刷磁盘，顺带着多一点不需要刷磁盘的写入任务，也不会导致耗时上涨。
 
 ### 优化大批量小 key 写入延迟
 
@@ -175,6 +253,9 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* updates) {
     max_size = size + (128 << 10);
   }
 ```
+
+### 写入 WAL 成功，但是 memtable 失败
+
 
 ## Compaction 机制
 
