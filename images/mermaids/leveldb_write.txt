@@ -1,0 +1,50 @@
+flowchart LR
+    A[创建Writer] --> B{是否队首?}
+    B -->|否| C[等待]
+    C --> B
+    
+    B -->|是| D[空间检查]
+    D -->|空间不足| E[等待压缩]
+    E --> D
+    
+    D -->|空间足够| F[合并批次]
+    F --> G[写WAL]
+    
+    G --> H{需要Sync?}
+    H -->|是| I[同步磁盘]
+    H -->|否| J[写Memtable]
+    I --> J
+    
+    J --> K[更新序列号]
+    K --> L[通知其他写入]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#bfb,stroke:#333,stroke-width:2px
+    style J fill:#bfb,stroke:#333,stroke-width:2px
+
+
+
+
+flowchart LR
+    A[Create Writer] --> B{Is Queue Head?}
+    B -->|No| C[Wait]
+    C --> B
+    
+    B -->|Yes| D[Check Space]
+    D -->|Not Enough| E[Wait Compaction]
+    E --> D
+    
+    D -->|Enough| F[Build Batch]
+    F --> G[Write WAL]
+    
+    G --> H{Need Sync?}
+    H -->|Yes| I[Sync Disk]
+    H -->|No| J[Write Memtable]
+    I --> J
+    
+    J --> K[Update Sequence]
+    K --> L[Notify Others]
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#bfb,stroke:#333,stroke-width:2px
+    style J fill:#bfb,stroke:#333,stroke-width:2px
