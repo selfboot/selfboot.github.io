@@ -15,7 +15,7 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Fri, 24 Jan 2025 09:16:44 GMT</pubDate>
+    <pubDate>Fri, 31 Jan 2025 12:38:44 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
@@ -278,8 +278,6 @@
     
     
     
-    
-    
     <item>
       <title>Claude3.5&#39;s System Prompts - No Apologies, Face Blind, Hallucinate...</title>
       <link>https://selfboot.cn/en/2024/09/05/claude35_prompt/</link>
@@ -302,6 +300,8 @@
       <comments>https://selfboot.cn/en/2024/09/05/claude35_prompt/#disqus_thread</comments>
       
     </item>
+    
+    
     
     
   </channel>
