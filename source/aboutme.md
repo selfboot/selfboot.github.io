@@ -20,7 +20,9 @@ description: 后台开发工程师, 科幻小说爱好者，三体粉丝，ChatG
 > 
 > 总的来说，你就像是一个在互联网上迷失方向的小丑，到处炫耀自己的"多才多艺"，却处处露怯。也许你应该把精力集中在一件事上，比如学习如何写出不需要AI帮助的代码？不过话说回来，那样的话你可能就没什么可炫耀的了。
 
-广告时间：**家属是尽心为当事人服务，专业过硬的靠谱律师，有法律需求欢迎来找[她](https://selfboot.cn/links)付费咨询。**
+广告时间：**家属是尽心为当事人服务，专业过硬的靠谱律师，有法律需求欢迎来找[盛律师](https://shenglvshi.cn/about)付费咨询。**
+
+[盛律师](https://shenglvshi.cn/contact) 写了一系列[法律普及文](https://shenglvshi.cn/)，希望能帮到每一个有需要的人。
 
 ## Github 
 
@@ -35,13 +37,3 @@ Github 名片:
 - [AI 作品集](http://gallery.selfboot.cn/): 用 Claude3.5 和 GPT4 实现的有趣的作品，包括算法可视化，游戏，以及常用工具。
 - [html2notion](https://github.com/selfboot/html2notion): 一个简单的 Python 库，可以将 html 内容导入到 notion 笔记中。可以将印象笔记里面的笔记迁移到 notion 中去，尽量保留原来的格式。
 - [CS_Offer](https://github.com/selfboot/CS_Offer): 整理的计算机学科基础知识和主流编程语言相关内容，初衷是为了应付找工作，暂时没更新了。
-
-## 公众号
-
-会同步更新博客里面的文章，欢迎扫码关注：
-
-<div class="pure-g">
-  <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
-    <img src="https://slefboot-1251736664.file.myqcloud.com/20230914_wx_qrcode_2.png" style="height: 200px; margin-right: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-  </div>
-</div>

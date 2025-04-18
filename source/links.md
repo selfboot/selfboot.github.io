@@ -4,6 +4,8 @@ donate: false
 description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法律咨询，文书撰写，专项法律服务，背调，公证，合同修改。
 ---
 
+盛律师个人站点(拼音) [https://shenglvshi.cn/](https://shenglvshi.cn/), 有盛律师的大量有趣，实用，专业的法律文章。
+
 广东瑞轩律师事务所-执业律师。如有法律事务需求，可以加微信详聊：
 
 <div style="display: flex; justify-content: space-start;">
@@ -48,23 +50,23 @@ description: 小盛律师专业靠谱，经验丰富，接受委托诉讼，法�
 ## 法律普及文章
 
 劳动关系
-- [劳动合同到期不续签，一张图告诉你这些情况有钱可以拿！](https://selfboot.cn/2023/08/23/employment_renewal/)
-- [被裁员后的法律指南](https://selfboot.cn/2023/06/06/gpt4_lawer_helper/)
+- [劳动合同到期不续签，一张图告诉你这些情况有钱可以拿！](https://shenglvshi.cn/employment_renewal/)
+- [被裁员后的法律指南](https://shenglvshi.cn/gpt4_lawer_helper/)
 
 婚姻关系
 
-- [夫妻忠诚协议真的有用吗？](https://selfboot.cn/2023/08/21/loyalty-agreement/)
-- [当婚姻走到了尽头：必读的离婚法律指南](https://selfboot.cn/2023/07/21/divorce_legal_knowlage/)
-- [离婚法律指南：离婚流程要多久？](https://selfboot.cn/2023/08/05/divorce_legal_longtime/)
-- [必读的离婚法律指南：不得不防的恶意转移财产！](https://selfboot.cn/2023/09/08/divorce_money_hide/)
-- [必读的离婚法律指南：子女的抚养权、抚养费与探视权](https://selfboot.cn/2023/08/13/divorce_legal_children/)
-- [必读的离婚法律指南：财产分割](https://selfboot.cn/2023/07/23/divorce_legal_money/)
-- [离婚财产分割：父母给的首付钱如何分？](https://selfboot.cn/2023/07/29/divorce_legal_money_parent/)
+- [夫妻忠诚协议真的有用吗？](https://shenglvshi.cn/loyalty-agreement/)
+- [当婚姻走到了尽头：必读的离婚法律指南](https://shenglvshi.cn/divorce_legal_knowlage/)
+- [离婚法律指南：离婚流程要多久？](https://shenglvshi.cn/divorce_legal_longtime/)
+- [必读的离婚法律指南：不得不防的恶意转移财产！](https://shenglvshi.cn/divorce_money_hide/)
+- [必读的离婚法律指南：子女的抚养权、抚养费与探视权](https://shenglvshi.cn/divorce_legal_children/)
+- [必读的离婚法律指南：财产分割](https://shenglvshi.cn/divorce_legal_money/)
+- [离婚财产分割：父母给的首付钱如何分？](https://shenglvshi.cn/divorce_legal_money_parent/)
 
 刑事案件
-- [小盛律师解读帮信罪：条文、案例、防范与问答](https://selfboot.cn/2023/08/16/assisting_in_fraud/)
+- [小盛律师解读帮信罪：条文、案例、防范与问答](https://shenglvshi.cn/assisting_in_fraud/)
 
-更多文章可以在 [法律普及](https://selfboot.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/) 专栏看到，也可以关注小盛律师的微信公众号、小红书、抖音哦。
+更多文章可以在 [法律普及](https://shenglvshi.cn/categories/%E6%B3%95%E5%BE%8B%E6%99%AE%E5%8F%8A/) 专栏看到，也可以关注小盛律师的微信公众号、小红书、抖音哦。
 
 <div class="pure-g">
   <div class="pure-u-1 pure-u-md-1-3" style="width: auto;">
