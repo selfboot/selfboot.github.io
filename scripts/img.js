@@ -1,6 +1,6 @@
 const cheerio = require("cheerio");
 const path = require("path");
-const imageSize = require("image-size");
+const { imageSize } = require("image-size");
 const url = require("url");
 const fs = require("fs");
 
@@ -28,7 +28,8 @@ hexo.extend.filter.register("after_render:html", function (str, data) {
 
       // 检查文件是否存在
       if (fs.existsSync(imgPath)) {
-        const dimensions = imageSize(imgPath);
+        const buffer = fs.readFileSync(imgPath);
+        const dimensions = imageSize(buffer);
         const width = dimensions.width;
 
         const small = src + "/webp400";
