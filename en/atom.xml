@@ -15,10 +15,8 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Fri, 18 Apr 2025 16:36:47 GMT</pubDate>
+    <pubDate>Tue, 22 Apr 2025 03:34:01 GMT</pubDate>
     <generator>http://hexo.io/</generator>
-    
-    
     
     
     <item>
@@ -48,6 +46,10 @@
     
     
     
+    
+    
+    
+    
     <item>
       <title>LevelDB Explained - Elegant Merging of Write and Delete Operations</title>
       <link>https://selfboot.cn/en/2025/01/13/leveldb_source_write_batch/</link>
@@ -72,8 +74,6 @@
       <comments>https://selfboot.cn/en/2025/01/13/leveldb_source_write_batch/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -278,6 +278,8 @@
     
     
     
+    
+    
     <item>
       <title>Claude3.5&#39;s System Prompts - No Apologies, Face Blind, Hallucinate...</title>
       <link>https://selfboot.cn/en/2024/09/05/claude35_prompt/</link>
@@ -300,8 +302,6 @@
       <comments>https://selfboot.cn/en/2024/09/05/claude35_prompt/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
   </channel>
