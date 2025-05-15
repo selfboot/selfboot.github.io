@@ -15,8 +15,10 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Tue, 29 Apr 2025 12:50:37 GMT</pubDate>
+    <pubDate>Thu, 15 May 2025 02:44:54 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    
     
     
     <item>
@@ -43,8 +45,6 @@
       <comments>https://selfboot.cn/en/2025/01/24/leveldb_source_writedb/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -77,8 +77,6 @@
     
     
     
-    
-    
     <item>
       <title>5 Real-world Cases of C++ Process Crashes from Production</title>
       <link>https://selfboot.cn/en/2025/01/10/c++_crash_cases/</link>
@@ -101,6 +99,10 @@
       <comments>https://selfboot.cn/en/2025/01/10/c++_crash_cases/#disqus_thread</comments>
       
     </item>
+    
+    
+    
+    
     
     
     
@@ -128,8 +130,6 @@
       <comments>https://selfboot.cn/en/2025/01/02/leveldb_source_thread_anno/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
