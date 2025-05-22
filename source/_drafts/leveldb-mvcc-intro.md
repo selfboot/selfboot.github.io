@@ -31,7 +31,7 @@ MVCC([Multi-Version Concurrency Control](https://en.wikipedia.org/wiki/Multivers
 
 ### LevelDB 键带版本格式
 
-实现 MVCC 的前提是，**每个键都保存多个版本**。所以要设计一个数据结构，把键和版本号关联起来。LevelDB 的内部 key 格式如下：
+实现 MVCC 的前提是，**每个键都保存多个版本**。所以要设计一个数据结构，把键和版本号关联起来。LevelDB 设计的 key 格式如下：
 
 > [key][sequence<<8|type]
 
@@ -90,7 +90,19 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 }
 ```
 
-可以看到这里同一个 key 的多次写入会产生多个版本，每个版本都有唯一的 sequence number，较新的版本（sequence number 更大）会排在前面。
+可以看到这里同一个 key 的多次写入会产生多个版本，每个版本都有唯一的 sequence number。
+
+
+LevelDB中的SST文件中，键是按照特定的顺序排列的，这种排序设计非常精巧，有几个关键方面：
+1. 排序方式
+首先，内部键(InternalKey)由三部分组成：
+用户键(user key)
+序列号(sequence number)
+值类型(value type)
+排序规则如下：
+用户键：升序排列（按用户提供的比较器顺序）
+序列号：降序排列（较新的序列号在前）
+值类型：降序排列（通常序列号已足够区分）
 
 ### 读取键值过程
 
