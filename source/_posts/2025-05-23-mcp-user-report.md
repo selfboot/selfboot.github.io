@@ -1,9 +1,10 @@
 ---
-title: 使用 Cursor 深度体验了 5 个 MCP Server，惊艳但并不实用
+title: 使用 Cursor 深度体验 3 个 MCP Server，惊艳但并不实用?
 tags: [LLM]
 category: 人工智能
 toc: true
-description: 
+description: 文章详细介绍了MCP的背景起源、与OpenAI Function Calling的关系，以及如何在Cursor中配置使用MCP Server。分别体验了网页自动化操作、Github仓库信息分析、图表生成等实用场景，发现MCP在Github代码分析方面表现惊艳，但网页操作仍有局限。文章同时指出MCP的核心限制：依然依赖大模型的function calling能力，受Token数量限制影响。虽然MCP为AI工具调用提供了标准化解决方案，但目前实用价值有限，更多是技术尝鲜阶段，期待未来随着模型能力提升带来更大突破。
+date: 2025-05-23 11:39:14
 ---
 
 大语言模型刚出来的时候，只是通过预训练的模型来生成回答内容。这个时候的模型有两个主要的缺点：
@@ -15,11 +16,13 @@ description:
 
 ## 背景：理解 Function Calling
 
-这时候，我们就可以告诉模型，我有这么几个工具，每个工具需要什么参数，然后能做什么事情，输出什么内容。这样我们就可以告诉模型，我需要做什么事情，模型会帮我们选择合适的工具，并解析出参数。之后我们可以执行相应的工具，拿到结果。并可以接着循环这个过程，让 AI 根据工具结果继续决定往下做什么事情。
+这时候，我们就可以告诉模型，我有这么几个工具，每个工具需要什么参数，然后能做什么事情，输出什么内容。当模型收到具体任务的时候，会帮我们选择合适的工具，并解析出参数。之后我们可以执行相应的工具，拿到结果。并可以接着循环这个过程，让 AI 根据工具结果继续决定往下做什么事情。
 
-我在网上找了个动图，可以来理解下：
+我在网上找了个动图，可以来理解下有了 function calling 后，做事情的流程：
 
 ![理解 function calling过程](https://slefboot-1251736664.file.myqcloud.com/20250522_mcp_user_report_functioncalling.webp)
+
+<!-- more -->
 
 当然这里大模型只是根据我们给的工具列表，选择合适的工具，并解析出参数。它不能直接去调用工具，我们需要**编程实现工具调用部分**，可以参考 OpenAI 的 [Function calling 文档](https://platform.openai.com/docs/guides/function-calling?api-mode=responses)。
 
@@ -29,9 +32,11 @@ description:
 
 但是有个问题，就是不同厂商 function calling 实现各不相同，开发者需要为每个平台单独适配。另外开发者还需要编写代码来解析 function calling 的输出，并调用相应的工具。这里面有不少工程的工作，比如失败重试、超时处理、结果解析等。
 
-计算机领域，**没有什么是不能通过加个中间层来解决的**。[Anthropic 在2024年11月25日推出了 MCP 协议](https://www.anthropic.com/news/model-context-protocol)，引入了 MCP Client 和 MCP Server 这个中间层，来解决解决 LLM 应用与外部数据源和工具之间通信的问题。
+计算机领域，**没有什么是不能通过加个中间层来解决的**。过了一年多，随着模型能力提升，各种外部工具的丰富，[Anthropic 在2024年11月25日推出了 MCP 协议](https://www.anthropic.com/news/model-context-protocol)，引入了 MCP Client 和 MCP Server 这个中间层，来解决解决 LLM 应用与外部数据源和工具之间通信的问题。
 
-这里有个图，可以帮助你理解 MCP 协议：
+当然其实这中间也有一些其他方案，来赋予模型调用外部工具的能力，比如 OpenAI 推出的 [ChatGPT Store](https://openai.com/index/introducing-the-gpt-store/)，曾经也火了一阵子的 [GTPs](https://chatgpt.com/gpts)，不过目前似乎很少看到人用了。
+
+目前比较流行的就是 MCP 了，这里有个图，可以帮助你理解：
 
 ![理解什么是 MCP](https://slefboot-1251736664.file.myqcloud.com/20250522_mcp_user_report_whatismcp.webp)
 
@@ -39,7 +44,7 @@ description:
 
 ## Cursor MCP 使用方法
 
-Cursor 接入 MCP 还是挺方便的，对于大部分不需要密钥的 MCP Server，基本一个配置就能接入。现在 MCP 发展还挺快，所以建议大家直接去看 [Cursor 的官方文档](https://docs.cursor.com/context/model-context-protocol)，获取最新信息。网上不少教你如何配置的文章，其实都过时了。
+在使用之前，我先简单介绍下 Cursor 使用 MCP 的方法。Cursor 接入 MCP 还是挺方便的，对于大部分不需要密钥的 MCP Server，基本一个配置就能接入。现在 MCP 发展还挺快，所以建议大家直接去看 [Cursor 的官方文档](https://docs.cursor.com/context/model-context-protocol)，获取最新信息。网上不少教你如何配置的文章，其实都过时了。
 
 这里我给大家介绍下配置的整体思想，方便你理解文档。Cursor 在这里相当于 AI 应用，它内置了 MCP Client，所以你不用管 Client 部分了。你只需要告诉他你有哪些 MCP Server，然后在会话聊天中 Cursor 会自动调用工具并使用它的结果。
 
@@ -57,7 +62,7 @@ uvx mcp-server-browser-use@latest
 docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-server
 ```
 
-有时候 MCP Server 里面还需要一些配置，比如 Github 的 API 密钥，这时候就需要你手动配置了。建议可以把密钥配置到环境变量中，**千万不要把密钥上传到代码仓库**哦。
+有时候 MCP Server 里面还需要一些配置，比如 Github 的 API 密钥，这时候就需要你手动配置了。提醒下你要把密钥配置到环境变量中，**千万不要把密钥上传到代码仓库**哦。
 
 具体到某个 MCP Server，你可以参考它的文档，看如何配置，应该没什么难度。配置好 json 后，Cursor 会自动识别，你可以打开这个 MCP Server，过一会看到绿色标记和列出来的工具，就说明配置成功了。
 
@@ -90,7 +95,7 @@ docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-ser
 
 ## MCP 体验二：Github 仓库信息分析
 
-再来试试 Cursor 官方例子中的 [Github MCP Server](https://github.com/github/github-mcp-server)，它支持搜索仓库、代码、issue，创建 PR 等。我想到一个场景就是，遇到一个火的项目，可以先让 AI 总结下目前比较火的 PR 或者 Issue，然后看看有没有可以贡献的地方。当然了，如果 AI 找到有价值的 Issue，然后再分析代码，给出解决方案，那这个价值就更大了。
+再来试试 Cursor 官方例子中的 [Github MCP Server](https://github.com/github/github-mcp-server)，它支持搜索仓库、代码、issue，创建 PR 等。我想到一个场景就是，遇到一个火的项目，可以先让 AI 总结下目前比较火的 PR 或者 Issue，然后看看有没有可以贡献的地方。当然了，如果 AI 找到有价值的 Issue，然后再分析代码，给出解决方案，并自动提交代码，那这个价值就更大了。
 
 当然，咱先拆分问题，来个低难度的信息收集：
 
@@ -129,12 +134,43 @@ docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-ser
 
 检查了几个，没什么大问题，这个我还是挺满意的。遇到一个大的项目，能够快速找到大家讨论多的 Issue，然后分析下，确实能帮上忙。不过我怀疑这里没找完，只有 3 页，其实一共 200 多个 Issue 呢。
 
-## MCP 体验三：具体 App 应用
+然后继续聚焦其中一个 [PR #917](https://github.com/google/leveldb/pull/917)，让他给我分析下。刚好今天 Claude 推出了 Sonnet 4 模型，用这个新的模型让他分析下。不得不说，针对这种拆解开的小的问题，AI 分析还是很强的。
 
+先是收集了这个 PR 的评论，PR 的代码改动，然后还拉了这个 PR 提到的另外 2 个 Issue，**综合了这么多信息后，给出了一个详细的分析**。分析也十分给力，先是问题描述，问题背景和表现，接着是提议的解决方案，社区针对这个方案的讨论焦点，比如性能影响，作者回应等。最后还给出这个 PR 的当前状态，从 2021 年 6 月提交至今，还没合并进去。这里的分析太惊艳了，看来后面遇到一些开源项目的问题，还是可以来用下的。
+
+这里是截图：
+
+![Github MCP PR 信息分析](https://slefboot-1251736664.file.myqcloud.com/20250523_mcp_user_report_githubissue.webp)
+
+当然看了下 Github MCP Server 的文档，这里不止是提供了读仓库，读 Issue 的能力，还有修改仓库的能力。包括提交 PR，创建 Issue，创建评论，创建标签，新建分支等。我还没来得及深入使用下这些会改动仓库的功能，等后面有机会再接着体验。
+
+## MCP 体验三：图表生成
+
+有时候会经常根据数据生成一些好看的报表，之前还有 AI 写了一个工具，来[生成动态柱状图](https://gallery.selfboot.cn/zh/tools/chartrace)。现在有了 MCP 后，可以试试让 AI 来生成图表。其实有不少很酷的生成图表的库，比如 echarts 这些。看了下现在没有官方的图表库，不过找到了一个 [mcp-server-chart](https://github.com/antvis/mcp-server-chart?tab=readme-ov-file)，它支持生成 echarts 的图表。
+
+这里有[最近 10 年中国各省份人口变化的动态竞速图](https://gallery.selfboot.cn/zh/tools/chartrace/dynamic/china_population)，导了一份数据出来，然后试试 MCP Server 生成图表效果如何。
+
+直接给它一份文件，然后提示：
+
+> @china_population.csv 结合这份中国人口变化数据，生成一个 2022 年和2023 年各省份人口的柱状图
+
+这里用的 Claude 4 Sonnet 模型，成功调用了 mcp-server-chart 的 generate_column_chart 工具，生成了图表。不过这个工具返回的是图片 URL，需要去输出里复制出来打开才能看。其实 Cursor 支持输出图片的 Base64 编码，这样聊天里也能加载出来。工具返回的图片地址[在这](https://mdn.alipayobjects.com/one_clip/afts/img/w099SKFp0AMAAAAAAAAAAAAAoEACAQFr/original)，效果如下：
+
+![MCP 生成柱状图](https://slefboot-1251736664.file.myqcloud.com/20250523_mcp_user_report_echart.webp)
+
+然后我发现这个工具支持其他类型的图表，比如折线图，散点图，饼图等。有个图我不知道啥图，但效果还挺好的，我就截了个图给 Claude，提示：
+
+> 参考这张图，生成一个 2023 年各省人口的图
+
+它先分析这是一个树状图，然后帮我生成了结果，还解释了下。解释超大矩形块是广东省，占据最大面积，提现了人口第一大省的地位。生成图[地址在这](https://mdn.alipayobjects.com/one_clip/afts/img/6CQ6TKSrI_sAAAAAAAAAAAAAoEACAQFr/original)，我这里也放出来吧：
+
+![MCP 生成人口树状图](https://slefboot-1251736664.file.myqcloud.com/20250523_mcp_user_report_echart_treemap.webp)
+
+效果还是可以的。目前这个工具每个图表一个 Tool，支持的图表类型还是有限的。
 
 ## MCP 使用限制
 
-首先咱们要明确一点，MCP 协议只是加了个 Server 和 Client 的中间层，它还是要依赖 LLM 的 function calling 能力。而 function calling 会受到 LLM 的上下文长度限制，工具的描述信息，参数等都会占用 Token。
+目前的 MCP 还是存在一些限制的，首先咱们要明确一点，MCP 协议只是加了个 Server 和 Client 的中间层，它**还是要依赖 LLM 的 function calling 能力**。而 function calling 会受到 LLM 的上下文长度限制，工具的描述信息，参数等都会占用 Token。
 
 当工具数量太多或者描述复杂的时候，可能会导致 Token 不够用。另外，就算 Token 够用，如果提供的工具描述过多，也会导致模型效果下降。[OpenAI 的文档](https://platform.openai.com/docs/guides/function-calling?api-mode=responses#token-usage)也有提到：
 
@@ -152,6 +188,14 @@ MCP 基于 function calling 能力，所以也有同样的限制。MCP server �
 
 ![MCP Server 列表](https://slefboot-1251736664.file.myqcloud.com/20250522_mcp_user_report_cursor_allmcps.webp)
 
-我看了半天，没发现什么让我怦然心动的 MCP Server，前面试过的几款，确实有些不错的亮点功能，但还不能让我觉得有特别大的价值。尝鲜之后，也就就束之高阁了。
+大致看了下，觉得有些 MCP Servers 后面可能会继续尝试用一用。
+
+- [firecrawl-mcp-server](https://github.com/mendableai/firecrawl-mcp-server): 这个工具可以搜索网页，并导出网页内容。还支持搜索，深度研究以及批量爬取。感觉后面写一些文章的时候，可以用来收集参考资料。爬网页这个需求还是会有的，也有不少类似的 MCP Server，后面都可以玩玩看了。
+- [MiniMax-MCP](https://github.com/MiniMax-AI/MiniMax-MCP): 最近 MiniMax 的语言合成冲到了榜首，体验了下确实很不错。有几十款音色，每个都很有特色，听起来几乎就是真人的了。这款 MCP Server 支持调用 MiniMax 的合成接口，可以用来生成一些语音内容，来尝尝鲜也是可以的。
+- [mcp-clickhouse](https://github.com/ClickHouse/mcp-clickhouse): 这类 DB 操作类的 MCP Server 如果足够强大的话也不错，可以聊着天就把数据查出来了，对普通人来说足够了。再配合图表类的 MCP Server，真的就能一句话把数据可视化出来。这里不止 Clickhouse 有，Mysql，Sqlite，Redis 这些都有 MCP Server，后面可以试试。
+
+就目前试过的几款，确实有些不错的亮点功能，但还不能让我觉得有特别大的价值。尝鲜之后，也就就束之高阁了。也就 Github MCP Server 让我觉得后面可能会用得到。
+
+不过文章还没写好 Claude Sonnet 4 模型就发布了，号称世界上最强编程模型。推理能力也有很大提升，等后面多用一段时间，才能有一个真实的体感。或许随着模型能力提升，各个 MCP Server 的持续优化，有一天终会变成大家每天都离不开的工具吧。
 
 不知道各位有什么好的 MCP Server 使用场景吗？欢迎留言讨论。
