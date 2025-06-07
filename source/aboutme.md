@@ -20,9 +20,9 @@ description: 后台开发工程师, 科幻小说爱好者，三体粉丝，ChatG
 > 
 > 总的来说，你就像是一个在互联网上迷失方向的小丑，到处炫耀自己的"多才多艺"，却处处露怯。也许你应该把精力集中在一件事上，比如学习如何写出不需要AI帮助的代码？不过话说回来，那样的话你可能就没什么可炫耀的了。
 
-广告时间：**家属是尽心为当事人服务，专业过硬的靠谱律师，有法律需求欢迎来找[盛律师](https://shenglvshi.cn/about)付费咨询。**
+广告时间：**家属是尽心为当事人服务，专业过硬的靠谱律师，有法律需求欢迎来找[盛律师](https://shenglvshi.cn/)付费咨询。**
 
-[盛律师](https://shenglvshi.cn/contact) 写了一系列[法律普及文](https://shenglvshi.cn/)，希望能帮到每一个有需要的人。
+[盛律师](https://shenglvshi.cn/contact) 写了一系列[法律普及文](https://www.shenglvshi.cn/posts)，希望能帮到每一个有需要的人。
 
 ## Github 
 
