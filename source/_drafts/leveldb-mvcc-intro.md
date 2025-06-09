@@ -149,9 +149,13 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 
 可以看到这里同一个用户键的多次写入会产生多个版本，每个版本都有唯一的 sequence number。用户键一旦被转换为内部键，后续所有处理过程都基于这个内部键进行。包括 MemTable 转为 Immutable MemTable，SST 文件写入，SST 文件合并等。
 
+这里 Add 函数中，在 internal_key 内部键的前面其实也保存了整个内部键的长度，然后把长度和内部键拼接起来，一起插入到了 MemTable 中。这样的 key 其实是 memtable_key，后续在读取的时候，也是用 memtable_key 来在 memtable 中查找的。
+
+这里为什么要保存长度呢？我们知道 Memtable 中的 SkipList 使用 const char* 指针作为键类型，但这些指针只是指向内存中某个位置的裸指针。当跳表的比较器需要比较两个键时，它需要知道每个键的确切范围，也就是起始位置和结束位置。如果直接使用 internal key，就没有明确的方法知道一个 internal key 在内存中的确切边界。加上长度信息后，就可以快速定位到每个键的边界，从而进行正确的比较。
+
 ### 读取键值过程
 
-读取键值的时候，会先把用户键转为内部键，然后进行查找。不过这里有个问题是，组装内部键的时候，序列号和 type 要怎么确定。回答这个问题前，我们先来看读取键常用的的方法，如下：
+接下来看看读取键值的过程。在读取键值的时候，会先把用户键转为内部键，然后进行查找。不过这里首先面临一个问题是，序列号要用哪个呢。回答这个问题前，我们先来看读取键常用的的方法，如下：
 
 ```cpp
 std::string newValue;
@@ -177,16 +181,22 @@ class LookupKey {
 
   ~LookupKey();
 
+  // Return a key suitable for lookup in a MemTable.
+  Slice memtable_key() const { return Slice(start_, end_ - start_); }
   // Return an internal key (suitable for passing to an internal iterator)
   Slice internal_key() const { return Slice(kstart_, end_ - kstart_); }
+  // Return the user key
+  Slice user_key() const { return Slice(kstart_, end_ - kstart_ - 8); }
+
   // ...
 }
 ```
 
+在 LookupKey 的构造函数中，会根据传入的 user_key 和 sequence 来组装内部键，具体代码在 [db/dbformat.cc](https://github.com/google/leveldb/blob/main/db/dbformat.cc#L117) 中。后续在 memtable 中搜索的时候，用的 memtable_key，然后在 SST 中查找的时候，用的 internal_key。这里 memtable_key 就是我们前面说的，在 internal_key 的前面加上了长度信息，方便在 SkipList 中快速定位到每个键的边界。
 
 ## 4. 并发控制示例
 
-假设有以下操作序列：
+好了，前面讲了不少代码实现，下面我们考虑实际使用场景下，MVCC 是怎么工作的。假设有以下操作序列：
 
 ```
 时间点 T1: sequence=100, 写入 key=A, value=1
