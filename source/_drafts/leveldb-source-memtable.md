@@ -4,23 +4,94 @@ tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
+mathjax: true
+date: 2025-06-10 17:47:42
 ---
 
-在 LevelDB 中，所有的写操作首先都会被记录到一个 [Write-Ahead Log（WAL，预写日志）](/leveldb-source-wal-log)中，以确保持久性。接着数据会被存储在 MemTable 中，MemTable 的主要作用是**在内存中有序存储最近写入的数据**，到达一定条件后批量落磁盘。
+在 LevelDB 中，所有的写操作首先都会被记录到一个 [Write-Ahead Log（WAL，预写日志）](https://selfboot.cn/2024/08/14/leveldb_source_wal_log/)中，以确保持久性。接着数据会被存储在 MemTable 中，MemTable 的主要作用是**在内存中有序存储最近写入的数据**，到达一定条件后批量落磁盘。
 
 LevelDB 在内存中维护两种 MemTable，一个是可写的，接受新的写入请求。当达到一定的大小阈值后，会被转换为一个不可变的 Immutable MemTable，接着会触发一个后台过程将其写入磁盘形成 SSTable。这个过程中，会创建一个新的 MemTable 来接受新的写入操作。这样可以保证写入操作的连续性，不受到影响。
 
-在读取数据时，LevelDB 首先查询 MemTable。如果在 MemTable 中找不到，然后会依次查询不可变的 Immutable MemTable，最后是磁盘上的 SSTable 文件。
+在读取数据时，LevelDB 首先查询 MemTable。如果在 MemTable 中找不到，然后会依次查询不可变的 Immutable MemTable，最后是磁盘上的 SSTable 文件。在 LevelDB 的实现中，不管是 MemTable 还是 Immutable MemTable，内部其实都是用 class MemTable 来实现的。这篇文章我们来看看 memtable 的实现细节。
 
 <!-- more -->
 
-本篇文章一起来看看 Memtable 是怎么实现的。
+## Memtable 使用方法
+
+先来看看 LevelDB 中哪里用到了 MemTable 类。在库的核心 DB [实现类 DBImpl](https://github.com/google/leveldb/blob/main/db/db_impl.h#L177) 中，可以看到有两个成员指针，
+
+```cpp
+class DBImpl : public DB {
+ public:
+  DBImpl(const Options& options, const std::string& dbname);
+  //...
+  MemTable* mem_;
+  MemTable* imm_ GUARDED_BY(mutex_);  // Memtable being compacted
+  //...
+}
+```
+
+mem_ 是可写的 memtable，imm_ 是不可变的 memtable。这两个是数据库实例中唯一的两个 memtable 对象，用来存储最近写入的数据，在读取和写入键值的时候，都会用到这两个 memtable。
+
+我们先来看写入过程，我之前写过[LevelDB 源码阅读：写入键值的工程实现和优化细节](https://selfboot.cn/2025/01/24/leveldb_source_writedb/)，里面有写入键值的全部过程。写入过程中，写入 WAL 日志成功后，会调用 [db/write_batch.cc](https://github.com/google/leveldb/blob/main/db/write_batch.cc#L121) 中的 MemTableInserter 类来写入 memtable，具体代码如下：
+
+```cpp
+// db/write_batch.cc
+class MemTableInserter : public WriteBatch::Handler {
+ public:
+  SequenceNumber sequence_;
+  MemTable* mem_;
+
+  void Put(const Slice& key, const Slice& value) override {
+    mem_->Add(sequence_, kTypeValue, key, value);
+    sequence_++;
+  }
+  //...
+};
+```
+
+这里调用了 Add 接口往 memtable 中写入键值对，sequence_ 是写入的序列号，kTypeValue 是写入的类型，key 和 value 是用户传入的键值对。 
+
+除了写入过程，在读取键值对的时候，也会需要 Memtable 类。具体在 [db/db_impl.cc](https://github.com/google/leveldb/blob/main/db/db_impl.cc#L1147) 中 DBImpl 类的 Get 方法中，会调用 memtable 的 Get 方法来查询键值对。
+
+```cpp
+Status DBImpl::Get(const ReadOptions& options, const Slice& key,
+                   std::string* value) {
+  // ...
+  MemTable* mem = mem_;
+  MemTable* imm = imm_;
+  Version* current = versions_->current();
+  mem->Ref();
+  if (imm != nullptr) imm->Ref();
+  // Unlock while reading from files and memtables
+  {
+    mutex_.Unlock();
+    LookupKey lkey(key, snapshot);
+    if (mem->Get(lkey, value, &s)) {
+      // Done
+    } else if (imm != nullptr && imm->Get(lkey, value, &s)) {
+      // Done
+    }
+    mutex_.Lock();
+  }
+
+  // ...
+  mem->Unref();
+  if (imm != nullptr) imm->Unref();
+  // ...
+```
+
+这里会先创建本地指针 mem 和 imm 来引用成员变量 mem_ 和 imm_，之后用本地指针来进行读取。这里有个问题是，**<span style="color:red">为什么不直接使用成员变量 mem_ 和 imm_ 来读取呢</span>**？这个问题留到后面我们再回答。
+
+好了，至此我们已经看到了 Memtable 的主要使用方法了，那它们内部是怎么实现的呢，我们接着看吧。
 
 ## Memtable 实现
 
-MemTable 内部使用跳表（Skip List）来存储键值对，跳表提供了平衡树的大部分优点（如有序性、插入和查找的对数时间复杂性），但是实现起来更为简单。关于跳表的详细实现，可以参考[LevelDB 源码阅读：从原理到实现深入理解跳表](/leveldb_source_skiplist)。
+在开始讨论 MemTable 对外方法的实现之前，先要知道 Memtable 中的数据其实是存储在跳表中的。跳表提供了平衡树的大部分优点（如有序性、插入和查找的对数时间复杂性），但是实现起来更为简单。关于跳表的详细实现，可以参考[LevelDB 源码阅读：跳表的原理、实现以及可视化](https://selfboot.cn/2024/09/09/leveldb_source_skiplist/)。
 
-类内部来声明了一个跳表对象 table_ 成员变量，跳表的 key 是 `const char*` 类型，value 是 `KeyComparator` 类型。KeyComparator 是一个自定义的比较器，它包含了一个 `InternalKeyComparator` 类型的成员变量 comparator，用来比较 internal key 的大小。比较器的 `operator()` 重载了函数调用操作符，先解码 length-prefixed string，拿到 internal key 然后调用 comparator 的 Compare 方法来比较大小。 
+MemTable 类内部来声明了一个跳表对象 table_ 成员变量，跳表的 key 是 `const char*` 类型，value 是 KeyComparator 类型。跳表中键值是有序的，所以肯定需要指定 key 的排序方法，这里 KeyComparator 就是这样一个自定义的比较器。
+
+KeyComparator 包含了一个 InternalKeyComparator 类型的成员变量 comparator，用来比较 internal key 的大小。KeyComparator 比较器的 `operator()` 重载了函数调用操作符，先从 const char* 中解码出 internal key，然后然后调用 InternalKeyComparator 的 Compare 方法来比较 internal key 的大小。具体实现在 [db/memtable.cc](https://github.com/google/leveldb/blob/main/db/memtable.cc#L28) 中。
 
 ```cpp
 int MemTable::KeyComparator::operator()(const char* aptr,
@@ -32,43 +103,17 @@ int MemTable::KeyComparator::operator()(const char* aptr,
 }
 ```
 
-这里 levelDB 的 **internal key** 其实是拼接了用户传入的 key 和内部的 sequence number，然后再加上一个类型标识。这样可以保证相同 key 的不同版本是有序的，具体的比较方法在 `db/dbformat.cc` 中的 InternalKeyComparator::Compare。
+再补充说下这里 levelDB 的 **internal key** 其实是拼接了用户传入的 key 和内部的 sequence number，然后再加上一个类型标识。这样可以保证相同 key 的不同版本是有序的，从而实现 MVCC 并发读写。存储到 Memtable 的时候又在 internal key 前面编码了长度信息，叫 `memtable key`，这样后面读取的时候，我们就能从 const char* 的 memtable key 中根据长度信息解出 internal key 来。这部分我在另一篇文章：[LevelDB 源码阅读：结合代码理解多版本并发控制(MVCC)](https://selfboot.cn/2025/06/10/leveldb_mvcc_intro/) 有详细分析，感兴趣的可以看看。
 
-Memtable 封装后的跳表，主要支持下面两个方法：
+Memtable 用跳表做存储，然后对外主要支持 Add 和 Get 方法，下面来看看这两个函数的实现细节。
 
-```cpp
-  // Add an entry into memtable that maps key to value at the
-  // specified sequence number and with the specified type.
-  // Typically value will be empty if type==kTypeDeletion.
-  void Add(SequenceNumber seq, ValueType type, const Slice& key,
-           const Slice& value);
+### Add 添加键值对
 
-  // If memtable contains a value for key, store it in *value and return true.
-  // If memtable contains a deletion for key, store a NotFound() error
-  // in *status and return true.
-  // Else, return false.
-  bool Get(const LookupKey& key, std::string* value, Status* s);
-```
+Add 方法用于往 MemTable 中添加一个键值对，其中 key 和 value 是用户传入的键值对，SequenceNumber 是写入时的序列号，ValueType 是写入的类型，有两种类型：kTypeValue 和 kTypeDeletion。kTypeValue 表示插入操作，kTypeDeletion 表示删除操作。LevelDB 中的删除操作，内部其实是插入一个标记为删除的键值对。
 
-下面来看看这两个函数的实现。
-
-### Add 添加 key
-
-Add 方法用于往 MemTable 中添加一个键值对，其中 key 和 value 是用户传入的键值对，sequence number 是写入时的序列号，value type 是写入的类型，有两种类型：kTypeValue 和 kTypeDeletion。kTypeValue 表示插入操作，kTypeDeletion 表示删除操作。LevelDB 中的删除操作，内部其实是插入一个标记为删除的键值对。
-
-在 LevelDB 的 `db/write_batch.cc` 中定义的 MemTableInserter 类中有写入 memtable 的逻辑，主要是调用 MemTable 的 Add 方法来添加键值对。这里 write_batch 的实现，可以参考 [LevelDB 源码阅读：批量写的优雅设计](/leveldb_source_write_batch/)。
+Add 实现在 [db/memtable.cc](https://github.com/google/leveldb/blob/main/db/memtable.cc#L76) 中，函数定义如下：
 
 ```cpp
-  void Put(const Slice& key, const Slice& value) override {
-    mem_->Add(sequence_, kTypeValue, key, value);
-    sequence_++;
-  }
-```
-
-下面来看看具体的写入逻辑：
-
-```cpp
-// db/memtable.cc
 void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
                    const Slice& value) {
   // Format of an entry is concatenation of:
@@ -77,6 +122,25 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
   //  tag          : uint64((sequence << 8) | type)
   //  value_size   : varint32 of value.size()
   //  value bytes  : char[value.size()]
+  //...
+```
+
+这里的注释十分清楚，Memtable 中存储了格式化后的键值对，先是 internal key 的长度，然后是 internal key 字节串，接着是 value 的长度，然后是 value 字节串。整体由 5 部分组成，格式如下：
+
+```cpp
++-----------+-----------+----------------------+----------+--------+
+| Key Size  | User Key  |          tag         | Val Size | Value  |
++-----------+-----------+----------------------+----------+--------+
+| varint32  | key bytes | 64 位，后 8 位为 type  | varint32 | value  |
+```
+
+这里第一部分的 keysize 是用 Varint 编码的用户 key 长度加上 8 字节 tag，tag 是序列号和 value type 的组合，高 56 位存储序列号，低 8 位存储 value type。其他部分比较简单，这里不再赘述。
+
+插入过程会先计算出需要分配的内存大小，然后分配内存，接着写入各个部分的值，最后插入到跳表中。具体写入过程代码如下：
+
+```cpp
+// db/memtable.cc
+  // ...
   size_t key_size = key.size();
   size_t val_size = value.size();
   size_t internal_key_size = key_size + 8;
@@ -96,25 +160,25 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 }
 ```
 
-这里的 `EncodeVarint32` 和 `EncodeFixed64` 是一些编码函数，用来将整数编码到字节流中。具体可以参考[LevelDB 源码阅读：utils 组件代码](/leveldb_source_utils#整数编、解码)。整体写跳表的代码很清晰，首先计算出存储到跳表中需要的内存大小 encoded_len，接着用 arena_ 分配了相应的内存 buf，然后写入各个部分的值，最后插入到跳表中。
+这里的 `EncodeVarint32` 和 `EncodeFixed64` 是一些编码函数，用来将整数编码到字节流中。具体可以参考[LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码](https://selfboot.cn/2024/08/29/leveldb_source_utils/)。接下来看看查询键的实现。
 
-这里写入键值对的格式在代码注释中写的很清晰，主要由 5 部分组成：
+### Get 查询键值
+
+查询方法的定义也比较简单，如下：
 
 ```cpp
-+-----------+-----------+----------------------+----------+--------+
-| Key Size  | User Key  |          tag         | Val Size | Value  |
-+-----------+-----------+----------------------+----------+--------+
-| varint32  | key bytes | 64 位，后 8 位为 type  | varint32 | value  |
+  // If memtable contains a value for key, store it in *value and return true.
+  // If memtable contains a deletion for key, store a NotFound() error
+  // in *status and return true.
+  // Else, return false.
+  bool Get(const LookupKey& key, std::string* value, Status* s);
 ```
 
-这里第一部分的 keysize 是用 Varint 编码的用户 key 长度加上 8 字节 tag，tag 是序列号和 value type 的组合，高 56 位存储序列号，低 8 位存储 value type。其他部分比较简单，这里不再赘述。
+这里接口传入的 key 并不是用户输入 key，而是一个 LookupKey 对象，在 [db/dbformat.h](https://github.com/google/leveldb/blob/main/db/dbformat.h#L184) 中有定义。这是因为 levelDB 中同一个用户键可能有不同版本，查询的时候必须指定快照(也就是序列号)，才能拿到对应的版本。所以用 LookupKey 对象，根据用户输入的 key 和 sequence number 来初始化，然后就可以拿到需要的键值格式。
 
-### Get 查询 key
-
-从 memtable 中查询 key 主要是通过跳表的 Seek 方法来查找 key，然后根据 key 的 tag 来确定返回结果。完整代码如下：
+具体到查找过程，先用 LookupKey 对象的 memtable_key 方法拿到前面提到的 memtable key，然后调用跳表的 Seek 方法来查找。[db/memtable.cc](https://github.com/google/leveldb/blob/main/db/memtable.cc#L102) 中 Get 方法的完整实现如下：
 
 ```cpp
-// db/memtable.cc
 bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
   Slice memkey = key.memtable_key();
   Table::Iterator iter(&table_);
@@ -146,13 +210,13 @@ bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
 }
 ```
 
-这里接口传入的 key 是一个 LookupKey 对象，在 `db/dbformat.h` 中有定义，它包含了用户查询的 key 和 sequence number。在查询时，先用 LookupKey 对象的 memtable_key 方法拿到前面提到的 internal key，然后调用跳表的 Seek 方法来查找。Seek 方法将迭代器定位到链表中**第一个大于等于目标内部键的位置**，接着需要验证该键的 key 与用户查询的 key 是否一致。因为可能存在多个具有相同前缀的键，Seek 可能会返回与查询键具有相同前缀的不同键。例如，查询 "app" 可能返回 "apple" 的记录。
+我们知道，跳表的 Seek 方法将迭代器定位到链表中**第一个大于等于目标内部键的位置**，所以我们还需要额外验证该键的 key 与用户查询的 key 是否一致。这是因为可能存在多个具有相同前缀的键，Seek 可能会返回与查询键具有相同前缀的不同键。例如，查询 "app" 可能返回 "apple" 的记录。
 
-这里并没有检查 internal key 中的序列号，这是为什么呢？前面也提到在跳表中，内部键的排序是基于内部键比较器 (InternalKeyComparator) 来进行的，这里的**排序要看键值和序列号**。首先**使用用户定义的比较函数（如按字典顺序）比较用户键**，键值小的靠前。如果用户键相同，则比较序列号，**序列号的比较是反向的，即序列号大的记录在跳表中位置更前**。这是因为我们通常希望对于相同的用户键，更新的更改（即具有更大序列号的记录）应该被优先访问。
+这里注释还特别说明了下，我们**并没有检查 internal key 中的序列号，这是为什么呢**？前面也提到在跳表中，键的排序是基于内部键比较器 (InternalKeyComparator) 来进行的，这里的排序要看键值和序列号。首先**会使用用户定义的比较函数（默认是字典顺序）比较用户键**，键值小的靠前。如果用户键相同，则比较序列号，**序列号大的记录在跳表中位置更前**。这是因为我们通常希望对于相同的用户键，更新的更改（即具有更大序列号的记录）应该被优先访问。
 
-比如有两个内部键，Key1 = "user_key1", Seq = 1002 和 Key1 = "user_key1", Seq = 1001。在跳表中，第一个记录（Seq = 1002）将位于第二个记录（Seq = 1001）之前，因为1002 > 1001。当用 Seek 查找“user_key1”时，首先会找到 Seq = 1002 的记录。
+比如有两个内部键，Key1 = "user_key1", Seq = 1002 和 Key1 = "user_key1", Seq = 1001。在跳表中，第一个记录（Seq = 1002）将位于第二个记录（Seq = 1001）之前，因为1002 > 1001。当用 Seek 查找 <Key = user_key1, Seq = 1001> 时，自然会跳过 Seq = 1002 的记录。
 
-所以拿到 internal key 后，不用再检查序列号。只用确认用户 key 相等后，再拿到 64 位的 tag，用 0xff 取出低 8 位的操作类型。对于删除操作会返回“未找到”的状态，说明该键值已经被删除了。
+所以拿到 internal key 后，不用再检查序列号。只用确认用户 key 相等后，再拿到 64 位的 tag，用 0xff 取出低 8 位的操作类型。对于删除操作会返回“未找到”的状态，说明该键值已经被删除了。对于值操作，则接着从 memtable key 后面解出 value 字节串，然后赋值给 value 指针。
 
 ## 友元类声明
 
