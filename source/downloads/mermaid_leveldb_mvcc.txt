@@ -1,0 +1,32 @@
+sequenceDiagram
+    participant DB as LevelDB
+    participant T1 as 写入操作1
+    participant T2 as 写入操作2
+    participant R1 as Reader1
+    participant T4 as 写入操作3
+    participant R2 as Reader2
+    
+    Note over DB: 初始状态
+    
+    T1->>DB: 写入 A=1 (seq=100)
+    Note over DB: 存储 (A, seq=100) = 1
+    
+    T2->>DB: 写入 A=2 (seq=101)
+    Note over DB: 存储 (A, seq=101) = 2
+    
+    R1->>DB: 获取 snapshot=101
+    Note over R1: 能看到 seq<=101 的数据
+    
+    T4->>DB: 写入 A=3 (seq=102)
+    Note over DB: 存储 (A, seq=102) = 3
+    
+    R2->>DB: 获取 snapshot=102
+    Note over R2: 能看到 seq<=102 的数据
+    
+    R1->>DB: 读取 key=A
+    DB-->>R1: 返回 value=2 (seq=101)
+    
+    R2->>DB: 读取 key=A
+    DB-->>R2: 返回 value=3 (seq=102)
+    
+    Note over DB: 不同快照可以同时读取同一键的不同版本

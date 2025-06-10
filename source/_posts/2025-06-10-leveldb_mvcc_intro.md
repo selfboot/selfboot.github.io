@@ -1,10 +1,13 @@
 ---
 title: LevelDB 源码阅读：结合代码理解多版本并发控制(MVCC)
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-description: a
+description: 本文深入剖析LevelDB如何通过MVCC实现并发控制，详细解读了带版本键的数据结构设计、排序规则以及读写过程的实现细节。文章介绍了LevelDB如何通过在键中嵌入序列号和类型信息，实现多版本数据管理，使读操作无需加锁即可获取一致性视图，同时写操作创建新版本而非覆盖现有数据。通过实际代码分析，展示了内部键的排序方法、Snapshot机制的工作原理，以及键值读写过程中的版本控制逻辑，帮助读者理解现代数据库系统并发控制的实际工程实现。
 mathjax: true
+date: 2025-06-10 17:47:42
 ---
 
 在数据库系统中，并发访问是一个常见的场景。多个用户同时读写数据库，如何保证每个人的读写结果都是正确的，这就是并发控制要解决的问题。
@@ -17,17 +20,34 @@ mathjax: true
 
 现代数据库系统普遍采用 MVCC 来控制并发，LevelDB 也不例外，接下来我们结合源码来理解 LevelDB 的 MVCC 实现。
 
+<!-- more -->
+
 ## 通过 MVCC 控制并发
 
-MVCC([Multi-Version Concurrency Control](https://en.wikipedia.org/wiki/Multiversion_concurrency_control)) 是一种并发控制机制，它通过维护数据的多个版本来实现并发访问。 简单来说，LevelDB 的 MVCC 实现关键点有下面几个：
+MVCC([Multi-Version Concurrency Control](https://en.wikipedia.org/wiki/Multiversion_concurrency_control)) 是一种并发控制机制，它通过维护数据的多个版本来实现并发访问。简单来说，LevelDB 的 MVCC 实现关键点有下面几个：
 
 - 每个 key 可以有多个版本，每个版本都有自己的序列号(sequence number)；
-- 写操作创建新版本而不是直接修改现有数据。
-- 读操作可以看到特定时间点的某个数据版本。
+- 写操作创建新版本而不是直接修改现有数据。不同的写入需要加锁互斥，保证每个写入获得递增的版本号。
+- 不同的读操作之间可以并发，不用加锁。多个读操作也可以和写操作并发，不需要加锁。
+- 通过 snapshot 来实现读和写、读和读之间的隔离，读取操作看到的总是某个时间点之前的数据版本。
 
-这就是 MVCC 的核心思想了。接下来结合源码，来看看具体实现。
+这就是 MVCC 的核心思想了。我们通过一个具体的时间操作序列，来理解下 MVCC 是怎么工作的。假设有以下操作序列：
 
-### LevelDB 键带版本格式
+```
+时间点 T1: sequence=100, 写入 key=A, value=1
+时间点 T2: sequence=101, 写入 key=A, value=2
+时间点 T3: Reader1 获取 snapshot=101
+时间点 T4: sequence=102, 写入 key=A, value=3
+时间点 T5: Reader2 获取 snapshot=102
+```
+
+那么不管 Reader1 和 Reader2 谁先读取，Reader1 读取 key=A 总会得到 value=2（sequence=101），Reader2 读取 key=A 会得到 value=3（sequence=102）。后续如果有新的读取，不带 snapshot 的读取会得到最新的数据。通过下面的时序图更容易理解，mermaid 源码在[这里](/downloads/mermaid_leveldb_mvcc.txt)：
+
+![LevelDB 读写 MVCC 操作时序图](https://slefboot-1251736664.file.myqcloud.com/20250610_leveldb_mvcc_intro_r_w.webp)
+
+MVCC 的整体效果就如上了，还是比较容易理解的。下面看看 LevelDB 中是怎么实现 MVCC 的。
+
+## LevelDB 键带版本格式
 
 实现 MVCC 的前提是，**每个键都保存多个版本**。所以要设计一个数据结构，把键和版本号关联起来。LevelDB 设计的 key 格式如下：
 
@@ -113,7 +133,7 @@ const Comparator* BytewiseComparator() {
 
 好了，关于排序就说到这。下面咱们结合代码来看看写入和读取的时候，是怎么拼接 key 的。
 
-### 写入带版本键
+## 写入带版本键
 
 LevelDB 写入键值对的步骤比较复杂，可以看我之前的文章：[LevelDB 源码阅读：写入键值的工程实现和优化细节](https://selfboot.cn/2025/01/24/leveldb_source_writedb/)。简单说就是先写入 memtable，然后是 immutable memtable，最后不断沉淀(compaction)到不同层次的 SST 文件。整个过程的第一步就是写入 memtable，所以在最开始写入 memtable 的时候，就会给 key 带上版本和类型，组装成前面我们说的带版本的内部 key 格式。
 
@@ -151,9 +171,9 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
 
 这里 Add 函数中，在 internal_key 内部键的前面其实也保存了整个内部键的长度，然后把长度和内部键拼接起来，一起插入到了 MemTable 中。这样的 key 其实是 memtable_key，后续在读取的时候，也是用 memtable_key 来在 memtable 中查找的。
 
-这里为什么要保存长度呢？我们知道 Memtable 中的 SkipList 使用 const char* 指针作为键类型，但这些指针只是指向内存中某个位置的裸指针。当跳表的比较器需要比较两个键时，它需要知道每个键的确切范围，也就是起始位置和结束位置。如果直接使用 internal key，就没有明确的方法知道一个 internal key 在内存中的确切边界。加上长度信息后，就可以快速定位到每个键的边界，从而进行正确的比较。
+**这里为什么要保存长度呢**？我们知道 Memtable 中的 SkipList 使用 const char* 指针作为键类型，但这些指针只是指向内存中某个位置的裸指针。当跳表的比较器需要比较两个键时，它需要知道每个键的确切范围，也就是起始位置和结束位置。如果直接使用 internal key，就没有明确的方法知道一个 internal key 在内存中的确切边界。加上长度信息后，就可以快速定位到每个键的边界，从而进行正确的比较。
 
-### 读取键值过程
+## 读取键值过程
 
 接下来看看读取键值的过程。在读取键值的时候，会先把用户键转为内部键，然后进行查找。不过这里首先面临一个问题是，序列号要用哪个呢。回答这个问题前，我们先来看读取键常用的的方法，如下：
 
@@ -194,55 +214,12 @@ class LookupKey {
 
 在 LookupKey 的构造函数中，会根据传入的 user_key 和 sequence 来组装内部键，具体代码在 [db/dbformat.cc](https://github.com/google/leveldb/blob/main/db/dbformat.cc#L117) 中。后续在 memtable 中搜索的时候，用的 memtable_key，然后在 SST 中查找的时候，用的 internal_key。这里 memtable_key 就是我们前面说的，在 internal_key 的前面加上了长度信息，方便在 SkipList 中快速定位到每个键的边界。
 
-## 4. 并发控制示例
+这里在 memtable 和 immutable memtable 中找不到的话，会去 SST 中查找。SST 的查找就相当复杂一些，涉及多版本数据的管理，后续我会专门写文章来介绍这里的读取过程。
 
-好了，前面讲了不少代码实现，下面我们考虑实际使用场景下，MVCC 是怎么工作的。假设有以下操作序列：
+## 总结
 
-```
-时间点 T1: sequence=100, 写入 key=A, value=1
-时间点 T2: sequence=101, 写入 key=A, value=2
-时间点 T3: Reader1 获取 snapshot=101
-时间点 T4: sequence=102, 写入 key=A, value=3
-时间点 T5: Reader2 获取 snapshot=102
-```
+本篇对 MVCC 的讲解还比较浅显，介绍了大概的概念，以及重点讲了下读取和写入过程中如何对序列号进行处理的过程。并没有深入数据多版本管理，以及旧版本数据回收清理的过程。后面文章再深入这些话题。
 
-此时：
-- Reader1 读取 key=A 会得到 value=2（sequence=101）
-- Reader2 读取 key=A 会得到 value=3（sequence=102）
-- 新的读取（不指定 snapshot）会得到 value=3
+总的来说，LevelDB 通过在键值中引入版本号，实现了多版本并发控制。通过 snapshot 来实现读取隔离，写入永远创建新版本。对于读操作来说，不需要加锁，可以并发读取。对于写操作来说，需要加锁，保证写入的顺序。
 
-## 5. 并发读写的保证
-
-1. **读写互不阻塞**：
-   - 写入创建新版本
-   - 读取基于 snapshot，看到的是某个时间点的一致性视图
-   - 不需要加锁
-
-2. **写写并发**：
-   - 通过 log 和 memtable 的互斥锁保证写入顺序
-   - 每个写入获得唯一的 sequence number
-
-3. **一致性视图**：
-   - 每个 snapshot 代表一个一致性视图
-   - 读取操作看到的总是某个时间点之前的所有写入
-
-## 6. 垃圾回收
-
-- 旧版本的数据会在 compaction 过程中被清理
-- 如果没有 snapshot 在引用某个版本，该版本可以被删除
-- 保留的版本数取决于活跃的 snapshot 数量
-
-### 总结
-
-LevelDB 的 MVCC：
-1. 通过 sequence number 实现多版本
-2. 通过 snapshot 实现读取隔离
-3. 写入永远创建新版本
-4. 读取看到的是快照时间点的一致视图
-5. 实现了无锁的并发读写
-
-这种设计：
-- 提供了很好的并发性能
-- 保证了读取的一致性
-- 避免了读写冲突
-- 代价是存储空间的额外开销（保存多个版本）
+这种设计提供了很好的并发性能，保证了读取的一致性，同时减少了锁冲突。不过代价是存储空间的额外开销，以及需要保存多个版本带来的代码复杂度。
