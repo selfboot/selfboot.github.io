@@ -1,0 +1,12 @@
+graph LR
+    subgraph "某个时间需要淘汰了"
+    direction LR
+    Head1[链表头] <--> A1[项A: refs=0] <--> C1[项C: refs=1] <--> D1[项D: refs=0] <--> B1[项B: refs=1] <--> Tail1[链表尾]
+    style B1 fill:#f9f,stroke:#333,stroke-width:2px
+    end
+    subgraph "开始状态"
+    direction LR
+    Head2[链表头] <--> B2[项B: refs=1] <--> D2[项D: refs=1] <--> C2[项C: refs=1] <--> A2[项A: refs=1] <--> Tail2[链表尾]
+    style B2 fill:#f9f,stroke:#333,stroke-width:2px
+    end
+    
