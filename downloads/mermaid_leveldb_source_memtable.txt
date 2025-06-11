@@ -1,0 +1,42 @@
+sequenceDiagram
+    participant 读线程 as 读线程
+    participant 写线程 as 写线程
+    participant 压缩线程 as 压缩线程
+    participant DB as DBImpl
+    participant MemTableA as MemTableA
+
+    Note over MemTableA: 初始状态: mem_ 指向 MemTableA (refs_=1)
+
+    读线程->>DB: Get(key)
+    activate 读线程
+    Note over 读线程: 获取mutex_锁
+    读线程->>MemTableA: Ref() [refs_=2]
+    Note over 读线程: 释放mutex_锁
+    
+    写线程->>DB: Write(batch)
+    activate 写线程
+    Note over 写线程: 获取mutex_锁
+    Note over 写线程: 发现 MemTableA 已满
+    写线程->>DB: 创建新的 MemTableB
+    写线程->>DB: imm_ = mem_ (MemTableA)
+    写线程->>DB: mem_ = MemTableB
+    Note over MemTableA: refs_仍为2 (现在由imm_引用)
+    写线程->>DB: 触发后台压缩
+    Note over 写线程: 释放mutex_锁
+    deactivate 写线程
+    
+    Note over 读线程: 完成查询操作
+    读线程->>DB: 重新获取mutex_锁
+    读线程->>MemTableA: Unref() [refs_=1]
+    Note over 读线程: 释放mutex_锁
+    deactivate 读线程
+    
+    压缩线程->>DB: 后台压缩任务
+    activate 压缩线程
+    Note over 压缩线程: 获取mutex_锁
+    压缩线程->>MemTableA: 将内容写入SST文件
+    压缩线程->>MemTableA: Unref() [refs_=0]
+    Note over MemTableA: 引用计数为0，触发删除
+    压缩线程->>DB: imm_ = nullptr
+    Note over 压缩线程: 释放mutex_锁
+    deactivate 压缩线程
