@@ -1,0 +1,42 @@
+sequenceDiagram
+    participant ReadThread as Read Thread
+    participant WriteThread as Write Thread
+    participant CompactionThread as Compaction Thread
+    participant DB as DBImpl
+    participant MemTableA as MemTableA
+
+    Note over MemTableA: Initial state: mem_ points to MemTableA (refs_=1)
+
+    ReadThread->>DB: Get(key)
+    activate ReadThread
+    Note over ReadThread: Acquire mutex_lock
+    ReadThread->>MemTableA: Ref() [refs_=2]
+    Note over ReadThread: Release mutex_lock
+    
+    WriteThread->>DB: Write(batch)
+    activate WriteThread
+    Note over WriteThread: Acquire mutex_lock
+    Note over WriteThread: Detect MemTableA is full
+    WriteThread->>DB: Create new MemTableB
+    WriteThread->>DB: imm_ = mem_ (MemTableA)
+    WriteThread->>DB: mem_ = MemTableB
+    Note over MemTableA: refs_ still 2 (now referenced by imm_)
+    WriteThread->>DB: Trigger background compaction
+    Note over WriteThread: Release mutex_lock
+    deactivate WriteThread
+    
+    Note over ReadThread: Complete query operation
+    ReadThread->>DB: Re-acquire mutex_lock
+    ReadThread->>MemTableA: Unref() [refs_=1]
+    Note over ReadThread: Release mutex_lock
+    deactivate ReadThread
+    
+    CompactionThread->>DB: Background compaction task
+    activate CompactionThread
+    Note over CompactionThread: Acquire mutex_lock
+    CompactionThread->>MemTableA: Write content to SST file
+    CompactionThread->>MemTableA: Unref() [refs_=0]
+    Note over MemTableA: Reference count is 0, trigger deletion
+    CompactionThread->>DB: imm_ = nullptr
+    Note over CompactionThread: Release mutex_lock
+    deactivate CompactionThread

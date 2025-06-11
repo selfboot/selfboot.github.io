@@ -1,11 +1,13 @@
 ---
 title: LevelDB 源码阅读：MemTable 内存表的实现细节
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-description: 
+description: 本文深入解析LevelDB中MemTable内存表的实现细节，包括其在内存中管理最近写入数据的核心作用。文章详细介绍了MemTable的内部构造、基于跳表的数据结构、键值对的编码格式以及内存管理机制。通过分析Add和Get方法的实现，展示了键值对如何被编码存储和高效查询。同时解释了引用计数机制如何实现并发访问控制，以及MemTable如何与友元类协作完成数据遍历。对理解LevelDB读写流程和性能优化具有重要参考价值。
 mathjax: true
-date: 2025-06-10 17:47:42
+date: 2025-06-11 19:47:42
 ---
 
 在 LevelDB 中，所有的写操作首先都会被记录到一个 [Write-Ahead Log（WAL，预写日志）](https://selfboot.cn/2024/08/14/leveldb_source_wal_log/)中，以确保持久性。接着数据会被存储在 MemTable 中，MemTable 的主要作用是**在内存中有序存储最近写入的数据**，到达一定条件后批量落磁盘。
@@ -81,7 +83,7 @@ Status DBImpl::Get(const ReadOptions& options, const Slice& key,
   // ...
 ```
 
-这里会先创建本地指针 mem 和 imm 来引用成员变量 mem_ 和 imm_，之后用本地指针来进行读取。这里有个问题是，**<span style="color:red">为什么不直接使用成员变量 mem_ 和 imm_ 来读取呢</span>**？这个问题留到后面我们再回答。
+这里会先创建本地指针 mem 和 imm 来引用成员变量 mem_ 和 imm_，之后用本地指针来进行读取。这里有个问题是，**<span style="color:red">为什么不直接使用成员变量 mem_ 和 imm_ 来读取呢</span>**？这个问题留到[后面解读疑问](#解答疑问)我们再回答。
 
 好了，至此我们已经看到了 Memtable 的主要使用方法了，那它们内部是怎么实现的呢，我们接着看吧。
 
@@ -89,7 +91,7 @@ Status DBImpl::Get(const ReadOptions& options, const Slice& key,
 
 在开始讨论 MemTable 对外方法的实现之前，先要知道 Memtable 中的数据其实是存储在跳表中的。跳表提供了平衡树的大部分优点（如有序性、插入和查找的对数时间复杂性），但是实现起来更为简单。关于跳表的详细实现，可以参考[LevelDB 源码阅读：跳表的原理、实现以及可视化](https://selfboot.cn/2024/09/09/leveldb_source_skiplist/)。
 
-MemTable 类内部来声明了一个跳表对象 table_ 成员变量，跳表的 key 是 `const char*` 类型，value 是 KeyComparator 类型。跳表中键值是有序的，所以肯定需要指定 key 的排序方法，这里 KeyComparator 就是这样一个自定义的比较器。
+MemTable 类内部来声明了一个跳表对象 table_ 成员变量，跳表是个模板类，初始化需要提供 key 和 Comparator 比较器。这里 memtable 中跳表的 key 是 `const char*` 类型，比较器是 KeyComparator 类型。KeyComparator 就是这样一个自定义的比较器，用来给跳表中键值进行排序。
 
 KeyComparator 包含了一个 InternalKeyComparator 类型的成员变量 comparator，用来比较 internal key 的大小。KeyComparator 比较器的 `operator()` 重载了函数调用操作符，先从 const char* 中解码出 internal key，然后然后调用 InternalKeyComparator 的 Compare 方法来比较 internal key 的大小。具体实现在 [db/memtable.cc](https://github.com/google/leveldb/blob/main/db/memtable.cc#L28) 中。
 
@@ -125,7 +127,7 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
   //...
 ```
 
-这里的注释十分清楚，Memtable 中存储了格式化后的键值对，先是 internal key 的长度，然后是 internal key 字节串，接着是 value 的长度，然后是 value 字节串。整体由 5 部分组成，格式如下：
+这里的注释十分清楚，Memtable 中存储了格式化后的键值对，先是 internal key 的长度，然后是 internal key 字节串(就是下面的 tag 部分，包含 User Key + Sequence Number + Value Type)，接着是 value 的长度，然后是 value 字节串。整体由 5 部分组成，格式如下：
 
 ```cpp
 +-----------+-----------+----------------------+----------+--------+
@@ -174,7 +176,7 @@ void MemTable::Add(SequenceNumber s, ValueType type, const Slice& key,
   bool Get(const LookupKey& key, std::string* value, Status* s);
 ```
 
-这里接口传入的 key 并不是用户输入 key，而是一个 LookupKey 对象，在 [db/dbformat.h](https://github.com/google/leveldb/blob/main/db/dbformat.h#L184) 中有定义。这是因为 levelDB 中同一个用户键可能有不同版本，查询的时候必须指定快照(也就是序列号)，才能拿到对应的版本。所以用 LookupKey 对象，根据用户输入的 key 和 sequence number 来初始化，然后就可以拿到需要的键值格式。
+这里接口传入的 key 并不是用户输入 key，而是一个 LookupKey 对象，在 [db/dbformat.h](https://github.com/google/leveldb/blob/main/db/dbformat.h#L184) 中有定义。这是因为 levelDB 中同一个用户键可能有不同版本，查询的时候必须指定快照(也就是序列号)，才能拿到对应的版本。所以这里抽象出了一个 LookupKey 类，可以根据用户输入的 key 和 sequence number 来初始化，然后就可以拿到需要的键值格式。
 
 具体到查找过程，先用 LookupKey 对象的 memtable_key 方法拿到前面提到的 memtable key，然后调用跳表的 Seek 方法来查找。[db/memtable.cc](https://github.com/google/leveldb/blob/main/db/memtable.cc#L102) 中 Get 方法的完整实现如下：
 
@@ -216,7 +218,7 @@ bool MemTable::Get(const LookupKey& key, std::string* value, Status* s) {
 
 比如有两个内部键，Key1 = "user_key1", Seq = 1002 和 Key1 = "user_key1", Seq = 1001。在跳表中，第一个记录（Seq = 1002）将位于第二个记录（Seq = 1001）之前，因为1002 > 1001。当用 Seek 查找 <Key = user_key1, Seq = 1001> 时，自然会跳过 Seq = 1002 的记录。
 
-所以拿到 internal key 后，不用再检查序列号。只用确认用户 key 相等后，再拿到 64 位的 tag，用 0xff 取出低 8 位的操作类型。对于删除操作会返回“未找到”的状态，说明该键值已经被删除了。对于值操作，则接着从 memtable key 后面解出 value 字节串，然后赋值给 value 指针。
+所以拿到 internal key 后，不用再检查序列号。只用确认用户 key 相等后，再拿到 64 位的 tag，用 0xff 取出低 8 位的操作类型。对于删除操作会返回"未找到"的状态，说明该键值已经被删除了。对于值操作，则接着从 memtable key 后面解出 value 字节串，然后赋值给 value 指针。
 
 ## 友元类声明
 
@@ -245,11 +247,13 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
 }
 ```
 
-这里遍历 memtable 时，用到一个友元类，为啥不直接提供一些 public 的接口来遍历呢？使用友元类的一个好处是，**类的职责划分比较清晰**。MemTableIterator 负责遍历 memTable 的数据，而 memTable 负责管理数据的存储。这种分离有助于清晰地定义类的职责，遵循单一职责原则，每个类只处理一组特定的任务，使得系统的设计更加模块化。
+这里遍历 memtable 时，用到一个友元类，**为啥不直接提供一些 public 的接口来遍历呢**？使用友元类的一个好处是，类的职责划分比较清晰。MemTableIterator 负责遍历 memTable 的数据，而 memTable 负责管理数据的存储。这种分离有助于清晰地定义类的职责，遵循单一职责原则，每个类只处理一组特定的任务，使得系统的设计更加模块化。
 
 ## 内存管理
 
-最后来看看 MemTable 的内存管理。MemTable 使用**引用计数**机制来管理内存，引用计数允许多个部分的代码共享对 MemTable 的访问权，而不需要担心资源释放的问题。这里对外提供了 Ref 和 Unref 两个方法来增加和减少引用计数：
+最后来看看 MemTable 的内存管理。MemTable 类有一个 Arena 类的成员变量 arena_，用来管理跳表的内存分配。在插入键值对的时候，编码后的信息就存在 arena_ 分配的内存中。关于内存管理 Arena 类，可以参考[LevelDB 源码阅读：内存分配器、随机数生成、CRC32、整数编解码](https://selfboot.cn/2024/08/29/leveldb_source_utils/#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86-Arena-%E7%B1%BB)。
+
+为了能够在不使用 MemTable 的时候，及时释放内存，这里引入了**引用计数**机制来管理内存。引用计数允许共享对 MemTable 的访问权，而不需要担心资源释放的问题。对外也提供了 Ref 和 Unref 两个方法来增加和减少引用计数：
 
 ```cpp
   // Increase reference count.
@@ -265,7 +269,7 @@ Status DBImpl::WriteLevel0Table(MemTable* mem, VersionEdit* edit,
   }
 ```
 
-当引用计数减至零时，MemTable 自动删除自己，然后就会调用析构函数 `~MemTable()` 来释放内存。对象析构时，对于自定义的成员变量，**会调用各自的析构函数来释放资源**。在 MemTable 中，用跳表来存储 key，跳表的内存则是通过 `Arena arena_;` 来管理的。MemTable 析构过程，会调用 area_ 的析构函数来释放之前分配的内存。
+当引用计数减至零时，MemTable 自动删除自己，这时候就会调用析构函数 `~MemTable()` 来释放内存。对象析构时，对于自定义的成员变量，**会调用各自的析构函数来释放资源**。在 MemTable 中，用跳表来存储 key，跳表的内存则是通过 `Arena arena_;` 来管理的。MemTable 析构过程，会调用 area_ 的析构函数来释放之前分配的内存。
 
 ```cpp
 Arena::~Arena() {
@@ -275,6 +279,34 @@ Arena::~Arena() {
 }
 ```
 
-Arena 类是 LevelDB 自己实现的内存管理类，具体内存分配和回收可以参考 [内存管理 Arena 类](/leveldb_source_utils/#内存管理-Arena-类)。
-
 这里值得注意的是，MemTable 将析构函数 `~MemTable();` 设置为 private，强制外部代码通过 `Unref()` 方法来管理 MemTable 的生命周期。这保证了引用计数逻辑能够正确执行，防止了由于不当的删除操作导致的内存错误。
+
+### 解答疑问
+
+好了，这时候还有最后一个问题了，就是前面留的一个疑问，在 LevelDB Get 方法中，为啥不直接使用成员变量 mem_ 和 imm_ 来读取，而是创建了两个本地指针来引用呢？
+
+**如果直接使用 mem_ 和 imm_ 的话，会有什么问题**？先考虑不加锁的情况，比如一个读线程正在读 mem_，这时候另一个写线程刚好写满了 mem_，触发了 mem_ 转到 imm_ 的逻辑，会重新创建一个空的 mem_，这时候读线程读到的内存地址就无效了。当然，你可以加锁，来把读写 mem_ 和 imm_ 都保护起来，但是这样并发性能就很差，同一时间，只允许一个读操作或者写操作。
+
+为了支持并发，LevelDB 这里的做法比较复杂。读取的时候，先加线程锁，复制 mem_ 和 imm_ 用 Ref() 增加引用计数。之后就可以释放线程锁，在复制的 mem 和 imm 上进行查找操作，这里的查找操作不用线程锁，支持多个读线程并发。读取完成后，再调用 Unref() 减少引用计数，如果引用计数变为零，对象被销毁。
+
+**考虑多个读线程在读 mem_，同时有 1 个写线程在写入 mem_**。每个读线程都会先拿到自己的 mem_ 的引用，然后释放锁开始查找操作。写线程可以往里面继续写入内容，或者写满后创建新的 mem_ 内存。只要有任何一个读线程还在查找，这里最开始的 mem_ 的引用计数就不会为零，内存地址就一直有效。直到所有读线程读完，并且写线程把 mem_ 写满，将它转为 imm_ 并写入 SST 文件后，最开始的 mem_ 的引用计数为零，这时候就触发析构操作，可以回收地址了。
+
+看文字有点绕，我让 AI 整理一个 mermaid 的流程图来帮助理解吧：
+
+![LevelDB 内存表的生命周期图](https://slefboot-1251736664.file.myqcloud.com/20250611_leveldb_source_memtable_life_mermaid.webp)
+
+mermaid 的源码可以在[这里](/downloads/mermaid_leveldb_source_memtable.txt)找到。
+
+## 总结
+
+在整个 LevelDB 架构中，MemTable 扮演着承上启下的角色。它接收来自上层的写入请求，在内存中积累到一定量后，转变为不可变的 Immutable MemTable，最终由后台线程写入磁盘形成 SST 文件。同时，它也是读取路径中优先级最高的组件，确保最新写入的数据能够立即被读取到。
+
+本文我们详细分析了 LevelDB 中 MemTable 的实现原理与工作机制，最后再简单总结下MemTable 的核心设计：
+
+1. **基于跳表的实现**：MemTable 内部使用跳表（SkipList）来存储数据，这种数据结构提供了平衡树的大部分优点，同时实现更为简单，能够高效地支持查找和插入操作。
+2. **内存管理机制**：MemTable 通过 Arena 内存分配器来管理内存，统一分配和释放，避免内存碎片和提高内存利用率。
+3. **引用计数机制**：通过 Ref() 和 Unref() 方法实现引用计数，支持并发访问，同时保证资源能在不再使用时及时释放。
+4. **特定键值编码格式**：MemTable 中存储的键值对采用了特定的编码格式，包含键长度、用户键、序列号和类型标识、值长度以及值本身，支持了 LevelDB 的多版本并发控制（MVCC）。
+5. **友元类协作**：通过友元类 MemTableIterator 来遍历 MemTable 中的数据，实现了关注点分离的设计原则。
+
+MemTable 通过细致的内存管理和引用计数机制，解决了并发访问问题；通过跳表数据结构，实现了高效的查询和插入；通过特定的键值编码格式，支持了多版本并发控制。这些设计共同构成了 LevelDB 高性能、高可靠性的基础。
