@@ -15,7 +15,7 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Wed, 11 Jun 2025 09:13:28 GMT</pubDate>
+    <pubDate>Wed, 11 Jun 2025 14:00:03 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
@@ -77,8 +77,6 @@
     
     
     
-    
-    
     <item>
       <title>In-depth Experience with 3 MCP Servers via Cursor: Impressive but Not Yet Practical?</title>
       <link>https://selfboot.cn/en/2025/05/23/mcp_user_report/</link>
@@ -101,6 +99,10 @@
       <comments>https://selfboot.cn/en/2025/05/23/mcp_user_report/#disqus_thread</comments>
       
     </item>
+    
+    
+    
+    
     
     
     
@@ -184,8 +186,6 @@
       <comments>https://selfboot.cn/en/2025/01/10/c++_crash_cases/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
