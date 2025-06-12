@@ -1,0 +1,11 @@
+graph LR
+    subgraph "Ready for Eviction"
+    direction LR
+    Head1[Head] <--> A1[Item A: refs=0] <--> C1[Item C: refs=1] <--> D1[Item D: refs=0] <--> B1[Item B: refs=1] <--> Tail1[Tail]
+    style B1 fill:#f9f,stroke:#333,stroke-width:2px
+    end
+    subgraph "Initial State"
+    direction LR
+    Head2[Head] <--> B2[Item B: refs=1] <--> D2[Item D: refs=1] <--> C2[Item C: refs=1] <--> A2[Item A: refs=1] <--> Tail2[Tail]
+    style B2 fill:#f9f,stroke:#333,stroke-width:2px
+    end
