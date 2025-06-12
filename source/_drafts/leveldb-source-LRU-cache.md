@@ -5,11 +5,12 @@ category: 源码剖析
 toc: true
 description: 
 date: 2025-06-16 21:00:00
+mathjax: true
 ---
 
 计算机系统中，缓存无处不在。从 CPU 缓存到内存缓存，从磁盘缓存到网络缓存，缓存无处不在。缓存的核心思想就是空间换时间，通过将热点数据缓存到高性能的存储中，从而提高性能。因为缓存设备比较贵，所以存储大小有限，就需要淘汰掉一些缓存数据。这里淘汰的策略就非常重要了，因为如果淘汰的策略不合理，把接下来要访问的数据淘汰掉了，那么缓存命中率就会非常低。
 
-缓存淘汰策略有很多种，比如 LRU、LFU、FIFO 等。其中 LRU(Least Recently Used) 就是一种很经典的缓存淘汰策略，它的核心思想是：**当缓存满了的时候，淘汰掉最近最少使用的数据**。这里基于的一个经验假设就是“**如果数据最近被访问过，那么将来被访问的几率也更高**”。只要这个假设成立，那么 LRU 就可以显著提高缓存命中率。
+缓存淘汰策略有很多种，比如 LRU、LFU、FIFO 等。其中 LRU(Least Recently Used) 就是一种很经典的缓存淘汰策略，它的核心思想是：**当缓存满了的时候，淘汰掉最近最少使用的数据**。这里基于的一个经验假设就是"**如果数据最近被访问过，那么将来被访问的几率也更高**"。只要这个假设成立，那么 LRU 就可以显著提高缓存命中率。
 
 在 LevelDB 中，实现了内存中的 LRU Cache，用于缓存热点数据，提高读写性能。默认情况下，LevelDB 会对 sstable 的索引 和 data block 进行缓存，其中 sstable 默认是支持缓存 990 (1000-10) 个，data block 则默认分配了 8MB 的缓存。
 
@@ -58,9 +59,9 @@ cache_->Erase(Slice(buf, sizeof(buf)));
 
 这里 Cache 是一个抽象类，定义了缓存操作的各种接口，具体定义在 [include/leveldb/cache.h](https://github.com/google/leveldb/blob/main/include/leveldb/cache.h) 中。它定义了缓存应该具有的基本操作，如 Insert、Lookup、Release、Erase 等。
 
-这样的设计允许在**不修改缓存使用方的代码的情况下，轻松替换不同的缓存实现**。哈哈，这不就是八股文经常说的，**面向对象编程 SOLID 中的依赖倒置**嘛，应用层依赖于抽象接口(Cache)而不是具体实现(LRUCache)。这样可以降低代码耦合度，提高系统的可扩展性和可维护性。
+这样的设计允许调用方在**不修改使用缓存部分的代码的情况下，轻松替换不同的缓存实现**。哈哈，这不就是八股文经常说的，**面向对象编程 SOLID 中的依赖倒置**嘛，应用层依赖于抽象接口(Cache)而不是具体实现(LRUCache)。这样可以降低代码耦合度，提高系统的可扩展性和可维护性。
 
-使用的时候，通过这里的工厂函数来创建具体的缓存实现 [ShardedLRUCache](https://github.com/google/leveldb/blob/main/util/cache.cc#L339)：
+具体到使用的时候，通过这里的工厂函数来创建具体的缓存实现 [ShardedLRUCache](https://github.com/google/leveldb/blob/main/util/cache.cc#L339)：
 
 ```cpp
 Cache* NewLRUCache(size_t capacity) { return new ShardedLRUCache(capacity); }
@@ -69,11 +70,11 @@ Cache* NewLRUCache(size_t capacity) { return new ShardedLRUCache(capacity); }
 // Cache* NewClockCache(size_t capacity);
 ```
 
-ShardedLRUCache 才是具体的缓存实现，它继承自 Cache 抽象类，并实现了 Cache 中的各种接口。ShardedLRUCache 本身并不复杂，它是在 LRUCache 的基础上，增加了分片机制，减少锁竞争来提高并发性能。
+ShardedLRUCache 才是具体的缓存实现，它继承自 Cache 抽象类，并实现了 Cache 中的各种接口。ShardedLRUCache 本身并不复杂，它是在 LRUCache 的基础上，增加了分片机制，减少锁竞争来提高并发性能。LRUCache 才是缓存核心，不过在我们先不管怎么实现 LRUCache，首先要确定**缓存的数据项是什么**。
 
 ## LRUHandle 类的实现
 
-我们知道，先不管怎么实现 LRUCache，首先要确定缓存的数据项是什么。在 LevelDB 中，缓存的数据项是 LRUHandle 类，定义在 [util/cache.cc](https://github.com/google/leveldb/blob/main/util/cache.cc#L43) 中。这里的注释也说明了，LRUHandle 是一个变长堆分配的结构体，会被保存在一个循环双向链表中，按访问时间排序。我们来看看这个结构体的成员有哪些吧：
+在 LevelDB 中，缓存的数据项是一个 LRUHandle 类，定义在 [util/cache.cc](https://github.com/google/leveldb/blob/main/util/cache.cc#L43) 中。这里的注释也说明了，LRUHandle 是一个支持堆分配内存的变长结构体，它会被保存在一个双向链表中，按访问时间排序。我们来看看这个结构体的成员有哪些吧：
 
 ```cpp
 struct LRUHandle {
@@ -93,38 +94,56 @@ struct LRUHandle {
 
 这里还稍微有点复杂，每个字段都还挺重要的，我们一个个来看吧。
 
-- void* value：存储缓存项的实际值，这里是一个指向数据的指针，这是用户存入缓存的数据；
-- void (*deleter)(const Slice&, void* value)：一个函数指针，指向用于删除 value 的回调函数，当缓存项被移除时，用它来释放缓存值的内存空间；
-- LRUHandle* next_hash：哈希表冲突解决链表的下一项指针，用于哈希表的拉链法实现；
-- LRUHandle* prev/next：双向链表（LRU 或 in_use）的前一个/下一个指针，用来维持双向链表，方便快速从双向链表中插入或者删除节点；
-- size_t charge：表示该缓存项占用的成本（通常是内存大小），用于计算总缓存使用量，判断是否需要淘汰；
-- size_t key_length：键的长度，用于构造 Slice 对象表示键；
-- bool in_cache：标记该项是否在缓存中，如果为 true，表示缓存拥有对该项的引用；
-- uint32_t refs：引用计数，包括缓存本身的引用（如果在缓存中）和客户端引用，当计数为0时，可以释放该项；
-- uint32_t hash：键的哈希值，用于快速查找和分片；这里同一个 key 也把 hash 值保存下来，避免重复计算；
-- char key_data[1]：柔性数组成员，存储键的实际数据，使用 malloc 分配足够空间来存储整个键；
+- value：存储缓存的实际 value 值，这里是一个 void* 的指针，说明缓存这层不关心具体值的结构，只用知道对象的地址就好；
+- deleter：一个函数指针，指向用于删除缓存值的回调函数，当缓存项被移除时，用它来释放缓存值的内存空间；
+- next_hash：LRU 缓存实现需要用到哈希表。这里 LevelDB 自己实现了一个高性能的哈希表，在 [LevelDB 源码阅读：如何设计一个高性能哈希表](/2024/12/25/leveldb_source_hashtable/) 中，我们介绍了 LevelDB 中哈希表的实现细节，里面有介绍过 LRUHandle 的 next_hash 字段就是用来解决哈希表的冲突的。
+- prev/next：双向链表的前一个/下一个指针，用来维持双向链表，方便快速从双向链表中插入或者删除节点；
+- charge：表示该缓存项占用的成本（通常是内存大小），用于计算总缓存使用量，判断是否需要淘汰；
+- key_length：键的长度，用于构造 Slice 对象表示键；
+- in_cache：标记该项是否在缓存中，如果为 true，表示缓存拥有对该项的引用；
+- refs：引用计数，包括缓存本身的引用（如果在缓存中）和使用方的引用，当计数为0时，可以释放该项；
+- hash：键的哈希值，用于快速查找和分片；这里同一个 key 也把 hash 值保存下来，避免重复计算；
+- key_data：柔性数组成员，存储键的实际数据，使用 malloc 分配足够空间来存储整个键。柔性数组我们在 [LevelDB 源码阅读：理解其中的 C++ 高级技巧](/2024/08/13/leveldb_source_unstand_c++/) 中也有介绍过，这里就不展开了。
 
-在 [LevelDB 源码阅读：如何设计一个高性能哈希表](/2024/12/25/leveldb_source_hashtable/) 中，我们介绍了 LevelDB 中哈希表的实现细节，里面有介绍过 LRUHandle 的 next_hash 字段就是用来解决哈希表的冲突的。最后的 key_data 柔性数组我们在 [LevelDB 源码阅读：理解其中的 C++ 高级技巧](/2024/08/13/leveldb_source_unstand_c++/) 中也有介绍过，这里就不展开了。
+这里 LRUHandle 的设计允许缓存高效地管理数据项，跟踪缓存项的引用，并实现 LRU 淘汰策略。特别是 in_cache 和 refs 字段的结合使用，使得我们可以区分"**被缓存但未被客户端引用**"和"**被客户端引用**"的项，从而用两个链表来支持高效淘汰缓存。
 
-这里 LRUHandle 的设计允许缓存高效地管理数据项，跟踪引用，并实现 LRU 淘汰策略。特别是 in_cache 和 refs 字段的结合使用，使得缓存可以区分"**被缓存但未被客户端引用**"和"**被客户端引用**"的项，从而支持两个链表的实现方式。下面缓存 LRUCache 类的实现细节中就能看到这里各个字段的使用了。
+下面我们详细看看 LRUCache 类的实现细节，就更容易理解上面各个字段的用途了。
 
 ## LRUCache 类的实现细节 
 
 前面看完了缓存的数据项的设计，接着可以来看看这里 LevelDB LRUCache 的具体实现细节了。核心的缓存逻辑实现在 [util/cache.cc](https://github.com/google/leveldb/blob/main/util/cache.cc#L151) 的 LRUCache 类中。该类包含了缓存的核心逻辑，如插入、查找、删除、淘汰等操作。
 
-### 两个双向链表
+这里注释(LevelDB 的注释感觉都值得好好品读)中提到，用了两个双向链表来维护缓存项，这又是为什么呢？
+
+```cpp
+// The cache keeps two linked lists of items in the cache.  All items in the
+// cache are in one list or the other, and never both.  Items still referenced
+// by clients but erased from the cache are in neither list.  The lists are:
+// - in-use:  contains the items currently referenced by clients, in no
+//   particular order.  (This list is used for invariant checking.  If we
+//   removed the check, elements that would otherwise be on this list could be
+//   left as disconnected singleton lists.)
+// - LRU:  contains the items not currently referenced by clients, in LRU order
+// Elements are moved between these lists by the Ref() and Unref() methods,
+// when they detect an element in the cache acquiring or losing its only
+// external reference.
+```
+
+### 为什么用两个双向链表？
 
 我们前面也提到，一般的 LRU Cache 实现中用一个双向链表。每次使用一个缓存项时，会将其移动到链表的头部，这样链表的尾部就是最近最少使用的缓存项。淘汰的时候，直接移除链表尾部的节点即可。比如开始提到的 Leetcode 中的题目就可以这样实现来解决，实现中每个缓存项就是一个 int，取的时候直接复制出来就好。**如果要缓存的项是简单的值类型，读的时候直接复制值，不需要引用，那单链表的实现足够了**。
 
 但在 LevelDB 中，缓存的数据项是 LRUHandle 对象，它是一个动态分配内存的变长结构体。在使用的时候，为了高并发和性能考虑，不能通过简单的值复制，而要通过引用计数来管理缓存项。如果还是简单的使用单链表的话，我们考虑下这样的场景。
 
-我们依次访问 A, C, D 项，最后访问了 B, B 项被客户端引用(refs=1)，位于链表头部。一段时间内，A、C、D都被访问，但 B 没有被访问。根据 LRU 规则，A、C、D依次被移到链表头部。B 虽然仍被引用，但因为长时间未被访问，相对位置逐渐后移。C 和 D 被访问后，很快使用完，这时候没有引用了。当需要淘汰时，从尾部开始，会发现B项(refs=1)不能淘汰，需要跳过继续往前遍历检查其他项。
+我们依次访问 A, C, D 项，最后访问了 B, B 项被客户端引用(refs=1)，位于链表头部，如下图中的开始状态。一段时间内，A、C、D都被访问了，但 B 没有被访问。根据 LRU 规则，A、C、D被移到链表头部。**B 虽然仍被引用，但因为长时间未被访问，相对位置逐渐后移**。A 和 D 被访问后，很快使用完，这时候没有引用了。当需要淘汰时，从尾部开始，会发现B项(refs=1)不能淘汰，需要跳过继续往前遍历检查其他项。
 
 ![LRUCache 中节点双向链表的状态](https://slefboot-1251736664.file.myqcloud.com/20250611_leveldb_source_lru_cache.webp)
 
 也就是说在这种引用场景下，淘汰节点的时候，如果链表尾部的节点正在被外部引用（refs > 1），则不能淘汰它。这时候需要**遍历链表寻找可淘汰的节点，效率较低**。在最坏情况下，如果所有节点都被引用，可能需要遍历整个链表却无法淘汰任何节点。
 
-为了解决这个问题，在 LRUCache 实现中，用了两个双向链表。一个是**in_use_**，用来存储被引用的缓存项。另一个是**lru_**，用来存储未被引用的缓存项。每个缓存项只能在其中的一个链表中，不能同时在两个链表中。但是可以根据当前是否被引用，在两个链表中移动。
+为了解决这个问题，在 LRUCache 实现中，用了两个双向链表。一个是**in_use_**，用来存储被引用的缓存项。另一个是**lru_**，用来存储未被引用的缓存项。每个缓存项只能在其中的一个链表中，不能同时在两个链表中。但是可以根据当前是否被引用，在两个链表中互相移动。这样在需要淘汰节点的时候，就可以直接从 lru_ 链表中淘汰，而不用遍历 in_use_ 链表。
+
+### 实现细节
 
 当缓存项的引用计数从2变为1（意味着没有外部引用，仅剩缓存自身的引用）时，它会从 in_use_ 列表中移动到 lru_ 列表中。此时，所有外部引用完成了对缓存项的使用，并调用了 Release 方法手动释放了所有权。
 当缓存容量达到上限时，可以根据缓存项在LRU列表中的位置（即它们被访问的历史）来决定哪些缓存项被淘汰。
@@ -153,7 +172,7 @@ LRUCache::LRUCache() : capacity_(0), usage_(0) {
 }
 ```
 
-Ref 函数的目的是增加给定缓存项 e 的引用计数。当缓存项的引用计数从1变为2时，表示**除了缓存自身对该项的引用之外，现在还有另一个外部引用**（例如，客户端代码正在使用该缓存项）。此时，缓存项从“最近最少使用（LRU）”列表移动到“正在使用（in_use）”列表。
+Ref 函数的目的是增加给定缓存项 e 的引用计数。当缓存项的引用计数从1变为2时，表示**除了缓存自身对该项的引用之外，现在还有另一个外部引用**（例如，客户端代码正在使用该缓存项）。此时，缓存项从"最近最少使用（LRU）"列表移动到"正在使用（in_use）"列表。
 
 
 
@@ -162,10 +181,59 @@ Ref 函数的目的是增加给定缓存项 e 的引用计数。当缓存项的�
 1. 从哈希表中移除：确保了后续的缓存访问请求不会再找到这个缓存项。
 2. 从LRU链表中移除，并处理相关资源，比如减少总的缓存使用量（usage_），以及减少引用计数（通过Unref方法）。
 
+## ShardedLRUCache 分片实现
 
+前面 LRUCache 的实现中，插入缓存、查找缓存、删除缓存操作都必须通过一个互斥锁来保护。在多线程环境下，如果只有一个大的缓存，**这个锁就会成为一个全局瓶颈**。当多个线程同时访问缓存时，只有一个线程能获得锁，其他线程都必须等待，这会严重影响并发性能。
 
-### ShardedLRUCache
+为了提高性能，ShardedLRUCache 将缓存分成多个分片（shard_ 数组），每个分片都有自己独立的锁。当一个请求到来时，它会根据 key 的哈希值被路由到特定的分片。这样，不同线程访问不同分片时就可以并行进行，因为它们获取的是不同的锁，从而减少了锁的竞争，提高了整体的吞吐量。
 
-前面 LRUCache 的实现中，所有的操作都是通过一个锁来保护的，所以性能瓶颈在于锁竞争。为了提高性能，ShardedLRUCache 将缓存分片，每个分片都有自己的锁，这样就可以减少锁竞争。
+那么需要分多少片呢？LevelDB 这里硬编码了一个 $ kNumShards = 1 << kNumShardBits $，计算出来是 16，算是一个经验选择吧。如果分片数量太少，比如2、4个，在核心数很多的服务器上，锁竞争依然可能很激烈。分片太多的话，每个分片的容量就会很小。这可能导致一个"热"分片频繁淘汰数据，而另一个"冷"分片有很多空闲空间的情况，从而降低了整个缓存的命中率。
 
-通过将缓存分成多个分片来减少锁的竞争，从而提高性能。它使用 Shard()函数根据键的哈希值来决定条目属于哪个分片。
+选择 16 的话，对于典型的 8 核或 16 核服务器，已经能提供足够好的并发度，同时又不会带来过大的额外开销。同时选择 2 的幂次方，还能通过位运算 $ hash >> (32 - kNumShardBits)$ 快速计算分片索引。
+
+加入分片后，包装了下原始的 LRUCache 类，构造的时候需要指定分片数，每个分片容量等，[实现](https://github.com/google/leveldb/blob/main/util/cache.cc#L352)如下：
+
+```cpp
+ public:
+  explicit ShardedLRUCache(size_t capacity) : last_id_(0) {
+    const size_t per_shard = (capacity + (kNumShards - 1)) / kNumShards;
+    for (int s = 0; s < kNumShards; s++) {
+      shard_[s].SetCapacity(per_shard);
+    }
+  }
+```
+
+然后其他相关缓存操作，比如插入、查找、删除等，都是通过 Shard 函数来决定操作哪个分片。这里以插入为例，[实现](https://github.com/google/leveldb/blob/main/util/cache.cc#L359)如下：
+
+```cpp
+  Handle* Insert(const Slice& key, void* value, size_t charge,
+                 void (*deleter)(const Slice& key, void* value)) override {
+    const uint32_t hash = HashSlice(key);
+    return shard_[Shard(hash)].Insert(key, hash, value, charge, deleter);
+  }
+```
+
+求 Hash 和计算分片的 Shard 函数没什么难点，这里就忽略了。这里也提下，ShardLRUCache 这里还要继承 Cache 抽象类，实现 Cache 中的各种接口。这样才能被其他调用 Cache 接口的地方使用。
+
+最后这里还有一个小细节，也值得说下，那就是 Cache 接口还有个 NewId 函数。在其他的 LRU 缓存实现中，没见过有支持 Cache 生成一个 Id。**LevelDB 为啥这么做呢？**
+
+### Cache 的 Id 生成
+
+LevelDB 其实提供了注释，但是只看注释似乎也不好明白，我们结合使用场景来分析下。
+
+```cpp
+  // Return a new numeric id.  May be used by multiple clients who are
+  // sharing the same cache to partition the key space.  Typically the
+  // client will allocate a new id at startup and prepend the id to
+  // its cache keys.
+  virtual uint64_t NewId() = 0;
+```
+
+这里补充些背景，我们在打开 LevelDB 数据库时，可以创建一个 Cache 对象，并传入 options.block_cache，用来缓存 SSTTable 文件中的数据块和过滤块。当然如果不传的话，LevelDB 默认也会创建一个 8 MB 的 SharedLRUCache 对象。这里 **Cache 对象是全局共享的，数据库中所有的 Table 对象都会使用这同一个 BlockCache 实例来缓存它们的数据块**。
+
+在 [table/table.cc](https://github.com/google/leveldb/blob/main/table/table.cc#L72) 的 Table::Open 中，我们看到每次打开 SSTTable 文件的时候，就会用 NewId 生成一个 cache_id。这里底层用互斥锁保证，每次生成的 Id 是全局递增的。后面我们要读取 SSTTable 文件中偏移量为 offset 的数据块 block 时，会用 `<cache_id, offset>` 作为缓存的 key 来进行读写。这样不同 SSTTable 文件的 cache_id 不同，即使他们的 offset 一样，这里缓存 key 也不同，不会冲突。
+
+说白了，SharedLRUCache 提供全局递增的 Id 主要是用来区分不同 SSTTable 文件，免得每个文件还要自己维护一个唯一 Id 来做缓存的 key。
+
+## 总结
+
