@@ -1,0 +1,44 @@
+graph
+
+%% 右边：已分片
+subgraph "分片后: 并发访问，性能提升"
+    direction TB
+    B1(线程 1) --> Hash
+    B2(线程 2) --> Hash
+    B3(线程 3) --> Hash
+    B4(线程 4) --> Hash
+
+    Hash["Hash(key) mod N"]
+
+    subgraph ShardedLRUCache
+        direction LR
+        subgraph Shard1
+            Lock1((锁 1)) --> Cache1[分片 1]
+        end
+        subgraph Shard2
+            Lock2((锁 2)) --> Cache2[分片 2]
+        end
+        subgraph ShardN
+            LockN((锁 N)) --> CacheN[分片 N]
+        end
+    end
+
+    Hash --> Lock1
+    Hash --> Lock2
+    Hash --> LockN
+
+    Note2["根据Key的哈希值分散到不同分片，<br>不同分片的访问可以并行，<br>锁竞争大幅降低"]
+    Note2 -.- ShardedLRUCache
+end
+%% 左边：未分片
+subgraph "未分片: 单一锁成为瓶颈"
+    direction TB
+    A1(线程 1) --> Lock
+    A2(线程 2) --> Lock
+    A3(线程 3) --> Lock
+    A4(线程 4) --> Lock
+    Lock((全局锁)) --> Cache[LRU 缓存]
+    Note1["所有线程竞争同一个锁，<br>只有一个能访问缓存，<br>其他必须等待"]
+    Note1 -.- Lock
+end
+
