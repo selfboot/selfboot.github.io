@@ -1,0 +1,44 @@
+graph
+
+%% Right: Sharded
+subgraph "After Sharding: Concurrent Access, Better Performance"
+    direction TB
+    B1(Thread 1) --> Hash
+    B2(Thread 2) --> Hash
+    B3(Thread 3) --> Hash
+    B4(Thread 4) --> Hash
+
+    Hash["Hash(key) mod N"]
+
+    subgraph ShardedLRUCache
+        direction LR
+        subgraph Shard1
+            Lock1((Lock 1)) --> Cache1[Shard 1]
+        end
+        subgraph Shard2
+            Lock2((Lock 2)) --> Cache2[Shard 2]
+        end
+        subgraph ShardN
+            LockN((Lock N)) --> CacheN[Shard N]
+        end
+    end
+
+    Hash --> Lock1
+    Hash --> Lock2
+    Hash --> LockN
+
+    Note2["Keys are hashed and distributed to different shards.<br>Accesses to different shards can proceed in parallel,<br>significantly reducing lock contention."]
+    Note2 -.- ShardedLRUCache
+end
+
+%% Left: Unsharded
+subgraph "Without Sharding: Single Lock Becomes Bottleneck"
+    direction TB
+    A1(Thread 1) --> Lock
+    A2(Thread 2) --> Lock
+    A3(Thread 3) --> Lock
+    A4(Thread 4) --> Lock
+    Lock((Global Lock)) --> Cache[LRU Cache]
+    Note1["All threads compete for the same lock.<br>Only one can access the cache,<br>others must wait."]
+    Note1 -.- Lock
+end

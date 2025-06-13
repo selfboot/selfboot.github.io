@@ -1,11 +1,13 @@
 ---
 title: LevelDB 源码阅读：LRU Cache 高性能缓存实现细节
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
-description: 
-date: 2025-06-16 21:00:00
+description: 本文深入剖析LevelDB中高性能LRU缓存的实现细节，包括缓存接口设计、LRUHandle数据结构、双向链表优化和分片机制。通过分析其巧妙的引用计数管理、哑元节点技巧和锁分片减少竞争等核心设计，展示了工业级缓存系统的优化思路。文章结合代码和图解，帮助读者理解LevelDB如何实现高并发、高性能的缓存，以及这些设计技巧如何应用到自己的项目中。
 mathjax: true
+date: 2025-06-13 21:00:00
 ---
 
 计算机系统中，缓存无处不在。从 CPU 缓存到内存缓存，从磁盘缓存到网络缓存，缓存无处不在。缓存的核心思想就是空间换时间，通过将热点数据缓存到高性能的存储中，从而提高性能。因为缓存设备比较贵，所以存储大小有限，就需要淘汰掉一些缓存数据。这里淘汰的策略就非常重要了，因为如果淘汰的策略不合理，把接下来要访问的数据淘汰掉了，那么缓存命中率就会非常低。
@@ -43,7 +45,7 @@ public:
 
 不过想实现一个工业界可用的高性能 LRU 缓存，还是有点难度的。接下来，我们来看看 LevelDB 是如何实现的。
 
-## Cache 接口：依赖倒置
+## 缓存设计：依赖倒置
 
 在开始看 LevelDB 的 LRU Cache 实现之前，先看下 LevelDB 中如何使用这里的缓存。比如在 [db/table_cache.cc](https://github.com/google/leveldb/blob/main/db/table_cache.cc) 中，为了缓存 SST table 的元数据信息，TableCache 类定义了一个 Cache 类型的成员变量，然后通过该成员来对缓存进行各种操作。
 
@@ -57,11 +59,13 @@ cache_->Erase(Slice(buf, sizeof(buf)));
 // ...
 ```
 
-这里 Cache 是一个抽象类，定义了缓存操作的各种接口，具体定义在 [include/leveldb/cache.h](https://github.com/google/leveldb/blob/main/include/leveldb/cache.h) 中。它定义了缓存应该具有的基本操作，如 Insert、Lookup、Release、Erase 等。
+这里 Cache 是一个抽象类，定义了缓存操作的各种接口，具体定义在 [include/leveldb/cache.h](https://github.com/google/leveldb/blob/main/include/leveldb/cache.h) 中。它定义了缓存应该具有的基本操作，如 Insert、Lookup、Release、Erase 等。它还定义了 Cache::Handle 这个类型，作为缓存条目。用户代码只与这个抽象接口交互，不需要知道具体实现。
+
+然后有个 LRUCache 类，是具体的缓存实现类，它实现了一个完整的 LRU 缓存。这个类不直接对外暴露，也不直接继承 Cache。然后还有个 ShardedLRUCache 类，它继承 Cache 类实现了缓存各种接口。它内部包含 16 个 LRUCache "分片"（shards），每个分片负责缓存一部分数据。
 
 这样的设计允许调用方在**不修改使用缓存部分的代码的情况下，轻松替换不同的缓存实现**。哈哈，这不就是八股文经常说的，**面向对象编程 SOLID 中的依赖倒置**嘛，应用层依赖于抽象接口(Cache)而不是具体实现(LRUCache)。这样可以降低代码耦合度，提高系统的可扩展性和可维护性。
 
-具体到使用的时候，通过这里的工厂函数来创建具体的缓存实现 [ShardedLRUCache](https://github.com/google/leveldb/blob/main/util/cache.cc#L339)：
+使用 Cache 的时候，通过这里的工厂函数来创建具体的缓存实现 [ShardedLRUCache](https://github.com/google/leveldb/blob/main/util/cache.cc#L339)：
 
 ```cpp
 Cache* NewLRUCache(size_t capacity) { return new ShardedLRUCache(capacity); }
@@ -70,7 +74,7 @@ Cache* NewLRUCache(size_t capacity) { return new ShardedLRUCache(capacity); }
 // Cache* NewClockCache(size_t capacity);
 ```
 
-ShardedLRUCache 才是具体的缓存实现，它继承自 Cache 抽象类，并实现了 Cache 中的各种接口。ShardedLRUCache 本身并不复杂，它是在 LRUCache 的基础上，增加了分片机制，减少锁竞争来提高并发性能。LRUCache 才是缓存核心，不过在我们先不管怎么实现 LRUCache，首先要确定**缓存的数据项是什么**。
+LRUCache 是缓存的核心部分，不过现在我们先不管怎么实现 LRUCache，先来看看**缓存项 Hanle 的设计**。
 
 ## LRUHandle 类的实现
 
@@ -143,24 +147,153 @@ struct LRUHandle {
 
 为了解决这个问题，在 LRUCache 实现中，用了两个双向链表。一个是**in_use_**，用来存储被引用的缓存项。另一个是**lru_**，用来存储未被引用的缓存项。每个缓存项只能在其中的一个链表中，不能同时在两个链表中。但是可以根据当前是否被引用，在两个链表中互相移动。这样在需要淘汰节点的时候，就可以直接从 lru_ 链表中淘汰，而不用遍历 in_use_ 链表。
 
-### 实现细节
+双链表介绍就先到这里，后面可以结合 LRUCache 的核心实现继续理解双链表具体怎么实现。
 
-当缓存项的引用计数从2变为1（意味着没有外部引用，仅剩缓存自身的引用）时，它会从 in_use_ 列表中移动到 lru_ 列表中。此时，所有外部引用完成了对缓存项的使用，并调用了 Release 方法手动释放了所有权。
-当缓存容量达到上限时，可以根据缓存项在LRU列表中的位置（即它们被访问的历史）来决定哪些缓存项被淘汰。
+### 缓存插入，删除，查找节点
 
-in_use_ 到 lru_ 的转移：当缓存项的引用计数从2变为1（意味着没有外部引用，仅剩缓存自身的引用）时，它会从 in_use_ 列表中移动到 lru_ 列表中。此时，所有外部引用完成了对缓存项的使用，并调用了 Release 方法手动释放了所有权。
-lru_ 到 in_use_ 的转移：当缓存项的引用计数从1变为2时，它会从 lru_ 列表中移动到 in_use_ 列表中。
+先来看插入节点，实现在 [util/cache.cc](https://github.com/google/leveldb/blob/main/util/cache.cc#L267) 中。简单说，这里先创建 LRUHandle 对象，然后把它放到 in_use_ 双向链表中，同时更新哈希表。如果插入节点后，缓存容量达到上限，则需要淘汰节点。但是实现中，还是有不少细节部分，LevelDB 的代码也确实精简。
 
+可以看下这里的入参，key 和 value 是客户端传入的，hash 是 key 的哈希值，charge 是缓存项占用的成本，deleter 是删除缓存项的回调函数。这里因为 LRUHandle 最后成员是柔性数组，所以我们先手动计算 LRUHandle 对象的大小，然后分配内存，之后开始初始化各种成员。这里 refs 初始化为 1，因为返回了一个 Handle 指针对象。 
 
-创建一个新的缓存项（LRUHandle对象），尝试将其加入缓存中，如果加入后超出了缓存的容量上限，则移除最老的缓存项。
+```cpp
+Cache::Handle* LRUCache::Insert(const Slice& key, uint32_t hash, void* value,
+                                size_t charge,
+                                void (*deleter)(const Slice& key,
+                                                void* value)) {
+  MutexLock l(&mutex_);
 
+  LRUHandle* e =
+      reinterpret_cast<LRUHandle*>(malloc(sizeof(LRUHandle) - 1 + key.size()));
+  e->value = value;
+  e->deleter = deleter;
+  e->charge = charge;
+  e->key_length = key.size();
+  e->hash = hash;
+  e->in_cache = false;
+  e->refs = 1;  // for the returned handle.
+  std::memcpy(e->key_data, key.data(), key.size());
+```
 
+接着这里也比较有意思，LevelDB 中的 LRUCache 实现，支持缓存容量设为 0，这时候就不缓存任何数据。要缓存的时候，更新 in_cache 为 true，增加 refs 计数，因为把 Handle 对象放到了 in_use_ 链表中。接着当然还要把 Handle 插入到哈希表中，注意这里有个 FinishErase 调用，值得好好聊聊。
 
-`lru_`是一个哑元（dummy node），用作 LRU 链表的头部，**其 next 成员指向 LRU 链表中的第一个实际缓存项**。`lru_.next != &lru_` 这个条件用于检查LRU链表是否为空。如果`lru_.next`等于`&lru_`，意味着LRU链表中没有任何缓存项，即链表只有哑元自身，链表为空。如果不等于，说明链表中至少有一个缓存项。
+```cpp
+  if (capacity_ > 0) {
+    e->refs++;  // for the cache's reference.
+    e->in_cache = true;
+    LRU_Append(&in_use_, e);
+    usage_ += charge;
+    FinishErase(table_.Insert(e));
+  } else {  // don't cache. (capacity_==0 is supported and turns off caching.)
+    // next is read by key() in an assert, so it must be initialized
+    e->next = nullptr;
+  }
+```
 
-`哑元（dummy node）`在很多数据结构的实现中被用作简化边界条件处理的技巧。在LRU缓存的上下文中，哑元主要是用来作为链表的头部，这样链表的头部始终存在，即使链表为空时也是如此。这种方法可以简化插入和删除操作，因为在插入和删除操作时**不需要对空链表做特殊处理**。例如，当向链表中添加一个新的元素时，可以直接在哑元和当前的第一个元素之间插入它，而不需要检查链表是否为空。同样，当从链表中删除元素时，你不需要担心删除最后一个元素后如何更新链表头部的问题，因为哑元始终在那里。
+我们前面将哈希表实现的时候，这里插入哈希表，如果已经有同样的 key，则返回旧的 Handle 对象。这里 FinishErase 函数就是用来清理这个旧的 Handle 对象。
 
-在 LRUCache 的实现中，哑元是通过在 LRUCache 类内部声明一个 LRUHandle 类型的成员变量（比如`lru_`）来实现的。在LRUCache的构造函数中，这个哑元会被初始化，其next和prev指针都指向它自己：
+```cpp
+// If e != nullptr, finish removing *e from the cache; it has already been
+// removed from the hash table.  Return whether e != nullptr.
+bool LRUCache::FinishErase(LRUHandle* e) {
+  if (e != nullptr) {
+    assert(e->in_cache);
+    LRU_Remove(e);
+    e->in_cache = false;
+    usage_ -= e->charge;
+    Unref(e);
+  }
+  return e != nullptr;
+}
+```
+
+清理操作有几个吧，首先从 in_use_ 或者 lru_ 链表中移除，这里其实不确定旧的 Handle 对象具体在哪个链表中，不过没关系，**LRU_Remove 不用知道在哪个链表也能处理**。LRU_Remove 函数实现很简单，也就两行代码，大家不理解的话可以画个图来理解下：
+
+```cpp
+void LRUCache::LRU_Remove(LRUHandle* e) {
+  e->next->prev = e->prev;
+  e->prev->next = e->next;
+}
+```
+
+接着更新 in_cache 为 false，表示已经不在缓存中了。后面还要更新缓存容量，减少 usage_。最后调用 Unref 减少这个 Handle 对象的引用计数，这时候这个 Handle 对象可能在其他地方还有引用。等到所有引用都释放了，这时候才会真正清理这个 Handle 对象。[Unref 函数](https://github.com/google/leveldb/blob/main/util/cache.cc#L226) 其实也有点意思，我把代码也贴出来：
+
+```cpp
+void LRUCache::Unref(LRUHandle* e) {
+  assert(e->refs > 0);
+  e->refs--;
+  if (e->refs == 0) {  // Deallocate.
+    assert(!e->in_cache);
+    (*e->deleter)(e->key(), e->value);
+    free(e);
+  } else if (e->in_cache && e->refs == 1) {
+    // No longer in use; move to lru_ list.
+    LRU_Remove(e);
+    LRU_Append(&lru_, e);
+  }
+}
+```
+
+首先减少计数，如果计数为 0，则表示**完全没有外部引用，这时候可以大胆释放内存**。释放也分两部分，先用回调函数 deleter 来清理 value 部分的内存空间。接着用 free 来释放 LRUHandle 指针的内存空间。如果计数为 1 并且还在缓存中，表示只有来自缓存自身的引用，这时候**需要把 Handle 对象从 in_use_ 链表中移除，并放到 lru_ 链表中**。如果后面要淘汰节点，这个节点在 lru_ 链表中，就可以直接淘汰了。
+
+接下来就是插入节点操作的最后一步了，判断缓存是否还有剩余空间，没有的话，要开始淘汰节点了。这里只要空间还是不够，然后就会从 lru_ 链表中取出队首节点，然后从**哈希表中移除，接着调用 FinishErase 清理节点**。这里判断双向链表是否为空也比较有意思，用到了哑元节点，后面再介绍。
+
+```cpp
+  while (usage_ > capacity_ && lru_.next != &lru_) {
+    LRUHandle* old = lru_.next;
+    assert(old->refs == 1);
+    bool erased = FinishErase(table_.Remove(old->key(), old->hash));
+    if (!erased) {  // to avoid unused variable when compiled NDEBUG
+      assert(erased);
+    }
+  }
+```
+
+整个插入节点函数，包括这里的淘汰逻辑，甚至是整个 LevelDB 代码中，都有大量的 assert 断言，用来做一些检查，保证有问题进程立马挂掉，避免错误传播。
+
+看完插入节点，其实删除节点就不用看了，代码实现很简单，从哈希表中移除节点，然后调用 FinishErase 清理节点。
+
+```cpp
+void LRUCache::Erase(const Slice& key, uint32_t hash) {
+  MutexLock l(&mutex_);
+  FinishErase(table_.Remove(key, hash));
+}
+```
+
+查找节点也相对简单些，直接从哈希表中查找，如果找到，则增加引用计数，并返回 Handle 对象。这里其实和插入一样，只要返回了 Handle 对象，就会增加引用计数。所以如果外面如果没有用到的话，要记得调用 Release 方法手动释放引用，不然内存就容易泄露了。
+
+```cpp
+Cache::Handle* LRUCache::Lookup(const Slice& key, uint32_t hash) {
+  MutexLock l(&mutex_);
+  LRUHandle* e = table_.Lookup(key, hash);
+  if (e != nullptr) {
+    Ref(e);
+  }
+  return reinterpret_cast<Cache::Handle*>(e);
+}
+void LRUCache::Release(Cache::Handle* handle) {
+  MutexLock l(&mutex_);
+  Unref(reinterpret_cast<LRUHandle*>(handle));
+}
+```
+
+此外，这里的 Cache 还实现了 Prune 接口，用来主动清理缓存。方法和插入里面的清理逻辑类似，不过这里会把 lru_ 链表中所有节点都清理掉。这个清理在 LevelDB 中也没地方用到过。
+
+### 双向链表的操作
+
+我们再补充讨论下这里双向链表相关的操作吧。前面我们其实已经知道了分了两个链表，一个 lru_ 链表，一个 in_use_ 链表。这里结合注释看更清晰：
+
+```cpp
+  // Dummy head of LRU list.
+  // lru.prev is newest entry, lru.next is oldest entry.
+  // Entries have refs==1 and in_cache==true.
+  LRUHandle lru_ GUARDED_BY(mutex_);
+
+  // Dummy head of in-use list.
+  // Entries are in use by clients, and have refs >= 2 and in_cache==true.
+  LRUHandle in_use_ GUARDED_BY(mutex_);
+```
+
+lru_ 成员是链表的哑元节点，next 成员指向 lru_ 链表中最老的缓存项，prev 成员指向 lru_ 链表中最新的缓存项。在 LRUCache 的构造函数中，lru_ 的 next 和 prev 都指向它自己，表示链表为空。还记得前面插入节点的时候，怎么判定还有可以淘汰的节点的吧，就是用 `lru_.next != &lru_`。
 
 ```cpp
 LRUCache::LRUCache() : capacity_(0), usage_(0) {
@@ -172,20 +305,33 @@ LRUCache::LRUCache() : capacity_(0), usage_(0) {
 }
 ```
 
-Ref 函数的目的是增加给定缓存项 e 的引用计数。当缓存项的引用计数从1变为2时，表示**除了缓存自身对该项的引用之外，现在还有另一个外部引用**（例如，客户端代码正在使用该缓存项）。此时，缓存项从"最近最少使用（LRU）"列表移动到"正在使用（in_use）"列表。
+`哑元（dummy node）`在很多数据结构的实现中被用作简化边界条件处理的技巧。在 LRU 缓存的上下文中，哑元主要是用来作为链表的头部，这样链表的头部始终存在，即使链表为空时也是如此。这种方法可以简化插入和删除操作，因为在插入和删除操作时**不需要对空链表做特殊处理**。
 
+例如，当向链表中添加一个新的元素时，可以直接在哑元和当前的第一个元素之间插入它，而不需要检查链表是否为空。同样，当从链表中删除元素时，你不需要担心删除最后一个元素后如何更新链表头部的问题，因为哑元始终在那里。
 
+删除链表中节点 LRU_Remove 我们前面看过，两行代码就行了。往链表添加节点的实现，我整理了一张图，配合代码就好理解了：
 
-`FinishErase` 函数为了从缓存中彻底移除一个缓存项（LRUHandle对象）。当我们从缓存中移除缓存项时，会需要两个步骤：
+![LRUCache 双向链表操作](https://slefboot-1251736664.file.myqcloud.com/20250613_leveldb_source_lru_cache_linkedlist.webp)
 
-1. 从哈希表中移除：确保了后续的缓存访问请求不会再找到这个缓存项。
-2. 从LRU链表中移除，并处理相关资源，比如减少总的缓存使用量（usage_），以及减少引用计数（通过Unref方法）。
+这里 e 是新插入的节点，list 是链表的哑元节点。list 的 pre 和 next 我这里用圆形，表示它可以是自己，比如初始空链表的时候。这里插入是在哑元的前面，所以 list->prev 永远是链表最新的节点，list->next 永远是链表最老的节点。这种链表操作，最好画个图，就一目了然了。
+
+### reinterpret_cast 转换
+
+最后再补充说下，上面代码中有不少地方用到了 reinterpret_cast 来在 LRUHandle* 和 Cache::Handle* 之间转换类型。**reinterpret_cast 将一种类型的指针强制转换为另一种类型的指针，而不进行任何类型检查**。它不进行任何底层数据的调整，只是告诉编译器："请把这个内存地址当作另一种类型来看待"。其实这种操作比较危险，一般不推荐这样用。
+
+但 LevelDB 这样做其实是为了将接口和实现分析。这里将具体的内部数据结构 LRUHandle* 以一个抽象、不透明的句柄 Cache::Handle* 形式暴露给外部用户，同时又能在内部将这个不透明的句柄转换回具体的数据结构进行操作。
+
+**在这种特定的、受控的设计模式下，它是完全安全的**。因为只有 LRUCache 内部代码可以创建 LRUHandle。任何返回给外部的 Cache::Handle* 总是指向一个合法的 LRUHandle 对象。任何传递给 LRUCache 的 Cache::Handle* 必须是之前由同一个 LRUCache 实例返回的。
+
+只要遵守这些约定，reinterpret_cast 就只是在指针的"视图"之间切换，指针本身始终指向一个有效的、类型正确的对象。如果用户试图伪造一个 Cache::Handle* 或者将一个不相关的指针传进来，程序就会发生未定义行为，但这属于 API 的误用。
 
 ## ShardedLRUCache 分片实现
 
 前面 LRUCache 的实现中，插入缓存、查找缓存、删除缓存操作都必须通过一个互斥锁来保护。在多线程环境下，如果只有一个大的缓存，**这个锁就会成为一个全局瓶颈**。当多个线程同时访问缓存时，只有一个线程能获得锁，其他线程都必须等待，这会严重影响并发性能。
 
-为了提高性能，ShardedLRUCache 将缓存分成多个分片（shard_ 数组），每个分片都有自己独立的锁。当一个请求到来时，它会根据 key 的哈希值被路由到特定的分片。这样，不同线程访问不同分片时就可以并行进行，因为它们获取的是不同的锁，从而减少了锁的竞争，提高了整体的吞吐量。
+为了提高性能，ShardedLRUCache 将缓存分成多个分片（shard_ 数组），每个分片都有自己独立的锁。当一个请求到来时，它会根据 key 的哈希值被路由到特定的分片。这样，不同线程访问不同分片时就可以并行进行，因为它们获取的是不同的锁，从而减少了锁的竞争，提高了整体的吞吐量。画个图可能更清晰些，mermaid 代码在[这里](/downloads/mermaid_leveldb_lru_cache_shard.txt)。
+
+![ShardedLRUCache 分片实现优点对比](https://slefboot-1251736664.file.myqcloud.com/20250613_leveldb_source_lru_cache_shard.webp)
 
 那么需要分多少片呢？LevelDB 这里硬编码了一个 $ kNumShards = 1 << kNumShardBits $，计算出来是 16，算是一个经验选择吧。如果分片数量太少，比如2、4个，在核心数很多的服务器上，锁竞争依然可能很激烈。分片太多的话，每个分片的容量就会很小。这可能导致一个"热"分片频繁淘汰数据，而另一个"冷"分片有很多空闲空间的情况，从而降低了整个缓存的命中率。
 
@@ -237,3 +383,14 @@ LevelDB 其实提供了注释，但是只看注释似乎也不好明白，我们
 
 ## 总结
 
+好了，LevelDB 的 LRU Cache 分析完了，我们可以看到一个工业级高性能缓存的设计思路和实现细节。最后总结下几个关键点：
+
+1. **接口与实现分离**：通过抽象的 Cache 接口，将缓存的使用方与具体实现解耦，体现了面向对象设计中的依赖倒置原则。用户代码只需要跟 Cache 接口打交道，不用关心具体实现。
+2. **精心设计的缓存项**：LRUHandle 结构体包含了引用计数、缓存标志等元数据，通过柔性数组成员存储变长的 key，减少内存分配次数，提高性能。
+3. **双链表优化**：通过两个双向链表（in_use_ 和 lru_）分别管理"正在使用"和"可以淘汰"的缓存项，避免了在淘汰时遍历整个链表，提高了淘汰效率。
+4. **哑元节点技巧**：使用哑元节点简化了链表操作，不需要处理空链表的特殊情况，代码更简洁。
+5. **分片减少锁竞争**：ShardedLRUCache 将缓存分成多个分片，每个分片有独立的锁，大幅提高了多线程环境下的并发性能。
+6. **引用计数管理内存**：通过精确的引用计数，确保缓存项在仍被外部引用时不会被释放，同时在不再需要时及时回收内存。
+7. **断言保证正确性**：大量使用断言来检查代码的前置条件和不变量，确保错误能够及早被发现。
+
+这些设计思路和实现技巧都值得我们在自己的项目中借鉴。特别是在需要高并发、高性能的场景中，LevelDB 的这些优化手段可以帮助我们设计出更高效的缓存系统。
