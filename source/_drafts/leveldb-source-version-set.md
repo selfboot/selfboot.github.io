@@ -4,7 +4,7 @@ tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
-date: 2025-01-31 18:00:00
+date: 2025-06-25 18:00:00
 ---
 
 在 LevelDB 中，每个 Version 代表了数据库在某一特定时刻的状态，包括所有的键值对和与之相关的元数据（如文件索引和状态信息），每个版本通过管理一系列的 SSTable 文件来存储数据。

@@ -1,9 +1,17 @@
+---
 title: LevelDB 源码阅读：SSTable 文件落磁盘以及解析
 tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
+date: 2025-06-25 18:00:00
 ---
+
+LevelDB 中，内存表中的键值对在到达一定大小后，会落到磁盘文件中。这里 LevelDB 是怎么组织文件格式的？怎么提高数据的读写性能？实现中有哪些优化点？接下来我们从 SSTable 文件的创建和解析，来看看这里到底怎么实现的。
+
+为了方便大家快速理解，这里先简单**填鸭式**的给大家介绍下 SSTable 文件的格式，至于为什么要这么设计，以及如何提高读写性能，我们后面再慢慢分析。
+
+## SSTable 文件格式概述
 
 SSTable（Sorted String Table）是 LevelDB 中用于**持久化存储键值对的文件格式**。它主要由一系列的数据块（Data Blocks）、一个索引块（Index Block）、一个可选的过滤块（Filter Block）、一个元数据块（Meta Index Block）和一个表尾（Footer）组成。下面是一个简单的 ASCII 图来描述 SSTable 的结构：
 
@@ -29,7 +37,7 @@ SSTable（Sorted String Table）是 LevelDB 中用于**持久化存储键值对�
 
 <!-- more -->
 
-每个块基本作用如下：
+我先简单概述下这里每个块基本作用，后面结合代码，我们再详细分析。
 
 - **Data Blocks**: 存储实际的键值对数据。每个块通常包含多个键值对，块的大小可以在 LevelDB 的配置中设置。
 - **Filter Block**: 一个可选的块，用于快速检查一个键是否存在于某个数据块中，通常使用布隆过滤器（Bloom Filter）来实现。
@@ -37,20 +45,22 @@ SSTable（Sorted String Table）是 LevelDB 中用于**持久化存储键值对�
 - **Index Block**: 存储每个数据块的最大键和该数据块在文件中的偏移量。通过索引块，LevelDB 可以快速定位到包含特定键的数据块。
 - **Footer**: 包含了元索引块和索引块的偏移量和大小。还包含了用于标识文件类型和版本的魔法数字。
 
-通过这些块，LevelDB 在查找键时可以高效地定位数据。块的构建和解析，在另一篇 [LevelDB 源码阅读：SSTable 中数据块 Block 的处理](/leveldb_source_table_block/) 里有详细说明，本篇文章主要讲解 SSTable 文件的创建和解析，涉及了 2 个核心文件：
+至于这些块是怎么构建和解析的，我们先不用管，后面我会在[LevelDB 源码阅读：SSTable 中数据块 Block 的处理](/leveldb_source_table_block/) 这个文章里详细说明。哎，LevelDB 实现就是这么一层套一层，咱们也只能一层层剥离来理解。
 
-- **table/table_builder.cc**: 负责 SSTable 文件的创建。TableBuilder 类提供了向 SST 文件中添加键值对的接口，可以用该类生成一个完整的 SST 文件。
-- **table/table.cc**: 负责 SSTable 文件的读取和解析。Table 类用于打开 SST 文件，并从中读取数据。
+本篇文章，咱们主要关注 SSTable 文件的创建和解析过程，也就是说怎么创建一个新的 SSTable 文件，以及怎么从 SSTable 文件中读取数据。这部分实现涉及了 2 个核心文件：
+
+- [table/table_builder.cc](https://github.com/google/leveldb/blob/main/table/table_builder.cc): 负责 SSTable 文件的创建。TableBuilder 类提供了向 SST 文件中添加键值对的接口，可以用该类生成一个完整的 SST 文件。
+- [table/table.cc](https://github.com/google/leveldb/blob/main/table/table.cc): 负责 SSTable 文件的读取和解析。Table 类用于打开 SST 文件，并从中读取数据。
 
 ## TableBuilder 写文件
 
-我们先来看 TableBuilder 类，该类可以将有序键值对转换为磁盘中的 SSTable 文件，确保数据的查询效率以及存储效率。该类只有一个私有成员变量，是一个 Rep* 指针，里面保存各种状态信息，比如当前的 DataBlock、IndexBlock 等。这里 Rep* 用到了 Pimpl 的设计模式，可以看本系列的 [LevelDB 源码阅读：理解其中的 C++ 高级技巧](leveldb_source_unstand_c++/#Pimpl-类设计) 了解关于 Pimpl 的更多细节。
+我们先来看 TableBuilder 类，该类可以**将有序键值对转换为磁盘中的 SSTable 文件，确保数据的查询效率以及存储效率**。该类只有一个私有成员变量，是一个 Rep* 指针，里面保存各种状态信息，比如当前的 DataBlock、IndexBlock 等。这里 Rep* 用到了 Pimpl 的设计模式，可以看本系列的 [LevelDB 源码阅读：理解其中的 C++ 高级技巧](/2024/08/13/leveldb_source_unstand_c++/#Pimpl-类设计) 了解关于 Pimpl 的更多细节。
 
 该类最重要的接口有 Add，Finish，接下来从这两个接口入手，分析 TableBuilder 类的实现。
 
 ### Add 添加键值
 
-TableBuilder::Add 方法是向 SSTable 文件中添加键值对的核心函数，其实现如下：
+[TableBuilder::Add](https://github.com/google/leveldb/blob/main/table/table_builder.cc#L94) 方法是向 SSTable 文件中添加键值对的核心函数，它的实现主要分 5 部分，我这里一个个来说吧。
 
 ```cpp
 void TableBuilder::Add(const Slice& key, const Slice& value) {
@@ -272,4 +282,3 @@ Status BuildTable(const std::string& dbname, Env* env, const Options& options,
 除了这里 BuildTable 将 immemtable 中的数据写入 level0 的 SSTable 文件外，还有一个场景是在 Compact 过程中，将多个 SSTable 文件合并成一个 SSTable 文件。这个过程在 db/db_impl.cc 中的 DoCompactionWork 函数中实现，核心步骤和上面区别不大，这里不再赘述。
 
 ## Table 解析文件
-
