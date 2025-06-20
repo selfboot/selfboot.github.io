@@ -15,7 +15,7 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Fri, 20 Jun 2025 13:13:52 GMT</pubDate>
+    <pubDate>Fri, 20 Jun 2025 13:20:39 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
@@ -191,8 +191,6 @@
     
     
     
-    
-    
     <item>
       <title>5 Real-world Cases of C++ Process Crashes from Production</title>
       <link>https://selfboot.cn/en/2025/01/10/c++_crash_cases/</link>
@@ -215,6 +213,8 @@
       <comments>https://selfboot.cn/en/2025/01/10/c++_crash_cases/#disqus_thread</comments>
       
     </item>
+    
+    
     
     
     
