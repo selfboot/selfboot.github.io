@@ -60,7 +60,7 @@ SSTable（Sorted String Table）是 LevelDB 中用于**持久化存储键值对�
 
 ### Add 添加键值
 
-[TableBuilder::Add](https://github.com/google/leveldb/blob/main/table/table_builder.cc#L94) 方法是向 SSTable 文件中添加键值对的核心函数。添加键值对，需要更改上面提到的 DataBlock、IndexBlock、FilterBlock 等各个块。这里为了提高效率，还是有不少优化细节，为了更好理解，我把它主要分 5 部分，这里一个个来说吧。
+[TableBuilder::Add](https://github.com/google/leveldb/blob/main/table/table_builder.cc#L94) 方法是向 SSTable 文件中添加键值对的核心函数。添加键值对，需要更改上面提到的 DataBlock、IndexBlock、FilterBlock 等各个块。这里为了提高效率，还是有不少优化细节，为了更好理解，我把它主要分 4 部分，这里一个个来说吧。
 
 ```cpp
 void TableBuilder::Add(const Slice& key, const Slice& value) {
