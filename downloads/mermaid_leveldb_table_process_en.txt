@@ -1,0 +1,49 @@
+---
+config:
+  layout: fixed
+---
+flowchart TD
+ subgraph subGraph0["LevelDB Optimization - Shortest Separator"]
+        B2["DataBlock 0"]
+        A2["SSTable File Structure"]
+        C2["DataBlock 1"]
+        D2["DataBlock 2"]
+        E2["IndexBlock"]
+        B2_1["Keys:<br>apple<br>banana<br>cherry<br>dog"]
+        C2_1["Keys:<br>floor<br>fox<br>grape<br>house"]
+        D2_1["Keys:<br>jack<br>juice<br>kite<br>lamp"]
+        E2_1@{ label: "Index Entries:<br>① key='e' → Block0<br>② key='i' → Block1<br>③ key='lamp' → Block2<br><br>Total size: 1+1+4 = 6 bytes" }
+  end
+ subgraph subGraph1["Traditional Method - Use Last Key Directly"]
+        B1["DataBlock 0"]
+        A1["SSTable File Structure"]
+        C1["DataBlock 1"]
+        D1["DataBlock 2"]
+        E1["IndexBlock"]
+        B1_1["Keys:<br>apple<br>banana<br>cherry<br>dog"]
+        C1_1["Keys:<br>floor<br>fox<br>grape<br>house"]
+        D1_1["Keys:<br>jack<br>juice<br>kite<br>lamp"]
+        E1_1@{ label: "Index Entries:<br>① key='dog' → Block0<br>② key='house' → Block1<br>③ key='lamp' → Block2<br><br>Total size: 3+5+4 = 12 bytes" }
+  end
+    A2 --> B2 & C2 & D2 & E2
+    B2 --> B2_1
+    C2 --> C2_1
+    D2 --> D2_1
+    E2 --> E2_1
+    A1 --> B1 & C1 & D1 & E1
+    B1 --> B1_1
+    C1 --> C1_1
+    D1 --> D1_1
+    E1 --> E1_1
+    A3@{ label: "Optimization Process:<br>FindShortestSeparator('dog', 'floor') = 'e'<br>FindShortestSeparator('house', 'jack') = 'i'<br>The last block is not optimized, directly use 'lamp'" }
+    E2_1@{ shape: rect}
+    E1_1@{ shape: rect}
+    A3@{ shape: rect}
+    style B2 fill:#c8e6c9
+    style C2 fill:#c8e6c9
+    style D2 fill:#c8e6c9
+    style E2 fill:#c8e6c9
+    style B1 fill:#ffcdd2
+    style C1 fill:#ffcdd2
+    style D1 fill:#ffcdd2
+    style E1 fill:#ffcdd2
