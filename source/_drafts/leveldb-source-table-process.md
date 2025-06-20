@@ -60,7 +60,7 @@ SSTable（Sorted String Table）是 LevelDB 中用于**持久化存储键值对�
 
 ### Add 添加键值
 
-[TableBuilder::Add](https://github.com/google/leveldb/blob/main/table/table_builder.cc#L94) 方法是向 SSTable 文件中添加键值对的核心函数，它的实现主要分 5 部分，我这里一个个来说吧。
+[TableBuilder::Add](https://github.com/google/leveldb/blob/main/table/table_builder.cc#L94) 方法是向 SSTable 文件中添加键值对的核心函数。添加键值对，需要更改上面提到的 DataBlock、IndexBlock、FilterBlock 等各个块。这里为了提高效率，还是有不少优化细节，为了更好理解，我把它主要分 5 部分，这里一个个来说吧。
 
 ```cpp
 void TableBuilder::Add(const Slice& key, const Slice& value) {
@@ -85,13 +85,13 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
   }
 ```
 
+LevelDB 在代码中**加了不少校验逻辑，确保如果有问题，早崩溃早发现**，这个理念对于底层库来说，还是很有必要的。Add 方法这里 assert 校验后面插入的键值对永远都是更大的，当然这点需要调用方来保证。为了实现校验逻辑，在每个 TableBuilder 的 Rep 中，都保存了 last_key，用来记录最后一个插入的 key。
+
 #### 处理索引记录
 
-接着会检查是否需要添加索引记录 (IndexBlock)，这些记录被用来快速检索 key 对应的 DataBlock 位置。**每个 DataBlock 都对应索引块中的一条记录**，每当处理完一个 DataBlock 时，就会将 pending_index_entry 设置为 true，等到下次全新的 DataBlock 增加第一个 key 前，再更新上个 DataBlock 的索引记录。
+接着会在**适当时机添加新的索引**。我们知道索引记录用来快速查找一个 key 对应的 DataBlock 偏移位置，每一个完整的 DataBlock 对应一个索引记录。我们先看看这里**添加索引记录的时机**，当处理完一个 DataBlock 时，会将 pending_index_entry 设置为 true，等到下次新的 DataBlock 增加第一个 key 时，再更新上个完整的 DataBlock 对应的索引记录。
 
-这里之所以要等到新 DataBlock 增加第一个 key 的时候才更新索引块，是**为了减少索引键的长度**，从而减少索引块的大小。比如前一个 DataBlock 中的最后(也是最大)一个 key 是 "the quick brown fox"，新的 DataBlock 即将插入的第一个(也是最小) key 是 "the who"，那么索引块中增加的索引键可以为 "the w"。这里 "the w" 是位于 "the quick brown fox" 和 "the who" 之间的**最短分隔 key**。这里计算字符串之间的最短分割 key，是通过调用 options.comparator->FindShortestSeparator，其默认实现在 `util/comparator.cc`。
-
-每条索引记录的 value 是**该块在文件内的偏移和 size**，这是通过 pending_handle 来记录的。当通过 WriteRawBlock 将 DataBlock 写文件的时候，会更新 pending_handle 的偏移和大小。然后写索引的时候，用 EncodeTo 将偏移和 size 编码到字符串中，和前面的索引 key 一起插入到 IndexBlock 中。索引部分的核心代码如下：
+这部分的核心代码如下：
 
 ```cpp
   if (r->pending_index_entry) {
@@ -104,9 +104,28 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
   }
 ```
 
+这里之所以要等到新 DataBlock 增加第一个 key 的时候才更新索引块，就是**为了尽最大程度减少索引键的长度，从而减少索引块的大小**，这也是 LevelDB 工程上的一个优化细节。
+
+这里扩展讲下背景可能更好理解，我们知道 SSTable 中每个索引记录都由一个分割键 separator_key 和一个指向数据块的 BlockHandle（偏移量+大小）组成。这个 separator_key 的作用就是划分不同 Datablock 的键空间，对于第 N 个数据块（Block N），它的索引键 separator_key_N 必须满足以下条件：
+
+- separator_key_N >= Block N 中的任何键
+- separator_key_N < Block N+1 中的任何键
+
+这样在查找一个目标键的时候，如果在索引块中找到第一个 separator_key_N > target_key 的条目，那么 target_key 如果存在，就必定在前一个数据块（Block N-1）中。
+
+直观上讲，索引最简单的实现是直接用 Block N 的最后一个键（last_key_N）作为 separator_key_N。但问题是，last_key_N 本身可能非常长。这就导致索引项会很长，进而整个索引块变得很大。**索引块通常需要加载到内存中，索引块越小，内存占用越少，缓存效率越高，查找速度也越快**。
+
+其实我们细想下，我们并不需要一个真实存在的键作为分割索引 key，只需要一个能把前后两个块分开的"隔离键"即可。这个键只需要满足：last_key_N <= separator_key < first_key_N+1。LevelDB 就是这样做的，这里通过调用 options.comparator->FindShortestSeparator，**找到前一个块最后的键，和下一个块第一个键之间最短分割字符串**。这里 FindShortestSeparator 的默认实现在 [util/comparator.cc](https://github.com/google/leveldb/blob/main/util/comparator.cc#L31C8-L31C29)中，本文不再列出来了。
+
+为了更清楚地理解这个优化过程，下面用一个具体的例子来演示：
+
+![SSTable DataBlock 索引分割键优化](https://slefboot-1251736664.file.myqcloud.com/20250620_leveldb_source_table_process_indexkey.webp)
+
+最后再聊下这里每条索引记录的 value，它是**该块在文件内的偏移和 size**，这是通过 pending_handle 来记录的。当通过 WriteRawBlock 将 DataBlock 写文件的时候，会更新 pending_handle 的偏移和大小。然后写索引的时候，用 EncodeTo 将偏移和 size 编码到字符串中，和前面的索引 key 一起插入到 IndexBlock 中。
+
 #### 处理过滤记录
 
-接着处理 FilterBlock 过滤索引块，该块用来**快速判断某个 key 是否存在于当前 SSTable 中**。如果设置需要过滤，在添加 key 的时候，则需要同步添加索引，其核心代码如下：
+接着处理 FilterBlock 过滤索引块，前面的索引块只是能找到键**应该在的块的位置**，还需要去读出块的内容才知道键到底存不存在。为了快速判断键值在不在，LevelDB 支持了过滤索引块，**可以快速判断某个 key 是否存在于当前 SSTable 中**。如果设置用到过滤索引块，则在添加 key 的时候，同步添加索引，其核心代码如下：
 
 ```cpp
   if (r->filter_block != nullptr) {
@@ -149,7 +168,7 @@ TableBuilder::TableBuilder(const Options& options, WritableFile* file)
 }
 ```
 
-关于 LevelDB 默认的布隆过滤器实现，可以参考[LevelDB 源码阅读：布隆过滤器的实现](/leveldb_source_filterblock)。
+关于 LevelDB 默认的布隆过滤器实现，可以参考[LevelDB 源码阅读：布隆过滤器的实现](/leveldb_source_filterblock)。索引块的构建，我单独写一篇来详解，这里我们也不深究细节部分。
 
 #### 处理数据块
 
@@ -166,7 +185,7 @@ TableBuilder::TableBuilder(const Options& options, WritableFile* file)
   }
 ```
 
-这里调用 BlockBuilder 中的 Add 方法，将键值对添加到 DataBlock 中，关于 BlockBuilder 的实现，参考本系列 [LevelDB 源码阅读：SSTable 中数据块 Block 的处理](/leveldb-source-table-block/)。每次添加键值对后，都会检查当前 DataBlock 的大小是否超过了 block_size，如果超过了，则调用 Flush 方法将 DataBlock 写入磁盘文件。这里的 block_size 是在 options 中设置的，默认是 4KB。这里是键值压缩前的大小，如果开启了压缩，实际写入文件的大小会小于 block_size。
+这里调用 BlockBuilder 中的 Add 方法，将键值对添加到 DataBlock 中，关于 BlockBuilder 的实现，参考本系列 [LevelDB 源码阅读：SSTable 中数据块 Block 的处理](/leveldb-source-table-block/)。每次添加键值对后，都会检查当前 DataBlock 的大小是否超过了 block_size，如果超过了，则调用 Flush 方法将 DataBlock 写入磁盘文件。这里 block_size 是在 options 中设置的，默认是 4KB。这个是键值压缩前的大小，如果开启了压缩，实际写入文件的大小会小于 block_size。
 
 ```cpp
   // Approximate size of user data packed per block.  Note that the
@@ -175,6 +194,8 @@ TableBuilder::TableBuilder(const Options& options, WritableFile* file)
   // compression is enabled.  This parameter can be changed dynamically.
   size_t block_size = 4 * 1024;
 ```
+
+这里怎么 Flush 写磁盘呢，我们接着往下看。
 
 ### Flush 写数据块
 
