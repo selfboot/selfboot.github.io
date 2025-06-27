@@ -1,10 +1,12 @@
 ---
 title: LevelDB 源码阅读：一步步拆解 SSTable 文件的创建过程
-tags: [C++, LevelDB]
+tags:
+  - C++
+  - LevelDB
 category: 源码剖析
 toc: true
 description: 深入解析 LevelDB 中 SSTable 文件的创建过程和内部结构设计。本文从问题驱动的角度，详细分析了 SSTable 如何通过分块存储、索引优化、过滤器等机制实现高效的读写性能。重点剖析 TableBuilder 类的实现细节，包括 DataBlock、IndexBlock、FilterBlock 的构建过程，以及索引键优化、压缩策略等工程技巧。通过源码分析展示了 LevelDB 如何解决大规模数据存储中的关键问题：快速定位数据块、减少无效磁盘 I/O、平衡存储空间与查询效率。文章结合具体代码示例和流程图，让读者深入理解 SSTable 文件格式设计的精妙之处，以及 LevelDB 作为高性能键值存储引擎的核心实现原理。
-date: 2025-06-25 18:00:00
+date: 2025-06-27 21:00:00
 ---
 
 LevelDB 中，内存表中的键值对在到达一定大小后，会落到磁盘文件 SSTable 中。并且磁盘文件也是分层的，每层包含多个 SSTable 文件，在运行时，LevelDB 会在适当时机，合并、重整 SSTable 文件，将数据不断往下层沉淀。
@@ -12,6 +14,8 @@ LevelDB 中，内存表中的键值对在到达一定大小后，会落到磁盘
 这里 SSTable 有一套组织数据的格式，目的就是保证数据有序，并且能快速查找。那么  SSTable 内部是怎么存储这些键值对的，又是怎么提高数据的读、写性能的。以及整个 SSTable 文件的实现中有哪些优化点？
 
 本文接下来我们会仔细分析 SSTable 文件的创建过程，一步步拆解来看看这里到底怎么实现的。在开始之前，我先给一个大的图，大家可以先留个印象。
+
+![SSTable 构建文件的步骤概览](https://slefboot-1251736664.file.myqcloud.com/20250627_leveldb_source_table_build_total.webp)
 
 <!-- more -->
 
@@ -294,9 +298,11 @@ void TableBuilder::WriteRawBlock(const Slice& block_contents,
 
 上面的所有操作，主要用来将键值对不断添加到数据块中，这个过程如果达到 DataBlock 的大小限制，会触发 DataBlock 的落盘。但整个 SSTable 文件还有索引块，过滤块等，**需要主动触发落盘**。那在什么时机触发，又是怎么落盘呢？
 
-LevelDB 中产生 SSTable 文件的时机有很多，这里以保存 immetable 时候触发的落盘时机为例。将 immemtable 保存为 SSTable 文件时，过程如下：首先迭代 immemtable 中的键值对，然后调用上面的 Add 方法来添加。Add 中会更新相关 block 的内容，每当 DataBlock 超过 block_size 时，会调用 Flush 方法将 DataBlock 写入文件。等所有键值对写完，会主动调用 Finish 方法，来进行一些**收尾工作**，比如将最后一个 Datablock 的数据写入文件，写入 IndexBlock，FilterBlock 等。
+LevelDB 中产生 SSTable 文件的时机有很多，这里以保存 immetable 时候触发的落盘时机为例。将 immemtable 保存为 SSTable 文件时，过程如下：首先迭代 immemtable 中的键值对，然后调用上面的 Add 方法来添加。Add 中会更新相关 block 的内容，每当 DataBlock 超过 block_size 时，会调用 Flush 方法将 DataBlock 写入文件。
 
-Finish 的实现如下，开始之前先用 Flush 把剩余的 DataBlock 部分刷到磁盘文件中，接着会处理其他块：
+等所有键值对写完，会主动调用 Finish 方法，来进行一些**收尾工作**，比如将最后一个 Datablock 的数据写入文件，写入 IndexBlock，FilterBlock 等。
+
+Finish 的实现如下，开始之前先用 Flush 把剩余的 DataBlock 部分刷到磁盘文件中，接着会处理其他块，并且在文件尾部添加一个固定大小的 footer 部分，用来记录索引信息。
 
 ```cpp
 Status TableBuilder::Finish() {
@@ -304,8 +310,6 @@ Status TableBuilder::Finish() {
   Flush();
   assert(!r->closed);
   r->closed = true;
-
-  BlockHandle filter_block_handle, metaindex_block_handle, index_block_handle;
 
   // Write filter block
   // Write metaindex block
@@ -316,7 +320,61 @@ Status TableBuilder::Finish() {
 }
 ```
 
-过滤索引块需要
+这里构建各个块也比较有意思，都是用一个 builder 来处理内容，同时用一个 handler 来记录块的偏移和大小。我们分别来看下。
+
+### BlockBuilder 构建块
+
+先思考一个问题，**这里有这么多类型的块，每个块都要一个自己的 Builder 来拼装数据吗**？
+
+这里要从每个块的数据结构来看，Data/Index/MetaIndex Block 这三种块都具有以下共同特征：
+
+- 键值对结构：都存储键值对形式的数据，虽然这里每个块里面的键值含义不一样，但都是键值对形式;
+- 有序性要求：键必须按顺序排列，因为后面查找的时候，需要支持二分查找或顺序扫描;
+
+所以这 3 类块的构建逻辑是类似的，LevelDB 中共用同一个 BlockBuilder 来处理。这里实现在 [table/block_builder.h](https://github.com/google/leveldb/blob/main/table/block_builder.h) 中，也有不少优化细节。比如前缀压缩优化，对于相似的键只存储差异部分，节省空间。重启点机制，每隔几个条目设置一个重启点，支持二分查找。后面我会专门用一篇文章来详细说明。封装后用起来比较简单，以 MetaIndex Block 为例，用 Add 添加键值，然后 WriteBlock 落磁盘就好。代码如下:
+
+```cpp
+void TableBuilder::Finish() {
+    BlockBuilder meta_index_block(&r->options);
+    if (r->filter_block != nullptr) {
+      // Add mapping from "filter.Name" to location of filter data
+      std::string key = "filter.";
+      key.append(r->options.filter_policy->Name());
+      std::string handle_encoding;
+      filter_block_handle.EncodeTo(&handle_encoding);
+      meta_index_block.Add(key, handle_encoding);
+    }
+
+    // TODO(postrelease): Add stats and other meta blocks
+    WriteBlock(&meta_index_block, &metaindex_block_handle);
+    // ...
+}
+```
+
+而 filter block 的数据结构和其他的都不一样，它存储的是布隆过滤器的二进制数据，按文件偏移分组，每 2KB 文件范围对应一个过滤器。所以 filter block 的构建逻辑和其他的都不一样，需要单独处理。这里的实现在 [table/filter_block.cc](https://github.com/google/leveldb/blob/main/table/filter_block.cc) 中，后面我单独再展开分析。这里使用倒是很简单，如下：
+
+```cpp
+  // Write filter block
+  if (ok() && r->filter_block != nullptr) {
+    WriteRawBlock(r->filter_block->Finish(), kNoCompression,
+                  &filter_block_handle);
+  }
+```
+
+这里 Finish 方法会返回 filter block 的二进制数据，然后调用 WriteRawBlock 方法将数据写入文件。
+
+### BlockHandle 记录偏移和大小
+
+上面用两个 builder 来构建块，但是用同一个 handler 类来记录块的偏移和大小。代码如下：
+
+```cpp
+  BlockHandle filter_block_handle, metaindex_block_handle, index_block_handle;
+
+```
+
+这里 BlockHandle 的实现在 [table/format.h](https://github.com/google/leveldb/blob/main/table/format.h#L23) 中，主要告诉系统在文件的第 X 字节位置，有一个大小为 Y 字节的块，仅此而已。不过配合不同块的 handle 信息，就能方便存储不同块的偏移和大小。
+
+至此，我们用两个 builder 来构建各种索引块，同时用一个 handler 来辅助记录块的偏移和大小。就完成了整个块的构建。
 
 ## 创建 SSTable 文件完整步骤
 
