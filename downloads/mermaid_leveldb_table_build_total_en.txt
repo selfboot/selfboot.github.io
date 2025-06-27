@@ -1,0 +1,18 @@
+---
+config:
+  layout: fixed
+---
+flowchart LR
+    A["**BuildTable Starts**<br>Create TableBuilder"] --> B["**Loop to Add Data**<br>Iterate MemTable"]
+    B --> C["**TableBuilder::Add**<br>Add Key-Value Pair"] & G["**Data Addition Complete**<br>Call Finish()"]
+    C --> D{"DataBlock<br>Full?"}
+    D -- No --> B
+    D -- Yes --> E["**Flush DataBlock**<br>Write to Disk"]
+    E --> F["**Update Index**<br>Record Block Position"]
+    F --> B
+    G --> H["**Write FilterBlock**<br>Bloom Filter"]
+    H --> I["**Write MetaIndexBlock**<br>Metadata Index"]
+    I --> J["**Write IndexBlock**<br>Data Block Index"]
+    J --> K["**Write Footer**<br>File Footer Info"]
+    K --> L["**SSTable Complete**<br>File Ready"]
+    style A fill:#e1f5fe

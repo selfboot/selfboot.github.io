@@ -1,0 +1,18 @@
+---
+config:
+  layout: fixed
+---
+flowchart LR
+    A["**BuildTable 启动**<br>创建 TableBuilder"] --> B["**循环添加数据**<br>遍历 MemTable"]
+    B --> C["**TableBuilder::Add**<br>添加键值对"] & G["**数据添加完成**<br>调用 Finish()"]
+    C --> D{"DataBlock<br>满了?"}
+    D -- 否 --> B
+    D -- 是 --> E["**Flush DataBlock**<br>写入磁盘"]
+    E --> F["**更新索引**<br>记录块位置"]
+    F --> B
+    G --> H["**写入 FilterBlock**<br>布隆过滤器"]
+    H --> I["**写入 MetaIndexBlock**<br>元数据索引"]
+    I --> J["**写入 IndexBlock**<br>数据块索引"]
+    J --> K["**写入 Footer**<br>文件尾部信息"]
+    K --> L["**SSTable 完成**<br>文件可用"]
+    style A fill:#e1f5fe
