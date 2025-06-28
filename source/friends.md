@@ -27,7 +27,7 @@ description: 这里是一些值得推荐的友情链接，包含了优质的个�
 - **网站名称**：SelfBoot
 - **网站链接**：https://selfboot.cn
 - **网站描述**：C++，Python，编程，这里有程序员的思考沉淀，也有 AI 的使用心得。
-- **网站图标**：https://selfboot.cn/favicon.ico
+- **网站图标**：https://slefboot-1251736664.file.myqcloud.com/20250628_selfboot_logo.webp
 
 ---
 
