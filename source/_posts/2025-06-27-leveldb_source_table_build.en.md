@@ -6,7 +6,7 @@ tags:
 category: Source Code Analysis
 toc: true
 description: A deep dive into the creation process and internal structure of SSTable files in LevelDB. This article takes a problem-driven approach to analyze how SSTable achieves high read/write performance through mechanisms like block storage, index optimization, and filters. It focuses on the implementation details of the TableBuilder class, including the construction of DataBlocks, IndexBlocks, and FilterBlocks, as well as engineering techniques like index key optimization and compression strategies. Through source code analysis, it demonstrates how LevelDB solves key problems in large-scale data storage, quickly locating data blocks, reducing unnecessary disk I/O, and balancing storage space with query efficiency. With concrete code examples and flowcharts, the article helps readers deeply understand the ingenious design of the SSTable file format and the core implementation principles of LevelDB as a high-performance key-value storage engine.
-date: 2025-06-27 21:00:00
+date: 2025-06-27 13:00:00
 ---
 
 In LevelDB, when the key-value pairs in the in-memory table (MemTable) reach a certain size, they are flushed to disk as an SSTable file. The disk files are also layered, with each layer containing multiple SSTable files. During runtime, LevelDB will merge and reorganize SSTable files at appropriate times, continuously compacting data into lower layers.

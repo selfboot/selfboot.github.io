@@ -6,7 +6,7 @@ tags:
 category: 源码剖析
 toc: true
 description: 深入解析 LevelDB 中 SSTable 文件的创建过程和内部结构设计。本文从问题驱动的角度，详细分析了 SSTable 如何通过分块存储、索引优化、过滤器等机制实现高效的读写性能。重点剖析 TableBuilder 类的实现细节，包括 DataBlock、IndexBlock、FilterBlock 的构建过程，以及索引键优化、压缩策略等工程技巧。通过源码分析展示了 LevelDB 如何解决大规模数据存储中的关键问题：快速定位数据块、减少无效磁盘 I/O、平衡存储空间与查询效率。文章结合具体代码示例和流程图，让读者深入理解 SSTable 文件格式设计的精妙之处，以及 LevelDB 作为高性能键值存储引擎的核心实现原理。
-date: 2025-06-27 21:00:00
+date: 2025-06-27 13:00:00
 ---
 
 LevelDB 中，内存表中的键值对在到达一定大小后，会落到磁盘文件 SSTable 中。并且磁盘文件也是分层的，每层包含多个 SSTable 文件，在运行时，LevelDB 会在适当时机，合并、重整 SSTable 文件，将数据不断往下层沉淀。
