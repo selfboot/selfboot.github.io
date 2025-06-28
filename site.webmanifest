@@ -1,0 +1,19 @@
+{
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "icons": [
+        {
+            "sizes": "192x192",
+            "src": "https://slefboot-1251736664.file.myqcloud.com/selfboot/android-chrome-192x192.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "512x512",
+            "src": "https://slefboot-1251736664.file.myqcloud.com/selfboot/android-chrome-512x512.png",
+            "type": "image/png"
+        }
+    ],
+    "name": "Selfboot",
+    "short_name": "Selfboot",
+    "theme_color": "#ffffff"
+} 
