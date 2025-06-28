@@ -1,10 +1,10 @@
-/* 蓝色虚线边框广告位样式 */
-.advertisements-widget {
+/* 蓝色虚线边框推荐内容样式 */
+.recommendations-widget {
   margin-bottom: 20px;
 }
 
 /* 确保虚线边框显示 - 使用最高优先级 */
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link {
   border: 2px dashed #4a90e2 !important;
   display: block !important;
   background: #f8fbff !important;
@@ -16,14 +16,14 @@
   color: #4a90e2 !important;
 }
 
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link:hover {
   background: #f0f8ff !important;
   border-color: #357abd !important;
   text-decoration: none !important;
   color: #357abd !important;
 }
 
-.advertisements-widget .widget-title {
+.recommendations-widget .widget-title {
   margin-bottom: 15px;
   font-size: 14px;
   font-weight: 600;
@@ -32,20 +32,20 @@
   border-bottom: 1px solid #eee;
 }
 
-.advertisements-widget .advertisements-container {
+.recommendations-widget .recommendations-container {
   padding: 0;
 }
 
-.advertisements-widget .advertisement-item {
+.recommendations-widget .recommendation-item {
   margin-bottom: 18px;
 }
 
-.advertisements-widget .advertisement-item:last-child {
+.recommendations-widget .recommendation-item:last-child {
   margin-bottom: 0;
 }
 
 /* 低优先级的后备样式 - 使用具体选择器避免影响其他样式 */
-.advertisements-widget .ad-link {
+.recommendations-widget .promo-link {
   display: block;
   text-decoration: none;
   border: 2px dashed #4a90e2;
@@ -56,13 +56,13 @@
   box-sizing: border-box;
 }
 
-.advertisements-widget .ad-link:hover {
+.recommendations-widget .promo-link:hover {
   background: #f0f8ff;
   border-color: #357abd;
   text-decoration: none;
 }
 
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content {
   font-size: 13px !important;
   color: #4a90e2 !important;
   line-height: 1.4 !important;
@@ -72,7 +72,7 @@
   align-items: center !important;
 }
 
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content i.fa {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content i.fa {
   margin-right: 8px !important;
   font-size: 14px !important;
   color: #4a90e2 !important;
@@ -80,75 +80,75 @@
   flex-shrink: 0 !important;
 }
 
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content .ad-text {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content .promo-text {
   flex: 1 !important;
   color: inherit !important;
 }
 
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content i.fa {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link:hover .promo-content i.fa {
   color: #357abd !important;
 }
 
-#sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content {
+#sidebar .widget.recommendations-widget .recommendation-item .promo-link:hover .promo-content {
   color: #357abd !important;
 }
 
 /* 暗色主题适配 */
-body.dark .advertisements-widget .widget-title {
+body.dark .recommendations-widget .widget-title {
   color: #e2e8f0;
   border-bottom-color: #4a5568;
 }
 
-body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link {
+body.dark #sidebar .widget.recommendations-widget .recommendation-item .promo-link {
   background: rgba(74, 144, 226, 0.1) !important;
   border-color: #4a90e2 !important;
 }
 
-body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover {
+body.dark #sidebar .widget.recommendations-widget .recommendation-item .promo-link:hover {
   background: rgba(74, 144, 226, 0.15) !important;
   border-color: #5ba0f2 !important;
 }
 
-body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content {
+body.dark #sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content {
   color: #6bb6ff !important;
 }
 
-body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content i.fa {
+body.dark #sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content i.fa {
   color: #6bb6ff !important;
 }
 
-body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content {
+body.dark #sidebar .widget.recommendations-widget .recommendation-item .promo-link:hover .promo-content {
   color: #89c4ff !important;
 }
 
-body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content i.fa {
+body.dark #sidebar .widget.recommendations-widget .recommendation-item .promo-link:hover .promo-content i.fa {
   color: #89c4ff !important;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .advertisements-widget {
+  .recommendations-widget {
     margin-bottom: 15px;
   }
   
-  .advertisements-widget .widget-title {
+  .recommendations-widget .widget-title {
     margin-bottom: 12px;
     font-size: 13px;
   }
   
-  .advertisements-widget .advertisement-item {
+  .recommendations-widget .recommendation-item {
     margin-bottom: 15px;
   }
   
-  #sidebar .widget.advertisements-widget .advertisement-item .ad-link {
+  #sidebar .widget.recommendations-widget .recommendation-item .promo-link {
     padding: 10px 12px !important;
   }
   
-  #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content {
+  #sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content {
     font-size: 12px !important;
   }
   
-  #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content i.fa {
+  #sidebar .widget.recommendations-widget .recommendation-item .promo-link .promo-content i.fa {
     font-size: 13px !important;
     margin-right: 6px !important;
   }
