@@ -1906,10 +1906,10 @@ tslib@^2.0.3:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
 
-undici@7.10.0, undici@^7.10.0:
-  version "7.10.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-7.10.0.tgz#8ae17a976acc6593b13c9ff3342840bea9b24670"
-  integrity sha512-u5otvFBOBZvmdjWLVW+5DAc9Nkq8f24g0O9oY7qw2JVIF1VocIFoyz9JFkuVOS2j41AufeO0xnlweJ2RLT8nGw==
+undici@7.11.0, undici@^7.10.0:
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-7.11.0.tgz#8e13a54f62afa756666c0590c38b3866e286d0b3"
+  integrity sha512-heTSIac3iLhsmZhUCjyS3JQEkZELateufzZuBaVM5RHXdSBMb1LPMQf5x+FH7qjsZYDP0ttAc3nnVpUB+wYbOg==
 
 unpipe@~1.0.0:
   version "1.0.0"
