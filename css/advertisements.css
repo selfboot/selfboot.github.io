@@ -1,0 +1,155 @@
+/* 蓝色虚线边框广告位样式 */
+.advertisements-widget {
+  margin-bottom: 20px;
+}
+
+/* 确保虚线边框显示 - 使用最高优先级 */
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link {
+  border: 2px dashed #4a90e2 !important;
+  display: block !important;
+  background: #f8fbff !important;
+  padding: 12px 15px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
+  color: #4a90e2 !important;
+}
+
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover {
+  background: #f0f8ff !important;
+  border-color: #357abd !important;
+  text-decoration: none !important;
+  color: #357abd !important;
+}
+
+.advertisements-widget .widget-title {
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.advertisements-widget .advertisements-container {
+  padding: 0;
+}
+
+.advertisements-widget .advertisement-item {
+  margin-bottom: 18px;
+}
+
+.advertisements-widget .advertisement-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 低优先级的后备样式 - 使用具体选择器避免影响其他样式 */
+.advertisements-widget .ad-link {
+  display: block;
+  text-decoration: none;
+  border: 2px dashed #4a90e2;
+  border-radius: 6px;
+  padding: 12px 15px;
+  background: #f8fbff;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.advertisements-widget .ad-link:hover {
+  background: #f0f8ff;
+  border-color: #357abd;
+  text-decoration: none;
+}
+
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content {
+  font-size: 13px !important;
+  color: #4a90e2 !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content i.fa {
+  margin-right: 8px !important;
+  font-size: 14px !important;
+  color: #4a90e2 !important;
+  transition: color 0.3s ease !important;
+  flex-shrink: 0 !important;
+}
+
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content .ad-text {
+  flex: 1 !important;
+  color: inherit !important;
+}
+
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content i.fa {
+  color: #357abd !important;
+}
+
+#sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content {
+  color: #357abd !important;
+}
+
+/* 暗色主题适配 */
+body.dark .advertisements-widget .widget-title {
+  color: #e2e8f0;
+  border-bottom-color: #4a5568;
+}
+
+body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link {
+  background: rgba(74, 144, 226, 0.1) !important;
+  border-color: #4a90e2 !important;
+}
+
+body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover {
+  background: rgba(74, 144, 226, 0.15) !important;
+  border-color: #5ba0f2 !important;
+}
+
+body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content {
+  color: #6bb6ff !important;
+}
+
+body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content i.fa {
+  color: #6bb6ff !important;
+}
+
+body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content {
+  color: #89c4ff !important;
+}
+
+body.dark #sidebar .widget.advertisements-widget .advertisement-item .ad-link:hover .ad-content i.fa {
+  color: #89c4ff !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .advertisements-widget {
+    margin-bottom: 15px;
+  }
+  
+  .advertisements-widget .widget-title {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+  
+  .advertisements-widget .advertisement-item {
+    margin-bottom: 15px;
+  }
+  
+  #sidebar .widget.advertisements-widget .advertisement-item .ad-link {
+    padding: 10px 12px !important;
+  }
+  
+  #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content {
+    font-size: 12px !important;
+  }
+  
+  #sidebar .widget.advertisements-widget .advertisement-item .ad-link .ad-content i.fa {
+    font-size: 13px !important;
+    margin-right: 6px !important;
+  }
+} 

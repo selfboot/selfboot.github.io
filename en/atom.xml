@@ -15,7 +15,7 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Fri, 27 Jun 2025 13:08:13 GMT</pubDate>
+    <pubDate>Sat, 28 Jun 2025 08:09:33 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
@@ -23,7 +23,7 @@
       <title>LevelDB Explained - A Step by Step Guide to SSTable Build</title>
       <link>https://selfboot.cn/en/2025/06/27/leveldb_source_table_build/</link>
       <guid>https://selfboot.cn/en/2025/06/27/leveldb_source_table_build/</guid>
-      <pubDate>Fri, 27 Jun 2025 21:00:00 GMT</pubDate>
+      <pubDate>Fri, 27 Jun 2025 13:00:00 GMT</pubDate>
       
       <description>A deep dive into the creation process and internal structure of SSTable files in LevelDB. This article takes a problem-driven approach to analyze how SSTable achieves high read/write performance through mechanisms like block storage, index optimization, and filters. It focuses on the implementation details of the TableBuilder class, including the construction of DataBlocks, IndexBlocks, and FilterBlocks, as well as engineering techniques like index key optimization and compression strategies. Through source code analysis, it demonstrates how LevelDB solves key problems in large-scale data storage, quickly locating data blocks, reducing unnecessary disk I/O, and balancing storage space with query efficiency. With concrete code examples and flowcharts, the article helps readers deeply understand the ingenious design of the SSTable file format and the core implementation principles of LevelDB as a high-performance key-value storage engine.</description>
       
@@ -220,6 +220,8 @@
     
     
     
+    
+    
     <item>
       <title>5 Real-world Cases of C++ Process Crashes from Production</title>
       <link>https://selfboot.cn/en/2025/01/10/c++_crash_cases/</link>
@@ -242,10 +244,6 @@
       <comments>https://selfboot.cn/en/2025/01/10/c++_crash_cases/#disqus_thread</comments>
       
     </item>
-    
-    
-    
-    
     
     
     
@@ -273,6 +271,8 @@
       <comments>https://selfboot.cn/en/2025/01/02/leveldb_source_thread_anno/#disqus_thread</comments>
       
     </item>
+    
+    
     
     
     
