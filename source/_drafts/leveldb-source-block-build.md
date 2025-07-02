@@ -1,9 +1,10 @@
 ---
-title: LevelDB 源码阅读：SSTable 中数据块 Block 的处理
+title: LevelDB 源码阅读：SSTable 中 DataBlock 的构建工程优化
 tags: [C++, LevelDB]
 category: 源码剖析
 toc: true
 description: 
+date: 2025-06-30 21:00:00
 ---
 
 在 LevelDB 中，SSTable（Sorted Strings Table）是存储键值对数据的文件格式。SSTable 文件由多个数据块（Blocks）组成，这些**块是文件的基本单位**。每个数据块通常包含一系列的键值对，这些键值对按键排序。每个数据块使用一种可配置的压缩算法进行压缩，以减少存储空间和提高读取效率。
@@ -17,17 +18,4 @@ LevelDB 中主要有下面 3 个编译单元封装对块的处理操作：
 接下来分别看看具体是怎么做的。
 
 <!-- more -->
-
-## table/format
-
-
-
-数据块的结尾处包含一个块尾（Block Trailer），其中包括数据的校验和，这有助于检测数据在存储或传输过程中的损坏。
-
-在 SSTable 文件的末尾，存在一个特殊的索引块（Index Block），用于存储每个数据块的最小键和该块在文件中的偏移量。这允许快速定位到包含给定键的数据块，从而实现高效的查找操作。
-
-
-## table/block_builder
-
-## table/block
 
