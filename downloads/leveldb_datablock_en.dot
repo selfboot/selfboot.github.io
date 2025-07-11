@@ -1,0 +1,58 @@
+digraph LevelDBPrefixCompression {
+    rankdir=LR;                       /* Left-to-right layout */
+    node [shape=plaintext, fontname="Arial"];
+
+    /* ---------------- Complete Key Reference ---------------- */
+    Keys [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+      <TR><TD><B>Complete Key</B></TD></TR>
+      <TR><TD><I></I></TD></TR>
+      <TR><TD>app</TD></TR>
+      <TR><TD>apple</TD></TR>
+      <TR><TD>applet</TD></TR>
+      <TR><TD>apply</TD></TR>
+      <TR><TD>apt</TD></TR>
+      <TR><TD>banana</TD></TR>
+      <TR><TD>band</TD></TR>
+      <TR><TD>bandit</TD></TR>
+      <TR><TD COLSPAN="1"><I>… Other Data …</I></TD></TR>
+      <TR><TD COLSPAN="1"> </TD></TR>
+      <TR><TD COLSPAN="1"> </TD></TR>
+    </TABLE>
+    >];
+
+    /* ---------------- Data Block ---------------- */
+    DataBlock [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+      <TR><TD COLSPAN="5"><B>LevelDB Data Block</B></TD></TR>
+      <TR>
+        <TD><B>shared_len</B></TD>
+        <TD><B>non_shared_len</B></TD>
+        <TD><B>value_len</B></TD>
+        <TD><B>Non-shared Part</B></TD>
+        <TD><B>value</B></TD>
+      </TR>
+
+      <!-- Restart 0 -->
+      <TR><TD>0</TD><TD>3</TD><TD>5</TD><TD>"app"</TD><TD>...</TD></TR>
+      <TR><TD>3</TD><TD>2</TD><TD>4</TD><TD>"le"</TD><TD>...</TD></TR>
+      <TR><TD>5</TD><TD>1</TD><TD>3</TD><TD>"t"</TD><TD>...</TD></TR>
+      <TR><TD>3</TD><TD>2</TD><TD>4</TD><TD>"ly"</TD><TD>...</TD></TR>
+
+      <!-- Restart 1 -->
+      <TR><TD>0</TD><TD>3</TD><TD>5</TD><TD>"apt"</TD><TD>...</TD></TR>
+      <TR><TD>1</TD><TD>5</TD><TD>5</TD><TD>"anana"</TD><TD>...</TD></TR>
+      <TR><TD>3</TD><TD>1</TD><TD>4</TD><TD>"d"</TD><TD>...</TD></TR>
+      <TR><TD>4</TD><TD>2</TD><TD>4</TD><TD>"it"</TD><TD>...</TD></TR>
+
+      <TR><TD COLSPAN="5"><I>… Other Data Omitted …</I></TD></TR>
+
+      <!-- Footer restart array -->
+      <TR><TD COLSPAN="5"><B>Restart Points</B>: [0, 4]</TD></TR>
+      <TR><TD COLSPAN="5">Restart Count: 2</TD></TR>
+    </TABLE>
+    >];
+
+    /* Add alignment indicator */
+    Keys -> DataBlock [label="Correspondence", style=dashed, color=blue];
+}
