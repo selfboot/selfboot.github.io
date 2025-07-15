@@ -15,8 +15,10 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Fri, 11 Jul 2025 13:34:27 GMT</pubDate>
+    <pubDate>Tue, 15 Jul 2025 13:42:45 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    
     
     
     <item>
@@ -43,8 +45,6 @@
       <comments>https://selfboot.cn/en/2025/06/27/leveldb_source_table_build/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -77,8 +77,6 @@
     
     
     
-    
-    
     <item>
       <title>LevelDB Explained - The Implementation Details of MemTable</title>
       <link>https://selfboot.cn/en/2025/06/11/leveldb_source_memtable/</link>
@@ -106,6 +104,10 @@
     
     
     
+    
+    
+    
+    
     <item>
       <title>LevelDB Explained - Understanding Multi-Version Concurrency Control (MVCC)</title>
       <link>https://selfboot.cn/en/2025/06/10/leveldb_mvcc_intro/</link>
@@ -130,8 +132,6 @@
       <comments>https://selfboot.cn/en/2025/06/10/leveldb_mvcc_intro/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
@@ -220,6 +220,8 @@
     
     
     
+    
+    
     <item>
       <title>5 Real-world Cases of C++ Process Crashes from Production</title>
       <link>https://selfboot.cn/en/2025/01/10/c++_crash_cases/</link>
@@ -242,8 +244,6 @@
       <comments>https://selfboot.cn/en/2025/01/10/c++_crash_cases/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
