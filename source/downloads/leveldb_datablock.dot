@@ -42,14 +42,14 @@ digraph LevelDBPrefixCompression {
 
       <!-- Restart 1 -->
       <TR><TD>0</TD><TD>3</TD><TD>5</TD><TD>"apt"</TD><TD>...</TD></TR>
-      <TR><TD>1</TD><TD>5</TD><TD>5</TD><TD>"anana"</TD><TD>...</TD></TR>
+      <TR><TD>0</TD><TD>6</TD><TD>5</TD><TD>"banana"</TD><TD>...</TD></TR>
       <TR><TD>3</TD><TD>1</TD><TD>4</TD><TD>"d"</TD><TD>...</TD></TR>
       <TR><TD>4</TD><TD>2</TD><TD>4</TD><TD>"it"</TD><TD>...</TD></TR>
 
       <TR><TD COLSPAN="5"><I>… 省略其他数据 …</I></TD></TR>
 
       <!-- 尾部 restart 数组 -->
-      <TR><TD COLSPAN="5"><B>Restart Points</B>: [0, 4]</TD></TR>
+      <TR><TD COLSPAN="5"><B>Restart Points</B>: [0, 28]</TD></TR>
       <TR><TD COLSPAN="5">Restart Count: 2</TD></TR>
     </TABLE>
     >];
