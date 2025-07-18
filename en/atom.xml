@@ -15,7 +15,7 @@
     <atom:link href="https://selfboot.cn/en/atom.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Fri, 18 Jul 2025 02:35:03 GMT</pubDate>
+    <pubDate>Fri, 18 Jul 2025 02:39:45 GMT</pubDate>
     <generator>http://hexo.io/</generator>
     
     
@@ -164,6 +164,8 @@
     
     
     
+    
+    
     <item>
       <title>In-depth Experience with 3 MCP Servers via Cursor: Impressive but Not Yet Practical?</title>
       <link>https://selfboot.cn/en/2025/05/23/mcp_user_report/</link>
@@ -186,8 +188,6 @@
       <comments>https://selfboot.cn/en/2025/05/23/mcp_user_report/#disqus_thread</comments>
       
     </item>
-    
-    
     
     
     
