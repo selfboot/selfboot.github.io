@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="[&quot;zh-CN&quot;,&quot;en&quot;,&quot;default&quot;]"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="baidu-site-verification" content="codeva-NxrUEx2EFN"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>LevelDB 源码阅读：DataBlock 的前缀压缩和重启点机制分析</title><link rel="stylesheet" type="text/css" href="/css/normalize.min.css"><link rel="stylesheet" type="text/css" href="/css/pure-min.min.css"><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><script type="text/javascript" src="/js/jquery.min.js"></script><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml,en/atom.xml"><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;973c5bad683a49b8af76df256779f523&quot;}"></script>
+<script defer="" src="https://cloud.umami.is/script.js" data-website-id="3578d9f2-9ea0-49d4-8781-e8d1217ab924" data-domains="selfboot.cn"></script><script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="referrer" content="no-referrer-when-downgrade"><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QNFB9JLSPV"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QNFB9JLSPV');
+</script><script async="" type="text/javascript" src="/js/clipboard.min.js"></script><script async="" type="text/javascript" src="/js/toastr.min.js"></script><link rel="stylesheet" href="/css/toastr.min.css"><script>function switchLanguage(lang) {
+  var currentPath = window.location.pathname;
+  var newPath;
+  if (lang === 'en') {
+    newPath = '/en' + currentPath.replace(/^\/(zh-CN\/)?/, '/');
+  } else {
+    newPath = currentPath.replace(/^\/en/, '');
+  }
+  window.location.href = newPath;
+}
+</script><link rel="icon" href="https://slefboot-1251736664.file.myqcloud.com/selfboot//favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="https://slefboot-1251736664.file.myqcloud.com/selfboot//apple-touch-icon.png"><link rel="manifest" href="https://slefboot-1251736664.file.myqcloud.com/selfboot//site.webmanifest"><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><a id="logo" href="/.">Just For Fun</a><div class="lang-select-wrapper"><i class="fas fa-globe"></i><select id="lang-select" onchange="switchLanguage(this.value)"><option value="zh-CN" selected="">中文</option><option value="en">English</option></select></div><p class="description">知其然，知其所以然。知识广度是深度的副产品！</p></div><div id="nav-menu"><a href="/."><i class="fa fa-home"></i><span> 首页</span></a><a href="/archives/"><i class="fa fa-archive"></i><span> 归档</span></a><a href="/aboutme.html"><i class="fa fa-user"></i><span> 关于</span></a><a href="/links.html"><i class="fa fa-user-graduate"></i><span> 小盛律师</span></a><a href="/friends.html"><i class="fa fa-link"></i><span> 友情链接</span></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">LevelDB 源码阅读：DataBlock 的前缀压缩和重启点机制分析</h1><div class="post-meta">2025/07/18<span> | </span><span class="category"><a href="/categories/%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/">源码剖析</a></span><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a class="disqus-comment-count" data-disqus-identifier="2025/07/18/leveldb_source_block_build/" href="/2025/07/18/leveldb_source_block_build/#disqus_thread"></a><div class="post-content"><p>在 LevelDB 中，SSTable（Sorted Strings Table）是存储键值对数据的文件格式。前面的文章<a href="https://selfboot.cn/2025/06/27/leveldb_source_table_build/">LevelDB 源码阅读：一步步拆解 SSTable 文件的创建过程</a> 介绍了 SSTable 文件的创建过程，我们知道了 SSTable 文件由多个数据块组成，这些<strong>块是文件的基本单位</strong>。</p>
+<p>这些数据块起始可以分两类，一种是键值对数据块，一种是过滤块数据块。相应的，为了组装这两类数据块，LevelDB 实现了两类 BlockBuilder 类，分别是 BlockBuilder 和 FilterBlockBuilder。这篇文章，我们来看看 BlockBuilder 的实现。</p>
+<p>先来看一个简单的示意图，展示了 LevelDB 中 DataBlock 的存储结构，图的源码在 <a href="https://selfboot.cn/downloads/leveldb_datablock.dot">leveldb_datablock.dot</a>。</p>
+<p><img src="https://slefboot-1251736664.file.myqcloud.com/20250717_leveldb_source_block_build_total.webp/webp" alt="LevelDB DataBlock 存储结构" srcset="https://slefboot-1251736664.file.myqcloud.com/20250717_leveldb_source_block_build_total.webp/webp 1522w, https://slefboot-1251736664.file.myqcloud.com/20250717_leveldb_source_block_build_total.webp/webp400 400w, https://slefboot-1251736664.file.myqcloud.com/20250717_leveldb_source_block_build_total.webp/webp800 800w" sizes="(min-width: 1150px) 723px, (min-width: 48em) calc((100vw - 120px) * 3 / 4 - 50px), (min-width: 35.5em) calc((100vw - 75px), calc(100vw - 40px)" width="1522" height="832"></p>
+<span id="more"></span>
+
+<p>接下来配合这个图来理解前缀压缩和重启点机制。</p>
+<h2 id="如何高效存储键值对？"><a href="#如何高效存储键值对？" class="headerlink" title="如何高效存储键值对？"></a>如何高效存储键值对？</h2><p>我们知道这里 DataBlock 用来存储有序的键值对，最简单的做法就是直接一个个存储。比如用 [keysize, key, valuesize, value] 这样的格式来存储。那么一个可能的键值对存储结果如下：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[3, "app", 6, "value1"]</span><br><span class="line">[5, "apple", 6, "value2"] </span><br><span class="line">[6, "applet", 6, "value3"]</span><br><span class="line">[5, "apply", 6, "value4"]</span><br></pre></td></tr></tbody></table></figure>
+
+<p>仔细观察这些键，我们会发现一个明显的问题：<strong>存在大量的重复前缀</strong>。</p>
+<ul>
+<li>app, apple, applet, apply 都共享前缀 “app”</li>
+<li>apple, applet 还额外共享前缀 “appl”</li>
+</ul>
+<p>这里的例子是我构造的，不过实际的业务场景中，我们的 key 经常都是有大量相同前缀的。这种共同前缀会浪费不少硬盘存储空间，另外读取的时候，也需要传输更多的冗余数据。如果缓存 DataBlock 到内存中，<strong>这种重复数据也会占用更多的内存</strong>。</p>
+<h3 id="前缀压缩"><a href="#前缀压缩" class="headerlink" title="前缀压缩"></a>前缀压缩</h3><p>LevelDB 作为底层的存储组件，肯定要考虑存储效率。为了解决这个问题，LevelDB 采用了<strong>前缀压缩</strong>的存储格式。核心思想是：<strong><span style="color: red;">对于有序的键值对，后面的键只存储与前一个键不同的部分</span></strong>。</p>
+<p>具体的存储格式变成了：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[shared_len, non_shared_len, value_len, non_shared_key, value]</span><br></pre></td></tr></tbody></table></figure>
+
+<p>其中 shared_len 表示与前一个键共享的前缀长度，non_shared_len 表示不共享部分的长度，value_len 表示值的长度，non_shared_key 表示键中不共享的部分，value 表示实际的值。</p>
+<p>让我们用前面的例子来看看效果，这里看看前缀压缩后键长度的变化：</p>
+<table>
+<thead>
+<tr>
+<th>完整 key</th>
+<th>shared_len</th>
+<th>non_shared_len</th>
+<th>non_shared_key</th>
+<th>存储开销分析</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>app</td>
+<td>0</td>
+<td>3</td>
+<td>“app”</td>
+<td>原始：1+3=4，压缩：1+1+3=5，<strong>省1字节</strong></td>
+</tr>
+<tr>
+<td>apple</td>
+<td>3</td>
+<td>2</td>
+<td>“le”</td>
+<td>原始：1+5=6，压缩：1+1+2=4，<strong>省2字节</strong></td>
+</tr>
+<tr>
+<td>applet</td>
+<td>5</td>
+<td>1</td>
+<td>“t”</td>
+<td>原始：1+6=7，压缩：1+1+1=3，<strong>省4字节</strong></td>
+</tr>
+<tr>
+<td>apply</td>
+<td>4</td>
+<td>1</td>
+<td>“y”</td>
+<td>原始：1+5=6，压缩：1+1+1=3，<strong>省3字节</strong></td>
+</tr>
+</tbody></table>
+<p>当然这里为了简化，假设长度值存储用 1 字节，实际上LevelDB使用变长编码，不过小长度下，长度也是 1 字节的。这里前缀压缩的效果并不是简单的节省重复前缀，而是需要<strong>权衡前缀长度与额外元数据的存储开销</strong>。</p>
+<p>在这个例子中，总体上我们节省了 (1+2+4+3) = 10 个字节。其实对于大部分业务场景，这里肯定都能节省不少存储空间的。</p>
+<h3 id="重启点机制"><a href="#重启点机制" class="headerlink" title="重启点机制"></a>重启点机制</h3><p>看起来很完美是吧？别急，我们来看看读取的键值的时候，会遇到什么问题。如果我们想要查找 “apply” 这个键，在前缀压缩的存储中我们只能看到：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[4, 1, 4, "y", ...]</span><br></pre></td></tr></tbody></table></figure>
+
+<p>为了拿到完整的键，我们要从从第一个键开始顺序读取，然后重建每个键的完整内容，直到找到目标键。这样会有什么问题？效率低啊！我们之所以顺序存键值，就是为了能用二分法快速定位到目标键，现在前缀压缩后，我们只能顺序读取，这在大块数据中会变得非常低效！</p>
+<p>那怎么办，放弃用前缀压缩，或者是用其他方法？哈哈，计算机科学中，我们经常遇到类似的问题，一般都是取个折中方案，在存储和查找效率之间找个平衡。</p>
+<p>LevelDB 的实现中，引入了 <strong>Restart Points（重启点）</strong> 来平衡这里的存储和查找效率。具体做法也很简单，就是每隔一定数量 N 的键，就存储键的完整内容。这里存储完整内容的键，就叫重启点。</p>
+<p>只有重启点还不够，<strong>我们还要有个索引，能快速找到一个块中所有的完整键</strong>。这里 LevelDB 做法也很简单，在 DataBlock 的尾部，记录每个重启点的偏移位置。</p>
+<p>查询的时候，根据尾部存储的重启点偏移，就能读出这里重启点的完整键，接着就可以用二分法快速定位到键应该在的区间。之后就可以从重启点开始顺序读取，直到找到目标键。这时候，最多读取 N 个键，就能找到目标键。这部分逻辑，我们放到下篇文章来展开。</p>
+<h2 id="构建-DataBlock-代码详解"><a href="#构建-DataBlock-代码详解" class="headerlink" title="构建 DataBlock 代码详解"></a>构建 DataBlock 代码详解</h2><p>整体逻辑已经很清晰了，接下来看看代码实现吧。这里实现在 <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/table/block_builder.cc">table/block_builder.cc</a> 中，代码量不多，还是比较好理解。</p>
+<p>这里我们先看几个内置成员变量，基本看到这些成员变量就能猜到具体的实现逻辑了。在 <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/table/block_builder.h#L43">table/block_builder.h</a> 中：</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BlockBuilder</span> {</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">BlockBuilder</span><span class="params">(<span class="type">const</span> Options* options)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">BlockBuilder</span>(<span class="type">const</span> BlockBuilder&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">  BlockBuilder&amp; <span class="keyword">operator</span>=(<span class="type">const</span> BlockBuilder&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="type">const</span> Options* options_;</span><br><span class="line">  std::string buffer_;              <span class="comment">// Destination buffer</span></span><br><span class="line">  std::vector&lt;<span class="type">uint32_t</span>&gt; restarts_;  <span class="comment">// Restart points</span></span><br><span class="line">  <span class="type">int</span> counter_;                     <span class="comment">// Number of entries emitted since restart</span></span><br><span class="line">  <span class="type">bool</span> finished_;                   <span class="comment">// Has Finish() been called?</span></span><br><span class="line">  std::string last_key_;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里 buffer_ 就是存储 DataBlock 数据的地方，restarts_ 数组记录所有重启点的偏移位置。counter_ 用来计算从上次重启点开始存储的键值对数量，达到配置的阈值后，就设置新的重启点。</p>
+<p>finished_ 记录是否已经完成构建，会在完成构建的时候，主动写尾部的数据。last_key_ 记录上一个键，用来做前缀压缩。</p>
+<h3 id="添加键值处理"><a href="#添加键值处理" class="headerlink" title="添加键值处理"></a>添加键值处理</h3><p>BlockBuilder 中核心的方法 2 个，分别是 Add 和 Finish。 我们先来看看 <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/table/block_builder.cc#L71">BlockBuilder::Add</a>，逻辑很清晰，这里去掉了一些 assert 校验逻辑。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">BlockBuilder::Add</span><span class="params">(<span class="type">const</span> Slice&amp; key, <span class="type">const</span> Slice&amp; value)</span> </span>{</span><br><span class="line">  <span class="function">Slice <span class="title">last_key_piece</span><span class="params">(last_key_)</span></span>;</span><br><span class="line">  <span class="type">size_t</span> shared = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> (counter_ &lt; options_-&gt;block_restart_interval) {</span><br><span class="line">    <span class="comment">// See how much sharing to do with previous string</span></span><br><span class="line">    <span class="type">const</span> <span class="type">size_t</span> min_length = std::<span class="built_in">min</span>(last_key_piece.<span class="built_in">size</span>(), key.<span class="built_in">size</span>());</span><br><span class="line">    <span class="keyword">while</span> ((shared &lt; min_length) &amp;&amp; (last_key_piece[shared] == key[shared])) {</span><br><span class="line">      shared++;</span><br><span class="line">    }</span><br><span class="line">  } <span class="keyword">else</span> {</span><br><span class="line">    <span class="comment">// Restart compression</span></span><br><span class="line">    restarts_.<span class="built_in">push_back</span>(buffer_.<span class="built_in">size</span>());</span><br><span class="line">    counter_ = <span class="number">0</span>;</span><br><span class="line">  }</span><br><span class="line">  <span class="type">const</span> <span class="type">size_t</span> non_shared = key.<span class="built_in">size</span>() - shared;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Add "&lt;shared&gt;&lt;non_shared&gt;&lt;value_size&gt;" to buffer_</span></span><br><span class="line">  <span class="built_in">PutVarint32</span>(&amp;buffer_, shared);</span><br><span class="line">  <span class="built_in">PutVarint32</span>(&amp;buffer_, non_shared);</span><br><span class="line">  <span class="built_in">PutVarint32</span>(&amp;buffer_, value.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Add string delta to buffer_ followed by value</span></span><br><span class="line">  buffer_.<span class="built_in">append</span>(key.<span class="built_in">data</span>() + shared, non_shared);</span><br><span class="line">  buffer_.<span class="built_in">append</span>(value.<span class="built_in">data</span>(), value.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Update state</span></span><br><span class="line">  last_key_.<span class="built_in">resize</span>(shared);</span><br><span class="line">  last_key_.<span class="built_in">append</span>(key.<span class="built_in">data</span>() + shared, non_shared);</span><br><span class="line">  <span class="built_in">assert</span>(<span class="built_in">Slice</span>(last_key_) == key);</span><br><span class="line">  counter_++;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里代码很优雅，一看就懂。我多说一点这里 last_key_ 的一个小优化细节，我们看到 last_key_ 是一个 string，每次更新 last_key_ 的时候，首先复用共有部分，接着用 append 添加非共有部分。对于共同前缀长的键来说，这种更新方法可以节省不少内存分配。</p>
+<p>在所有 key 添加完的时候，调用方主动调用 Finish 方法，然后把重启点数组和大小写到尾部，然后整体返回一个 Slice 对象。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Slice <span class="title">BlockBuilder::Finish</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="comment">// Append restart array</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; restarts_.<span class="built_in">size</span>(); i++) {</span><br><span class="line">    <span class="built_in">PutFixed32</span>(&amp;buffer_, restarts_[i]);</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">PutFixed32</span>(&amp;buffer_, restarts_.<span class="built_in">size</span>());</span><br><span class="line">  finished_ = <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Slice</span>(buffer_);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>调用方会接着用这个 Slice 对象，写入到 SSTable 文件中。</p>
+<h2 id="重启点间隔大小选择"><a href="#重启点间隔大小选择" class="headerlink" title="重启点间隔大小选择"></a>重启点间隔大小选择</h2><p>到此为止，我们了解了 LevelDB 中 DataBlock 构建过程中的优化细节，以及具体代码实现了。前面我们没提到重启点间隔大小，这里是通过配置项 <a target="_blank" rel="noopener" href="https://github.com/google/leveldb/blob/main/include/leveldb/options.h#L106">options.h</a> 中的 block_restart_interval 来控制的，默认值是 16。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Number of keys between restart points for delta encoding of keys.</span></span><br><span class="line"><span class="comment">// This parameter can be changed dynamically.  Most clients should</span></span><br><span class="line"><span class="comment">// leave this parameter alone.</span></span><br><span class="line"><span class="type">int</span> block_restart_interval = <span class="number">16</span>;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这个<strong>值为啥是 16？如果在自己的业务场景用的话，可以调整</strong>吗？</p>
+<p>先来看第一个问题，LevelDB 中默认是 16，可能是作者经过测试选择的一个魔数。不过从开源出来的代码看，这里没有不同间隔的压测数据。table_test.cc 中，也只有不同间隔的功能测试代码。</p>
+<p>再来看第二个问题，我们自己的业务中，如果选择这个间隔值？我们要明白这个间隔值主要用来平衡压缩和查询性能，如果设置太小，就会导致压缩率降低。如果设置太大的话，压缩率上去了，但是查找的时候，线性扫描的键就会增多。</p>
+<p>LevelDB 默认块的大小是 4KB，假设我们一个键值对平均 100 字节，那么 4KB 的块可以存储 40 个键值对。如果重启点间隔是 16，那么每个块中，重启点就有 3 个。</p>
+<figure class="highlight cpp"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">restart_point[<span class="number">0</span>]: <span class="string">"user:12345:profile"</span> (键 <span class="number">1</span><span class="number">-16</span>)</span><br><span class="line">restart_point[<span class="number">1</span>]: <span class="string">"user:12350:account"</span> (键 <span class="number">17</span><span class="number">-32</span>)  ← 目标区间</span><br><span class="line">restart_point[<span class="number">2</span>]: <span class="string">"user:12355:profile"</span> (键 <span class="number">33</span><span class="number">-40</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>二分查找最多需要 2 次就能找到所在的区间，接着扫描的话，最坏情况要读取 15 个键，就能找到目标键。整体查找代价还是可以接受的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>明白了这里前缀压缩和重启点机制后，其实整个 DataBlock 的构建过程还是挺简单的。接下来我会继续分析 DataBlock 的读取解析过程，以及 FilterBlock 的构建和解析。</p>
+</div><div class="article-footer-copyright"><p>本文由<b>selfboot</b> 发表于<a href="https://selfboot.cn" target="_blank">个人博客</a>，采用<a href="https://creativecommons.org/licenses/by-sa/3.0/cn/" target="_blank">署名-非商业性使用-相同方式共享 3.0 中国大陆许可协议。</a></p><p>本文章已自动同步在<b style="color:red">个人公众号</b>，欢迎去 <a href="https://selfboot.cn/aboutme.html" target="_blank">个人主页 </a> 扫码关注</p><p>非商业转载请注明作者及出处。商业转载请联系<a href="mailto:xuezaigds@gmail.com">作者本人</a></p><p>本文链接为：<a href="https://selfboot.cn/2025/07/18/leveldb_source_block_build/" target="_blank">LevelDB 源码阅读：DataBlock 的前缀压缩和重启点机制分析</a></p></div><div class="post-donate"><div class="donate_bar center" id="donate_board"><a class="btn_donate" id="btn_donate" href="javascript:;" title="赞助"></a><div class="donate_txt"> ↑<br>内容不错，赞助一下<br></div></div><div class="donate_bar center hidden" id="donate_guide"><img src="https://slefboot-1251736664.file.myqcloud.com/weixin.jpg" title="微信打赏"><img src="https://slefboot-1251736664.file.myqcloud.com/zhifubao.jpg" title="支付宝打赏"></div><script type="text/javascript">document.getElementById('btn_donate').onclick = function(){
+    $('#donate_board').addClass('hidden');
+    $('#donate_guide').removeClass('hidden');
+}</script></div><div class="addthis_sharing_toolbox"></div><div class="tags"><a href="/tags/C/"><i class="fa fa-tag"></i>C++</a><a href="/tags/LevelDB/"><i class="fa fa-tag"></i>LevelDB</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'https://selfboot.cn/2025/07/18/leveldb_source_block_build/';
+    this.page.identifier = '2025/07/18/leveldb_source_block_build/';
+    this.page.title = 'LevelDB 源码阅读：DataBlock 的前缀压缩和重启点机制分析';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//xuelangZF.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//xuelangZF.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://xuelangZF.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });</script></div><script type="text/javascript">document.addEventListener('DOMContentLoaded', function () {
+  var disqusThread = document.getElementById('disqus_thread');
+  if (!disqusThread) return;
+  
+  function removeAdIframes() {
+    var iframes = disqusThread.getElementsByTagName('iframe');
+    for (var i = iframes.length - 1; i >= 0; i--) {
+      var iframe = iframes[i];
+      if (iframe.src && iframe.src.indexOf("tempest.services.disqus.com/ads-iframe") !== -1) {
+        iframe.parentNode.removeChild(iframe);
+      }
+    }
+  }
+  
+  removeAdIframes();
+  
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      removeAdIframes();
+    });
+  });
+  observer.observe(disqusThread, { childList: true, subtree: true });
+});
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="https://www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="https://selfboot.cn"></form></div><div class="widget recommendations-widget"><div class="widget-title"> 推荐内容</div><div class="recommendations-container"><div class="recommendation-item"><a class="promo-link" href="https://puzzles-game.com/" target="_blank"><div class="promo-content"><i class="fa fa-gamepad"></i><span class="promo-text">训练大脑, 保持聪明</span></div></a></div><div class="recommendation-item"><a class="promo-link" href="https://gallery.selfboot.cn" target="_blank"><div class="promo-content"><i class="fa fa-robot"></i><span class="promo-text">人工智能, 助我创造</span></div></a></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>分类</span></div><ul><li><a href="/categories/程序设计/">程序设计</a> (23)</li><li><a href="/categories/工具介绍/">工具介绍</a> (13)</li><li><a href="/categories/数据结构与算法/">数据结构与算法</a> (13)</li><li><a href="/categories/计算机基础/">计算机基础</a> (9)</li><li><a href="/categories/社会百态/">社会百态</a> (11)</li><li><a href="/categories/计算机网络/">计算机网络</a> (4)</li><li><a href="/categories/项目实践/">项目实践</a> (10)</li><li><a href="/categories/源码剖析/">源码剖析</a> (24)</li><li><a href="/categories/金融/">金融</a> (1)</li><li><a href="/categories/人工智能/">人工智能</a> (32)</li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"></i><span>标签</span></div><div class="tagcloud"><a href="/tags/Python/" style="font-size: 15.00px;">Python</a> <a href="/tags/教程/" style="font-size: 15.00px;">教程</a> <a href="/tags/总结/" style="font-size: 15.00px;">总结</a> <a href="/tags/方法/" style="font-size: 15.00px;">方法</a> <a href="/tags/Google/" style="font-size: 15.00px;">Google</a> <a href="/tags/思考/" style="font-size: 15.00px;">思考</a> <a href="/tags/前端/" style="font-size: 15.00px;">前端</a> <a href="/tags/Django/" style="font-size: 15.00px;">Django</a> <a href="/tags/DNS/" style="font-size: 15.00px;">DNS</a> <a href="/tags/见闻/" style="font-size: 15.00px;">见闻</a> <a href="/tags/Protocol/" style="font-size: 15.00px;">Protocol</a> <a href="/tags/C/" style="font-size: 15.00px;">C++</a> <a href="/tags/Flask/" style="font-size: 15.00px;">Flask</a> <a href="/tags/Thread/" style="font-size: 15.00px;">Thread</a> <a href="/tags/ChatGPT/" style="font-size: 15.00px;">ChatGPT</a> <a href="/tags/Prompt/" style="font-size: 15.00px;">Prompt</a> <a href="/tags/Plugin/" style="font-size: 15.00px;">Plugin</a> <a href="/tags/Leetcode/" style="font-size: 15.00px;">Leetcode</a> <a href="/tags/Redis/" style="font-size: 15.00px;">Redis</a> <a href="/tags/Debug/" style="font-size: 15.00px;">Debug</a> <a href="/tags/Issue/" style="font-size: 15.00px;">Issue</a> <a href="/tags/eBPF/" style="font-size: 15.00px;">eBPF</a> <a href="/tags/Go/" style="font-size: 15.00px;">Go</a> <a href="/tags/数学/" style="font-size: 15.00px;">数学</a> <a href="/tags/Gemini/" style="font-size: 15.00px;">Gemini</a> <a href="/tags/google/" style="font-size: 15.00px;">google</a> <a href="/tags/LLM/" style="font-size: 15.00px;">LLM</a> <a href="/tags/LevelDB/" style="font-size: 15.00px;">LevelDB</a></div></div><!-- Debug: page.path = 2025/07/18/leveldb_source_block_build/ --><div class="widget"><div class="widget-title"><i class="fa fa-file-o"></i><span>最近文章</span></div><ul><li><a href="/2025/07/18/leveldb_source_block_build/" title="LevelDB 源码阅读：DataBlock 的前缀压缩和重启点机制分析">LevelDB 源码阅读：DataBlock 的前缀压缩和重启点机制分析</a></li><li><a href="/2025/06/27/leveldb_source_table_build/" title="LevelDB 源码阅读：一步步拆解 SSTable 文件的创建过程">LevelDB 源码阅读：一步步拆解 SSTable 文件的创建过程</a></li><li><a href="/2025/06/13/leveldb_source_LRU_cache/" title="LevelDB 源码阅读：LRU Cache 高性能缓存实现细节">LevelDB 源码阅读：LRU Cache 高性能缓存实现细节</a></li><li><a href="/2025/06/11/leveldb_source_memtable/" title="LevelDB 源码阅读：MemTable 内存表的实现细节">LevelDB 源码阅读：MemTable 内存表的实现细节</a></li><li><a href="/2025/06/10/leveldb_mvcc_intro/" title="LevelDB 源码阅读：结合代码理解多版本并发控制(MVCC)">LevelDB 源码阅读：结合代码理解多版本并发控制(MVCC)</a></li><li><a href="/2025/05/23/mcp_user_report/" title="使用 Cursor 深度体验 3 个 MCP Server，惊艳但并不实用?">使用 Cursor 深度体验 3 个 MCP Server，惊艳但并不实用?</a></li><li><a href="/2025/01/24/leveldb_source_writedb/" title="LevelDB 源码阅读：写入键值的工程实现和优化细节">LevelDB 源码阅读：写入键值的工程实现和优化细节</a></li><li><a href="/2025/01/13/leveldb_source_write_batch/" title="LevelDB 源码阅读：如何优雅地合并写入和删除操作">LevelDB 源码阅读：如何优雅地合并写入和删除操作</a></li><li><a href="/2025/01/10/c++_crash_cases/" title="5 个导致 C++ 进程 Crash 的真实业务案例">5 个导致 C++ 进程 Crash 的真实业务案例</a></li><li><a href="/2025/01/02/leveldb_source_thread_anno/" title="LevelDB 源码阅读：利用 Clang 的静态线程安全分析">LevelDB 源码阅读：利用 Clang 的静态线程安全分析</a></li></ul></div><!-- Debug: Current Language = zh-CN, Filtered Posts Count = 10 --><div class="widget" id="toc"><div class="widget-title"><i class="fa fa-list-ul"></i><span> 文章目录</span></div><ul class="dsq-widget-list"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%AB%98%E6%95%88%E5%AD%98%E5%82%A8%E9%94%AE%E5%80%BC%E5%AF%B9%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">如何高效存储键值对？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E7%BC%80%E5%8E%8B%E7%BC%A9"><span class="toc-number">1.1.</span> <span class="toc-text">前缀压缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%90%AF%E7%82%B9%E6%9C%BA%E5%88%B6"><span class="toc-number">1.2.</span> <span class="toc-text">重启点机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA-DataBlock-%E4%BB%A3%E7%A0%81%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">构建 DataBlock 代码详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E9%94%AE%E5%80%BC%E5%A4%84%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">添加键值处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%90%AF%E7%82%B9%E9%97%B4%E9%9A%94%E5%A4%A7%E5%B0%8F%E9%80%89%E6%8B%A9"><span class="toc-number">3.</span> <span class="toc-text">重启点间隔大小选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="/." rel="nofollow">Just For Fun.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/selfboot/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/selfboot"> SelfBoot.</a><p><span id="busuanzi_container_site_pv"></span>本站总访问量 <span id="busuanzi_value_site_pv"></span> 次，<span id="busuanzi_container_site_uv"></span>本站访客数: <span id="busuanzi_value_site_uv"></span> 人次</p><p>友情链接：<a rel="dofollow" target="_blank" href="https://puzzles-game.com/">益智游戏</a></p></div></div></div><link rel="stylesheet" type="text/css" href="/css/donate.css"><link rel="stylesheet" type="text/css" href="/css/copyright.css"><link rel="stylesheet" type="text/css" href="/css/recommendations.css"><a class="show" id="rocket" href="#top" aria-label="Back to top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script><script type="text/javascript" src="/js/jquery.fancybox.min.js" defer=""></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" defer=""></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.min.css"><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
