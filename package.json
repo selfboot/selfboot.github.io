@@ -28,6 +28,6 @@
     "hexo-server": "^3.0.0",
     "image-size": "2.0.2",
     "on-headers": "1.1.0",
-    "undici": "7.11.0"
+    "undici": "7.24.7"
   }
 }
